@@ -3,7 +3,41 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Mail, Lock, Eye, EyeOff, AlertCircle, CheckCircle2, User as UserIcon, Briefcase } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
-const API_BASE = import.meta.env.VITE_API_URL ?? 'http://localhost:1337';
+const API_BASE = import.meta.env.VITE_API_URL ?? '/api';
+
+async function parseResponseBody(res) {
+  const contentType = res.headers.get('content-type') ?? '';
+  if (contentType.includes('application/json')) {
+    try {
+      return await res.json();
+    } catch {
+      return null;
+    }
+  }
+
+  try {
+    const text = await res.text();
+    return text ? { message: text } : null;
+  } catch {
+    return null;
+  }
+}
+
+function getLoginAttempts(type, email, password) {
+  const specificEndpoint = type === 'customer' ? '/auth/customer/login' : '/auth/employee/login';
+  return [
+    { endpoint: specificEndpoint, body: { email, password } },
+    { endpoint: '/auth/login', body: { email, password, role: type } },
+    { endpoint: '/auth/local', body: { identifier: email, password } },
+  ];
+}
+
+function getRequestUrl(endpoint) {
+  if (API_BASE.endsWith('/api') && endpoint.startsWith('/api/')) {
+    return `${API_BASE}${endpoint.slice(4)}`;
+  }
+  return `${API_BASE}${endpoint}`;
+}
 
 export default function Login() {
   const { login } = useAuth();
@@ -31,22 +65,39 @@ export default function Login() {
     setError('');
 
     try {
-      const endpoint = loginType === 'customer' ? '/auth/customer/login' : '/auth/employee/login';
-      const res = await fetch(`${API_BASE}${endpoint}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify({ email: form.email, password: form.password }),
-      });
-      const data = await res.json();
+      const attempts = getLoginAttempts(loginType, form.email, form.password);
 
-      if (!res.ok) {
-        setError(data.message ?? 'Credenciales inválidas.');
-        return;
+      for (const attempt of attempts) {
+        const res = await fetch(getRequestUrl(attempt.endpoint), {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify(attempt.body),
+        });
+
+        const data = await parseResponseBody(res);
+
+        if (res.ok) {
+          const token = data?.accessToken ?? data?.jwt;
+          const user = data?.user ?? null;
+
+          if (!token) {
+            setError('El servidor no devolvió un token de acceso válido.');
+            return;
+          }
+
+          login(token, user);
+          navigate('/dashboard');
+          return;
+        }
+
+        if (![404, 405, 500].includes(res.status)) {
+          setError(data?.message ?? data?.error ?? 'Credenciales inválidas.');
+          return;
+        }
       }
 
-      login(data.accessToken, data.user);
-      navigate('/dashboard');
+      setError('No se encontró un endpoint de login compatible en el servidor.');
     } catch {
       setError('No se pudo conectar con el servidor. Inténtalo de nuevo.');
     } finally {

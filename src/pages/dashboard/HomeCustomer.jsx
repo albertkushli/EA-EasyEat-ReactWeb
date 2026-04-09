@@ -3,7 +3,7 @@ import { LogOut, User, Award, History, Heart, ChevronRight } from 'lucide-react'
 import { useAuth } from '../../context/AuthContext';
 import RestaurantCard from '../../components/RestaurantCard';
 
-const API_BASE = import.meta.env.VITE_API_URL ?? 'http://localhost:1337';
+const API_BASE = import.meta.env.VITE_API_URL ?? '/api';
 
 export default function HomeCustomer() {
   const { user, logout, token } = useAuth();
