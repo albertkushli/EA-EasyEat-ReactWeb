@@ -1,29 +1,46 @@
 import { createContext, useContext, useState, useCallback, useEffect } from 'react';
+import axios from 'axios';
 
 const AuthContext = createContext(null);
 const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:1337';
 
 export function AuthProvider({ children }) {
-  const [auth, setAuth] = useState(null); // { accessToken, user }
+  const [auth, setAuth] = useState(() => {
+    try {
+      const stored = localStorage.getItem('auth_data');
+      return stored ? JSON.parse(stored) : null;
+    } catch { return null; }
+  });
+  const [restaurant, setRestaurant] = useState(() => {
+    try {
+      const stored = localStorage.getItem('restaurant_data');
+      return stored ? JSON.parse(stored) : null;
+    } catch { return null; }
+  });
   const [loading, setLoading] = useState(true);
+
+  // Persist auth state to localStorage
+  useEffect(() => {
+    if (auth) localStorage.setItem('auth_data', JSON.stringify(auth));
+    else localStorage.removeItem('auth_data');
+  }, [auth]);
+
+  // Persist restaurant state to localStorage
+  useEffect(() => {
+    if (restaurant) localStorage.setItem('restaurant_data', JSON.stringify(restaurant));
+    else localStorage.removeItem('restaurant_data');
+  }, [restaurant]);
+
 
   // ─── Silent Refresh ─────────────────────────────────────────────────────────
   const refreshSession = useCallback(async () => {
     try {
-      const res = await fetch(`${API_BASE}/auth/refresh`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include', // Important for httpOnly cookie
-      });
-
-      if (res.ok) {
-        const data = await res.json();
-        setAuth({ accessToken: data.accessToken, user: data.user });
-        return data.accessToken;
-      } else {
-        setAuth(null);
-        return null;
+      // Instead of relying on the backend /auth/refresh stub which currently returns 401,
+      // we rely on the localStorage data which we initialized above.
+      if (auth?.accessToken) {
+        return auth.accessToken;
       }
+      return null;
     } catch {
       setAuth(null);
       return null;
@@ -40,28 +57,95 @@ export function AuthProvider({ children }) {
     initAuth();
   }, [refreshSession]);
 
-  const login = useCallback((accessToken, user) => {
-    setAuth({ accessToken, user });
+  const login = useCallback(async (email, password, userType = 'customer') => {
+    try {
+      const endpoint = userType === 'customer' ? '/auth/customer/login' : '/auth/employee/login';
+      const res = await axios.post(`${API_BASE}${endpoint}`, { email, password }, {
+        withCredentials: true
+      });
+
+      if (res.status === 200) {
+        const { accessToken, user } = res.data;
+        setAuth({ accessToken, user });
+
+        // If employee with restaurant_id, fetch restaurant data
+        if (user.role === 'owner' || user.role === 'staff') {
+          if (user.restaurant_id) {
+            try {
+              const restRes = await axios.get(`${API_BASE}/restaurants/${user.restaurant_id}`);
+              if (restRes.status === 200) {
+                setRestaurant(restRes.data);
+                console.log('📍 Restaurant data loaded:', restRes.data.profile?.name);
+              }
+            } catch (err) {
+              console.error('Failed to load restaurant:', err);
+            }
+          }
+        }
+
+        return { success: true };
+      }
+    } catch (error) {
+      console.error('Login error:', error);
+        console.error('Login error completo:', error);
+        console.error('Response:', error.response);
+        console.error('Status:', error.response?.status);
+        console.error('Data:', error.response?.data);
+      return { success: false, error: error.response?.data?.message || 'Login failed' };
+    }
+  }, []);
+
+  const register = useCallback(async (userData) => {
+    try {
+      const res = await axios.post(`${API_BASE}/auth/customer/register`, userData, {
+        withCredentials: true
+      });
+
+      if (res.status === 201) {
+        // Auto-login functionality
+        const { accessToken, user } = res.data;
+        if (accessToken && user) {
+          setAuth({ accessToken, user });
+        }
+        return { success: true };
+      }
+    } catch (error) {
+      console.error('Register error:', error);
+      return { success: false, error: error.response?.data?.message || 'Registration failed' };
+    }
   }, []);
 
   const logout = useCallback(async () => {
     try {
-      await fetch(`${API_BASE}/auth/logout`, { 
-        method: 'POST', 
-        credentials: 'include' 
-      });
+      // Optional: notify backend we're logging out
+      await axios.post(`${API_BASE}/auth/logout`, {}, { withCredentials: true }).catch(() => {});
     } finally {
       setAuth(null);
+      setRestaurant(null);
+      localStorage.removeItem('auth_data');
+      localStorage.removeItem('restaurant_data');
     }
   }, []);
 
   const isAuthenticated = Boolean(auth?.accessToken);
-  const role            = auth?.user?.role ?? null;
-  const user            = auth?.user ?? null;
-  const token           = auth?.accessToken ?? null;
+  const role = auth?.user?.role ?? null;
+  const user = auth?.user ?? null;
+  const token = auth?.accessToken ?? null;
 
   return (
-    <AuthContext.Provider value={{ auth, user, token, login, logout, refreshSession, isAuthenticated, role, loading }}>
+    <AuthContext.Provider value={{
+      auth,
+      user,
+      token,
+      login,
+      register,
+      logout,
+      refreshSession,
+      isAuthenticated,
+      role,
+      loading,
+      restaurant
+    }}>
       {!loading && children}
     </AuthContext.Provider>
   );
