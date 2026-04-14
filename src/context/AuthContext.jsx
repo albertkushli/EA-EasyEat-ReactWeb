@@ -2,7 +2,10 @@ import { createContext, useContext, useState, useCallback, useEffect } from 'rea
 import axios from 'axios';
 
 const AuthContext = createContext(null);
-const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:1337';
+// By setting API_BASE to an empty string (or omitting the host), 
+// requests will be made to the same origin (http://localhost:5173) 
+// and then proxied to http://localhost:1337 by Vite.
+const API_BASE = import.meta.env.VITE_API_URL || '';
 
 export function AuthProvider({ children }) {
   const [auth, setAuth] = useState(() => {

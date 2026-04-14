@@ -15,32 +15,45 @@ export default function HomeCustomer() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
 
-  const totalPoints = pointsWallet.reduce((sum, w) => sum + (w.points || 0), 0);
+  // Ensure pointsWallet is an array before reducing
+  const totalPoints = Array.isArray(pointsWallet) 
+    ? pointsWallet.reduce((sum, w) => sum + (w.points || 0), 0)
+    : 0;
 
   useEffect(() => {
     async function fetchData() {
       try {
         const headers = { Authorization: `Bearer ${token}` };
-        const [resRes, favRes, ptsRes, badgesRes, visitsRes] = await Promise.all([
+        const [resRes, favRes, ptsRes, badgesRes, visitsRes] = await Promise.allSettled([
           axios.get(`${API_BASE}/restaurants`),
-          axios.get(`${API_BASE}/customers/me/favouriteRestaurants`, { headers }),
-          axios.get(`${API_BASE}/customers/me/pointsWallet`, { headers }),
-          axios.get(`${API_BASE}/customers/me/badges`, { headers }),
-          axios.get(`${API_BASE}/customers/me/visits`, { headers }),
+          axios.get(`${API_BASE}/customers/${user?.id}/favouriteRestaurants`, { headers }),
+          axios.get(`${API_BASE}/customers/${user?.id}/pointsWallet`, { headers }),
+          axios.get(`${API_BASE}/customers/${user?.id}/badges`, { headers }),
+          axios.get(`${API_BASE}/customers/${user?.id}/visits`, { headers }),
         ]);
 
-        if (resRes.data) setRestaurants(resRes.data.slice(0, 6));
-        if (favRes.data) setFavoriteRestaurants(favRes.data);
-        if (ptsRes.data) setPointsWallet(ptsRes.data);
-        if (badgesRes.data) setBadges(badgesRes.data);
-        if (visitsRes.data) setVisits(visitsRes.data);
+        if (resRes.status === 'fulfilled' && resRes.value.data) {
+          setRestaurants(Array.isArray(resRes.value.data) ? resRes.value.data.slice(0, 6) : []);
+        }
+        if (favRes.status === 'fulfilled' && favRes.value.data) {
+          setFavoriteRestaurants(Array.isArray(favRes.value.data) ? favRes.value.data : []);
+        }
+        if (ptsRes.status === 'fulfilled' && ptsRes.value.data) {
+          setPointsWallet(Array.isArray(ptsRes.value.data) ? ptsRes.value.data : []);
+        }
+        if (badgesRes.status === 'fulfilled' && badgesRes.value.data) {
+          setBadges(Array.isArray(badgesRes.value.data) ? badgesRes.value.data : []);
+        }
+        if (visitsRes.status === 'fulfilled' && visitsRes.value.data) {
+          setVisits(Array.isArray(visitsRes.value.data) ? visitsRes.value.data : []);
+        }
         
         console.log("Customer data fetched:", {
-          restaurants: resRes.data,
-          favorites: favRes.data,
-          points: ptsRes.data,
-          badges: badgesRes.data,
-          visits: visitsRes.data
+          restaurants: resRes.value?.data,
+          favorites: favRes.value?.data,
+          points: ptsRes.value?.data,
+          badges: badgesRes.value?.data,
+          visits: visitsRes.value?.data
         });
       } catch (err) {
         console.error('Error fetching customer data:', err);
@@ -51,10 +64,10 @@ export default function HomeCustomer() {
     fetchData();
   }, [token]);
 
-  const filtered = restaurants.filter(r =>
+  const filtered = Array.isArray(restaurants) ? restaurants.filter(r =>
     r.profile?.name?.toLowerCase().includes(search.toLowerCase()) ||
     r.profile?.location?.city?.toLowerCase().includes(search.toLowerCase())
-  );
+  ) : [];
 
   if (loading) {
     return (
@@ -76,8 +89,8 @@ export default function HomeCustomer() {
           </div>
           <div className="hc-header__right">
             <div className="hc-user-pill">
-              <div className="hc-user-avatar">{user.name?.[0]?.toUpperCase()}</div>
-              <span>{user.name?.split(' ')[0]}</span>
+              <div className="hc-user-avatar">{user?.name?.[0]?.toUpperCase()}</div>
+              <span>{user?.name?.split(' ')[0]}</span>
             </div>
             <button onClick={logout} className="hc-logout-btn" title="Cerrar sesión">
               <LogOut size={18} />
@@ -92,7 +105,7 @@ export default function HomeCustomer() {
         <section className="hc-hero">
           <div className="hc-hero__text">
             <p className="hc-hero__greeting">Bienvenido de vuelta,</p>
-            <h1 className="hc-hero__name">{user.name?.split(' ')[0]} 👋</h1>
+            <h1 className="hc-hero__name">{user?.name?.split(' ')[0]} 👋</h1>
             <p className="hc-hero__sub">Descubre sabores que te esperan hoy</p>
           </div>
           <div className="hc-hero__orbs">
@@ -113,21 +126,21 @@ export default function HomeCustomer() {
           <div className="hc-stat-card hc-stat-card--visits">
             <div className="hc-stat-card__icon"><Flame size={22} /></div>
             <div className="hc-stat-card__info">
-              <span className="hc-stat-card__value">{visits.length}</span>
+              <span className="hc-stat-card__value">{Array.isArray(visits) ? visits.length : 0}</span>
               <span className="hc-stat-card__label">Visitas</span>
             </div>
           </div>
           <div className="hc-stat-card hc-stat-card--badges">
             <div className="hc-stat-card__icon"><Trophy size={22} /></div>
             <div className="hc-stat-card__info">
-              <span className="hc-stat-card__value">{badges.length}</span>
+              <span className="hc-stat-card__value">{Array.isArray(badges) ? badges.length : 0}</span>
               <span className="hc-stat-card__label">Badges</span>
             </div>
           </div>
           <div className="hc-stat-card hc-stat-card--favs">
             <div className="hc-stat-card__icon"><Heart size={22} /></div>
             <div className="hc-stat-card__info">
-              <span className="hc-stat-card__value">{favoriteRestaurants.length}</span>
+              <span className="hc-stat-card__value">{Array.isArray(favoriteRestaurants) ? favoriteRestaurants.length : 0}</span>
               <span className="hc-stat-card__label">Favoritos</span>
             </div>
           </div>
@@ -148,7 +161,7 @@ export default function HomeCustomer() {
         </section>
 
         {/* ── Favoritos ── */}
-        {favoriteRestaurants.length > 0 && (
+        {Array.isArray(favoriteRestaurants) && favoriteRestaurants.length > 0 && (
           <section className="hc-section">
             <div className="hc-section__head">
               <h2 className="hc-section__title"><Heart size={18} /> Tus favoritos</h2>
@@ -181,7 +194,7 @@ export default function HomeCustomer() {
         </section>
 
         {/* ── Visitas recientes ── */}
-        {visits.length > 0 && (
+        {Array.isArray(visits) && visits.length > 0 && (
           <section className="hc-section">
             <div className="hc-section__head">
               <h2 className="hc-section__title"><Clock size={18} /> Visitas recientes</h2>
@@ -205,7 +218,7 @@ export default function HomeCustomer() {
         )}
 
         {/* ── Badges ── */}
-        {badges.length > 0 && (
+        {Array.isArray(badges) && badges.length > 0 && (
           <section className="hc-section">
             <div className="hc-section__head">
               <h2 className="hc-section__title"><Trophy size={18} /> Tus logros</h2>
@@ -495,15 +508,15 @@ export default function HomeCustomer() {
 }
 
 function RestaurantCard({ restaurant: r }) {
-  const img = r.profile?.image?.[0];
+  const img = r?.profile?.image?.[0];
   return (
     <div className="hc-res-card">
       <div className="hc-res-card__img">
         {img
-          ? <img src={img} alt={r.profile?.name} onError={e => { e.target.style.display = 'none'; e.target.nextSibling.style.display = 'flex'; }} />
+          ? <img src={img} alt={r?.profile?.name} onError={e => { e.target.style.display = 'none'; e.target.nextSibling.style.display = 'flex'; }} />
           : null}
         <div className="hc-res-card__img--placeholder" style={{ display: img ? 'none' : 'flex' }}>🍴</div>
-        {r.profile?.globalRating && (
+        {r?.profile?.globalRating && (
           <div className="hc-res-card__rating">
             <Star size={12} fill="currentColor" />
             {Number(r.profile.globalRating).toFixed(1)}
@@ -511,10 +524,10 @@ function RestaurantCard({ restaurant: r }) {
         )}
       </div>
       <div className="hc-res-card__body">
-        <p className="hc-res-card__name">{r.profile?.name}</p>
-        {r.profile?.description && <p className="hc-res-card__desc">{r.profile.description}</p>}
+        <p className="hc-res-card__name">{r?.profile?.name}</p>
+        {r?.profile?.description && <p className="hc-res-card__desc">{r.profile.description}</p>}
         <div className="hc-res-card__meta">
-          {r.profile?.location?.city && (
+          {r?.profile?.location?.city && (
             <span className="hc-res-card__tag">
               <MapPin size={12} />{r.profile.location.city}
             </span>
