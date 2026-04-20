@@ -4,10 +4,33 @@ import { useAuth } from '../../context/AuthContext';
 import axios from 'axios';
 
 const API_BASE = import.meta.env.VITE_API_URL ?? 'http://localhost:1337';
+const DEFAULT_META = { total: 0, page: 1, limit: 1, totalPages: 1 };
+
+function parsePaginatedListResponse(payload, fallbackLimit = 10) {
+  if (Array.isArray(payload)) {
+    return {
+      data: payload,
+      meta: { total: payload.length, page: 1, limit: fallbackLimit, totalPages: 1 }
+    };
+  }
+
+  const data = Array.isArray(payload?.data) ? payload.data : [];
+  const rawMeta = payload?.meta || {};
+  const total = Number.isFinite(rawMeta.total) ? rawMeta.total : data.length;
+  const page = Number.isFinite(rawMeta.page) ? rawMeta.page : 1;
+  const limit = Number.isFinite(rawMeta.limit) ? rawMeta.limit : fallbackLimit;
+  const totalPages = Number.isFinite(rawMeta.totalPages)
+    ? rawMeta.totalPages
+    : Math.max(1, Math.ceil(total / Math.max(1, limit)));
+
+  return { data, meta: { total, page, limit, totalPages } };
+}
 
 export default function HomeCustomer() {
   const { user, logout, token } = useAuth();
   const [restaurants, setRestaurants] = useState([]);
+  const [restaurantsMeta, setRestaurantsMeta] = useState(DEFAULT_META);
+  const [restaurantsPage, setRestaurantsPage] = useState(1);
   const [favoriteRestaurants, setFavoriteRestaurants] = useState([]);
   const [pointsWallet, setPointsWallet] = useState([]);
   const [badges, setBadges] = useState([]);
@@ -24,28 +47,35 @@ export default function HomeCustomer() {
     async function fetchData() {
       try {
         const headers = { Authorization: `Bearer ${token}` };
+        const restaurantLimit = 6;
         const [resRes, favRes, ptsRes, badgesRes, visitsRes] = await Promise.allSettled([
-          axios.get(`${API_BASE}/restaurants`),
-          axios.get(`${API_BASE}/customers/${user?.id}/favouriteRestaurants`, { headers }),
-          axios.get(`${API_BASE}/customers/${user?.id}/pointsWallet`, { headers }),
-          axios.get(`${API_BASE}/customers/${user?.id}/badges`, { headers }),
-          axios.get(`${API_BASE}/customers/${user?.id}/visits`, { headers }),
+          axios.get(`${API_BASE}/restaurants`, { params: { page: restaurantsPage, limit: restaurantLimit } }),
+          axios.get(`${API_BASE}/customers/${user?.id}/favouriteRestaurants`, { headers, params: { page: 1, limit: 10 } }),
+          axios.get(`${API_BASE}/customers/${user?.id}/pointsWallet`, { headers, params: { page: 1, limit: 20 } }),
+          axios.get(`${API_BASE}/customers/${user?.id}/badges`, { headers, params: { page: 1, limit: 10 } }),
+          axios.get(`${API_BASE}/customers/${user?.id}/visits`, { headers, params: { page: 1, limit: 20 } }),
         ]);
 
         if (resRes.status === 'fulfilled' && resRes.value.data) {
-          setRestaurants(Array.isArray(resRes.value.data) ? resRes.value.data.slice(0, 6) : []);
+          const parsedRestaurants = parsePaginatedListResponse(resRes.value.data, restaurantLimit);
+          setRestaurants(parsedRestaurants.data);
+          setRestaurantsMeta(parsedRestaurants.meta);
         }
         if (favRes.status === 'fulfilled' && favRes.value.data) {
-          setFavoriteRestaurants(Array.isArray(favRes.value.data) ? favRes.value.data : []);
+          const parsedFavorites = parsePaginatedListResponse(favRes.value.data, 10);
+          setFavoriteRestaurants(parsedFavorites.data);
         }
         if (ptsRes.status === 'fulfilled' && ptsRes.value.data) {
-          setPointsWallet(Array.isArray(ptsRes.value.data) ? ptsRes.value.data : []);
+          const parsedPoints = parsePaginatedListResponse(ptsRes.value.data, 20);
+          setPointsWallet(parsedPoints.data);
         }
         if (badgesRes.status === 'fulfilled' && badgesRes.value.data) {
-          setBadges(Array.isArray(badgesRes.value.data) ? badgesRes.value.data : []);
+          const parsedBadges = parsePaginatedListResponse(badgesRes.value.data, 10);
+          setBadges(parsedBadges.data);
         }
         if (visitsRes.status === 'fulfilled' && visitsRes.value.data) {
-          setVisits(Array.isArray(visitsRes.value.data) ? visitsRes.value.data : []);
+          const parsedVisits = parsePaginatedListResponse(visitsRes.value.data, 20);
+          setVisits(parsedVisits.data);
         }
         
         console.log("Customer data fetched:", {
@@ -62,7 +92,7 @@ export default function HomeCustomer() {
       }
     }
     fetchData();
-  }, [token]);
+  }, [token, user?.id, restaurantsPage]);
 
   const filtered = Array.isArray(restaurants) ? restaurants.filter(r =>
     r.profile?.name?.toLowerCase().includes(search.toLowerCase()) ||
@@ -178,7 +208,7 @@ export default function HomeCustomer() {
         <section className="hc-section">
           <div className="hc-section__head">
             <h2 className="hc-section__title"><MapPin size={18} /> Cerca de ti</h2>
-            <span className="hc-section__count">{filtered.length} restaurantes</span>
+            <span className="hc-section__count">{filtered.length} de {restaurantsMeta.total} restaurantes</span>
           </div>
           {filtered.length > 0 ? (
             <div className="hc-cards">
@@ -191,6 +221,27 @@ export default function HomeCustomer() {
               <p>No se encontraron restaurantes para "<strong>{search}</strong>"</p>
             </div>
           )}
+          <div className="hc-pagination">
+            <button
+              type="button"
+              className="hc-pagination__btn"
+              disabled={restaurantsMeta.page <= 1}
+              onClick={() => setRestaurantsPage(prev => Math.max(1, prev - 1))}
+            >
+              Anterior
+            </button>
+            <span className="hc-pagination__info">
+              Página {restaurantsMeta.page} de {restaurantsMeta.totalPages}
+            </span>
+            <button
+              type="button"
+              className="hc-pagination__btn"
+              disabled={restaurantsMeta.page >= restaurantsMeta.totalPages}
+              onClick={() => setRestaurantsPage(prev => Math.min(restaurantsMeta.totalPages, prev + 1))}
+            >
+              Siguiente
+            </button>
+          </div>
         </section>
 
         {/* ── Visitas recientes ── */}
@@ -383,6 +434,31 @@ export default function HomeCustomer() {
           font-family: var(--font); font-size: 0.95rem; color: var(--clr-text);
         }
         .hc-search__input::placeholder { color: var(--clr-text-muted); }
+
+        .hc-pagination {
+          display: flex;
+          align-items: center;
+          justify-content: flex-end;
+          gap: 0.75rem;
+          margin-top: 0.5rem;
+        }
+        .hc-pagination__btn {
+          border: 1px solid var(--glass-border);
+          background: var(--glass-bg);
+          color: var(--clr-text);
+          padding: 0.45rem 0.9rem;
+          border-radius: 10px;
+          cursor: pointer;
+          font-size: 0.8rem;
+        }
+        .hc-pagination__btn:disabled {
+          opacity: 0.5;
+          cursor: not-allowed;
+        }
+        .hc-pagination__info {
+          font-size: 0.8rem;
+          color: var(--clr-text-muted);
+        }
 
         /* ── Section ── */
         .hc-section { display: flex; flex-direction: column; gap: 1rem; }
