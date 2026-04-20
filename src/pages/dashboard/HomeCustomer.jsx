@@ -35,7 +35,8 @@ export default function HomeCustomer() {
   const [pointsWallet, setPointsWallet] = useState([]);
   const [badges, setBadges] = useState([]);
   const [visits, setVisits] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loadingRestaurants, setLoadingRestaurants] = useState(true);
+  const [loadingCustomerData, setLoadingCustomerData] = useState(true);
   const [search, setSearch] = useState('');
 
   // Ensure pointsWallet is an array before reducing
@@ -44,23 +45,39 @@ export default function HomeCustomer() {
     : 0;
 
   useEffect(() => {
-    async function fetchData() {
+    async function fetchRestaurants() {
       try {
-        const headers = { Authorization: `Bearer ${token}` };
         const restaurantLimit = 6;
-        const [resRes, favRes, ptsRes, badgesRes, visitsRes] = await Promise.allSettled([
-          axios.get(`${API_BASE}/restaurants`, { params: { page: restaurantsPage, limit: restaurantLimit } }),
-          axios.get(`${API_BASE}/customers/${user?.id}/favouriteRestaurants`, { headers, params: { page: 1, limit: 10 } }),
-          axios.get(`${API_BASE}/customers/${user?.id}/pointsWallet`, { headers, params: { page: 1, limit: 20 } }),
-          axios.get(`${API_BASE}/customers/${user?.id}/badges`, { headers, params: { page: 1, limit: 10 } }),
-          axios.get(`${API_BASE}/customers/${user?.id}/visits`, { headers, params: { page: 1, limit: 20 } }),
-        ]);
-
-        if (resRes.status === 'fulfilled' && resRes.value.data) {
-          const parsedRestaurants = parsePaginatedListResponse(resRes.value.data, restaurantLimit);
+        const res = await axios.get(`${API_BASE}/restaurants`, { params: { page: restaurantsPage, limit: restaurantLimit } });
+        if (res.status === 200 && res.data) {
+          const parsedRestaurants = parsePaginatedListResponse(res.data, restaurantLimit);
           setRestaurants(parsedRestaurants.data);
           setRestaurantsMeta(parsedRestaurants.meta);
         }
+      } catch (err) {
+        console.error('Error fetching restaurants:', err);
+      } finally {
+        setLoadingRestaurants(false);
+      }
+    }
+    fetchRestaurants();
+  }, [restaurantsPage]);
+
+  useEffect(() => {
+    async function fetchCustomerData() {
+      if (!token || !user?.id) {
+        setLoadingCustomerData(false);
+        return;
+      }
+      try {
+        const headers = { Authorization: `Bearer ${token}` };
+        const [favRes, ptsRes, badgesRes, visitsRes] = await Promise.allSettled([
+          axios.get(`${API_BASE}/customers/${user.id}/favouriteRestaurants`, { headers, params: { page: 1, limit: 10 } }),
+          axios.get(`${API_BASE}/customers/${user.id}/pointsWallet`, { headers, params: { page: 1, limit: 20 } }),
+          axios.get(`${API_BASE}/customers/${user.id}/badges`, { headers, params: { page: 1, limit: 10 } }),
+          axios.get(`${API_BASE}/customers/${user.id}/visits`, { headers, params: { page: 1, limit: 20 } }),
+        ]);
+
         if (favRes.status === 'fulfilled' && favRes.value.data) {
           const parsedFavorites = parsePaginatedListResponse(favRes.value.data, 10);
           setFavoriteRestaurants(parsedFavorites.data);
@@ -77,22 +94,16 @@ export default function HomeCustomer() {
           const parsedVisits = parsePaginatedListResponse(visitsRes.value.data, 20);
           setVisits(parsedVisits.data);
         }
-        
-        console.log("Customer data fetched:", {
-          restaurants: resRes.value?.data,
-          favorites: favRes.value?.data,
-          points: ptsRes.value?.data,
-          badges: badgesRes.value?.data,
-          visits: visitsRes.value?.data
-        });
       } catch (err) {
         console.error('Error fetching customer data:', err);
       } finally {
-        setLoading(false);
+        setLoadingCustomerData(false);
       }
     }
-    fetchData();
-  }, [token, user?.id, restaurantsPage]);
+    fetchCustomerData();
+  }, [token, user?.id]);
+
+  const loading = loadingRestaurants || loadingCustomerData;
 
   const filtered = Array.isArray(restaurants) ? restaurants.filter(r =>
     r.profile?.name?.toLowerCase().includes(search.toLowerCase()) ||
@@ -208,7 +219,7 @@ export default function HomeCustomer() {
         <section className="hc-section">
           <div className="hc-section__head">
             <h2 className="hc-section__title"><MapPin size={18} /> Cerca de ti</h2>
-            <span className="hc-section__count">{filtered.length} de {restaurantsMeta.total} restaurantes</span>
+            <span className="hc-section__count">{filtered.length} en esta página · {restaurantsMeta.total} total</span>
           </div>
           {filtered.length > 0 ? (
             <div className="hc-cards">
