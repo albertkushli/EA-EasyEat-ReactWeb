@@ -62,104 +62,28 @@ export default function PeakVisitHoursChart({ visits = [], restaurantId }) {
 
   if (!hasVisits) {
     return (
-      <div
-        style={{
-          width: '100%',
-          padding: 'var(--sp-md)',
-          background: 'var(--glass-bg)',
-          border: '1px solid var(--glass-border)',
-          borderRadius: '16px',
-          backdropFilter: 'blur(12px)',
-        }}
-      >
-        <h3
-          style={{
-            marginBottom: 'var(--sp-sm)',
-            fontSize: '0.95rem',
-            fontWeight: 700,
-          }}
-        >
-          Peak Visit Hours
-        </h3>
-        <p
-          style={{
-            color: 'var(--clr-text-muted)',
-            fontSize: 'var(--text-sm)',
-          }}
-        >
-          No hay visitas registradas todavía.
-        </p>
-      </div>
+      <p style={{ color: 'var(--clr-text-muted)', fontSize: 'var(--text-sm)' }}>
+        No hay visitas registradas todavía.
+      </p>
     );
   }
 
   return (
-    <div
-      style={{
-        width: '100%',
-        
-        padding: 'var(--sp-md)',
-        borderRadius: '16px',
-        backdropFilter: 'blur(12px)',
-      }}
-    >
-      <h3
-        style={{
-          marginBottom: 'var(--sp-md)',
-          fontSize: '0.95rem',
-          fontWeight: 700,
-          color: 'var(--clr-text)',
-        }}
-      >
-        Peak Visit Hours
-      </h3>
-
-      <div style={{ width: '100%', height: 220 }}>
-        <ResponsiveContainer width="100%" height="100%">
-          <LineChart
-            data={data}
-            margin={{ top: 4, right: 0, left: -20, bottom: 0 }}
-          >
-            <CartesianGrid strokeDasharray="3 3" opacity={0.15} />
-            <XAxis
-              dataKey="hour"
-              tickLine={false}
-              axisLine={false}
-              tick={{ fontSize: 11, fill: 'var(--clr-text-muted)' }}
-            />
-            <YAxis
-              tickLine={false}
-              axisLine={false}
-              tick={{ fontSize: 10, fill: 'var(--clr-text-muted)' }}
-            />
-            <Tooltip
-              cursor={{ strokeDasharray: '3 3', stroke: 'var(--clr-primary)' }}
-              formatter={(value) => [value, 'Visits']}
-              contentStyle={{
-                background: 'var(--glass-bg)',
-                borderRadius: '8px',
-                fontSize: '12px',
-              }}
-            />
-            <Line
-              type="monotone"
-              dataKey="visits"
-              stroke="hsl(48,96%,60%)"
-              strokeWidth={2.5}
-              dot={{
-                fill: 'hsl(48,96%,60%)',
-                r: 4,
-                strokeWidth: 2,
-                stroke: 'var(--glass-bg)',
-              }}
-              activeDot={{
-                r: 6,
-              }}
-              isAnimationActive={true}
-            />
-          </LineChart>
-        </ResponsiveContainer>
-      </div>
+    <div style={{ width: '100%', height: 220 }}>
+      <ResponsiveContainer width="100%" height="100%">
+        <LineChart data={data}>
+          <CartesianGrid strokeDasharray="3 3" opacity={0.15} />
+          <XAxis dataKey="hour" />
+          <YAxis />
+          <Tooltip />
+          <Line
+            type="monotone"
+            dataKey="visits"
+            stroke="hsl(48,96%,60%)"
+            strokeWidth={2.5}
+          />
+        </LineChart>
+      </ResponsiveContainer>
     </div>
   );
 }

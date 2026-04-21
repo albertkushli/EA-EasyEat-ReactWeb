@@ -1,23 +1,58 @@
-import { useState, useEffect, useMemo } from 'react';
-import { LogOut, Briefcase, QrCode, List, Settings, Clock, User, ChevronRight, TrendingUp, Users, Star, MapPin } from 'lucide-react';
+// ========================
+// IMPORTS
+// ========================
+
+// Hooks de React
+import { useState, useEffect } from 'react';
+
+// Iconos
+import { LogOut, QrCode, List, Settings, Clock, User, ChevronRight } from 'lucide-react';
+
+// Contexto de autenticación (usuario, rol, restaurante, token)
 import { useAuth } from '../../context/AuthContext';
+
+// Componentes de gráficos
 import RestaurantReviewsBarChart from '../../components/dashboard/RestaurantReviewsBarChart';
 import PeakVisitHoursChart from '../../components/dashboard/PeakVisitHoursChart';
 import TopDishCard from '../../components/dashboard/TopDishCard';
+
+// Cliente API (axios)
 import apiClient from '../../lib/apiClient';
 
+// Componentes de métricas
+import AvgPointsVisitCard from '../../components/dashboard/AvgPointsVisitCard';
+import LoyalCustomersCard from '../../components/dashboard/LoyalCustomersCard';
+import AvgRatingCard from '../../components/dashboard/AvgRatingCard';
+
+
+// ========================
+// CONSTANTES
+// ========================
+
+// Meta por defecto para paginación de visitas
 const DEFAULT_META = { total: 0, page: 1, limit: 1, totalPages: 1 };
 
-async function getRestaurantStats(restaurantId) {
-  const res = await apiClient.get(`/statistics/restaurant/${restaurantId}`, {
-  });
+// Número de visitas por página
+const VISITS_LIMIT = 8;
 
+
+// ========================
+// FUNCIONES AUXILIARES
+// ========================
+
+// Obtiene estadísticas del restaurante desde el backend
+async function getRestaurantStats(restaurantId) {
+  const res = await apiClient.get(`/statistics/restaurant/${restaurantId}`);
+
+  // Soporta distintos formatos de respuesta
   if (res.data?.data && !Array.isArray(res.data.data)) return res.data.data;
   if (res.data && !Array.isArray(res.data)) return res.data;
   return null;
 }
 
+// Normaliza la respuesta paginada de visitas
 function parsePaginatedVisitsResponse(payload, fallbackLimit = 8) {
+  // Caso: { visits: [] }
   if (Array.isArray(payload?.visits)) {
     const visitsData = payload.visits;
     return {
@@ -26,11 +61,14 @@ function parsePaginatedVisitsResponse(payload, fallbackLimit = 8) {
     };
   }
 
+  // Caso estándar: { data: [], meta: {} }
   const data = Array.isArray(payload?.data) ? payload.data : [];
   const rawMeta = payload?.meta || {};
+
   const total = Number.isFinite(rawMeta.total) ? rawMeta.total : data.length;
   const page = Number.isFinite(rawMeta.page) ? rawMeta.page : 1;
   const limit = Number.isFinite(rawMeta.limit) ? rawMeta.limit : fallbackLimit;
+
   const totalPages = Number.isFinite(rawMeta.totalPages)
     ? rawMeta.totalPages
     : Math.max(1, Math.ceil(total / Math.max(1, limit)));
@@ -38,117 +76,93 @@ function parsePaginatedVisitsResponse(payload, fallbackLimit = 8) {
   return { data, meta: { total, page, limit, totalPages } };
 }
 
-function extractArray(payload, keys = []) {
+// Extrae reviews independientemente de la estructura de la respuesta
+function extractReviews(payload) {
   if (Array.isArray(payload)) return payload;
-
-  for (const key of keys) {
-    if (Array.isArray(payload?.[key])) return payload[key];
-  }
-
   if (Array.isArray(payload?.data)) return payload.data;
+  if (Array.isArray(payload?.reviews)) return payload.reviews;
   return [];
 }
 
-function buildDishRatingsFromReviews(reviews) {
-  if (!Array.isArray(reviews)) return [];
-
-  // DEBUG: Log raw reviews structure
-  if (reviews.length > 0) {
-    console.log('[DEBUG buildDishRatings] First review object:', JSON.stringify(reviews[0], null, 2));
-  }
-
-  return reviews.flatMap((review) => {
-    const entries = [];
-
-    const restaurantId = String(review?.restaurant_id?._id ?? review?.restaurant_id ?? '');
-
-    // Try multiple paths to extract dish_id
-    const directDishId = 
-      review?.dish_id?.toString?.() ||
-      review?.dish?._id?.toString?.() ||
-      String(review?.dish_id ?? review?.dish?._id ?? review?.dish ?? '');
-
-    // Try multiple paths to extract rating
-    const directRating = Number(
-      review?.rating ?? 
-      review?.dishRating ?? 
-      review?.score ?? 
-      review?.overallRating ?? 
-      review?.ratings?.overall ??
-      review?.rating_value ??
-      0,
-    );
-
-    if (directDishId && Number.isFinite(directRating) && directRating > 0) {
-      entries.push({
-        dish_id: directDishId.toString(),
-        restaurant_id: restaurantId,
-        rating: directRating,
-        deletedAt: review?.deletedAt ?? null,
-      });
-    }
-
-    // Also check for nested dishRatings array
-    const nestedDishRatings = Array.isArray(review?.dishRatings)
-      ? review.dishRatings
-      : Array.isArray(review?.dish_ratings)
-        ? review.dish_ratings
-        : [];
-
-    nestedDishRatings.forEach((item) => {
-      const dishId = String(item?.dish_id?._id ?? item?.dish_id ?? item?.dish?._id ?? item?.dish ?? '');
-      const rating = Number(item?.rating ?? item?.score ?? item?.value ?? 0);
-
-      if (!dishId || !Number.isFinite(rating) || rating <= 0) return;
-
-      entries.push({
-        dish_id: dishId.toString(),
-        restaurant_id: String(item?.restaurant_id?._id ?? item?.restaurant_id ?? restaurantId ?? ''),
-        rating,
-        deletedAt: item?.deletedAt ?? null,
-      });
-    });
-
-    return entries;
-  });
+// Ordena visitas por fecha descendente (más recientes primero)
+function sortVisitsByDateDesc(visits) {
+  return visits.sort(
+    (a, b) => new Date(b.date || b.createdAt) - new Date(a.date || a.createdAt),
+  );
 }
 
+
+// ========================
+// COMPONENTE PRINCIPAL
+// ========================
+
 export default function HomeEmployee() {
+
+  // Contexto global
   const { user, logout, role, token, restaurant } = useAuth();
+
+  // ========================
+  // STATE
+  // ========================
+
   const [visits, setVisits] = useState([]);
   const [visitsMeta, setVisitsMeta] = useState(DEFAULT_META);
   const [visitsPage, setVisitsPage] = useState(1);
   const [restaurantKpis, setRestaurantKpis] = useState(null);
   const [reviews, setReviews] = useState([]);
-  const [dishes, setDishes] = useState([]);
   const [loading, setLoading] = useState(true);
+
   const isOwner = role === 'owner';
+
+
+  // ========================
+  // FETCH VISITS
+  // ========================
 
   useEffect(() => {
     async function fetchVisits() {
       setLoading(true);
-      if (!user.restaurant_id) { setLoading(false); return; }
+
+      // Si no hay restaurante, no hacemos la petición
+      if (!user.restaurant_id) { 
+        setLoading(false); 
+        return; 
+      }
+
       try {
-        const visitsLimit = 8;
         const res = await apiClient.get(`/restaurants/${user.restaurant_id}/visits`, {
-          params: { page: visitsPage, limit: visitsLimit }
+          params: { page: visitsPage, limit: VISITS_LIMIT }
         });
+
         if (res.status === 200) {
-          const parsedVisits = parsePaginatedVisitsResponse(res.data, visitsLimit);
-          setVisits(parsedVisits.data.sort((a, b) => new Date(b.date || b.createdAt) - new Date(a.date || a.createdAt)));
+          const parsedVisits = parsePaginatedVisitsResponse(res.data, VISITS_LIMIT);
+
+          // Ordenamos visitas
+          setVisits(sortVisitsByDateDesc(parsedVisits.data));
+
+          // Guardamos metadata de paginación
           setVisitsMeta(parsedVisits.meta);
         }
+
       } catch (err) {
         console.error('Error fetching visits:', err);
       } finally {
         setLoading(false);
       }
     }
+
     fetchVisits();
   }, [user.restaurant_id, token, visitsPage]);
 
+
+  // ========================
+  // FETCH KPIs
+  // ========================
+
   useEffect(() => {
     async function fetchRestaurantKpis() {
+
+      // Si no hay token o restaurante → reset
       if (!token || !user?.restaurant_id) {
         setRestaurantKpis(null);
         return;
@@ -156,10 +170,18 @@ export default function HomeEmployee() {
 
       try {
         const currentRestaurantId = String(user.restaurant_id);
-        const stats = await getRestaurantStats(currentRestaurantId);
-        const statsRestaurantId = String(stats?.restaurant_id?._id ?? stats?.restaurant_id ?? '');
 
-        setRestaurantKpis(statsRestaurantId === currentRestaurantId ? stats : null);
+        const stats = await getRestaurantStats(currentRestaurantId);
+
+        const statsRestaurantId = String(
+          stats?.restaurant_id?._id ?? stats?.restaurant_id ?? ''
+        );
+
+        // Solo guardamos si coincide el restaurante
+        setRestaurantKpis(
+          statsRestaurantId === currentRestaurantId ? stats : null
+        );
+
       } catch (err) {
         console.error('Error fetching restaurant KPIs:', err);
         setRestaurantKpis(null);
@@ -169,8 +191,14 @@ export default function HomeEmployee() {
     fetchRestaurantKpis();
   }, [token, user?.restaurant_id]);
 
+
+  // ========================
+  // FETCH REVIEWS
+  // ========================
+
   useEffect(() => {
     async function fetchReviews() {
+
       if (!token || !user?.restaurant_id) {
         setReviews([]);
         return;
@@ -179,16 +207,9 @@ export default function HomeEmployee() {
       try {
         const res = await apiClient.get('/reviews');
 
-        const payload = res.data;
-        const allReviews = Array.isArray(payload)
-          ? payload
-          : Array.isArray(payload?.data)
-            ? payload.data
-            : Array.isArray(payload?.reviews)
-              ? payload.reviews
-              : [];
+        // Normalizamos respuesta
+        setReviews(extractReviews(res.data));
 
-        setReviews(allReviews);
       } catch (err) {
         console.error('Error fetching reviews:', err);
         setReviews([]);
@@ -198,51 +219,26 @@ export default function HomeEmployee() {
     fetchReviews();
   }, [token, user?.restaurant_id]);
 
-  useEffect(() => {
-    async function fetchDishes() {
-      if (!token || !user?.restaurant_id) {
-        setDishes([]);
-        return;
-      }
 
-      try {
-        const res = await apiClient.get('/dishes');
-        setDishes(extractArray(res.data, ['dishes']));
-      } catch {
-        // Dishes endpoint may not exist in all environments.
-        setDishes([]);
-      }
-    }
-
-    fetchDishes();
-  }, [token, user?.restaurant_id]);
-
-  const dishRatings = useMemo(
-    () => buildDishRatingsFromReviews(reviews),
-    [reviews],
-  );
-
-  // DEBUG: Log dishRatings construction
-  useEffect(() => {
-    console.log('[DEBUG] reviews count:', reviews.length);
-    console.log('[DEBUG] dishRatings count:', dishRatings.length);
-    console.log('[DEBUG] user.restaurant_id:', user?.restaurant_id);
-    console.log('[DEBUG] dishes count:', dishes.length);
-    if (dishRatings.length > 0) {
-      console.log('[DEBUG] First dishRating:', dishRatings[0]);
-      console.log('[DEBUG] Sample dishRatings (first 5):', dishRatings.slice(0, 5));
-    }
-  }, [reviews, dishRatings, dishes, user?.restaurant_id]);
+  // ========================
+  // DATOS DERIVADOS
+  // ========================
 
   const restName = restaurant?.profile?.name || 'Tu restaurante';
   const restRating = restaurant?.profile?.globalRating;
-  const restCity = restaurant?.profile?.location?.city;
   const restAddress = restaurant?.profile?.location?.address;
+
   const loyalCustomers = Number(restaurantKpis?.loyalCustomers ?? 0);
   const averagePointsPerVisit = Number(restaurantKpis?.averagePointsPerVisit ?? 0);
 
-  // Wait for both visits and restaurant data (if employee)
-  const isDataLoading = loading || ((role === 'owner' || role === 'staff') && !restaurant);
+
+  // ========================
+  // LOADING
+  // ========================
+
+  const isDataLoading =
+    loading ||
+    ((role === 'owner' || role === 'staff') && !restaurant);
 
   if (isDataLoading) {
     return (
@@ -253,34 +249,49 @@ export default function HomeEmployee() {
     );
   }
 
+
+  // ========================
+  // RENDER
+  // ========================
+
   return (
     <div className="he-page">
 
-      {/* ── Header ── */}
+      {/* HEADER */}
       <header className="he-header">
         <div className="he-header__inner">
+
+          {/* Marca */}
           <div className="he-brand">
             <span className="he-brand__icon">🍽️</span>
             <div>
               <span className="he-brand__name">EasyEat</span>
-              <span className={`he-role-badge he-role-badge--${role}`}>{role?.toUpperCase()}</span>
+              <span className={`he-role-badge he-role-badge--${role}`}>
+                {role?.toUpperCase()}
+              </span>
             </div>
           </div>
+
+          {/* Usuario */}
           <div className="he-header__right">
             <div className="he-user-pill">
-              <div className="he-avatar">{user.name?.[0]?.toUpperCase()}</div>
+              <div className="he-avatar">
+                {user.name?.[0]?.toUpperCase()}
+              </div>
               <span>{user.name?.split(' ')[0]}</span>
             </div>
+
             <button onClick={logout} className="he-logout-btn" title="Cerrar sesión">
               <LogOut size={18} />
             </button>
           </div>
+
         </div>
       </header>
 
       <main className="he-main">
 
-        {/* ── Restaurant Hero ── */}
+        {/* HERO DEL RESTAURANTE */}
         <section className="he-hero">
           <div className="he-hero__left">
             <h1 className="he-hero__name">{restName}</h1>
@@ -292,32 +303,14 @@ export default function HomeEmployee() {
           </div>
         </section>
 
-        {/* ── Stats Row (Metrics) ── */}
+        {/* MÉTRICAS */}
         <div className="he-metrics-grid">
-          <div className="he-stat he-stat--visits">
-            <div className="he-stat__icon"><TrendingUp size={20} /></div>
-            <div>
-              <span className="he-stat__value">{averagePointsPerVisit}</span>
-              <span className="he-stat__label">Average Points / Visit</span>
-            </div>
-          </div>
-          <div className="he-stat he-stat--customers">
-            <div className="he-stat__icon"><Users size={20} /></div>
-            <div>
-              <span className="he-stat__value">{loyalCustomers}</span>
-              <span className="he-stat__label">Loyal Customers</span>
-            </div>
-          </div>
-          <div className="he-stat he-stat--rating">
-            <div className="he-stat__icon"><Star size={20} /></div>
-            <div>
-              <span className="he-stat__value">{Number(restRating ?? 0).toFixed(1)}</span>
-              <span className="he-stat__label">Avg Rating</span>
-            </div>
-          </div>
+          <AvgPointsVisitCard value={averagePointsPerVisit} />
+          <LoyalCustomersCard value={loyalCustomers} />
+          <AvgRatingCard value={Number(restRating ?? 0).toFixed(1)} />
         </div>
 
-        {/* ── Charts Row (Full Width, 3 Columns) ── */}
+        {/* GRÁFICOS */}
         <div className="he-charts-grid">
           <div className="he-chart-slot">
             <RestaurantReviewsBarChart
@@ -325,12 +318,14 @@ export default function HomeEmployee() {
               restaurantId={user?.restaurant_id}
             />
           </div>
+
           <div className="he-chart-slot">
             <PeakVisitHoursChart
               visits={visits}
               restaurantId={user?.restaurant_id}
             />
           </div>
+
           <div className="he-chart-slot">
             <TopDishCard
               restaurantId={user?.restaurant_id}
@@ -339,53 +334,85 @@ export default function HomeEmployee() {
           </div>
         </div>
 
-        {/* ── Quick Actions ── */}
+        {/* ACCIONES RÁPIDAS */}
         <section className="he-section">
           <h2 className="he-section__title">Acciones rápidas</h2>
+
           <div className="he-actions">
+
             <button className="he-action-card">
-              <div className="he-action-card__icon he-action-card__icon--qr"><QrCode size={26} /></div>
+              <div className="he-action-card__icon he-action-card__icon--qr">
+                <QrCode size={26} />
+              </div>
               <span>Generar QR</span>
               <p>Escaneo de visita</p>
             </button>
+
             <button className="he-action-card">
-              <div className="he-action-card__icon he-action-card__icon--list"><List size={26} /></div>
+              <div className="he-action-card__icon he-action-card__icon--list">
+                <List size={26} />
+              </div>
               <span>Ver visitas</span>
               <p>Historial completo</p>
             </button>
+
             {isOwner && (
               <button className="he-action-card">
-                <div className="he-action-card__icon he-action-card__icon--settings"><Settings size={26} /></div>
+                <div className="he-action-card__icon he-action-card__icon--settings">
+                  <Settings size={26} />
+                </div>
                 <span>Configuración</span>
                 <p>Ajustes del local</p>
               </button>
             )}
+
           </div>
         </section>
 
-        {/* ── Recent Visits ── */}
+        {/* VISITAS RECIENTES */}
         <section className="he-section">
           <div className="he-section__head">
             <h2 className="he-section__title">Visitas recientes</h2>
-            <span className="he-section__count">{visits.length} de {visitsMeta.total} registros</span>
+            <span className="he-section__count">
+              {visits.length} de {visitsMeta.total} registros
+            </span>
           </div>
+
           <div className="he-visits">
+
             {visits.length > 0 ? visits.map((v, i) => (
               <div key={i} className="he-visit-row">
+
+                {/* Avatar */}
                 <div className="he-visit-row__avatar">
                   {(v.customer_id?.name || v.customer_name)?.[0]?.toUpperCase() || <User size={16} />}
                 </div>
+
+                {/* Info */}
                 <div className="he-visit-row__info">
-                  <span className="he-visit-row__name">{v.customer_id?.name || v.customer_name || 'Cliente'}</span>
+                  <span className="he-visit-row__name">
+                    {v.customer_id?.name || v.customer_name || 'Cliente'}
+                  </span>
+
                   <span className="he-visit-row__date">
                     <Clock size={12} />
-                    {new Date(v.date || v.createdAt).toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric' })}
+                    {new Date(v.date || v.createdAt).toLocaleDateString('es-ES', {
+                      day: 'numeric',
+                      month: 'short',
+                      year: 'numeric'
+                    })}
                   </span>
                 </div>
+
+                {/* Puntos */}
                 {v.pointsEarned && (
-                  <span className="he-visit-row__pts">+{v.pointsEarned} pts</span>
+                  <span className="he-visit-row__pts">
+                    +{v.pointsEarned} pts
+                  </span>
                 )}
+
                 <ChevronRight size={16} className="he-visit-row__arrow" />
+
               </div>
             )) : (
               <div className="he-empty">
@@ -393,8 +420,12 @@ export default function HomeEmployee() {
                 <p>No hay visitas registradas todavía</p>
               </div>
             )}
+
           </div>
+
+          {/* PAGINACIÓN */}
           <div className="he-pagination">
+
             <button
               type="button"
               className="he-pagination__btn"
@@ -403,9 +434,11 @@ export default function HomeEmployee() {
             >
               Anterior
             </button>
+
             <span className="he-pagination__info">
               Página {visitsMeta.page} de {visitsMeta.totalPages}
             </span>
+
             <button
               type="button"
               className="he-pagination__btn"
@@ -414,6 +447,7 @@ export default function HomeEmployee() {
             >
               Siguiente
             </button>
+
           </div>
         </section>
 
