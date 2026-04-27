@@ -304,9 +304,11 @@ export default function HomeEmployee() {
         </section>
 
         {/* MÉTRICAS */}
+                  <h2 className="he-section__title">Estdadísticas del restaurante</h2>
+
         <div className="he-metrics-grid">
-          <AvgPointsVisitCard value={averagePointsPerVisit} />
-          <LoyalCustomersCard value={loyalCustomers} />
+          <AvgPointsVisitCard value={Number(averagePointsPerVisit ?? 0)} />
+          <LoyalCustomersCard value={Number(loyalCustomers ?? 0)} />
           <AvgRatingCard value={Number(restRating ?? 0).toFixed(1)} />
         </div>
 

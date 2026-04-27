@@ -2,6 +2,9 @@ import axios from 'axios';
 
 const API_BASE = import.meta.env.VITE_API_URL || '';
 
+// ─────────────────────────────────────────
+// Obtener token del localStorage
+// ─────────────────────────────────────────
 export function getStoredAuthToken() {
   try {
     const stored = localStorage.getItem('auth_data');
@@ -14,13 +17,22 @@ export function getStoredAuthToken() {
   }
 }
 
+// ─────────────────────────────────────────
+// Crear instancia axios
+// ─────────────────────────────────────────
 const apiClient = axios.create({
   baseURL: API_BASE,
-  withCredentials: true,
+  withCredentials: true, // IMPORTANTE para cookies
 });
 
+// ─────────────────────────────────────────
+// INTERCEPTOR REQUEST
+// ─────────────────────────────────────────
 apiClient.interceptors.request.use((config) => {
   const token = getStoredAuthToken();
+
+  console.log('➡️ REQUEST:', config.method?.toUpperCase(), config.url);
+  console.log('🔑 TOKEN:', token);
 
   if (token && !config.headers?.Authorization) {
     config.headers = {
@@ -31,5 +43,32 @@ apiClient.interceptors.request.use((config) => {
 
   return config;
 });
+
+// ─────────────────────────────────────────
+// INTERCEPTOR RESPONSE
+// ─────────────────────────────────────────
+apiClient.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    console.error('❌ API ERROR:', {
+      url: error.config?.url,
+      status: error.response?.status,
+      message: error.response?.data,
+    });
+
+    // Si token inválido → limpiar sesión
+    if (error.response?.status === 401) {
+      console.warn('⚠️ Token inválido o expirado → limpiando sesión');
+
+      localStorage.removeItem('auth_data');
+      localStorage.removeItem('restaurant_data');
+
+      // opcional: redirigir al login
+      // window.location.href = '/login';
+    }
+
+    return Promise.reject(error);
+  }
+);
 
 export default apiClient;
