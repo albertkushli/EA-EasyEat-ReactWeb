@@ -35,7 +35,6 @@ const DEFAULT_META = { total: 0, page: 1, limit: 1, totalPages: 1 };
 // Número de visitas por página
 const VISITS_LIMIT = 8;
 
-
 // ========================
 // FUNCIONES AUXILIARES
 // ========================
@@ -110,6 +109,7 @@ export default function HomeEmployee() {
   const [visitsPage, setVisitsPage] = useState(1);
   const [restaurantKpis, setRestaurantKpis] = useState(null);
   const [reviews, setReviews] = useState([]);
+  const [employees, setEmployees] = useState([]);
   const [loading, setLoading] = useState(true);
 
   const isOwner = role === 'owner';
@@ -218,7 +218,29 @@ export default function HomeEmployee() {
 
     fetchReviews();
   }, [token, user?.restaurant_id]);
+useEffect(() => {
+  async function fetchEmployees() {
+    if (!user?.restaurant_id) {
+      setEmployees([]);
+      return;
+    }
 
+    try {
+      const res = await apiClient.get(
+        `/employees/restaurant/${user.restaurant_id}`
+      );
+
+      const employeesData = res.data?.data || res.data || [];
+      setEmployees(employeesData);
+
+    } catch (err) {
+      console.error('Error fetching employees:', err);
+      setEmployees([]);
+    }
+  }
+
+  fetchEmployees();
+}, [user?.restaurant_id]);
 
   // ========================
   // DATOS DERIVADOS
@@ -304,7 +326,7 @@ export default function HomeEmployee() {
         </section>
 
         {/* MÉTRICAS */}
-                  <h2 className="he-section__title">Estdadísticas del restaurante</h2>
+         <h2 className="he-section__title">Estdadísticas del restaurante</h2>
 
         <div className="he-metrics-grid">
           <AvgPointsVisitCard value={Number(averagePointsPerVisit ?? 0)} />
@@ -335,6 +357,69 @@ export default function HomeEmployee() {
             />
           </div>
         </div>
+
+        {/* EMPLEADOS */}
+        <section className="he-section">
+          <div className="he-section__head">
+            <h2 className="he-section__title">Empleados</h2>
+            <span className="he-section__count">{employees.length} empleados</span>
+          </div>
+
+          <div className="he-employees">
+            {employees.length > 0 ? (
+              employees.map((employee) => {
+                const name = employee?.profile?.name || 'Sin nombre';
+                const email = employee?.profile?.email || 'Sin email';
+                const phone = employee?.profile?.phone || 'Sin teléfono';
+                const role = employee?.profile?.role || 'staff';
+                const active = employee?.active;
+
+                const stats = employee?.stats || {};
+                const rating = Number(stats.averageRating || 0);
+                const visitCount = Number(stats.visits || 0);
+                const revenue = Number(stats.revenue || 0);
+
+                return (
+                  <article key={employee._id} className="he-employee-card">
+                    <div className="he-employee-avatar">
+                      {name?.[0]?.toUpperCase() || '?'}
+                    </div>
+
+                    <div className="he-employee-content">
+                      <div className="he-employee-left">
+                        <span className="he-employee-name">{name}</span>
+                        <span className={`he-role-pill he-role-${role}`}>
+                          {role.toUpperCase()}
+                        </span>
+                        <span className="he-employee-sub">{email}</span>
+                        <span className="he-employee-sub">{phone}</span>
+                      </div>
+
+                      <div className="he-employee-center">
+                        <span className="he-rating">⭐ {rating.toFixed(1)}</span>
+                        <span className="he-visits">📊 {visitCount} visitas</span>
+                        <span className="he-revenue">
+                          💰 {revenue.toLocaleString('es-ES')}€
+                        </span>
+                      </div>
+
+                      <div className="he-employee-right">
+                        <span className={active ? 'he-active' : 'he-inactive'}>
+                          {active ? 'Activo' : 'Inactivo'}
+                        </span>
+                      </div>
+                    </div>
+                  </article>
+                );
+              })
+            ) : (
+              <div className="he-empty">
+                <User size={32} />
+                <p>No hay empleados registrados</p>
+              </div>
+            )}
+          </div>
+        </section>
 
         {/* ACCIONES RÁPIDAS */}
         <section className="he-section">
@@ -560,6 +645,12 @@ export default function HomeEmployee() {
           width: 44px; height: 44px; border-radius: 12px;
           display: flex; align-items: center; justify-content: center; flex-shrink: 0;
         }
+          .he-stats-center {
+          display: flex;
+          gap: 20px;
+          justify-content: center;
+           min-width: 160px;
+          }
         .he-stat--visits .he-stat__icon { background: hsla(142,71%,45%,0.12); color: var(--clr-accent); }
         .he-stat--customers .he-stat__icon { background: hsla(217,91%,60%,0.12); color: hsl(217,91%,70%); }
         .he-stat--rating .he-stat__icon { background: hsla(48,96%,53%,0.12); color: hsl(48,96%,60%); }
@@ -663,12 +754,148 @@ export default function HomeEmployee() {
           font-size: 0.8rem;
           color: var(--clr-text-muted);
         }
+          
 
         @media (max-width: 900px) {
           .he-charts-grid {
             grid-template-columns: 1fr;
           }
         }
+          
+        /* Employees */
+        .he-employees {
+          border: 1px solid var(--glass-border);
+          border-radius: 16px;
+          overflow: hidden;
+          background: var(--glass-bg);
+          backdrop-filter: blur(12px);
+        }
+        .he-employee-card {
+          display: flex;
+          gap: 1rem;
+          align-items: center;
+          padding: 1rem 1.25rem;
+          border-bottom: 1px solid var(--glass-border);
+          transition: background 0.2s, transform 0.2s;
+        }
+        .he-employee-card:last-child {
+          border-bottom: none;
+        }
+        .he-employee-card:hover {
+          background: hsla(255, 255, 255, 0.03);
+          transform: translateY(-2px);
+        }
+        .he-employee-avatar {
+          width: 38px;
+          height: 38px;
+          border-radius: 50%;
+          background: linear-gradient(135deg, hsl(217, 91%, 60%), hsl(142, 71%, 45%));
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-weight: 800;
+          color: #fff;
+          flex-shrink: 0;
+        }
+        .he-employee-content {
+          display: grid;
+          grid-template-columns: minmax(0, 1.1fr) auto minmax(0, 0.8fr);
+          gap: 1rem;
+          align-items: center;
+          flex: 1;
+          min-width: 0;
+        }
+        .he-employee-left,
+        .he-employee-center,
+        .he-employee-right {
+          display: flex;
+          flex-direction: column;
+          gap: 0.25rem;
+          min-width: 0;
+        }
+        .he-employee-center {
+          align-items: center;
+          justify-content: center;
+          text-align: center;
+          padding: 0.35rem 0.9rem;
+          border-left: 1px solid var(--glass-border);
+          border-right: 1px solid var(--glass-border);
+        }
+        .he-employee-right {
+          align-items: flex-end;
+          justify-content: center;
+          text-align: right;
+        }
+        .he-employee-name {
+          font-weight: 700;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+        .he-employee-sub {
+          font-size: 0.75rem;
+          color: var(--clr-text-muted);
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+          .he-employee-top {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+        .he-role-pill {
+          font-size: 0.65rem;
+          font-weight: 800;
+          padding: 2px 8px;
+          border-radius: 999px;
+          width: fit-content;
+        }
+        .he-role-owner {
+          background: hsla(26,95%,55%,0.2);
+          color: var(--clr-primary);
+        }
+        .he-role-staff {
+          background: hsla(217,91%,60%,0.15);
+          color: hsl(217,91%,70%);
+        }
+        .he-rating,
+        .he-visits,
+        .he-revenue {
+          font-size: 0.8rem;
+          font-weight: 600;
+        }
+        .he-active {
+          color: #22c55e;
+          font-weight: 700;
+        }
+        .he-inactive {
+          color: #f59e0b;
+          opacity: 0.8;
+          font-weight: 700;
+        }
+
+        @media (max-width: 700px) {
+          .he-employee-card {
+            align-items: flex-start;
+          }
+          .he-employee-content {
+            grid-template-columns: 1fr;
+          }
+          .he-employee-center {
+            align-items: flex-start;
+            text-align: left;
+            padding: 0;
+            border-left: 0;
+            border-right: 0;
+          }
+          .he-employee-right {
+            align-items: flex-start;
+            text-align: left;
+          }
+        }
+
+        
       `}</style>
     </div>
   );
