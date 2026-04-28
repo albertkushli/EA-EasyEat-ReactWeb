@@ -31,9 +31,6 @@ const apiClient = axios.create({
 apiClient.interceptors.request.use((config) => {
   const token = getStoredAuthToken();
 
-  console.log('➡️ REQUEST:', config.method?.toUpperCase(), config.url);
-  console.log('🔑 TOKEN:', token);
-
   if (token && !config.headers?.Authorization) {
     config.headers = {
       ...config.headers,

@@ -15,6 +15,8 @@ import { useAuth } from '../../context/AuthContext';
 import RestaurantReviewsBarChart from '../../components/dashboard/RestaurantReviewsBarChart';
 import PeakVisitHoursChart from '../../components/dashboard/PeakVisitHoursChart';
 import TopDishCard from '../../components/dashboard/TopDishCard';
+import DashboardTrendsCard from '../../components/dashboard/DashboardTrendsCard';
+import EmployeeCard from '../../components/EmployeeCard';
 
 // Cliente API (axios)
 import apiClient from '../../lib/apiClient';
@@ -33,7 +35,7 @@ import AvgRatingCard from '../../components/dashboard/AvgRatingCard';
 const DEFAULT_META = { total: 0, page: 1, limit: 1, totalPages: 1 };
 
 // Número de visitas por página
-const VISITS_LIMIT = 8;
+const VISITS_LIMIT = 1000;
 
 // ========================
 // FUNCIONES AUXILIARES
@@ -47,6 +49,28 @@ async function getRestaurantStats(restaurantId) {
   if (res.data?.data && !Array.isArray(res.data.data)) return res.data.data;
   if (res.data && !Array.isArray(res.data)) return res.data;
   return null;
+}
+
+/**
+ * Obtiene lista de empleados con estadísticas desde el backend
+ * @param {string} restaurantId - ID del restaurante
+ * @returns {Promise<Array>} Array de empleados con stats
+ */
+async function fetchEmployeesWithStats(restaurantId) {
+  if (!restaurantId) return [];
+
+  try {
+    const res = await apiClient.get(
+      `/employees/restaurant/${restaurantId}/stats`
+    );
+
+    // Normaliza respuesta: { data: [...] } o [...]
+    const payload = res.data?.data ?? res.data;
+    return Array.isArray(payload) ? payload : [];
+  } catch (err) {
+    console.error('Error al cargar empleados:', err);
+    return [];
+  }
 }
 
 // Normaliza la respuesta paginada de visitas
@@ -90,6 +114,41 @@ function sortVisitsByDateDesc(visits) {
   );
 }
 
+/**
+ * Obtiene todas las visitas del restaurante recorriendo todas las páginas.
+ * Se usa solo para la tarjeta de tendencias, no para la lista paginada.
+ */
+async function fetchAllRestaurantVisits(restaurantId) {
+  if (!restaurantId) return [];
+
+  const pageSize = 200;
+
+  try {
+    const firstResponse = await apiClient.get(
+      `/restaurants/${restaurantId}/visits`,
+      { params: { page: 1, limit: pageSize } }
+    );
+
+    const firstPage = parsePaginatedVisitsResponse(firstResponse.data, pageSize);
+    const collectedVisits = [...firstPage.data];
+
+    for (let page = 2; page <= firstPage.meta.totalPages; page += 1) {
+      const response = await apiClient.get(
+        `/restaurants/${restaurantId}/visits`,
+        { params: { page, limit: pageSize } }
+      );
+
+      const parsedPage = parsePaginatedVisitsResponse(response.data, pageSize);
+      collectedVisits.push(...parsedPage.data);
+    }
+
+    return sortVisitsByDateDesc(collectedVisits);
+  } catch (err) {
+    console.error('Error fetching all visits for trends:', err);
+    return [];
+  }
+}
+
 
 // ========================
 // COMPONENTE PRINCIPAL
@@ -105,6 +164,7 @@ export default function HomeEmployee() {
   // ========================
 
   const [visits, setVisits] = useState([]);
+  const [allVisits, setAllVisits] = useState([]);
   const [visitsMeta, setVisitsMeta] = useState(DEFAULT_META);
   const [visitsPage, setVisitsPage] = useState(1);
   const [restaurantKpis, setRestaurantKpis] = useState(null);
@@ -153,6 +213,25 @@ export default function HomeEmployee() {
 
     fetchVisits();
   }, [user.restaurant_id, token, visitsPage]);
+
+
+  // ========================
+  // FETCH VISITAS COMPLETAS PARA TENDENCIAS
+  // ========================
+
+  useEffect(() => {
+    async function loadAllVisits() {
+      if (!user?.restaurant_id) {
+        setAllVisits([]);
+        return;
+      }
+
+      const visitsData = await fetchAllRestaurantVisits(user.restaurant_id);
+      setAllVisits(visitsData);
+    }
+
+    loadAllVisits();
+  }, [user?.restaurant_id, token]);
 
 
   // ========================
@@ -218,29 +297,22 @@ export default function HomeEmployee() {
 
     fetchReviews();
   }, [token, user?.restaurant_id]);
-useEffect(() => {
-  async function fetchEmployees() {
-    if (!user?.restaurant_id) {
-      setEmployees([]);
-      return;
+  // ========================
+  // FETCH EMPLEADOS
+  // ========================
+  useEffect(() => {
+    async function loadEmployees() {
+      if (!user?.restaurant_id) {
+        setEmployees([]);
+        return;
+      }
+
+      const employees = await fetchEmployeesWithStats(user.restaurant_id);
+      setEmployees(employees);
     }
 
-    try {
-      const res = await apiClient.get(
-        `/employees/restaurant/${user.restaurant_id}`
-      );
-
-      const employeesData = res.data?.data || res.data || [];
-      setEmployees(employeesData);
-
-    } catch (err) {
-      console.error('Error fetching employees:', err);
-      setEmployees([]);
-    }
-  }
-
-  fetchEmployees();
-}, [user?.restaurant_id]);
+    loadEmployees();
+  }, [user?.restaurant_id, token]);
 
   // ========================
   // DATOS DERIVADOS
@@ -358,7 +430,9 @@ useEffect(() => {
           </div>
         </div>
 
-        {/* EMPLEADOS */}
+        {/* ═══════════════════════════════════════════ */}
+        {/* SECCIÓN: EMPLEADOS                         */}
+        {/* ═══════════════════════════════════════════ */}
         <section className="he-section">
           <div className="he-section__head">
             <h2 className="he-section__title">Empleados</h2>
@@ -367,51 +441,13 @@ useEffect(() => {
 
           <div className="he-employees">
             {employees.length > 0 ? (
-              employees.map((employee) => {
-                const name = employee?.profile?.name || 'Sin nombre';
-                const email = employee?.profile?.email || 'Sin email';
-                const phone = employee?.profile?.phone || 'Sin teléfono';
-                const role = employee?.profile?.role || 'staff';
-                const active = employee?.active;
-
-                const stats = employee?.stats || {};
-                const rating = Number(stats.averageRating || 0);
-                const visitCount = Number(stats.visits || 0);
-                const revenue = Number(stats.revenue || 0);
-
-                return (
-                  <article key={employee._id} className="he-employee-card">
-                    <div className="he-employee-avatar">
-                      {name?.[0]?.toUpperCase() || '?'}
-                    </div>
-
-                    <div className="he-employee-content">
-                      <div className="he-employee-left">
-                        <span className="he-employee-name">{name}</span>
-                        <span className={`he-role-pill he-role-${role}`}>
-                          {role.toUpperCase()}
-                        </span>
-                        <span className="he-employee-sub">{email}</span>
-                        <span className="he-employee-sub">{phone}</span>
-                      </div>
-
-                      <div className="he-employee-center">
-                        <span className="he-rating">⭐ {rating.toFixed(1)}</span>
-                        <span className="he-visits">📊 {visitCount} visitas</span>
-                        <span className="he-revenue">
-                          💰 {revenue.toLocaleString('es-ES')}€
-                        </span>
-                      </div>
-
-                      <div className="he-employee-right">
-                        <span className={active ? 'he-active' : 'he-inactive'}>
-                          {active ? 'Activo' : 'Inactivo'}
-                        </span>
-                      </div>
-                    </div>
-                  </article>
-                );
-              })
+              employees.map((employee) => (
+                <EmployeeCard
+                  key={employee?._id || employee?.id || employee?.profile?.email}
+                  employee={employee}
+                  visits={visits}
+                />
+              ))
             ) : (
               <div className="he-empty">
                 <User size={32} />
@@ -419,6 +455,13 @@ useEffect(() => {
               </div>
             )}
           </div>
+        </section>
+
+        {/* TENDENCIA TEMPORAL */}
+        <section className="he-section">
+          
+
+          <DashboardTrendsCard visits={allVisits} />
         </section>
 
         {/* ACCIONES RÁPIDAS */}
@@ -671,6 +714,95 @@ useEffect(() => {
           display: flex;
         }
 
+        .he-trends-card {
+          width: 100%;
+          padding: 1.25rem;
+          border-radius: 16px;
+          border: 1px solid var(--glass-border);
+          background: var(--glass-bg);
+          backdrop-filter: blur(12px);
+          display: flex;
+          flex-direction: column;
+          gap: 1rem;
+        }
+        .he-trends-card__header {
+          display: flex;
+          align-items: flex-start;
+          justify-content: space-between;
+          gap: 1rem;
+        }
+        .he-trends-card__title {
+          font-size: 1rem;
+          font-weight: 800;
+          margin: 0;
+        }
+        .he-trends-card__subtitle {
+          margin: 0.3rem 0 0;
+          font-size: 0.78rem;
+          color: var(--clr-text-muted);
+          line-height: 1.4;
+        }
+        .he-trends-card__badge {
+          font-size: 0.7rem;
+          font-weight: 800;
+          letter-spacing: 0.04em;
+          padding: 0.35rem 0.65rem;
+          border-radius: 999px;
+          color: var(--clr-primary);
+          background: hsla(26,95%,55%,0.12);
+          border: 1px solid hsla(26,95%,55%,0.2);
+          white-space: nowrap;
+        }
+        .he-trends-card__legend {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 1rem;
+          font-size: 0.75rem;
+          color: var(--clr-text-muted);
+        }
+        .he-trends-card__legend span {
+          display: inline-flex;
+          align-items: center;
+          gap: 0.45rem;
+        }
+        .he-trends-card__dot {
+          width: 10px;
+          height: 10px;
+          border-radius: 999px;
+          display: inline-block;
+        }
+        .he-trends-card__dot--real { background: var(--clr-primary); }
+        .he-trends-card__dot--predicted { background: var(--clr-accent); }
+        .he-trends-card__charts {
+          display: grid;
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+          gap: 1rem;
+        }
+        .he-trends-card__panel {
+          border: 1px solid var(--glass-border);
+          border-radius: 14px;
+          background: transparent;
+          padding: 0.9rem;
+          min-width: 0;
+        }
+        .he-trends-card__panel-title {
+          font-size: 0.8rem;
+          font-weight: 800;
+          color: var(--clr-text);
+          margin-bottom: 0.75rem;
+          letter-spacing: 0.02em;
+        }
+        .he-trends-card__empty {
+          min-height: 280px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          text-align: center;
+          color: var(--clr-text-muted);
+          font-size: 0.9rem;
+          padding: 1rem;
+        }
+
         /* Section */
         .he-section { display: flex; flex-direction: column; gap: 1rem; }
         .he-section__head { display: flex; align-items: center; justify-content: space-between; }
@@ -758,6 +890,9 @@ useEffect(() => {
 
         @media (max-width: 900px) {
           .he-charts-grid {
+            grid-template-columns: 1fr;
+          }
+          .he-trends-card__charts {
             grid-template-columns: 1fr;
           }
         }
@@ -859,12 +994,21 @@ useEffect(() => {
           background: hsla(217,91%,60%,0.15);
           color: hsl(217,91%,70%);
         }
-        .he-rating,
-        .he-visits,
-        .he-revenue {
+        
+        /* Métricas de empleado (base uniforme) */
+        .he-employee-metric {
           font-size: 0.8rem;
           font-weight: 600;
+          display: block;
+          white-space: nowrap;
         }
+        .he-employee-rating,
+        .he-employee-visits,
+        .he-employee-revenue {
+          /* Heredan estilos de .he-employee-metric */
+        }
+        
+        /* Estados de empleado */
         .he-active {
           color: #22c55e;
           font-weight: 700;
