@@ -47,11 +47,15 @@ apiClient.interceptors.request.use((config) => {
 apiClient.interceptors.response.use(
   (response) => response,
   (error) => {
-    console.error('❌ API ERROR:', {
-      url: error.config?.url,
-      status: error.response?.status,
-      message: error.response?.data,
-    });
+    // Allow callers to suppress logging by adding header 'X-Suppress-Error-Log'
+    const suppress = error.config?.headers?.['X-Suppress-Error-Log'] || error.config?.headers?.['x-suppress-error-log'];
+    if (!suppress) {
+      console.error('❌ API ERROR:', {
+        url: error.config?.url,
+        status: error.response?.status,
+        message: error.response?.data,
+      });
+    }
 
     // Si token inválido → limpiar sesión
     if (error.response?.status === 401) {

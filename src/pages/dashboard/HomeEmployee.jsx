@@ -14,6 +14,7 @@ import { useAuth } from '../../context/AuthContext';
 // Componentes de gráficos
 import RestaurantReviewsBarChart from '../../components/dashboard/RestaurantReviewsBarChart';
 import PeakVisitHoursChart from '../../components/dashboard/PeakVisitHoursChart';
+import RealPredictionsChart from '../../components/dashboard/RealPredictionsChart';
 import TopDishCard from '../../components/dashboard/TopDishCard';
 import DashboardTrendsCard from '../../components/dashboard/DashboardTrendsCard';
 import EmployeeCard from '../../components/EmployeeCard';
@@ -25,7 +26,7 @@ import AvgPointsVisitCard from '../../components/dashboard/AvgPointsVisitCard';
 import LoyalCustomersCard from '../../components/dashboard/LoyalCustomersCard';
 import AvgRatingCard from '../../components/dashboard/AvgRatingCard';
 
-
+import { Sidebar } from '../../components/Sidebar';
 // ========================
 // CONSTANTES
 // ========================
@@ -169,6 +170,7 @@ export default function HomeEmployee() {
   const [restaurantKpis, setRestaurantKpis] = useState(null);
   const [reviews, setReviews] = useState([]);
   const [employees, setEmployees] = useState([]);
+  const [activeView, setActiveView] = useState('dashboard');
   const [loading, setLoading] = useState(true);
 
   const isOwner = role === 'owner';
@@ -342,49 +344,30 @@ export default function HomeEmployee() {
     );
   }
 
+  const handleSidebarViewChange = (view) => {
+    setActiveView(view);
+  };
+
 
   // ========================
   // RENDER
   // ========================
 
-  return (
-    <div className="he-page">
+return (
+  <div className="he-layout">
 
-      {/* HEADER */}
-      <header className="he-header">
-        <div className="he-header__inner">
+    {/* SIDEBAR */}
+    <Sidebar
+      activeView={activeView}
+      onViewChange={handleSidebarViewChange}
+      restaurantName={restName}
+    />
 
-          {/* Marca */}
-          <div className="he-brand">
-            <span className="he-brand__icon">🍽️</span>
-            <div>
-              <span className="he-brand__name">EasyEat</span>
-              <span className={`he-role-badge he-role-badge--${role}`}>
-                {role?.toUpperCase()}
-              </span>
-            </div>
-          </div>
-
-          {/* Usuario */}
-          <div className="he-header__right">
-            <div className="he-user-pill">
-              <div className="he-avatar">
-                {user.name?.[0]?.toUpperCase()}
-              </div>
-              <span>{user.name?.split(' ')[0]}</span>
-            </div>
-
-            <button onClick={logout} className="he-logout-btn" title="Cerrar sesión">
-              <LogOut size={18} />
-            </button>
-          </div>
-
-        </div>
-      </header>
-
+    {/* CONTENIDO */}
+    <div className="he-content">
       <main className="he-main">
 
-        {/* HERO DEL RESTAURANTE */}
+        {/* HERO DEL RESTAURANTE - Siempre visible */}
         <section className="he-hero">
           <div className="he-hero__left">
             <h1 className="he-hero__name">{restName}</h1>
@@ -395,194 +378,125 @@ export default function HomeEmployee() {
             <div className="he-orb he-orb--2" />
           </div>
         </section>
-        <RestaurantTimetableCard timetable={restaurant?.profile?.timetable} />
-        {/* MÉTRICAS */}
-         <h2 className="he-section__title">Estdadísticas del restaurante</h2>
 
-        <div className="he-metrics-grid">
-          <AvgPointsVisitCard value={Number(averagePointsPerVisit ?? 0)} />
-          <LoyalCustomersCard value={Number(loyalCustomers ?? 0)} />
-          <AvgRatingCard value={Number(restRating ?? 0).toFixed(1)} />
-        </div>
+        {/* ════════════════════════════════════════════ */}
+        {/* TAB: DASHBOARD - Estadísticas del restaurante */}
+        {/* ════════════════════════════════════════════ */}
+        {activeView === 'dashboard' && (
+          <>
+            <h2 className="he-section__title">Estadísticas del restaurante</h2>
+            <div className="he-metrics-grid">
+              <AvgPointsVisitCard value={Number(averagePointsPerVisit ?? 0)} />
+              <LoyalCustomersCard value={Number(loyalCustomers ?? 0)} />
+              <AvgRatingCard value={Number(restRating ?? 0).toFixed(1)} />
+            </div>
 
-        {/* GRÁFICOS */}
-        <div className="he-charts-grid">
-          <div className="he-chart-slot">
-            <RestaurantReviewsBarChart
-              reviews={reviews}
-              restaurantId={user?.restaurant_id}
-            />
-          </div>
-
-          <div className="he-chart-slot">
-            <PeakVisitHoursChart
-              visits={visits}
-              restaurantId={user?.restaurant_id}
-            />
-          </div>
-
-          <div className="he-chart-slot">
-            <TopDishCard
-              restaurantId={user?.restaurant_id}
-              title="Top Dish"
-            />
-          </div>
-        </div>
-
-        {/* ═══════════════════════════════════════════ */}
-        {/* SECCIÓN: EMPLEADOS                         */}
-        {/* ═══════════════════════════════════════════ */}
-        <section className="he-section">
-          <div className="he-section__head">
-            <h2 className="he-section__title">Empleados</h2>
-            <span className="he-section__count">{employees.length} empleados</span>
-          </div>
-
-          <div className="he-employees">
-            {employees.length > 0 ? (
-              employees.map((employee) => (
-                <EmployeeCard
-                  key={employee?._id || employee?.id || employee?.profile?.email}
-                  employee={employee}
-                  visits={visits}
+            {/* Gráficos en el dashboard */}
+            <div className="he-charts-grid">
+              <div className="he-chart-slot">
+                <RestaurantReviewsBarChart
+                  reviews={reviews}
+                  restaurantId={user?.restaurant_id}
                 />
-              ))
-            ) : (
-              <div className="he-empty">
-                <User size={32} />
-                <p>No hay empleados registrados</p>
               </div>
-            )}
-          </div>
-        </section>
 
-        {/* TENDENCIA TEMPORAL */}
-        <section className="he-section">
-          
-
-          <DashboardTrendsCard visits={allVisits} averageRating={Number(restRating ?? 0)} />
-        </section>
-
-        {/* ACCIONES RÁPIDAS */}
-        <section className="he-section">
-          <h2 className="he-section__title">Acciones rápidas</h2>
-
-          <div className="he-actions">
-
-            <button className="he-action-card">
-              <div className="he-action-card__icon he-action-card__icon--qr">
-                <QrCode size={26} />
+              <div className="he-chart-slot">
+                <PeakVisitHoursChart
+                  visits={visits}
+                  restaurantId={user?.restaurant_id}
+                />
               </div>
-              <span>Generar QR</span>
-              <p>Escaneo de visita</p>
-            </button>
 
-            <button className="he-action-card">
-              <div className="he-action-card__icon he-action-card__icon--list">
-                <List size={26} />
+              <div className="he-chart-slot">
+                <TopDishCard
+                  restaurantId={user?.restaurant_id}
+                  title="Top Dish"
+                />
               </div>
-              <span>Ver visitas</span>
-              <p>Historial completo</p>
-            </button>
+            </div>
+          </>
+        )}
 
-            {isOwner && (
-              <button className="he-action-card">
-                <div className="he-action-card__icon he-action-card__icon--settings">
-                  <Settings size={26} />
+        {/* ════════════════════════════════════════════ */}
+        {/* TAB: EMPLEADOS */}
+        {/* ════════════════════════════════════════════ */}
+        {activeView === 'employees' && (
+          <section className="he-section">
+            <div className="he-section__head">
+              <h2 className="he-section__title">Empleados</h2>
+              <span className="he-section__count">{employees.length} empleados</span>
+            </div>
+
+            <div className="he-employees">
+              {employees.length > 0 ? (
+                employees.map((employee) => (
+                  <EmployeeCard
+                    key={employee?._id || employee?.id || employee?.profile?.email}
+                    employee={employee}
+                    visits={visits}
+                  />
+                ))
+              ) : (
+                <div className="he-empty">
+                  <User size={32} />
+                  <p>No hay empleados registrados</p>
                 </div>
-                <span>Configuración</span>
-                <p>Ajustes del local</p>
-              </button>
-            )}
+              )}
+            </div>
+          </section>
+        )}
 
+        {/* ════════════════════════════════════════════ */}
+        {/* TAB: ANÁLISIS - Gráficas */}
+        {/* ════════════════════════════════════════════ */}
+        {activeView === 'analytics' && (
+          <div className="he-charts-grid">
+            <div className="he-chart-slot">
+              <RealPredictionsChart
+                visits={allVisits.length ? allVisits : visits}
+                daysToPredict={7}
+                mode="real"
+              />
+            </div>
+
+            <div className="he-chart-slot">
+              <RealPredictionsChart
+                visits={allVisits.length ? allVisits : visits}
+                daysToPredict={7}
+                mode="prediction"
+              />
+            </div>
           </div>
-        </section>
+        )}
 
-        {/* VISITAS RECIENTES */}
-        <section className="he-section">
-          <div className="he-section__head">
-            <h2 className="he-section__title">Visitas recientes</h2>
-            <span className="he-section__count">
-              {visits.length} de {visitsMeta.total} registros
-            </span>
-          </div>
-
-          <div className="he-visits">
-
-            {visits.length > 0 ? visits.map((v, i) => (
-              <div key={i} className="he-visit-row">
-
-                {/* Avatar */}
-                <div className="he-visit-row__avatar">
-                  {(v.customer_id?.name || v.customer_name)?.[0]?.toUpperCase() || <User size={16} />}
-                </div>
-
-                {/* Info */}
-                <div className="he-visit-row__info">
-                  <span className="he-visit-row__name">
-                    {v.customer_id?.name || v.customer_name || 'Cliente'}
-                  </span>
-
-                  <span className="he-visit-row__date">
-                    <Clock size={12} />
-                    {new Date(v.date || v.createdAt).toLocaleDateString('es-ES', {
-                      day: 'numeric',
-                      month: 'short',
-                      year: 'numeric'
-                    })}
-                  </span>
-                </div>
-
-                {/* Puntos */}
-                {v.pointsEarned && (
-                  <span className="he-visit-row__pts">
-                    +{v.pointsEarned} pts
-                  </span>
-                )}
-
-                <ChevronRight size={16} className="he-visit-row__arrow" />
-
-              </div>
-            )) : (
-              <div className="he-empty">
-                <Clock size={32} />
-                <p>No hay visitas registradas todavía</p>
-              </div>
-            )}
-
-          </div>
-
-          {/* PAGINACIÓN */}
-          <div className="he-pagination">
-
-            <button
-              type="button"
-              className="he-pagination__btn"
-              disabled={visitsMeta.page <= 1}
-              onClick={() => setVisitsPage(prev => Math.max(1, prev - 1))}
-            >
-              Anterior
-            </button>
-
-            <span className="he-pagination__info">
-              Página {visitsMeta.page} de {visitsMeta.totalPages}
-            </span>
-
-            <button
-              type="button"
-              className="he-pagination__btn"
-              disabled={visitsMeta.page >= visitsMeta.totalPages}
-              onClick={() => setVisitsPage(prev => Math.min(visitsMeta.totalPages, prev + 1))}
-            >
-              Siguiente
-            </button>
-
-          </div>
-        </section>
+        {/* ════════════════════════════════════════════ */}
+        {/* TAB: CONFIGURACIÓN - Horario y ajustes */}
+        {/* ════════════════════════════════════════════ */}
+        {activeView === 'settings' && (
+          <>
+            <h2 className="he-section__title">Configuración</h2>
+            <RestaurantTimetableCard timetable={restaurant?.profile?.timetable} />
+          </>
+        )}
 
       </main>
 
       <style>{`
+        .he-layout {
+          display: flex;
+          width: 100%;
+          min-height: 100vh;
+          background: var(--clr-bg);
+        }
+
+        .he-content {
+          margin-left: 16rem;
+          width: calc(100% - 16rem);
+          min-height: 100vh;
+          background: #ffffff; /* área principal blanca */
+          color: #0b1220;
+        }
+
         .he-page { min-height: 100vh; background: var(--clr-bg); font-family: var(--font); color: var(--clr-text); }
 
         .he-loading {
@@ -936,6 +850,11 @@ export default function HomeEmployee() {
           
 
         @media (max-width: 900px) {
+          .he-content {
+            margin-left: 0;
+            width: 100%;
+          }
+
           .he-charts-grid {
             grid-template-columns: 1fr;
           }
@@ -1212,5 +1131,6 @@ export default function HomeEmployee() {
         
       `}</style>
     </div>
+  </div>
   );
 }

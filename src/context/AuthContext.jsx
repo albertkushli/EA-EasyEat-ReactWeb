@@ -1,7 +1,7 @@
 import { createContext, useContext, useState, useCallback, useEffect } from 'react';
 import apiClient from '../lib/apiClient';
 
-const AuthContext = createContext(null);
+export const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
   const [auth, setAuth] = useState(() => {
@@ -126,8 +126,8 @@ export function AuthProvider({ children }) {
 
   const logout = useCallback(async () => {
     try {
-      // Optional: notify backend we're logging out
-      await apiClient.post('/auth/logout', {}).catch(() => {});
+      // Optional: notify backend we're logging out - suppress API error logs for this call
+      await apiClient.post('/auth/logout', {}, { headers: { 'X-Suppress-Error-Log': '1' } }).catch(() => {});
     } finally {
       setAuth(null);
       setRestaurant(null);
