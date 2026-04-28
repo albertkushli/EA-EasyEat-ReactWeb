@@ -20,6 +20,14 @@ const SHORT_DATE_FORMATTER = new Intl.DateTimeFormat('es-ES', {
   month: '2-digit',
 });
 
+const REVENUE_FORMATTER = new Intl.NumberFormat('es-ES', {
+  style: 'currency',
+  currency: 'EUR',
+  maximumFractionDigits: 0,
+});
+
+const DEFAULT_REVENUE_THRESHOLD = 300;
+
 function toValidDate(value) {
   const date = new Date(value);
   return Number.isNaN(date.getTime()) ? null : date;
@@ -27,6 +35,12 @@ function toValidDate(value) {
 
 function startOfDayTimestamp(date) {
   return new Date(date.getFullYear(), date.getMonth(), date.getDate()).getTime();
+}
+
+function addDays(date, amount) {
+  const nextDate = new Date(date);
+  nextDate.setDate(nextDate.getDate() + amount);
+  return nextDate;
 }
 
 function formatDate(date) {
@@ -50,13 +64,55 @@ function groupVisitsByDay(visits = []) {
       chartDate: formatShortDate(date),
       timestamp,
       visits: 0,
+      revenue: 0,
     };
 
     current.visits += 1;
+    current.revenue += Number(visit?.billAmount || 0);
     groupedVisits.set(timestamp, current);
   });
 
   return Array.from(groupedVisits.values()).sort((a, b) => a.timestamp - b.timestamp);
+}
+
+function getDailyLookup(visits = []) {
+  return groupVisitsByDay(visits).reduce((lookup, day) => {
+    lookup.set(day.timestamp, day);
+    return lookup;
+  }, new Map());
+}
+
+function getPeriodTotals(dailyLookup, startDate, endDate) {
+  let visits = 0;
+  let revenue = 0;
+
+  for (let cursor = new Date(startDate); cursor <= endDate; cursor = addDays(cursor, 1)) {
+    const dayStats = dailyLookup.get(startOfDayTimestamp(cursor));
+    if (!dayStats) continue;
+
+    visits += dayStats.visits;
+    revenue += dayStats.revenue;
+  }
+
+  return { visits, revenue };
+}
+
+function calculatePercentageChange(current, previous) {
+  if (!previous) return null;
+  return ((current - previous) / previous) * 100;
+}
+
+function formatChangeLabel(change) {
+  if (change == null || Number.isNaN(change)) return 'Sin comparación';
+  const sign = change >= 0 ? '+' : '';
+  return `${change >= 0 ? '📈' : '📉'} ${sign}${Math.abs(change).toFixed(1)}% vs 7 días anteriores`;
+}
+
+function getChangeTone(change) {
+  if (change == null) return 'neutral';
+  if (change > 0) return 'positive';
+  if (change < 0) return 'negative';
+  return 'neutral';
 }
 
 function buildPredictedDays(dailyData) {
@@ -68,8 +124,7 @@ function buildPredictedDays(dailyData) {
   const lastTimestamp = dailyData[dailyData.length - 1].timestamp;
 
   return Array.from({ length: 7 }, (_, index) => {
-    const futureDate = new Date(lastTimestamp);
-    futureDate.setDate(futureDate.getDate() + index + 1);
+    const futureDate = addDays(new Date(lastTimestamp), index + 1);
 
     return {
       date: formatDate(futureDate),
@@ -101,62 +156,112 @@ function buildChartData(visits) {
 }
 
 function splitChartData(chartData) {
-  const realData = chartData
-    .filter((item) => item.predicted === false)
-    .map((item) => ({
-      date: item.date,
-      chartDate: item.chartDate,
-      visits: item.actualVisits ?? item.visits ?? 0,
-    }));
+  return {
+    realData: chartData
+      .filter((item) => item.predicted === false)
+      .map((item) => ({
+        chartDate: item.chartDate,
+        visits: item.actualVisits ?? item.visits ?? 0,
+      })),
+    predictedData: chartData
+      .filter((item) => item.predicted === true)
+      .map((item) => ({
+        chartDate: item.chartDate,
+        visits: item.predictedVisits ?? item.visits ?? 0,
+      })),
+  };
+}
 
-  const predictedData = chartData
-    .filter((item) => item.predicted === true)
-    .map((item) => ({
-      date: item.date,
-      chartDate: item.chartDate,
-      visits: item.predictedVisits ?? item.visits ?? 0,
-    }));
+function buildAlerts({ averageRating, visitsChange, currentRevenue, revenueThreshold }) {
+  const alerts = [];
 
-  return { realData, predictedData };
+  if (averageRating != null && averageRating < 7) {
+    alerts.push({ id: 'rating-low', tone: 'danger', text: '⚠️ El rating del restaurante es bajo' });
+  }
+
+  if (visitsChange != null && visitsChange < -10) {
+    alerts.push({ id: 'visits-drop', tone: 'danger', text: '⚠️ Caída significativa de visitas esta semana' });
+  }
+
+  if (currentRevenue < revenueThreshold) {
+    alerts.push({ id: 'revenue-low', tone: 'warning', text: '⚠️ Revenue bajo este periodo' });
+  }
+
+  if (!alerts.length) {
+    alerts.push({ id: 'good-performance', tone: 'success', text: '✅ Buen rendimiento general del restaurante' });
+  }
+
+  return alerts;
 }
 
 function TrendsTooltip({ active, payload, label }) {
   if (!active || !payload?.length) return null;
 
-  const actualPoint = payload.find((item) => item?.dataKey === 'actualVisits' && item?.value != null);
-  const predictedPoint = payload.find((item) => item?.dataKey === 'predictedVisits' && item?.value != null);
+  const point = payload[0];
 
   return (
-    <div style={{
-      background: 'var(--glass-bg)',
-      border: '1px solid var(--glass-border)',
-      borderRadius: '12px',
-      padding: '0.75rem 0.9rem',
-      boxShadow: 'var(--shadow-md)',
-      backdropFilter: 'blur(12px)',
-    }}>
+    <div
+      style={{
+        background: 'var(--glass-bg)',
+        border: '1px solid var(--glass-border)',
+        borderRadius: '12px',
+        padding: '0.75rem 0.9rem',
+        boxShadow: 'var(--shadow-md)',
+        backdropFilter: 'blur(12px)',
+      }}
+    >
       <div style={{ fontSize: '0.8rem', color: 'var(--clr-text-muted)', marginBottom: '0.35rem' }}>
         {label}
       </div>
-      {actualPoint && (
-        <div style={{ color: 'var(--clr-primary)', fontSize: '0.85rem', fontWeight: 700 }}>
-          Visitas reales: {actualPoint.value}
-        </div>
-      )}
-      {predictedPoint && (
-        <div style={{ color: 'var(--clr-accent)', fontSize: '0.85rem', fontWeight: 700 }}>
-          Predicción: {predictedPoint.value}
-        </div>
-      )}
+      <div style={{ color: 'var(--clr-text)', fontSize: '0.85rem', fontWeight: 700 }}>
+        Visitas: {point?.value ?? 0}
+      </div>
     </div>
   );
 }
 
-export default function DashboardTrendsCard({ visits = [] }) {
+export default function DashboardTrendsCard({
+  visits = [],
+  averageRating = null,
+  revenueThreshold = DEFAULT_REVENUE_THRESHOLD,
+}) {
   const chartData = useMemo(() => buildChartData(visits), [visits]);
-  const { realData, predictedData } = useMemo(
-    () => splitChartData(chartData),
-    [chartData],
+  const { realData, predictedData } = useMemo(() => splitChartData(chartData), [chartData]);
+
+  const { currentPeriod, previousPeriod } = useMemo(() => {
+    const orderedDays = groupVisitsByDay(visits);
+
+    if (!orderedDays.length) {
+      return {
+        currentPeriod: { visits: 0, revenue: 0 },
+        previousPeriod: { visits: 0, revenue: 0 },
+      };
+    }
+
+    const dailyLookup = getDailyLookup(visits);
+    const latestDay = orderedDays[orderedDays.length - 1].timestamp;
+    const currentStart = addDays(new Date(latestDay), -6);
+    const currentEnd = new Date(latestDay);
+    const previousStart = addDays(currentStart, -7);
+    const previousEnd = addDays(currentStart, -1);
+
+    return {
+      currentPeriod: getPeriodTotals(dailyLookup, currentStart, currentEnd),
+      previousPeriod: getPeriodTotals(dailyLookup, previousStart, previousEnd),
+    };
+  }, [visits]);
+
+  const visitsChange = calculatePercentageChange(currentPeriod.visits, previousPeriod.visits);
+  const revenueChange = calculatePercentageChange(currentPeriod.revenue, previousPeriod.revenue);
+
+  const alerts = useMemo(
+    () => buildAlerts({
+      averageRating,
+      visitsChange,
+      currentRevenue: currentPeriod.revenue,
+      revenueThreshold,
+    }),
+    [averageRating, visitsChange, currentPeriod.revenue, revenueThreshold],
   );
 
   return (
@@ -164,8 +269,41 @@ export default function DashboardTrendsCard({ visits = [] }) {
       <div className="he-trends-card__header">
         <div>
           <h3 className="he-trends-card__title">Evolución temporal</h3>
+          <p className="he-trends-card__subtitle">
+            Visitas reales por día, predicción simple y contexto comparativo de 7 días.
+          </p>
         </div>
         <span className="he-trends-card__badge">+7 días</span>
+      </div>
+
+      <div className="he-trends-card__summary">
+        <div className="he-trends-card__metric">
+          <span className="he-trends-card__metric-label">Visitas</span>
+          <strong className="he-trends-card__metric-value">{currentPeriod.visits}</strong>
+          <span className={`he-trends-card__metric-change he-trends-card__metric-change--${getChangeTone(visitsChange)}`}>
+            {formatChangeLabel(visitsChange)}
+          </span>
+        </div>
+
+        <div className="he-trends-card__metric">
+          <span className="he-trends-card__metric-label">Revenue</span>
+          <strong className="he-trends-card__metric-value">
+            {REVENUE_FORMATTER.format(currentPeriod.revenue)}
+          </strong>
+          <span className={`he-trends-card__metric-change he-trends-card__metric-change--${getChangeTone(revenueChange)}`}>
+            {formatChangeLabel(revenueChange)}
+          </span>
+        </div>
+
+        <div className="he-trends-card__metric">
+          <span className="he-trends-card__metric-label">Rating</span>
+          <strong className="he-trends-card__metric-value">
+            {averageRating == null ? '—' : averageRating.toFixed(1)}
+          </strong>
+          <span className={`he-trends-card__metric-change he-trends-card__metric-change--${averageRating != null && averageRating < 7 ? 'negative' : 'neutral'}`}>
+            {averageRating == null ? 'Sin dato' : averageRating < 7 ? '⚠️ Rating bajo' : 'Nivel correcto'}
+          </span>
+        </div>
       </div>
 
       {chartData.length > 0 ? (
@@ -224,6 +362,14 @@ export default function DashboardTrendsCard({ visits = [] }) {
           Todavía no hay visitas suficientes para construir la tendencia.
         </div>
       )}
+
+      <div className="he-trends-card__alerts">
+        {alerts.map((alert) => (
+          <div key={alert.id} className={`he-trends-card__alert he-trends-card__alert--${alert.tone}`}>
+            {alert.text}
+          </div>
+        ))}
+      </div>
 
       <div className="he-trends-card__legend">
         <span><i className="he-trends-card__dot he-trends-card__dot--real" /> Datos reales</span>

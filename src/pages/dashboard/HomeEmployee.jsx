@@ -461,7 +461,7 @@ export default function HomeEmployee() {
         <section className="he-section">
           
 
-          <DashboardTrendsCard visits={allVisits} />
+          <DashboardTrendsCard visits={allVisits} averageRating={Number(restRating ?? 0)} />
         </section>
 
         {/* ACCIONES RÁPIDAS */}
@@ -753,26 +753,38 @@ export default function HomeEmployee() {
           border: 1px solid hsla(26,95%,55%,0.2);
           white-space: nowrap;
         }
-        .he-trends-card__legend {
+        .he-trends-card__summary {
+          display: grid;
+          grid-template-columns: repeat(3, minmax(0, 1fr));
+          gap: 0.85rem;
+        }
+        .he-trends-card__metric {
+          padding: 0.9rem 1rem;
+          border: 1px solid var(--glass-border);
+          border-radius: 14px;
+          background: transparent;
           display: flex;
-          flex-wrap: wrap;
-          gap: 1rem;
-          font-size: 0.75rem;
+          flex-direction: column;
+          gap: 0.25rem;
+        }
+        .he-trends-card__metric-label {
+          font-size: 0.72rem;
           color: var(--clr-text-muted);
+          text-transform: uppercase;
+          letter-spacing: 0.06em;
         }
-        .he-trends-card__legend span {
-          display: inline-flex;
-          align-items: center;
-          gap: 0.45rem;
+        .he-trends-card__metric-value {
+          font-size: 1.1rem;
+          font-weight: 800;
+          color: var(--clr-text);
         }
-        .he-trends-card__dot {
-          width: 10px;
-          height: 10px;
-          border-radius: 999px;
-          display: inline-block;
+        .he-trends-card__metric-change {
+          font-size: 0.78rem;
+          font-weight: 700;
         }
-        .he-trends-card__dot--real { background: var(--clr-primary); }
-        .he-trends-card__dot--predicted { background: var(--clr-accent); }
+        .he-trends-card__metric-change--positive { color: hsl(142, 71%, 45%); }
+        .he-trends-card__metric-change--negative { color: hsl(0, 84%, 60%); }
+        .he-trends-card__metric-change--neutral { color: var(--clr-text-muted); }
         .he-trends-card__charts {
           display: grid;
           grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -792,6 +804,42 @@ export default function HomeEmployee() {
           margin-bottom: 0.75rem;
           letter-spacing: 0.02em;
         }
+        .he-trends-card__alerts {
+          display: flex;
+          flex-direction: column;
+          gap: 0.5rem;
+        }
+        .he-trends-card__alert {
+          padding: 0.8rem 0.95rem;
+          border-radius: 12px;
+          border: 1px solid var(--glass-border);
+          background: transparent;
+          font-size: 0.85rem;
+          font-weight: 700;
+        }
+        .he-trends-card__alert--warning { color: hsl(48, 96%, 60%); }
+        .he-trends-card__alert--danger { color: hsl(0, 84%, 65%); }
+        .he-trends-card__alert--success { color: hsl(142, 71%, 45%); }
+        .he-trends-card__legend {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 1rem;
+          font-size: 0.75rem;
+          color: var(--clr-text-muted);
+        }
+        .he-trends-card__legend span {
+          display: inline-flex;
+          align-items: center;
+          gap: 0.45rem;
+        }
+        .he-trends-card__dot {
+          width: 10px;
+          height: 10px;
+          border-radius: 999px;
+          display: inline-block;
+        }
+        .he-trends-card__dot--real { background: rgba(249, 115, 22, 0.95); }
+        .he-trends-card__dot--predicted { background: rgba(16, 185, 129, 0.95); }
         .he-trends-card__empty {
           min-height: 280px;
           display: flex;
@@ -893,6 +941,9 @@ export default function HomeEmployee() {
             grid-template-columns: 1fr;
           }
           .he-trends-card__charts {
+            grid-template-columns: 1fr;
+          }
+          .he-trends-card__summary {
             grid-template-columns: 1fr;
           }
         }
