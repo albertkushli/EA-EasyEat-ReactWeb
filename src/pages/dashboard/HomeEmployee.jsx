@@ -17,8 +17,7 @@ import PeakVisitHoursChart from '../../components/dashboard/PeakVisitHoursChart'
 import TopDishCard from '../../components/dashboard/TopDishCard';
 import DashboardTrendsCard from '../../components/dashboard/DashboardTrendsCard';
 import EmployeeCard from '../../components/EmployeeCard';
-
-// Cliente API (axios)
+import RestaurantTimetableCard from "../../components/dashboard/RestaurantTimetableCard";// Cliente API (axios)
 import apiClient from '../../lib/apiClient';
 
 // Componentes de métricas
@@ -396,7 +395,7 @@ export default function HomeEmployee() {
             <div className="he-orb he-orb--2" />
           </div>
         </section>
-
+        <RestaurantTimetableCard timetable={restaurant?.profile?.timetable} />
         {/* MÉTRICAS */}
          <h2 className="he-section__title">Estdadísticas del restaurante</h2>
 
@@ -1089,6 +1088,126 @@ export default function HomeEmployee() {
             text-align: left;
           }
         }
+
+        /* ============================= */
+/* TIMETABLE CARD */
+/* ============================= */
+
+.he-timetable-card {
+  margin-top: -10px;
+  padding: 1.5rem;
+  border-radius: 16px;
+  border: 1px solid var(--glass-border);
+  background: var(--glass-bg);
+  backdrop-filter: blur(12px);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* HEADER */
+.he-timetable-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.he-timetable-title {
+  font-size: 0.95rem;
+  font-weight: 800;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Estado abierto/cerrado */
+.he-status {
+  font-size: 0.7rem;
+  font-weight: 800;
+  padding: 4px 10px;
+  border-radius: 999px;
+  letter-spacing: 0.05em;
+}
+
+.he-status.open {
+  background: rgba(34, 197, 94, 0.15);
+  color: #22c55e;
+  border: 1px solid rgba(34, 197, 94, 0.3);
+}
+
+.he-status.closed {
+  background: rgba(239, 68, 68, 0.15);
+  color: #ef4444;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+/* LISTA */
+.he-timetable-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+/* FILA */
+.he-timetable-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.8rem;
+  padding: 8px 10px;
+  border-radius: 10px;
+  transition: all 0.2s ease;
+  border: 1px solid transparent;
+}
+
+/* Hover suave */
+.he-timetable-row:hover {
+  background: hsla(255,255,255,0.04);
+}
+
+/* Día */
+.he-timetable-day {
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+/* Horas */
+.he-timetable-hours {
+  color: var(--clr-text-muted);
+  text-align: right;
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+/* Día actual 🔥 */
+.he-timetable-row.active {
+  background: hsla(26,95%,55%,0.12);
+  border: 1px solid hsla(26,95%,55%,0.3);
+  color: var(--clr-primary);
+  font-weight: 700;
+}
+
+/* Texto horas en activo */
+.he-timetable-row.active .he-timetable-hours {
+  color: var(--clr-primary);
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .he-timetable-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+
+  .he-timetable-hours {
+    text-align: left;
+    justify-content: flex-start;
+  }
+}
 
         
       `}</style>
