@@ -88,6 +88,7 @@
   "auth": {
     "login": {
       "title": "Bienvenido de vuelta",
+      "tagline": "Tu experiencia gastronómica Premium",
       "subtitle": "Inicia sesión para acceder a tu panel principal",
       "tabs": {
         "customer": "Cliente",
@@ -110,6 +111,7 @@
     },
     "register": {
       "title": "Crear nueva cuenta",
+      "tagline": "Únete a nuestra comunidad hoy mismo",
       "subtitle": "Rellena tus datos y empieza a disfrutar",
       "form": {
         "fullName": "Nombre completo",
@@ -117,6 +119,7 @@
         "email": "Correo electrónico",
         "emailPlaceholder": "tu@email.com",
         "password": "Contraseña",
+        "passwordPlaceholder": "••••••••",
         "confirmPassword": "Confirmar contraseña",
         "rules": {
           "length": "Mínimo 8 caracteres de longitud",
@@ -138,10 +141,15 @@
     }
   },
   "dashboard": {
+    "noAuthorized": "No autorizado",
+    "noAuthorizedDesc": "Debes iniciar sesión para acceder al dashboard.",
+    "unknownRole": "Rol no reconocido",
+    "unknownRoleDesc": "Tu rol de usuario no está configurado correctamente.",
     "customer": {
       "loading": "Cargando tu experiencia…",
       "welcome": "Bienvenido de vuelta,",
       "discover": "Descubre sabores que te esperan hoy",
+      "badge": "badge",
       "stats": {
         "totalPoints": "Puntos totales",
         "visits": "Visitas",
@@ -149,6 +157,7 @@
         "favorites": "Favoritos"
       },
       "searchPlaceholder": "Buscar restaurantes o ciudades…",
+      "noRestaurantName": "Restaurante",
       "sections": {
         "favorites": "Tus favoritos",
         "nearYou": "Cerca de ti",
@@ -203,6 +212,12 @@
         "records": "de registros",
         "client": "Cliente",
         "none": "No hay visitas registradas todavía"
+      },
+      "pagination": {
+        "previous": "Anterior",
+        "next": "Siguiente",
+        "page": "Página",
+        "of": "de"
       }
     }
   },

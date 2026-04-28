@@ -2,8 +2,10 @@ import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Mail, Lock, Eye, EyeOff, AlertCircle, User as UserIcon, Briefcase } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { useTranslation } from 'react-i18next';
 
 export default function Login() {
+  const { t } = useTranslation();
   const { login } = useAuth();
   const navigate = useNavigate();
 
@@ -26,7 +28,7 @@ export default function Login() {
   async function handleSubmit(e) {
     e.preventDefault();
     if (!form.email || !form.password) {
-      setError('Por favor completa todos los campos.');
+      setError(t("auth.errors.completeFields"));
       return;
     }
 
@@ -42,7 +44,7 @@ export default function Login() {
         setError(result.error);
       }
     } catch {
-      setError('No se pudo conectar con el servidor. Inténtalo de nuevo.');
+      setError(t("auth.errors.serverError"));
     } finally {
       setLoading(false);
     }
@@ -57,12 +59,12 @@ export default function Login() {
       <div className="auth-card">
         <div className="brand">
           <div className="brand-icon">🍽️</div>
-          <span className="brand-name">EasyEat</span>
-          <span className="brand-tagline">Tu experiencia gastronómica Premium</span>
+          <span className="brand-name">{t("navbar.logo")}</span>
+          <span className="brand-tagline">{t("auth.login.tagline")}</span>
         </div>
 
-        <h1 className="auth-title">Bienvenido de vuelta</h1>
-        <p className="auth-subtitle">Inicia sesión para acceder a tu panel principal</p>
+        <h1 className="auth-title">{t("auth.login.title")}</h1>
+        <p className="auth-subtitle">{t("auth.login.subtitle")}</p>
 
         {/* Tab Switcher - Changes the entire theme dynamically */}
         <div className="login-tabs">
@@ -71,14 +73,14 @@ export default function Login() {
             className={`tab-btn ${loginType === 'customer' ? 'active' : ''}`}
             onClick={() => setLoginType('customer')}
           >
-            <UserIcon size={16} /> Cliente
+            <UserIcon size={16} /> {t("auth.login.tabs.customer")}
           </button>
           <button
             type="button"
             className={`tab-btn ${loginType === 'employee' ? 'active' : ''}`}
             onClick={() => setLoginType('employee')}
           >
-            <Briefcase size={16} /> Restaurante
+            <Briefcase size={16} /> {t("auth.login.tabs.restaurant")}
           </button>
         </div>
 
@@ -91,7 +93,7 @@ export default function Login() {
 
         <form onSubmit={handleSubmit} noValidate>
           <div className="form-group">
-            <label className="form-label" htmlFor="login-email">Correo electrónico</label>
+            <label className="form-label" htmlFor="login-email">{t("auth.login.form.email")}</label>
             <div className="input-wrapper">
               <Mail className="input-icon" size={18} />
               <input
@@ -99,7 +101,7 @@ export default function Login() {
                 className="form-input"
                 type="email"
                 name="email"
-                placeholder="Introduza tu correo..."
+                placeholder={t("auth.login.form.emailPlaceholder")}
                 value={form.email}
                 onChange={handleChange}
                 autoComplete="email"
@@ -109,7 +111,7 @@ export default function Login() {
           </div>
 
           <div className="form-group">
-            <label className="form-label" htmlFor="login-password">Contraseña</label>
+            <label className="form-label" htmlFor="login-password">{t("auth.login.form.password")}</label>
             <div className="input-wrapper">
               <Lock className="input-icon" size={18} />
               <input
@@ -117,7 +119,7 @@ export default function Login() {
                 className="form-input"
                 type={showPwd ? 'text' : 'password'}
                 name="password"
-                placeholder="••••••••"
+                placeholder={t("auth.login.form.passwordPlaceholder")}
                 value={form.password}
                 onChange={handleChange}
                 autoComplete="current-password"
@@ -126,7 +128,7 @@ export default function Login() {
                 type="button" 
                 className="input-icon-right" 
                 onClick={() => setShowPwd(v => !v)}
-                title={showPwd ? "Ocultar Contraseña" : "Mostrar Contraseña"}
+                title={showPwd ? t("auth.login.form.hidePassword") : t("auth.login.form.showPassword")}
               >
                 {showPwd ? <EyeOff size={18} /> : <Eye size={18} />}
               </button>
@@ -134,13 +136,13 @@ export default function Login() {
           </div>
 
           <button id="login-submit-btn" type="submit" className="btn btn--primary" disabled={loading}>
-            {loading ? 'Iniciando sesión…' : 'Acceder a mi cuenta'}
+            {loading ? t("auth.login.form.loading") : t("auth.login.form.submit")}
           </button>
         </form>
 
         {loginType === 'customer' && (
           <div className="auth-footer">
-            ¿No tienes cuenta todavía? <Link to="/register" className="auth-link">Regístrate gratis</Link>
+            {t("auth.login.footer.noAccount")} <Link to="/register" className="auth-link">{t("auth.login.footer.register")}</Link>
           </div>
         )}
       </div>

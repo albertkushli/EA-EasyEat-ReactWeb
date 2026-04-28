@@ -88,6 +88,7 @@
     "auth": {
         "login": {
             "title": "Welcome back",
+            "tagline": "Your Premium gastronomic experience",
             "subtitle": "Sign in to access your main dashboard",
             "tabs": {
                 "customer": "Customer",
@@ -110,6 +111,7 @@
         },
         "register": {
             "title": "Create new account",
+            "tagline": "Join our community today",
             "subtitle": "Fill in your details and start enjoying",
             "form": {
                 "fullName": "Full name",
@@ -117,6 +119,7 @@
                 "email": "Email address",
                 "emailPlaceholder": "you@email.com",
                 "password": "Password",
+                "passwordPlaceholder": "••••••••",
                 "confirmPassword": "Confirm password",
                 "rules": {
                     "length": "Minimum 8 characters long",
@@ -138,10 +141,15 @@
         }
     },
     "dashboard": {
+        "noAuthorized": "Not authorized",
+        "noAuthorizedDesc": "You must log in to access the dashboard.",
+        "unknownRole": "Unrecognized role",
+        "unknownRoleDesc": "Your user role is not configured correctly.",
         "customer": {
             "loading": "Loading your experience…",
             "welcome": "Welcome back,",
             "discover": "Discover flavors waiting for you today",
+            "badge": "badge",
             "stats": {
                 "totalPoints": "Total points",
                 "visits": "Visits",
@@ -149,6 +157,7 @@
                 "favorites": "Favorites"
             },
             "searchPlaceholder": "Search restaurants or cities…",
+            "noRestaurantName": "Restaurant",
             "sections": {
                 "favorites": "Your favorites",
                 "nearYou": "Near you",
@@ -203,6 +212,12 @@
                 "records": "of records",
                 "client": "Client",
                 "none": "No visits registered yet"
+            },
+            "pagination": {
+                "previous": "Previous",
+                "next": "Next",
+                "page": "Page",
+                "of": "of"
             }
         }
     },

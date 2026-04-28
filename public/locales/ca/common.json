@@ -88,6 +88,7 @@
   "auth": {
     "login": {
       "title": "Bentornat",
+      "tagline": "La teva experiència gastronòmica Premium",
       "subtitle": "Inicia sessió per accedir al teu panell principal",
       "tabs": {
         "customer": "Client",
@@ -110,6 +111,7 @@
     },
     "register": {
       "title": "Crear nou compte",
+      "tagline": "Uneix-te a la nostra comunitat avui mateix",
       "subtitle": "Omple les teves dades i comença a gaudir",
       "form": {
         "fullName": "Nom complet",
@@ -117,6 +119,7 @@
         "email": "Correu electrònic",
         "emailPlaceholder": "tu@email.com",
         "password": "Contrasenya",
+        "passwordPlaceholder": "••••••••",
         "confirmPassword": "Confirmar contrasenya",
         "rules": {
           "length": "Mínim 8 caràcters de longitud",
@@ -138,10 +141,15 @@
     }
   },
   "dashboard": {
+    "noAuthorized": "No autoritzat",
+    "noAuthorizedDesc": "Has d'iniciar sessió per accedir al taulell.",
+    "unknownRole": "Rol no reconegut",
+    "unknownRoleDesc": "El teu rol d'usuari no està configurat correctament.",
     "customer": {
       "loading": "Carregant la teva experiència…",
       "welcome": "Bentornat,",
       "discover": "Descobreix sabors que t'esperen avui",
+      "badge": "badge",
       "stats": {
         "totalPoints": "Punts totals",
         "visits": "Visites",
@@ -149,6 +157,7 @@
         "favorites": "Preferits"
       },
       "searchPlaceholder": "Buscar restaurants o ciutats…",
+      "noRestaurantName": "Restaurant",
       "sections": {
         "favorites": "Els teus preferits",
         "nearYou": "Prop teu",
@@ -203,6 +212,12 @@
         "records": "de registres",
         "client": "Client",
         "none": "Encara no hi ha visites registrades"
+      },
+      "pagination": {
+        "previous": "Anterior",
+        "next": "Següent",
+        "page": "Pàgina",
+        "of": "de"
       }
     }
   },

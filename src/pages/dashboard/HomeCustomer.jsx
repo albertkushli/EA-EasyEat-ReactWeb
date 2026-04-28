@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { LogOut, User, MapPin, Star, Search, Coins, Trophy, Heart, Clock, ChevronRight, Flame } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import apiClient from '../../lib/apiClient';
+import { useTranslation } from 'react-i18next';
 
 const DEFAULT_META = { total: 0, page: 1, limit: 1, totalPages: 1 };
 
@@ -26,6 +27,7 @@ function parsePaginatedListResponse(payload, fallbackLimit = 10) {
 }
 
 export default function HomeCustomer() {
+  const { t, i18n } = useTranslation();
   const { user, logout, token } = useAuth();
   const [restaurants, setRestaurants] = useState([]);
   const [restaurantsMeta, setRestaurantsMeta] = useState(DEFAULT_META);
@@ -39,7 +41,7 @@ export default function HomeCustomer() {
   const [search, setSearch] = useState('');
 
   // Ensure pointsWallet is an array before reducing
-  const totalPoints = Array.isArray(pointsWallet) 
+  const totalPoints = Array.isArray(pointsWallet)
     ? pointsWallet.reduce((sum, w) => sum + (w.points || 0), 0)
     : 0;
 
@@ -112,7 +114,7 @@ export default function HomeCustomer() {
     return (
       <div className="hc-loading">
         <div className="hc-loading__spinner" />
-        <p>Cargando tu experiencia…</p>
+        <p>{t("dashboard.customer.loading")}</p>
       </div>
     );
   }
@@ -124,14 +126,14 @@ export default function HomeCustomer() {
         <div className="hc-header__inner">
           <div className="hc-brand">
             <span className="hc-brand__icon">🍽️</span>
-            <span className="hc-brand__name">EasyEat</span>
+            <span className="hc-brand__name">{t("navbar.logo")}</span>
           </div>
           <div className="hc-header__right">
             <div className="hc-user-pill">
               <div className="hc-user-avatar">{user?.name?.[0]?.toUpperCase()}</div>
               <span>{user?.name?.split(' ')[0]}</span>
             </div>
-            <button onClick={logout} className="hc-logout-btn" title="Cerrar sesión">
+            <button onClick={logout} className="hc-logout-btn" title={t("navbar.links.logout")}>
               <LogOut size={18} />
             </button>
           </div>
@@ -143,9 +145,9 @@ export default function HomeCustomer() {
         {/* ── Hero Welcome ── */}
         <section className="hc-hero">
           <div className="hc-hero__text">
-            <p className="hc-hero__greeting">Bienvenido de vuelta,</p>
+            <p className="hc-hero__greeting">{t("dashboard.customer.welcome")}</p>
             <h1 className="hc-hero__name">{user?.name?.split(' ')[0]} 👋</h1>
-            <p className="hc-hero__sub">Descubre sabores que te esperan hoy</p>
+            <p className="hc-hero__sub">{t("dashboard.customer.discover")}</p>
           </div>
           <div className="hc-hero__orbs">
             <div className="hc-orb hc-orb--1" />
@@ -159,28 +161,28 @@ export default function HomeCustomer() {
             <div className="hc-stat-card__icon"><Coins size={22} /></div>
             <div className="hc-stat-card__info">
               <span className="hc-stat-card__value">{totalPoints.toLocaleString()}</span>
-              <span className="hc-stat-card__label">Puntos totales</span>
+              <span className="hc-stat-card__label">{t("dashboard.customer.stats.totalPoints")}</span>
             </div>
           </div>
           <div className="hc-stat-card hc-stat-card--visits">
             <div className="hc-stat-card__icon"><Flame size={22} /></div>
             <div className="hc-stat-card__info">
               <span className="hc-stat-card__value">{Array.isArray(visits) ? visits.length : 0}</span>
-              <span className="hc-stat-card__label">Visitas</span>
+              <span className="hc-stat-card__label">{t("dashboard.customer.stats.visits")}</span>
             </div>
           </div>
           <div className="hc-stat-card hc-stat-card--badges">
             <div className="hc-stat-card__icon"><Trophy size={22} /></div>
             <div className="hc-stat-card__info">
               <span className="hc-stat-card__value">{Array.isArray(badges) ? badges.length : 0}</span>
-              <span className="hc-stat-card__label">Badges</span>
+              <span className="hc-stat-card__label">{t("dashboard.customer.stats.badges")}</span>
             </div>
           </div>
           <div className="hc-stat-card hc-stat-card--favs">
             <div className="hc-stat-card__icon"><Heart size={22} /></div>
             <div className="hc-stat-card__info">
               <span className="hc-stat-card__value">{Array.isArray(favoriteRestaurants) ? favoriteRestaurants.length : 0}</span>
-              <span className="hc-stat-card__label">Favoritos</span>
+              <span className="hc-stat-card__label">{t("dashboard.customer.stats.favorites")}</span>
             </div>
           </div>
         </section>
@@ -192,7 +194,7 @@ export default function HomeCustomer() {
             <input
               className="hc-search__input"
               type="text"
-              placeholder="Buscar restaurantes o ciudades…"
+              placeholder={t("dashboard.customer.searchPlaceholder")}
               value={search}
               onChange={e => setSearch(e.target.value)}
             />
@@ -203,7 +205,7 @@ export default function HomeCustomer() {
         {Array.isArray(favoriteRestaurants) && favoriteRestaurants.length > 0 && (
           <section className="hc-section">
             <div className="hc-section__head">
-              <h2 className="hc-section__title"><Heart size={18} /> Tus favoritos</h2>
+              <h2 className="hc-section__title"><Heart size={18} /> {t("dashboard.customer.sections.favorites")}</h2>
             </div>
             <div className="hc-cards hc-cards--favs">
               {favoriteRestaurants.slice(0, 3).map((r, i) => (
@@ -216,8 +218,8 @@ export default function HomeCustomer() {
         {/* ── Todos los restaurantes ── */}
         <section className="hc-section">
           <div className="hc-section__head">
-            <h2 className="hc-section__title"><MapPin size={18} /> Cerca de ti</h2>
-            <span className="hc-section__count">{filtered.length} en esta página · {restaurantsMeta.total} total</span>
+            <h2 className="hc-section__title"><MapPin size={18} /> {t("dashboard.customer.sections.nearYou")}</h2>
+            <span className="hc-section__count">{filtered.length} {t("dashboard.customer.results.onThisPage")} · {restaurantsMeta.total} {t("dashboard.customer.results.total")}</span>
           </div>
           {filtered.length > 0 ? (
             <div className="hc-cards">
@@ -227,7 +229,7 @@ export default function HomeCustomer() {
             </div>
           ) : (
             <div className="hc-empty">
-              <p>No se encontraron restaurantes para "<strong>{search}</strong>"</p>
+              <p>{t("dashboard.customer.results.noResults")} "<strong>{search}</strong>"</p>
             </div>
           )}
           <div className="hc-pagination">
@@ -237,10 +239,10 @@ export default function HomeCustomer() {
               disabled={restaurantsMeta.page <= 1}
               onClick={() => setRestaurantsPage(prev => Math.max(1, prev - 1))}
             >
-              Anterior
+              {t("dashboard.customer.pagination.previous")}
             </button>
             <span className="hc-pagination__info">
-              Página {restaurantsMeta.page} de {restaurantsMeta.totalPages}
+              {t("dashboard.customer.pagination.page")} {restaurantsMeta.page} {t("dashboard.customer.pagination.of")} {restaurantsMeta.totalPages}
             </span>
             <button
               type="button"
@@ -248,7 +250,7 @@ export default function HomeCustomer() {
               disabled={restaurantsMeta.page >= restaurantsMeta.totalPages}
               onClick={() => setRestaurantsPage(prev => Math.min(restaurantsMeta.totalPages, prev + 1))}
             >
-              Siguiente
+              {t("dashboard.customer.pagination.next")}
             </button>
           </div>
         </section>
@@ -257,15 +259,15 @@ export default function HomeCustomer() {
         {Array.isArray(visits) && visits.length > 0 && (
           <section className="hc-section">
             <div className="hc-section__head">
-              <h2 className="hc-section__title"><Clock size={18} /> Visitas recientes</h2>
+              <h2 className="hc-section__title"><Clock size={18} /> {t("dashboard.customer.sections.recentVisits")}</h2>
             </div>
             <div className="hc-visits">
               {visits.slice(0, 5).map((v, i) => (
                 <div key={i} className="hc-visit-item">
                   <div className="hc-visit-item__dot" />
                   <div className="hc-visit-item__info">
-                    <span className="hc-visit-item__name">{v.restaurant_id?.profile?.name || v.restaurant_name || 'Restaurante'}</span>
-                    <span className="hc-visit-item__date">{new Date(v.date || v.createdAt).toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric' })}</span>
+                    <span className="hc-visit-item__name">{v.restaurant_id?.profile?.name || v.restaurant_name || t("dashboard.noRestaurantName")}</span>
+                    <span className="hc-visit-item__date">{new Date(v.date || v.createdAt).toLocaleDateString(i18n.language, { day: 'numeric', month: 'short', year: 'numeric' })}</span>
                   </div>
                   {v.pointsEarned && (
                     <span className="hc-visit-item__pts">+{v.pointsEarned} pts</span>
@@ -281,13 +283,13 @@ export default function HomeCustomer() {
         {Array.isArray(badges) && badges.length > 0 && (
           <section className="hc-section">
             <div className="hc-section__head">
-              <h2 className="hc-section__title"><Trophy size={18} /> Tus logros</h2>
+              <h2 className="hc-section__title"><Trophy size={18} /> {t("dashboard.customer.sections.achievements")}</h2>
             </div>
             <div className="hc-badges">
               {badges.map((b, i) => (
                 <div key={i} className="hc-badge">
                   <div className="hc-badge__icon">{b.icon || '🏅'}</div>
-                  <span className="hc-badge__name">{b.title || `Badge ${i + 1}`}</span>
+                  <span className="hc-badge__name">{b.title || `${t("dashboard.customer.badge")} ${i + 1}`}</span>
                 </div>
               ))}
             </div>
