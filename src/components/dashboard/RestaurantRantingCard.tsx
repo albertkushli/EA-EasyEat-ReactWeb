@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import apiClient from '../../lib/apiClient';
+import { useTranslation } from 'react-i18next';
 
 type RestaurantData = {
   profile?: {
@@ -9,6 +10,7 @@ type RestaurantData = {
 };
 
 export default function RestaurantRantingCard() {
+  const { t } = useTranslation();
   const authCtx = useAuth() as any;
   const restaurantId = String(authCtx?.user?.restaurant_id ?? '');
   const [restaurant, setRestaurant] = useState<RestaurantData | null>(null);
@@ -49,9 +51,9 @@ export default function RestaurantRantingCard() {
         padding: 16,
       }}
     >
-      <h3 style={{ margin: 0, marginBottom: 10 }}>Restaurant Rating</h3>
+      <h3 style={{ margin: 0, marginBottom: 10 }}>{t("components.restaurantRating.title")}</h3>
       {loading ? (
-        <p style={{ margin: 0, color: 'var(--clr-text-muted)' }}>Cargando...</p>
+        <p style={{ margin: 0, color: 'var(--clr-text-muted)' }}>{t("components.restaurantRating.loading")}</p>
       ) : (
         <p style={{ margin: 0, fontWeight: 700 }}>⭐ {safeRating.toFixed(1)}</p>
       )}

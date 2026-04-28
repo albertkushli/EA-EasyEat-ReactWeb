@@ -218,6 +218,9 @@
         "next": "Siguiente",
         "page": "Página",
         "of": "de"
+      },
+      "status": {
+        "sevenPreviousDays": "7 días anteriores"
       }
     }
   },
@@ -229,6 +232,61 @@
       "active": "Activo",
       "inactive": "Inactivo",
       "visits": "visitas"
+    },
+    "metrics": {
+      "avgPointsVisit": "Puntos Medios / Visita",
+      "avgRating": "Rating Medio",
+      "loyalCustomers": "Clientes Fieles"
+    },
+    "trends": {
+      "title": "Evolución temporal",
+      "subtitle": "Visitas reales por día, predicción simple y contexto comparativo de 7 días.",
+      "badge": "+7 días",
+      "visits": "Visitas",
+      "revenue": "Revenue",
+      "rating": "Rating",
+      "noData": "Sin dato",
+      "lowRating": "⚠️ Rating bajo",
+      "correctLevel": "Nivel correcto",
+      "realVisits": "Visitas reales",
+      "prediction7Days": "Predicción 7 días",
+      "prediction": "Predicción",
+      "empty": "Todavía no hay visitas suficientes para construir la tendencia.",
+      "realData": "Datos reales",
+      "alerts": {
+        "visitsDrop": "⚠️ Caída significativa de visitas esta semana",
+        "revenueLow": "⚠️ Revenue bajo este periodo",
+        "goodPerformance": "✅ Buen rendimiento general del restaurante"
+      }
+    },
+    "restaurantCard": {
+      "defaultCategory": "General",
+      "defaultCity": "Barcelona"
+    },
+    "peakHours": {
+      "title": "Horas de Pico",
+      "noVisits": "No hay visitas registradas todavía.",
+      "chartTitle": "Horas de pico"
+    },
+    "topDishes": {
+      "title": "Platos Top",
+      "loading": "Cargando...",
+      "none": "No hay platos valorados todavía."
+    },
+    "restaurantRating": {
+      "title": "Calificación del Restaurante",
+      "loading": "Cargando..."
+    },
+    "reviewScores": {
+      "title": "Puntuaciones de Reseñas",
+      "noReviews": "No hay reviews para este restaurante todavía.",
+      "average": "Promedio",
+      "categories": {
+        "food": "Comida",
+        "service": "Servicio",
+        "cleanliness": "Limpieza",
+        "environment": "Ambiente"
+      }
     }
   }
 }

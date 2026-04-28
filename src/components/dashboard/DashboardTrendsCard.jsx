@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   CartesianGrid,
   Line,
@@ -8,23 +9,6 @@ import {
   XAxis,
   YAxis,
 } from 'recharts';
-
-const DATE_FORMATTER = new Intl.DateTimeFormat('es-ES', {
-  day: '2-digit',
-  month: '2-digit',
-  year: 'numeric',
-});
-
-const SHORT_DATE_FORMATTER = new Intl.DateTimeFormat('es-ES', {
-  day: '2-digit',
-  month: '2-digit',
-});
-
-const REVENUE_FORMATTER = new Intl.NumberFormat('es-ES', {
-  style: 'currency',
-  currency: 'EUR',
-  maximumFractionDigits: 0,
-});
 
 const DEFAULT_REVENUE_THRESHOLD = 300;
 
@@ -43,16 +27,10 @@ function addDays(date, amount) {
   return nextDate;
 }
 
-function formatDate(date) {
-  return DATE_FORMATTER.format(date);
-}
-
-function formatShortDate(date) {
-  return SHORT_DATE_FORMATTER.format(date);
-}
-
-function groupVisitsByDay(visits = []) {
+function groupVisitsByDay(visits = [], locale) {
   const groupedVisits = new Map();
+  const dateOptions = { day: '2-digit', month: '2-digit', year: 'numeric' };
+  const shortDateOptions = { day: '2-digit', month: '2-digit' };
 
   visits.forEach((visit) => {
     const date = toValidDate(visit?.date || visit?.createdAt);
@@ -60,8 +38,8 @@ function groupVisitsByDay(visits = []) {
 
     const timestamp = startOfDayTimestamp(date);
     const current = groupedVisits.get(timestamp) || {
-      date: formatDate(date),
-      chartDate: formatShortDate(date),
+      date: date.toLocaleDateString(locale, dateOptions),
+      chartDate: date.toLocaleDateString(locale, shortDateOptions),
       timestamp,
       visits: 0,
       revenue: 0,
@@ -75,8 +53,8 @@ function groupVisitsByDay(visits = []) {
   return Array.from(groupedVisits.values()).sort((a, b) => a.timestamp - b.timestamp);
 }
 
-function getDailyLookup(visits = []) {
-  return groupVisitsByDay(visits).reduce((lookup, day) => {
+function getDailyLookup(visits = [], locale) {
+  return groupVisitsByDay(visits, locale).reduce((lookup, day) => {
     lookup.set(day.timestamp, day);
     return lookup;
   }, new Map());
@@ -102,10 +80,10 @@ function calculatePercentageChange(current, previous) {
   return ((current - previous) / previous) * 100;
 }
 
-function formatChangeLabel(change) {
-  if (change == null || Number.isNaN(change)) return 'Sin comparación';
+function formatChangeLabel(change, t) {
+  if (change == null || Number.isNaN(change)) return t("common.noComparison");
   const sign = change >= 0 ? '+' : '';
-  return `${change >= 0 ? '📈' : '📉'} ${sign}${Math.abs(change).toFixed(1)}% vs 7 días anteriores`;
+  return `${change >= 0 ? '📈' : '📉'} ${sign}${Math.abs(change).toFixed(1)}% vs ${t("dashboard.employee.status.sevenPreviousDays")}`;
 }
 
 function getChangeTone(change) {
@@ -115,7 +93,7 @@ function getChangeTone(change) {
   return 'neutral';
 }
 
-function buildPredictedDays(dailyData) {
+function buildPredictedDays(dailyData, locale) {
   if (!dailyData.length) return [];
 
   const recentDays = dailyData.slice(-7);
@@ -123,12 +101,15 @@ function buildPredictedDays(dailyData) {
   const predictedVisits = Math.max(0, Math.round(averageVisits));
   const lastTimestamp = dailyData[dailyData.length - 1].timestamp;
 
+  const dateOptions = { day: '2-digit', month: '2-digit', year: 'numeric' };
+  const shortDateOptions = { day: '2-digit', month: '2-digit' };
+
   return Array.from({ length: 7 }, (_, index) => {
     const futureDate = addDays(new Date(lastTimestamp), index + 1);
 
     return {
-      date: formatDate(futureDate),
-      chartDate: formatShortDate(futureDate),
+      date: futureDate.toLocaleDateString(locale, dateOptions),
+      chartDate: futureDate.toLocaleDateString(locale, shortDateOptions),
       timestamp: startOfDayTimestamp(futureDate),
       visits: predictedVisits,
       predicted: true,
@@ -136,8 +117,8 @@ function buildPredictedDays(dailyData) {
   });
 }
 
-function buildChartData(visits) {
-  const groupedDays = groupVisitsByDay(visits);
+function buildChartData(visits, locale) {
+  const groupedDays = groupVisitsByDay(visits, locale);
 
   const realDays = groupedDays.map((day) => ({
     ...day,
@@ -146,7 +127,7 @@ function buildChartData(visits) {
     predictedVisits: null,
   }));
 
-  const predictedDays = buildPredictedDays(groupedDays).map((day) => ({
+  const predictedDays = buildPredictedDays(groupedDays, locale).map((day) => ({
     ...day,
     actualVisits: null,
     predictedVisits: day.visits,
@@ -172,29 +153,29 @@ function splitChartData(chartData) {
   };
 }
 
-function buildAlerts({ averageRating, visitsChange, currentRevenue, revenueThreshold }) {
+function buildAlerts({ averageRating, visitsChange, currentRevenue, revenueThreshold, t }) {
   const alerts = [];
 
   if (averageRating != null && averageRating < 7) {
-    alerts.push({ id: 'rating-low', tone: 'danger', text: '⚠️ El rating del restaurante es bajo' });
+    alerts.push({ id: 'rating-low', tone: 'danger', text: t("components.trends.alerts.ratingLow") });
   }
 
   if (visitsChange != null && visitsChange < -10) {
-    alerts.push({ id: 'visits-drop', tone: 'danger', text: '⚠️ Caída significativa de visitas esta semana' });
+    alerts.push({ id: 'visits-drop', tone: 'danger', text: t("components.trends.alerts.visitsDrop") });
   }
 
   if (currentRevenue < revenueThreshold) {
-    alerts.push({ id: 'revenue-low', tone: 'warning', text: '⚠️ Revenue bajo este periodo' });
+    alerts.push({ id: 'revenue-low', tone: 'warning', text: t("components.trends.alerts.revenueLow") });
   }
 
   if (!alerts.length) {
-    alerts.push({ id: 'good-performance', tone: 'success', text: '✅ Buen rendimiento general del restaurante' });
+    alerts.push({ id: 'good-performance', tone: 'success', text: t("components.trends.alerts.goodPerformance") });
   }
 
   return alerts;
 }
 
-function TrendsTooltip({ active, payload, label }) {
+function TrendsTooltip({ active, payload, label, t }) {
   if (!active || !payload?.length) return null;
 
   const point = payload[0];
@@ -214,7 +195,7 @@ function TrendsTooltip({ active, payload, label }) {
         {label}
       </div>
       <div style={{ color: 'var(--clr-text)', fontSize: '0.85rem', fontWeight: 700 }}>
-        Visitas: {point?.value ?? 0}
+        {t("components.trends.visits")}: {point?.value ?? 0}
       </div>
     </div>
   );
@@ -225,11 +206,14 @@ export default function DashboardTrendsCard({
   averageRating = null,
   revenueThreshold = DEFAULT_REVENUE_THRESHOLD,
 }) {
-  const chartData = useMemo(() => buildChartData(visits), [visits]);
+  const { t, i18n } = useTranslation();
+  const locale = i18n.language;
+
+  const chartData = useMemo(() => buildChartData(visits, locale), [visits, locale]);
   const { realData, predictedData } = useMemo(() => splitChartData(chartData), [chartData]);
 
   const { currentPeriod, previousPeriod } = useMemo(() => {
-    const orderedDays = groupVisitsByDay(visits);
+    const orderedDays = groupVisitsByDay(visits, locale);
 
     if (!orderedDays.length) {
       return {
@@ -238,7 +222,7 @@ export default function DashboardTrendsCard({
       };
     }
 
-    const dailyLookup = getDailyLookup(visits);
+    const dailyLookup = getDailyLookup(visits, locale);
     const latestDay = orderedDays[orderedDays.length - 1].timestamp;
     const currentStart = addDays(new Date(latestDay), -6);
     const currentEnd = new Date(latestDay);
@@ -249,7 +233,7 @@ export default function DashboardTrendsCard({
       currentPeriod: getPeriodTotals(dailyLookup, currentStart, currentEnd),
       previousPeriod: getPeriodTotals(dailyLookup, previousStart, previousEnd),
     };
-  }, [visits]);
+  }, [visits, locale]);
 
   const visitsChange = calculatePercentageChange(currentPeriod.visits, previousPeriod.visits);
   const revenueChange = calculatePercentageChange(currentPeriod.revenue, previousPeriod.revenue);
@@ -260,48 +244,55 @@ export default function DashboardTrendsCard({
       visitsChange,
       currentRevenue: currentPeriod.revenue,
       revenueThreshold,
+      t,
     }),
-    [averageRating, visitsChange, currentPeriod.revenue, revenueThreshold],
+    [averageRating, visitsChange, currentPeriod.revenue, revenueThreshold, t],
   );
+
+  const revenueFormatter = new Intl.NumberFormat(locale, {
+    style: 'currency',
+    currency: 'EUR',
+    maximumFractionDigits: 0,
+  });
 
   return (
     <section className="he-trends-card">
       <div className="he-trends-card__header">
         <div>
-          <h3 className="he-trends-card__title">Evolución temporal</h3>
+          <h3 className="he-trends-card__title">{t("components.trends.title")}</h3>
           <p className="he-trends-card__subtitle">
-            Visitas reales por día, predicción simple y contexto comparativo de 7 días.
+            {t("components.trends.subtitle")}
           </p>
         </div>
-        <span className="he-trends-card__badge">+7 días</span>
+        <span className="he-trends-card__badge">{t("components.trends.badge")}</span>
       </div>
 
       <div className="he-trends-card__summary">
         <div className="he-trends-card__metric">
-          <span className="he-trends-card__metric-label">Visitas</span>
+          <span className="he-trends-card__metric-label">{t("components.trends.visits")}</span>
           <strong className="he-trends-card__metric-value">{currentPeriod.visits}</strong>
           <span className={`he-trends-card__metric-change he-trends-card__metric-change--${getChangeTone(visitsChange)}`}>
-            {formatChangeLabel(visitsChange)}
+            {formatChangeLabel(visitsChange, t)}
           </span>
         </div>
 
         <div className="he-trends-card__metric">
-          <span className="he-trends-card__metric-label">Revenue</span>
+          <span className="he-trends-card__metric-label">{t("components.trends.revenue")}</span>
           <strong className="he-trends-card__metric-value">
-            {REVENUE_FORMATTER.format(currentPeriod.revenue)}
+            {revenueFormatter.format(currentPeriod.revenue)}
           </strong>
           <span className={`he-trends-card__metric-change he-trends-card__metric-change--${getChangeTone(revenueChange)}`}>
-            {formatChangeLabel(revenueChange)}
+            {formatChangeLabel(revenueChange, t)}
           </span>
         </div>
 
         <div className="he-trends-card__metric">
-          <span className="he-trends-card__metric-label">Rating</span>
+          <span className="he-trends-card__metric-label">{t("components.trends.rating")}</span>
           <strong className="he-trends-card__metric-value">
             {averageRating == null ? '—' : averageRating.toFixed(1)}
           </strong>
           <span className={`he-trends-card__metric-change he-trends-card__metric-change--${averageRating != null && averageRating < 7 ? 'negative' : 'neutral'}`}>
-            {averageRating == null ? 'Sin dato' : averageRating < 7 ? '⚠️ Rating bajo' : 'Nivel correcto'}
+            {averageRating == null ? t("components.trends.noData") : averageRating < 7 ? t("components.trends.lowRating") : t("components.trends.correctLevel")}
           </span>
         </div>
       </div>
@@ -309,14 +300,14 @@ export default function DashboardTrendsCard({
       {chartData.length > 0 ? (
         <div className="he-trends-card__charts">
           <div className="he-trends-card__panel">
-            <div className="he-trends-card__panel-title">Visitas reales</div>
+            <div className="he-trends-card__panel-title">{t("components.trends.realVisits")}</div>
             <div style={{ width: '100%', height: 240 }}>
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={realData} margin={{ top: 10, right: 10, left: -10, bottom: 0 }}>
                   <CartesianGrid strokeDasharray="4 4" opacity={0.12} />
                   <XAxis dataKey="chartDate" tickMargin={8} />
                   <YAxis allowDecimals={false} tickMargin={8} />
-                  <Tooltip content={<TrendsTooltip />} />
+                  <Tooltip content={<TrendsTooltip t={t} />} />
                   <Line
                     type="monotone"
                     dataKey="visits"
@@ -325,7 +316,7 @@ export default function DashboardTrendsCard({
                     dot={{ r: 4, fill: 'rgba(249, 115, 22, 0.95)', stroke: 'rgba(249, 115, 22, 1)', strokeWidth: 1 }}
                     activeDot={{ r: 6, fill: 'rgba(249, 115, 22, 1)', stroke: 'rgba(249, 115, 22, 1)' }}
                     connectNulls={false}
-                    name="Visitas reales"
+                    name={t("components.trends.realVisits")}
                   />
                 </LineChart>
               </ResponsiveContainer>
@@ -333,14 +324,14 @@ export default function DashboardTrendsCard({
           </div>
 
           <div className="he-trends-card__panel">
-            <div className="he-trends-card__panel-title">Predicción 7 días</div>
+            <div className="he-trends-card__panel-title">{t("components.trends.prediction7Days")}</div>
             <div style={{ width: '100%', height: 240 }}>
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={predictedData} margin={{ top: 10, right: 10, left: -10, bottom: 0 }}>
                   <CartesianGrid strokeDasharray="4 4" opacity={0.12} />
                   <XAxis dataKey="chartDate" tickMargin={8} />
                   <YAxis allowDecimals={false} tickMargin={8} />
-                  <Tooltip content={<TrendsTooltip />} />
+                  <Tooltip content={<TrendsTooltip t={t} />} />
                   <Line
                     type="monotone"
                     dataKey="visits"
@@ -350,7 +341,7 @@ export default function DashboardTrendsCard({
                     dot={{ r: 4, fill: 'rgba(16, 185, 129, 0.9)', stroke: 'rgba(16, 185, 129, 1)', strokeWidth: 1 }}
                     activeDot={{ r: 6, fill: 'rgba(16, 185, 129, 1)', stroke: 'rgba(16, 185, 129, 1)' }}
                     connectNulls={false}
-                    name="Predicción"
+                    name={t("components.trends.prediction")}
                   />
                 </LineChart>
               </ResponsiveContainer>
@@ -359,7 +350,7 @@ export default function DashboardTrendsCard({
         </div>
       ) : (
         <div className="he-trends-card__empty">
-          Todavía no hay visitas suficientes para construir la tendencia.
+          {t("components.trends.empty")}
         </div>
       )}
 
@@ -372,8 +363,8 @@ export default function DashboardTrendsCard({
       </div>
 
       <div className="he-trends-card__legend">
-        <span><i className="he-trends-card__dot he-trends-card__dot--real" /> Datos reales</span>
-        <span><i className="he-trends-card__dot he-trends-card__dot--predicted" /> Predicción</span>
+        <span><i className="he-trends-card__dot he-trends-card__dot--real" /> {t("components.trends.realData")}</span>
+        <span><i className="he-trends-card__dot he-trends-card__dot--predicted" /> {t("components.trends.prediction")}</span>
       </div>
     </section>
   );

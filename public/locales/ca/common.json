@@ -20,7 +20,8 @@
       "customer": "Sóc client",
       "restaurant": "Sóc restaurant",
       "admin": "Ets administrador? Accedeix aquí"
-    }
+    },
+    "tagline": "Uneix-te a la revolució del food-loyalty"
   },
   "features": {
     "foodie": {
@@ -218,6 +219,9 @@
         "next": "Següent",
         "page": "Pàgina",
         "of": "de"
+      },
+      "status": {
+        "sevenPreviousDays": "7 dies anteriors"
       }
     }
   },
@@ -229,6 +233,61 @@
       "active": "Actiu",
       "inactive": "Inactiu",
       "visits": "visites"
+    },
+    "metrics": {
+      "avgPointsVisit": "Punts Mitjans / Visita",
+      "avgRating": "Rating Mitjà",
+      "loyalCustomers": "Clients Fidels"
+    },
+    "trends": {
+      "title": "Evolució temporal",
+      "subtitle": "Visites reals per dia, predicció simple i context comparatiu de 7 dies.",
+      "badge": "+7 dies",
+      "visits": "Visites",
+      "revenue": "Revenue",
+      "rating": "Rating",
+      "noData": "Sense dades",
+      "lowRating": "⚠️ Rating baix",
+      "correctLevel": "Nivell correcte",
+      "realVisits": "Visites reals",
+      "prediction7Days": "Predicció 7 dies",
+      "prediction": "Predicció",
+      "empty": "Encara no hi ha prou visites per construir la tendència.",
+      "realData": "Dades reals",
+      "alerts": {
+        "visitsDrop": "⚠️ Caiguda significativa de visites aquesta setmana",
+        "revenueLow": "⚠️ Revenue baix aquest període",
+        "goodPerformance": "✅ Bon rendiment general del restaurant"
+      }
+    },
+    "restaurantCard": {
+      "defaultCategory": "General",
+      "defaultCity": "Barcelona"
+    },
+    "peakHours": {
+      "title": "Hores Pic",
+      "noVisits": "Encara no hi ha visites registrades.",
+      "chartTitle": "Hores pic"
+    },
+    "topDishes": {
+      "title": "Plats Top",
+      "loading": "Carregant...",
+      "none": "Encara no hi ha plats valorats."
+    },
+    "restaurantRating": {
+      "title": "Qualificació del Restaurant",
+      "loading": "Carregant..."
+    },
+    "reviewScores": {
+      "title": "Puntuacions de Ressenyes",
+      "noReviews": "Encara no hi ha reviews per a aquest restaurant.",
+      "average": "Mitjana",
+      "categories": {
+        "food": "Menjar",
+        "service": "Servei",
+        "cleanliness": "Neteja",
+        "environment": "Ambient"
+      }
     }
   }
 }

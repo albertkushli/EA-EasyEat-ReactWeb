@@ -218,6 +218,9 @@
                 "next": "Next",
                 "page": "Page",
                 "of": "of"
+            },
+            "status": {
+                "sevenPreviousDays": "7 previous days"
             }
         }
     },
@@ -229,6 +232,61 @@
             "active": "Active",
             "inactive": "Inactive",
             "visits": "visits"
+        },
+        "metrics": {
+            "avgPointsVisit": "Avg Points / Visit",
+            "avgRating": "Avg Rating",
+            "loyalCustomers": "Loyal Customers"
+        },
+        "trends": {
+            "title": "Temporal evolution",
+            "subtitle": "Real visits per day, simple prediction and 7-day comparative context.",
+            "badge": "+7 days",
+            "visits": "Visits",
+            "revenue": "Revenue",
+            "rating": "Rating",
+            "noData": "No data",
+            "lowRating": "⚠️ Low rating",
+            "correctLevel": "Correct level",
+            "realVisits": "Real visits",
+            "prediction7Days": "7-day prediction",
+            "prediction": "Prediction",
+            "empty": "Not enough visits to build the trend yet.",
+            "realData": "Real data",
+            "alerts": {
+                "visitsDrop": "⚠️ Significant drop in visits this week",
+                "revenueLow": "⚠️ Low revenue this period",
+                "goodPerformance": "✅ Good overall restaurant performance"
+            }
+        },
+        "restaurantCard": {
+            "defaultCategory": "General",
+            "defaultCity": "Barcelona"
+        },
+        "peakHours": {
+            "title": "Peak Visit Hours",
+            "noVisits": "No visits registered yet.",
+            "chartTitle": "Peak hours"
+        },
+        "topDishes": {
+            "title": "Top Dishes",
+            "loading": "Loading...",
+            "none": "No rated dishes yet."
+        },
+        "restaurantRating": {
+            "title": "Restaurant Rating",
+            "loading": "Loading..."
+        },
+        "reviewScores": {
+            "title": "Review Scores",
+            "noReviews": "No reviews for this restaurant yet.",
+            "average": "Average",
+            "categories": {
+                "food": "Food",
+                "service": "Service",
+                "cleanliness": "Cleanliness",
+                "environment": "Environment"
+            }
         }
     }
 }
