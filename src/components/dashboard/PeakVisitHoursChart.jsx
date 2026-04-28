@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import {
   LineChart,
   Line,
@@ -57,20 +58,21 @@ function buildPeakVisitStats(visits, restaurantId) {
 }
 
 export default function PeakVisitHoursChart({ visits = [], restaurantId }) {
+  const { t } = useTranslation();
   const data = buildPeakVisitStats(visits, restaurantId);
   const hasVisits = data.length > 0;
 
   if (!hasVisits) {
     return (
       <p style={{ color: 'var(--clr-text-muted)', fontSize: 'var(--text-sm)' }}>
-        No hay visitas registradas todavía.
+        {t("components.peakHours.noVisits")}
       </p>
     );
   }
 
   return (
     <div style={{ width: '100%', height: 220 }}>
-              <h3>Horas de pico</h3>
+      <h3>{t("components.peakHours.chartTitle")}</h3>
 
       <ResponsiveContainer width="100%" height="100%">
         <LineChart data={data}>

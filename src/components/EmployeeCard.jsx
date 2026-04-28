@@ -1,13 +1,4 @@
-// ════════════════════════════════════════════════
-// FORMATTERS (Funciones de formato centralizadas)
-// ════════════════════════════════════════════════
-
-const CURRENCY_FORMATTER = new Intl.NumberFormat('es-ES', {
-  style: 'currency',
-  currency: 'EUR',
-  minimumFractionDigits: 0,
-  maximumFractionDigits: 0,
-});
+import { useTranslation } from 'react-i18next';
 
 // ════════════════════════════════════════════════
 // HELPERS
@@ -27,14 +18,15 @@ function safeToNumber(value, fallback = 0) {
 /**
  * Extrae datos del perfil de un empleado con valores por defecto
  * @param {Object} employee - Objeto empleado
+ * @param {Function} t - Traduction function
  * @returns {Object} Datos del perfil normalizados
  */
-function extractEmployeeProfile(employee) {
+function extractEmployeeProfile(employee, t) {
   const profile = employee?.profile || {};
   return {
-    name: profile?.name || 'Sin nombre',
-    email: profile?.email || 'Sin email',
-    phone: profile?.phone || 'Sin teléfono',
+    name: profile?.name || t("components.employeeCard.noName"),
+    email: profile?.email || t("components.employeeCard.noEmail"),
+    phone: profile?.phone || t("components.employeeCard.noPhone"),
     role: profile?.role || 'staff',
   };
 }
@@ -49,7 +41,7 @@ function extractEmployeeProfile(employee) {
  */
 function extractEmployeeStats(employee, visits = []) {
   const stats = employee?.stats || {};
-  
+
   // Busca visitas en diferentes propiedades posibles
   let visits_count = safeToNumber(stats?.visits, 0);
   if (visits_count === 0) visits_count = safeToNumber(stats?.totalVisits, 0);
@@ -89,13 +81,14 @@ function extractEmployeeStats(employee, visits = []) {
 /**
  * Determina el estado del empleado (Activo/Inactivo)
  * @param {Object} employee - Objeto empleado
+ * @param {Function} t - Traduction function
  * @returns {Object} Estado y clase CSS
  */
-function extractEmployeeStatus(employee) {
+function extractEmployeeStatus(employee, t) {
   const isActive = Boolean(employee?.active);
   return {
     isActive,
-    label: isActive ? 'Activo' : 'Inactivo',
+    label: isActive ? t("components.employeeCard.active") : t("components.employeeCard.inactive"),
     className: isActive ? 'he-active' : 'he-inactive',
   };
 }
@@ -123,14 +116,21 @@ function EmployeeInfo({ profile }) {
 /**
  * Sección de estadísticas del empleado
  */
-function EmployeeStats({ stats }) {
+function EmployeeStats({ stats, locale, t }) {
+  const currencyFormatter = new Intl.NumberFormat(locale, {
+    style: 'currency',
+    currency: 'EUR',
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
+  });
+
   return (
     <div className="he-employee-center">
       <span className="he-employee-metric he-employee-visits">
-        📊 {stats.visits} visitas
+        📊 {stats.visits} {t("components.employeeCard.visits")}
       </span>
       <span className="he-employee-metric he-employee-revenue">
-        💰 {CURRENCY_FORMATTER.format(stats.revenue)}
+        💰 {currencyFormatter.format(stats.revenue)}
       </span>
       <span className="he-employee-metric he-employee-rating">
         ⭐ {stats.rating.toFixed(1)} / 10
@@ -163,10 +163,13 @@ function EmployeeStatusBadge({ status }) {
  * @param {Array} props.visits - Array de visitas (opcional, para fallback de cálculo)
  */
 export default function EmployeeCard({ employee, visits = [] }) {
+  const { t, i18n } = useTranslation();
+  const locale = i18n.language;
+
   // Extrae datos de forma segura
-  const profile = extractEmployeeProfile(employee);
+  const profile = extractEmployeeProfile(employee, t);
   const stats = extractEmployeeStats(employee, visits);
-  const status = extractEmployeeStatus(employee);
+  const status = extractEmployeeStatus(employee, t);
 
   // Genera key única para el avatar
   const avatarLetter = profile.name?.[0]?.toUpperCase() || '?';
@@ -181,7 +184,7 @@ export default function EmployeeCard({ employee, visits = [] }) {
       {/* Contenido */}
       <div className="he-employee-content">
         <EmployeeInfo profile={profile} />
-        <EmployeeStats stats={stats} />
+        <EmployeeStats stats={stats} locale={locale} t={t} />
         <EmployeeStatusBadge status={status} />
       </div>
     </article>

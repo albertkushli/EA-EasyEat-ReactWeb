@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 export function useTopDishes(restaurantId) {
   const [topDishes, setTopDishes] = useState([]);
@@ -22,14 +23,16 @@ export function useTopDishes(restaurantId) {
 
   return { topDishes, loading };
 }
+
 export default function TopDishCard({ restaurantId }) {
+  const { t } = useTranslation();
   const { topDishes, loading } = useTopDishes(restaurantId);
 
   if (loading) {
     return (
       <div className="card">
-        <h3>Top Dishes</h3>
-        <p>Cargando...</p>
+        <h3>{t("components.topDishes.title")}</h3>
+        <p>{t("components.topDishes.loading")}</p>
       </div>
     );
   }
@@ -37,15 +40,15 @@ export default function TopDishCard({ restaurantId }) {
   if (!topDishes.length) {
     return (
       <div className="card">
-        <h3>Top Dishes</h3>
-        <p>No hay platos valorados todavía.</p>
+        <h3>{t("components.topDishes.title")}</h3>
+        <p>{t("components.topDishes.none")}</p>
       </div>
     );
   }
 
   return (
     <div className="card">
-      <h3>Top Dishes</h3>
+      <h3>{t("components.topDishes.title")}</h3>
 
       {topDishes.map((dish, index) => (
         <div

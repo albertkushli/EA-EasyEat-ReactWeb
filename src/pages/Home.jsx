@@ -1,13 +1,14 @@
 import { Link } from 'react-router-dom';
-import { 
-  Utensils, 
-  Trophy, 
-  Gift, 
-  BarChart3, 
-  Users, 
-  MapPin, 
-  Search, 
-  CheckCircle, 
+import { useTranslation } from 'react-i18next';
+import {
+  Utensils,
+  Trophy,
+  Gift,
+  BarChart3,
+  Users,
+  MapPin,
+  Search,
+  CheckCircle,
   ChevronRight,
   ArrowRight,
   Star,
@@ -15,19 +16,20 @@ import {
 } from 'lucide-react';
 
 export default function Home() {
+  const { t } = useTranslation();
   return (
     <div className="landing-page">
       {/* Navbar */}
       <nav className="lp-nav">
         <Link to="/" className="lp-logo">
-          <span style={{ fontSize: '1.5rem' }}>🍽️</span> 
-          <span>EasyEat</span>
+          <span style={{ fontSize: '1.5rem' }}>🍽️</span>
+          <span>{t("navbar.logo")}</span>
         </Link>
         <div className="lp-nav-links">
-          <a href="#clientes" className="lp-link">Clientes</a>
-          <a href="#restaurantes" className="lp-link">Restaurantes</a>
-          <a href="#funciona" className="lp-link">Cómo funciona</a>
-          <Link to="/login" className="lp-btn-acceder">Acceder</Link>
+          <a href="#clientes" className="lp-link">{t("navbar.links.customers")}</a>
+          <a href="#restaurantes" className="lp-link">{t("navbar.links.restaurants")}</a>
+          <a href="#funciona" className="lp-link">{t("navbar.links.howItWorks")}</a>
+          <Link to="/login" className="lp-btn-acceder">{t("navbar.links.access")}</Link>
         </div>
       </nav>
 
@@ -35,28 +37,28 @@ export default function Home() {
       <section className="lp-hero">
         <div className="hero-gradient-orb"></div>
         <div className="hero-gradient-orb hero-gradient-orb--2"></div>
-        
+
         <div className="lp-hero-content">
           <h1 className="lp-hero-title">
-            <span className="text-orange">Gana puntos.</span><br />
-            <span className="text-green">Come más.</span><br />
-            Vive mejor.
+            <span className="text-orange">{t("hero.title.win")}</span><br />
+            <span className="text-green">{t("hero.title.eat")}</span><br />
+            {t("hero.title.live")}
           </h1>
           <p className="lp-hero-subtitle">
-            La plataforma de fidelización que recompensa cada bocado. Conecta con tus restaurantes favoritos y consigue premios exclusivos.
+            {t("hero.subtitle")}
           </p>
-          
+
           <div className="lp-hero-ctas">
             <a href="#clientes" className="lp-cta-btn lp-cta-btn--orange">
-              Soy cliente <ChevronRight size={20} />
+              {t("hero.ctas.customer")} <ChevronRight size={20} />
             </a>
             <a href="#restaurantes" className="lp-cta-btn lp-cta-btn--green">
-              Soy restaurante <ChevronRight size={20} />
+              {t("hero.ctas.restaurant")} <ChevronRight size={20} />
             </a>
           </div>
 
           <Link to="/login" className="lp-hero-admin-link">
-            ¿Eres administrador? Accede aquí <ArrowRight size={14} />
+            {t("hero.ctas.admin")} <ArrowRight size={14} />
           </Link>
         </div>
       </section>
@@ -65,38 +67,38 @@ export default function Home() {
       <section className="lp-split-section" id="clientes">
         <div className="lp-split-pane lp-split-pane--customer">
           <div className="split-icon">⭐</div>
-          <h2 className="split-title">Para ti, foodie</h2>
+          <h2 className="split-title">{t("features.foodie.title")}</h2>
           <ul className="split-list">
             <li className="split-item">
               <div className="split-item-icon"><MapPin size={24} /></div>
-              <span>Descubre restaurantes cerca de ti</span>
+              <span>{t("features.foodie.items.discover")}</span>
             </li>
             <li className="split-item">
               <div className="split-item-icon"><Trophy size={24} /></div>
-              <span>Acumula puntos con cada visita</span>
+              <span>{t("features.foodie.items.accumulate")}</span>
             </li>
             <li className="split-item">
               <div className="split-item-icon"><Gift size={24} /></div>
-              <span>Canjea recompensas exclusivas gratis</span>
+              <span>{t("features.foodie.items.redeem")}</span>
             </li>
           </ul>
         </div>
-        
+
         <div className="lp-split-pane lp-split-pane--restaurant" id="restaurantes">
           <div className="split-icon">📊</div>
-          <h2 className="split-title">Para tu negocio</h2>
+          <h2 className="split-title">{t("features.business.title")}</h2>
           <ul className="split-list">
             <li className="split-item">
               <div className="split-item-icon"><BarChart3 size={24} /></div>
-              <span>Analiza visitas y estadísticas reales</span>
+              <span>{t("features.business.items.analyze")}</span>
             </li>
             <li className="split-item">
               <div className="split-item-icon"><Users size={24} /></div>
-              <span>Fideliza a tus clientes con puntos</span>
+              <span>{t("features.business.items.loyalty")}</span>
             </li>
             <li className="split-item">
               <div className="split-item-icon"><Zap size={24} /></div>
-              <span>Gestiona carta y premios fácilmente</span>
+              <span>{t("features.business.items.manage")}</span>
             </li>
           </ul>
         </div>
@@ -104,7 +106,7 @@ export default function Home() {
 
       {/* How it works */}
       <section className="lp-steps-section" id="funciona">
-        <h2 className="lp-section-title">Tan fácil como comer</h2>
+        <h2 className="lp-section-title">{t("howItWorks.title")}</h2>
         <div className="lp-steps-grid">
           <div className="lp-step-card">
             <div className="step-number">01</div>
@@ -112,30 +114,30 @@ export default function Home() {
               <div className="step-icon" style={{ color: 'var(--lp-orange)' }}>
                 <Search size={32} />
               </div>
-              <h3 className="step-title">Encuentra</h3>
-              <p className="step-desc">Busca por categoría, ubicación o valoración y descubre tu próximo sitio favorito.</p>
+              <h3 className="step-title">{t("howItWorks.steps.find.title")}</h3>
+              <p className="step-desc">{t("howItWorks.steps.find.desc")}</p>
             </div>
           </div>
-          
+
           <div className="lp-step-card">
             <div className="step-number">02</div>
             <div className="step-content">
               <div className="step-icon" style={{ color: 'var(--lp-green)' }}>
                 <MapPin size={32} />
               </div>
-              <h3 className="step-title">Visita</h3>
-              <p className="step-desc">Haz check-in al llegar y acumula puntos automáticamente por cada comida.</p>
+              <h3 className="step-title">{t("howItWorks.steps.visit.title")}</h3>
+              <p className="step-desc">{t("howItWorks.steps.visit.desc")}</p>
             </div>
           </div>
-          
+
           <div className="lp-step-card">
             <div className="step-number">03</div>
             <div className="step-content">
               <div className="step-icon" style={{ color: 'var(--lp-orange)' }}>
                 <Gift size={32} />
               </div>
-              <h3 className="step-title">Disfruta</h3>
-              <p className="step-desc">Canjea tus puntos acumulados por platos gratis, descuentos o experiencias únicas.</p>
+              <h3 className="step-title">{t("howItWorks.steps.enjoy.title")}</h3>
+              <p className="step-desc">{t("howItWorks.steps.enjoy.desc")}</p>
             </div>
           </div>
         </div>
@@ -146,19 +148,19 @@ export default function Home() {
         <div className="lp-stats-grid">
           <div className="stat-item">
             <span className="stat-value text-orange">+200</span>
-            <span className="stat-label">Restaurantes</span>
+            <span className="stat-label">{t("stats.restaurants")}</span>
           </div>
           <div className="stat-item">
             <span className="stat-value text-green">+3.4k</span>
-            <span className="stat-label">Usuarios</span>
+            <span className="stat-label">{t("stats.users")}</span>
           </div>
           <div className="stat-item">
             <span className="stat-value text-orange">+12k</span>
-            <span className="stat-label">Visitas</span>
+            <span className="stat-label">{t("stats.visits")}</span>
           </div>
         </div>
         <p style={{ marginTop: '50px', opacity: 0.6, fontWeight: 700, letterSpacing: '1px' }}>
-          CRECIENDO CADA SEMANA EN BARCELONA
+          {t("stats.tagline")}
         </p>
       </section>
 
@@ -166,20 +168,20 @@ export default function Home() {
       <section className="lp-final-cta">
         <div className="cta-box">
           <h2 style={{ fontSize: '42px', fontWeight: 800, marginBottom: '24px' }}>
-            ¿Listo para empezar a ganar?
+            {t("cta.ready")}
           </h2>
           <p style={{ fontSize: '18px', color: '#64748b', marginBottom: '40px', maxWidth: '600px', margin: '0 auto 40px' }}>
-            Únete a los miles de usuarios que ya están disfrutando de las mejores ventajas en los mejores restaurantes.
+            {t("cta.join")}
           </p>
           <Link to="/login" className="lp-cta-btn lp-cta-btn--orange" style={{ display: 'inline-flex', margin: '0 auto' }}>
-            Acceder a mi cuenta <ArrowRight size={20} />
+            {t("cta.access")} <ArrowRight size={20} />
           </Link>
           <div style={{ marginTop: '30px', display: 'flex', justifyContent: 'center', gap: '24px' }}>
             <span style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '14px', fontWeight: 600, color: '#94a3b8' }}>
-              <CheckCircle size={16} className="text-green" /> Sin tarjetas físicas
+              <CheckCircle size={16} className="text-green" /> {t("cta.benefits.noCards")}
             </span>
             <span style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '14px', fontWeight: 600, color: '#94a3b8' }}>
-              <CheckCircle size={16} className="text-green" /> 100% Gratuito
+              <CheckCircle size={16} className="text-green" /> {t("cta.benefits.free")}
             </span>
           </div>
         </div>
@@ -189,28 +191,28 @@ export default function Home() {
       <footer className="lp-footer">
         <div className="footer-grid">
           <div>
-            <div className="footer-logo">EasyEat</div>
-            <p className="footer-tagline">Revolucionando la fidelización en el sector de la restauración.</p>
+            <div className="footer-logo">{t("navbar.logo")}</div>
+            <p className="footer-tagline">{t("footer.tagline")}</p>
           </div>
           <div>
-            <h4 className="footer-title">Plataforma</h4>
+            <h4 className="footer-title">{t("footer.sections.platform")}</h4>
             <ul className="footer-links">
-              <li><a href="#clientes" className="footer-link">Para Clientes</a></li>
-              <li><a href="#restaurantes" className="footer-link">Para Restaurantes</a></li>
-              <li><a href="#funciona" className="footer-link">Cómo funciona</a></li>
+              <li><a href="#clientes" className="footer-link">{t("navbar.links.customers")}</a></li>
+              <li><a href="#restaurantes" className="footer-link">{t("navbar.links.restaurants")}</a></li>
+              <li><a href="#funciona" className="footer-link">{t("navbar.links.howItWorks")}</a></li>
             </ul>
           </div>
           <div>
-            <h4 className="footer-title">Legal</h4>
+            <h4 className="footer-title">{t("footer.sections.legal")}</h4>
             <ul className="footer-links">
-              <li><a href="#" className="footer-link">Términos y condiciones</a></li>
-              <li><a href="#" className="footer-link">Privacidad</a></li>
-              <li><a href="#" className="footer-link">Cookies</a></li>
+              <li><a href="#" className="footer-link">{t("footer.links.terms")}</a></li>
+              <li><a href="#" className="footer-link">{t("footer.links.privacy")}</a></li>
+              <li><a href="#" className="footer-link">{t("footer.links.cookies")}</a></li>
             </ul>
           </div>
         </div>
         <div className="footer-bottom">
-          <p>© 2026 EasyEat · Proyecto Académico · UPC · Barcelona</p>
+          <p>{t("footer.copy")}</p>
         </div>
       </footer>
     </div>

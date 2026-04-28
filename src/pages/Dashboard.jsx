@@ -1,16 +1,18 @@
 import { useAuth } from '../context/AuthContext';
 import HomeCustomer from './dashboard/HomeCustomer';
 import HomeEmployee from './dashboard/HomeEmployee';
+import { useTranslation } from 'react-i18next';
 
 export default function Dashboard() {
+  const { t } = useTranslation();
   const { role, isAuthenticated } = useAuth();
 
   if (!isAuthenticated) {
     return (
       <div className="dashboard-page">
         <div className="error-state">
-          <h2>No autorizado</h2>
-          <p>Debes iniciar sesión para acceder al dashboard.</p>
+          <h2>{t("dashboard.noAuthorized")}</h2>
+          <p>{t("dashboard.noAuthorizedDesc")}</p>
         </div>
       </div>
     );
@@ -25,8 +27,8 @@ export default function Dashboard() {
     return (
       <div className="dashboard-page">
         <div className="error-state">
-          <h2>Rol no reconocido</h2>
-          <p>Tu rol de usuario no está configurado correctamente.</p>
+          <h2>{t("dashboard.unknownRole")}</h2>
+          <p>{t("dashboard.unknownRoleDesc")}</p>
         </div>
       </div>
     );

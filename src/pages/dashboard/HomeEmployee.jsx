@@ -25,6 +25,8 @@ import AvgPointsVisitCard from '../../components/dashboard/AvgPointsVisitCard';
 import LoyalCustomersCard from '../../components/dashboard/LoyalCustomersCard';
 import AvgRatingCard from '../../components/dashboard/AvgRatingCard';
 
+import { useTranslation } from 'react-i18next';
+
 
 // ========================
 // CONSTANTES
@@ -154,6 +156,7 @@ async function fetchAllRestaurantVisits(restaurantId) {
 // ========================
 
 export default function HomeEmployee() {
+  const { t, i18n } = useTranslation();
 
   // Contexto global
   const { user, logout, role, token, restaurant } = useAuth();
@@ -183,9 +186,9 @@ export default function HomeEmployee() {
       setLoading(true);
 
       // Si no hay restaurante, no hacemos la petición
-      if (!user.restaurant_id) { 
-        setLoading(false); 
-        return; 
+      if (!user.restaurant_id) {
+        setLoading(false);
+        return;
       }
 
       try {
@@ -317,7 +320,7 @@ export default function HomeEmployee() {
   // DATOS DERIVADOS
   // ========================
 
-  const restName = restaurant?.profile?.name || 'Tu restaurante';
+  const restName = restaurant?.profile?.name || t("dashboard.employee.yourRestaurant");
   const restRating = restaurant?.profile?.globalRating;
   const restAddress = restaurant?.profile?.location?.address;
 
@@ -337,7 +340,7 @@ export default function HomeEmployee() {
     return (
       <div className="he-loading">
         <div className="he-loading__spinner" />
-        <p>Cargando panel de {isOwner ? 'Dueño' : 'Personal'}…</p>
+        <p>{isOwner ? t("dashboard.employee.loadingOwner") : t("dashboard.employee.loadingStaff")}</p>
       </div>
     );
   }
@@ -358,7 +361,7 @@ export default function HomeEmployee() {
           <div className="he-brand">
             <span className="he-brand__icon">🍽️</span>
             <div>
-              <span className="he-brand__name">EasyEat</span>
+              <span className="he-brand__name">{t("navbar.logo")}</span>
               <span className={`he-role-badge he-role-badge--${role}`}>
                 {role?.toUpperCase()}
               </span>
@@ -374,7 +377,7 @@ export default function HomeEmployee() {
               <span>{user.name?.split(' ')[0]}</span>
             </div>
 
-            <button onClick={logout} className="he-logout-btn" title="Cerrar sesión">
+            <button onClick={logout} className="he-logout-btn" title={t("navbar.links.logout")}>
               <LogOut size={18} />
             </button>
           </div>
@@ -397,7 +400,7 @@ export default function HomeEmployee() {
         </section>
         <RestaurantTimetableCard timetable={restaurant?.profile?.timetable} />
         {/* MÉTRICAS */}
-         <h2 className="he-section__title">Estdadísticas del restaurante</h2>
+        <h2 className="he-section__title">{t("dashboard.employee.statsTitle")}</h2>
 
         <div className="he-metrics-grid">
           <AvgPointsVisitCard value={Number(averagePointsPerVisit ?? 0)} />
@@ -424,7 +427,7 @@ export default function HomeEmployee() {
           <div className="he-chart-slot">
             <TopDishCard
               restaurantId={user?.restaurant_id}
-              title="Top Dish"
+              title={t("dashboard.employee.topDish")}
             />
           </div>
         </div>
@@ -434,8 +437,8 @@ export default function HomeEmployee() {
         {/* ═══════════════════════════════════════════ */}
         <section className="he-section">
           <div className="he-section__head">
-            <h2 className="he-section__title">Empleados</h2>
-            <span className="he-section__count">{employees.length} empleados</span>
+            <h2 className="he-section__title">{t("dashboard.employee.employees.title")}</h2>
+            <span className="he-section__count">{employees.length} {t("dashboard.employee.employees.count")}</span>
           </div>
 
           <div className="he-employees">
@@ -450,7 +453,7 @@ export default function HomeEmployee() {
             ) : (
               <div className="he-empty">
                 <User size={32} />
-                <p>No hay empleados registrados</p>
+                <p>{t("dashboard.employee.employees.none")}</p>
               </div>
             )}
           </div>
@@ -458,14 +461,14 @@ export default function HomeEmployee() {
 
         {/* TENDENCIA TEMPORAL */}
         <section className="he-section">
-          
+
 
           <DashboardTrendsCard visits={allVisits} averageRating={Number(restRating ?? 0)} />
         </section>
 
         {/* ACCIONES RÁPIDAS */}
         <section className="he-section">
-          <h2 className="he-section__title">Acciones rápidas</h2>
+          <h2 className="he-section__title">{t("dashboard.employee.quickActions.title")}</h2>
 
           <div className="he-actions">
 
@@ -473,16 +476,16 @@ export default function HomeEmployee() {
               <div className="he-action-card__icon he-action-card__icon--qr">
                 <QrCode size={26} />
               </div>
-              <span>Generar QR</span>
-              <p>Escaneo de visita</p>
+              <span>{t("dashboard.employee.quickActions.generateQr.title")}</span>
+              <p>{t("dashboard.employee.quickActions.generateQr.desc")}</p>
             </button>
 
             <button className="he-action-card">
               <div className="he-action-card__icon he-action-card__icon--list">
                 <List size={26} />
               </div>
-              <span>Ver visitas</span>
-              <p>Historial completo</p>
+              <span>{t("dashboard.employee.quickActions.viewVisits.title")}</span>
+              <p>{t("dashboard.employee.quickActions.viewVisits.desc")}</p>
             </button>
 
             {isOwner && (
@@ -490,8 +493,8 @@ export default function HomeEmployee() {
                 <div className="he-action-card__icon he-action-card__icon--settings">
                   <Settings size={26} />
                 </div>
-                <span>Configuración</span>
-                <p>Ajustes del local</p>
+                <span>{t("dashboard.employee.quickActions.settings.title")}</span>
+                <p>{t("dashboard.employee.quickActions.settings.desc")}</p>
               </button>
             )}
 
@@ -501,9 +504,9 @@ export default function HomeEmployee() {
         {/* VISITAS RECIENTES */}
         <section className="he-section">
           <div className="he-section__head">
-            <h2 className="he-section__title">Visitas recientes</h2>
+            <h2 className="he-section__title">{t("dashboard.employee.recentVisits.title")}</h2>
             <span className="he-section__count">
-              {visits.length} de {visitsMeta.total} registros
+              {visits.length} {t("dashboard.employee.recentVisits.records")}
             </span>
           </div>
 
@@ -520,12 +523,12 @@ export default function HomeEmployee() {
                 {/* Info */}
                 <div className="he-visit-row__info">
                   <span className="he-visit-row__name">
-                    {v.customer_id?.name || v.customer_name || 'Cliente'}
+                    {v.customer_id?.name || v.customer_name || t("dashboard.employee.recentVisits.client")}
                   </span>
 
                   <span className="he-visit-row__date">
                     <Clock size={12} />
-                    {new Date(v.date || v.createdAt).toLocaleDateString('es-ES', {
+                    {new Date(v.date || v.createdAt).toLocaleDateString(i18n.language, {
                       day: 'numeric',
                       month: 'short',
                       year: 'numeric'
@@ -546,7 +549,7 @@ export default function HomeEmployee() {
             )) : (
               <div className="he-empty">
                 <Clock size={32} />
-                <p>No hay visitas registradas todavía</p>
+                <p>{t("dashboard.employee.recentVisits.none")}</p>
               </div>
             )}
 
@@ -561,11 +564,11 @@ export default function HomeEmployee() {
               disabled={visitsMeta.page <= 1}
               onClick={() => setVisitsPage(prev => Math.max(1, prev - 1))}
             >
-              Anterior
+              {t("dashboard.employee.pagination.previous")}
             </button>
 
             <span className="he-pagination__info">
-              Página {visitsMeta.page} de {visitsMeta.totalPages}
+              {t("dashboard.employee.pagination.page")} {visitsMeta.page} {t("dashboard.employee.pagination.of")} {visitsMeta.totalPages}
             </span>
 
             <button
@@ -574,7 +577,7 @@ export default function HomeEmployee() {
               disabled={visitsMeta.page >= visitsMeta.totalPages}
               onClick={() => setVisitsPage(prev => Math.min(visitsMeta.totalPages, prev + 1))}
             >
-              Siguiente
+              {t("dashboard.employee.pagination.next")}
             </button>
 
           </div>

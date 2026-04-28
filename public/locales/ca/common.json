@@ -1,0 +1,293 @@
+{
+  "navbar": {
+    "logo": "EasyEat",
+    "links": {
+      "customers": "Clients",
+      "restaurants": "Restaurants",
+      "howItWorks": "Com funciona",
+      "access": "Accedir",
+      "logout": "Tancar sessió"
+    }
+  },
+  "hero": {
+    "title": {
+      "win": "Guanya punts.",
+      "eat": "Menja més.",
+      "live": "Viu millor."
+    },
+    "subtitle": "La plataforma de fidelització que recompensa cada mossegada. Connecta amb els teus restaurants preferits i aconsegueix premis exclusius.",
+    "ctas": {
+      "customer": "Sóc client",
+      "restaurant": "Sóc restaurant",
+      "admin": "Ets administrador? Accedeix aquí"
+    },
+    "tagline": "Uneix-te a la revolució del food-loyalty"
+  },
+  "features": {
+    "foodie": {
+      "title": "Per a tu, foodie",
+      "items": {
+        "discover": "Descobreix restaurants prop teu",
+        "accumulate": "Acumula punts amb cada visita",
+        "redeem": "Canvia recompenses exclusives gratis"
+      }
+    },
+    "business": {
+      "title": "Per al teu negoci",
+      "items": {
+        "analyze": "Analitza visites i estadístiques reals",
+        "loyalty": "Fidelitza els teus clients amb punts",
+        "manage": "Gestiona carta i premis fàcilment"
+      }
+    }
+  },
+  "howItWorks": {
+    "title": "Tan fàcil com menjar",
+    "steps": {
+      "find": {
+        "title": "Troba",
+        "desc": "Busca per categoria, ubicació o valoració i descobreix el teu proper lloc preferit."
+      },
+      "visit": {
+        "title": "Visita",
+        "desc": "Fes check-in en arribar i acumula punts automàticament per cada àpat."
+      },
+      "enjoy": {
+        "title": "Gaudeix",
+        "desc": "Canvia els teus punts acumulats per plats gratis, descomptes o experiències úniques."
+      }
+    }
+  },
+  "stats": {
+    "restaurants": "Restaurants",
+    "users": "Usuaris",
+    "visits": "Visites",
+    "tagline": "CREIXENT CADA SETMANA A BARCELONA"
+  },
+  "cta": {
+    "ready": "Llest per començar a guanyar?",
+    "join": "Uneix-te als milers d'usuaris que ja estan gaudint dels millors avantatges als millors restaurants.",
+    "access": "Accedir al meu compte",
+    "benefits": {
+      "noCards": "Sense targetes físiques",
+      "free": "100% Gratuït"
+    }
+  },
+  "footer": {
+    "tagline": "Revolucionant la fidelització en el sector de la restauració.",
+    "sections": {
+      "platform": "Plataforma",
+      "legal": "Legal"
+    },
+    "links": {
+      "terms": "Termes i condicions",
+      "privacy": "Privadesa",
+      "cookies": "Cookies"
+    },
+    "copy": "© 2026 EasyEat · Projecte Acadèmic · UPC · Barcelona"
+  },
+  "auth": {
+    "login": {
+      "title": "Bentornat",
+      "tagline": "La teva experiència gastronòmica Premium",
+      "subtitle": "Inicia sessió per accedir al teu panell principal",
+      "tabs": {
+        "customer": "Client",
+        "restaurant": "Restaurant"
+      },
+      "form": {
+        "email": "Correu electrònic",
+        "emailPlaceholder": "Introdueix el teu correu...",
+        "password": "Contrasenya",
+        "passwordPlaceholder": "••••••••",
+        "showPassword": "Mostrar Contrasenya",
+        "hidePassword": "Ocultar Contrasenya",
+        "submit": "Accedir al meu compte",
+        "loading": "Iniciant sessió…"
+      },
+      "footer": {
+        "noAccount": "Encara no tens compte?",
+        "register": "Registra't gratis"
+      }
+    },
+    "register": {
+      "title": "Crear nou compte",
+      "tagline": "Uneix-te a la nostra comunitat avui mateix",
+      "subtitle": "Omple les teves dades i comença a gaudir",
+      "form": {
+        "fullName": "Nom complet",
+        "namePlaceholder": "Ex. Joan Pérez",
+        "email": "Correu electrònic",
+        "emailPlaceholder": "tu@email.com",
+        "password": "Contrasenya",
+        "passwordPlaceholder": "••••••••",
+        "confirmPassword": "Confirmar contrasenya",
+        "rules": {
+          "length": "Mínim 8 caràcters de longitud",
+          "uppercase": "Inclou almenys una lletra majúscula",
+          "match": "Les contrasenyes coincideixen perfectament"
+        },
+        "submit": "Finalitzar Registre",
+        "loading": "Creant compte…"
+      },
+      "footer": {
+        "hasAccount": "Ja tens compte?",
+        "login": "Inicia sessió en el seu lloc"
+      }
+    },
+    "errors": {
+      "completeFields": "Si us plau completa tots els camps.",
+      "serverError": "No s'ha pogut connectar amb el servidor. Intenta-ho de nou.",
+      "invalidForm": "Si us plau, completa correctament tots els camps obligatoris."
+    }
+  },
+  "dashboard": {
+    "noAuthorized": "No autoritzat",
+    "noAuthorizedDesc": "Has d'iniciar sessió per accedir al taulell.",
+    "unknownRole": "Rol no reconegut",
+    "unknownRoleDesc": "El teu rol d'usuari no està configurat correctament.",
+    "customer": {
+      "loading": "Carregant la teva experiència…",
+      "welcome": "Bentornat,",
+      "discover": "Descobreix sabors que t'esperen avui",
+      "badge": "badge",
+      "stats": {
+        "totalPoints": "Punts totals",
+        "visits": "Visites",
+        "badges": "Badges",
+        "favorites": "Preferits"
+      },
+      "searchPlaceholder": "Buscar restaurants o ciutats…",
+      "noRestaurantName": "Restaurant",
+      "sections": {
+        "favorites": "Els teus preferits",
+        "nearYou": "Prop teu",
+        "recentVisits": "Visites recents",
+        "achievements": "Els teus assoliments"
+      },
+      "results": {
+        "onThisPage": "en aquesta pàgina",
+        "total": "total",
+        "noResults": "No s'han trobat restaurants per a"
+      },
+      "pagination": {
+        "previous": "Anterior",
+        "next": "Següent",
+        "page": "Pàgina",
+        "of": "de"
+      }
+    },
+    "employee": {
+      "loadingOwner": "Carregant panell de Propietari…",
+      "loadingStaff": "Carregant panell de Personal…",
+      "yourRestaurant": "El teu restaurant",
+      "statsTitle": "Estadístiques del restaurant",
+      "metrics": {
+        "avgPoints": "Mitjana punts/visita",
+        "loyalCustomers": "Clients lleials",
+        "avgRating": "Valoració mitjana"
+      },
+      "topDish": "Plat Top",
+      "employees": {
+        "title": "Empleats",
+        "count": "empleats",
+        "none": "No hi ha empleats registrats"
+      },
+      "quickActions": {
+        "title": "Accions ràpides",
+        "generateQr": {
+          "title": "Generar QR",
+          "desc": "Escaneig de visita"
+        },
+        "viewVisits": {
+          "title": "Veure visites",
+          "desc": "Historial complet"
+        },
+        "settings": {
+          "title": "Configuració",
+          "desc": "Ajustos del local"
+        }
+      },
+      "recentVisits": {
+        "title": "Visites recents",
+        "records": "de registres",
+        "client": "Client",
+        "none": "Encara no hi ha visites registrades"
+      },
+      "pagination": {
+        "previous": "Anterior",
+        "next": "Següent",
+        "page": "Pàgina",
+        "of": "de"
+      },
+      "status": {
+        "sevenPreviousDays": "7 dies anteriors"
+      }
+    }
+  },
+  "components": {
+    "employeeCard": {
+      "noName": "Sense nom",
+      "noEmail": "Sense email",
+      "noPhone": "Sense telèfon",
+      "active": "Actiu",
+      "inactive": "Inactiu",
+      "visits": "visites"
+    },
+    "metrics": {
+      "avgPointsVisit": "Punts Mitjans / Visita",
+      "avgRating": "Rating Mitjà",
+      "loyalCustomers": "Clients Fidels"
+    },
+    "trends": {
+      "title": "Evolució temporal",
+      "subtitle": "Visites reals per dia, predicció simple i context comparatiu de 7 dies.",
+      "badge": "+7 dies",
+      "visits": "Visites",
+      "revenue": "Revenue",
+      "rating": "Rating",
+      "noData": "Sense dades",
+      "lowRating": "⚠️ Rating baix",
+      "correctLevel": "Nivell correcte",
+      "realVisits": "Visites reals",
+      "prediction7Days": "Predicció 7 dies",
+      "prediction": "Predicció",
+      "empty": "Encara no hi ha prou visites per construir la tendència.",
+      "realData": "Dades reals",
+      "alerts": {
+        "visitsDrop": "⚠️ Caiguda significativa de visites aquesta setmana",
+        "revenueLow": "⚠️ Revenue baix aquest període",
+        "goodPerformance": "✅ Bon rendiment general del restaurant"
+      }
+    },
+    "restaurantCard": {
+      "defaultCategory": "General",
+      "defaultCity": "Barcelona"
+    },
+    "peakHours": {
+      "title": "Hores Pic",
+      "noVisits": "Encara no hi ha visites registrades.",
+      "chartTitle": "Hores pic"
+    },
+    "topDishes": {
+      "title": "Plats Top",
+      "loading": "Carregant...",
+      "none": "Encara no hi ha plats valorats."
+    },
+    "restaurantRating": {
+      "title": "Qualificació del Restaurant",
+      "loading": "Carregant..."
+    },
+    "reviewScores": {
+      "title": "Puntuacions de Ressenyes",
+      "noReviews": "Encara no hi ha reviews per a aquest restaurant.",
+      "average": "Mitjana",
+      "categories": {
+        "food": "Menjar",
+        "service": "Servei",
+        "cleanliness": "Neteja",
+        "environment": "Ambient"
+      }
+    }
+  }
+}

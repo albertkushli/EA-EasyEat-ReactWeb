@@ -1,0 +1,292 @@
+{
+    "navbar": {
+        "logo": "EasyEat",
+        "links": {
+            "customers": "Customers",
+            "restaurants": "Restaurants",
+            "howItWorks": "How it works",
+            "access": "Access",
+            "logout": "Logout"
+        }
+    },
+    "hero": {
+        "title": {
+            "win": "Earn points.",
+            "eat": "Eat more.",
+            "live": "Live better."
+        },
+        "subtitle": "The loyalty platform that rewards every bite. Connect with your favorite restaurants and get exclusive rewards.",
+        "ctas": {
+            "customer": "I am a customer",
+            "restaurant": "I am a restaurant",
+            "admin": "Are you an admin? Access here"
+        }
+    },
+    "features": {
+        "foodie": {
+            "title": "For you, foodie",
+            "items": {
+                "discover": "Discover restaurants near you",
+                "accumulate": "Earn points with every visit",
+                "redeem": "Redeem exclusive rewards for free"
+            }
+        },
+        "business": {
+            "title": "For your business",
+            "items": {
+                "analyze": "Analyze visits and real statistics",
+                "loyalty": "Build customer loyalty with points",
+                "manage": "Manage menu and prizes easily"
+            }
+        }
+    },
+    "howItWorks": {
+        "title": "As easy as eating",
+        "steps": {
+            "find": {
+                "title": "Find",
+                "desc": "Search by category, location, or rating and discover your next favorite spot."
+            },
+            "visit": {
+                "title": "Visit",
+                "desc": "Check-in upon arrival and automatically earn points for every meal."
+            },
+            "enjoy": {
+                "title": "Enjoy",
+                "desc": "Redeem your earned points for free dishes, discounts, or unique experiences."
+            }
+        }
+    },
+    "stats": {
+        "restaurants": "Restaurants",
+        "users": "Users",
+        "visits": "Visits",
+        "tagline": "GROWING EVERY WEEK IN BARCELONA"
+    },
+    "cta": {
+        "ready": "Ready to start winning?",
+        "join": "Join the thousands of users already enjoying the best perks in the best restaurants.",
+        "access": "Access my account",
+        "benefits": {
+            "noCards": "No physical cards",
+            "free": "100% Free"
+        }
+    },
+    "footer": {
+        "tagline": "Revolutionizing loyalty in the restaurant industry.",
+        "sections": {
+            "platform": "Platform",
+            "legal": "Legal"
+        },
+        "links": {
+            "terms": "Terms and conditions",
+            "privacy": "Privacy",
+            "cookies": "Cookies"
+        },
+        "copy": "© 2026 EasyEat · Academic Project · UPC · Barcelona"
+    },
+    "auth": {
+        "login": {
+            "title": "Welcome back",
+            "tagline": "Your Premium gastronomic experience",
+            "subtitle": "Sign in to access your main dashboard",
+            "tabs": {
+                "customer": "Customer",
+                "restaurant": "Restaurant"
+            },
+            "form": {
+                "email": "Email address",
+                "emailPlaceholder": "Enter your email...",
+                "password": "Password",
+                "passwordPlaceholder": "••••••••",
+                "showPassword": "Show Password",
+                "hidePassword": "Hide Password",
+                "submit": "Access my account",
+                "loading": "Signing in…"
+            },
+            "footer": {
+                "noAccount": "Don't have an account yet?",
+                "register": "Register for free"
+            }
+        },
+        "register": {
+            "title": "Create new account",
+            "tagline": "Join our community today",
+            "subtitle": "Fill in your details and start enjoying",
+            "form": {
+                "fullName": "Full name",
+                "namePlaceholder": "E.g. John Doe",
+                "email": "Email address",
+                "emailPlaceholder": "you@email.com",
+                "password": "Password",
+                "passwordPlaceholder": "••••••••",
+                "confirmPassword": "Confirm password",
+                "rules": {
+                    "length": "Minimum 8 characters long",
+                    "uppercase": "Include at least one uppercase letter",
+                    "match": "Passwords match perfectly"
+                },
+                "submit": "Finish Registration",
+                "loading": "Creating account…"
+            },
+            "footer": {
+                "hasAccount": "Already have an account?",
+                "login": "Sign in instead"
+            }
+        },
+        "errors": {
+            "completeFields": "Please fill in all fields.",
+            "serverError": "Could not connect to the server. Please try again.",
+            "invalidForm": "Please fill in all required fields correctly."
+        }
+    },
+    "dashboard": {
+        "noAuthorized": "Not authorized",
+        "noAuthorizedDesc": "You must log in to access the dashboard.",
+        "unknownRole": "Unrecognized role",
+        "unknownRoleDesc": "Your user role is not configured correctly.",
+        "customer": {
+            "loading": "Loading your experience…",
+            "welcome": "Welcome back,",
+            "discover": "Discover flavors waiting for you today",
+            "badge": "badge",
+            "stats": {
+                "totalPoints": "Total points",
+                "visits": "Visits",
+                "badges": "Badges",
+                "favorites": "Favorites"
+            },
+            "searchPlaceholder": "Search restaurants or cities…",
+            "noRestaurantName": "Restaurant",
+            "sections": {
+                "favorites": "Your favorites",
+                "nearYou": "Near you",
+                "recentVisits": "Recent visits",
+                "achievements": "Your achievements"
+            },
+            "results": {
+                "onThisPage": "on this page",
+                "total": "total",
+                "noResults": "No restaurants found for"
+            },
+            "pagination": {
+                "previous": "Previous",
+                "next": "Next",
+                "page": "Page",
+                "of": "of"
+            }
+        },
+        "employee": {
+            "loadingOwner": "Loading Owner dashboard…",
+            "loadingStaff": "Loading Staff dashboard…",
+            "yourRestaurant": "Your restaurant",
+            "statsTitle": "Restaurant statistics",
+            "metrics": {
+                "avgPoints": "Avg points/visit",
+                "loyalCustomers": "Loyal customers",
+                "avgRating": "Average rating"
+            },
+            "topDish": "Top Dish",
+            "employees": {
+                "title": "Employees",
+                "count": "employees",
+                "none": "No employees registered"
+            },
+            "quickActions": {
+                "title": "Quick actions",
+                "generateQr": {
+                    "title": "Generate QR",
+                    "desc": "Visit scan"
+                },
+                "viewVisits": {
+                    "title": "View visits",
+                    "desc": "Full history"
+                },
+                "settings": {
+                    "title": "Settings",
+                    "desc": "Local adjustments"
+                }
+            },
+            "recentVisits": {
+                "title": "Recent visits",
+                "records": "of records",
+                "client": "Client",
+                "none": "No visits registered yet"
+            },
+            "pagination": {
+                "previous": "Previous",
+                "next": "Next",
+                "page": "Page",
+                "of": "of"
+            },
+            "status": {
+                "sevenPreviousDays": "7 previous days"
+            }
+        }
+    },
+    "components": {
+        "employeeCard": {
+            "noName": "No name",
+            "noEmail": "No email",
+            "noPhone": "No phone",
+            "active": "Active",
+            "inactive": "Inactive",
+            "visits": "visits"
+        },
+        "metrics": {
+            "avgPointsVisit": "Avg Points / Visit",
+            "avgRating": "Avg Rating",
+            "loyalCustomers": "Loyal Customers"
+        },
+        "trends": {
+            "title": "Temporal evolution",
+            "subtitle": "Real visits per day, simple prediction and 7-day comparative context.",
+            "badge": "+7 days",
+            "visits": "Visits",
+            "revenue": "Revenue",
+            "rating": "Rating",
+            "noData": "No data",
+            "lowRating": "⚠️ Low rating",
+            "correctLevel": "Correct level",
+            "realVisits": "Real visits",
+            "prediction7Days": "7-day prediction",
+            "prediction": "Prediction",
+            "empty": "Not enough visits to build the trend yet.",
+            "realData": "Real data",
+            "alerts": {
+                "visitsDrop": "⚠️ Significant drop in visits this week",
+                "revenueLow": "⚠️ Low revenue this period",
+                "goodPerformance": "✅ Good overall restaurant performance"
+            }
+        },
+        "restaurantCard": {
+            "defaultCategory": "General",
+            "defaultCity": "Barcelona"
+        },
+        "peakHours": {
+            "title": "Peak Visit Hours",
+            "noVisits": "No visits registered yet.",
+            "chartTitle": "Peak hours"
+        },
+        "topDishes": {
+            "title": "Top Dishes",
+            "loading": "Loading...",
+            "none": "No rated dishes yet."
+        },
+        "restaurantRating": {
+            "title": "Restaurant Rating",
+            "loading": "Loading..."
+        },
+        "reviewScores": {
+            "title": "Review Scores",
+            "noReviews": "No reviews for this restaurant yet.",
+            "average": "Average",
+            "categories": {
+                "food": "Food",
+                "service": "Service",
+                "cleanliness": "Cleanliness",
+                "environment": "Environment"
+            }
+        }
+    }
+}

@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import {
   BarChart,
   Bar,
@@ -9,13 +10,6 @@ import {
   ResponsiveContainer,
 } from 'recharts';
 
-const CHART_KEYS = [
-  { key: 'foodQuality', name: 'Food' },
-  { key: 'staffService', name: 'Service' },
-  { key: 'cleanliness', name: 'Cleanliness' },
-  { key: 'environment', name: 'Environment' },
-];
-
 function normalizeRestaurantId(value) {
   return String(value?._id ?? value ?? '');
 }
@@ -26,7 +20,14 @@ function average(values) {
   return total / values.length;
 }
 
-function buildReviewStats(reviews, restaurantId) {
+function buildReviewStats(reviews, restaurantId, t) {
+  const chartKeys = [
+    { key: 'foodQuality', name: t("components.reviewScores.categories.food") },
+    { key: 'staffService', name: t("components.reviewScores.categories.service") },
+    { key: 'cleanliness', name: t("components.reviewScores.categories.cleanliness") },
+    { key: 'environment', name: t("components.reviewScores.categories.environment") },
+  ];
+
   const currentRestaurantId = normalizeRestaurantId(restaurantId);
   const restaurantReviews = Array.isArray(reviews)
     ? reviews.filter((review) =>
@@ -34,7 +35,7 @@ function buildReviewStats(reviews, restaurantId) {
       )
     : [];
 
-  return CHART_KEYS.map(({ key, name }) => {
+  return chartKeys.map(({ key, name }) => {
     const values = restaurantReviews
       .map((review) => Number(review?.ratings?.[key]))
       .filter((value) => Number.isFinite(value));
@@ -47,7 +48,8 @@ function buildReviewStats(reviews, restaurantId) {
 }
 
 export default function RestaurantReviewsBarChart({ reviews = [], restaurantId }) {
-  const data = buildReviewStats(reviews, restaurantId);
+  const { t } = useTranslation();
+  const data = buildReviewStats(reviews, restaurantId, t);
   const hasReviews = Array.isArray(reviews) && reviews.some(
     (review) => normalizeRestaurantId(review?.restaurant_id) === normalizeRestaurantId(restaurantId),
   );
@@ -62,9 +64,9 @@ export default function RestaurantReviewsBarChart({ reviews = [], restaurantId }
         borderRadius: '16px',
         backdropFilter: 'blur(12px)',
       }}>
-        <h3 style={{ marginBottom: 'var(--sp-sm)', fontSize: '0.95rem', fontWeight: 700 }}>Review Scores</h3>
+        <h3 style={{ marginBottom: 'var(--sp-sm)', fontSize: '0.95rem', fontWeight: 700 }}>{t("components.reviewScores.title")}</h3>
         <p style={{ color: 'var(--clr-text-muted)', fontSize: 'var(--text-sm)' }}>
-          No hay reviews para este restaurante todavía.
+          {t("components.reviewScores.noReviews")}
         </p>
       </div>
     );
@@ -86,7 +88,7 @@ export default function RestaurantReviewsBarChart({ reviews = [], restaurantId }
         fontWeight: 700,
         color: 'var(--clr-text)',
       }}>
-        Review Scores
+        {t("components.reviewScores.title")}
       </h3>
 
       <div style={{ width: '100%', height: 220 }}>
@@ -107,7 +109,7 @@ export default function RestaurantReviewsBarChart({ reviews = [], restaurantId }
             />
             <Tooltip
               cursor={{ fill: 'rgba(255,255,255,0.04)' }}
-              formatter={(value) => [value, 'Average']}
+              formatter={(value) => [value, t("components.reviewScores.average")]}
               contentStyle={{
                 background: 'var(--glass-bg)',
                 border: '1px solid var(--glass-border)',
