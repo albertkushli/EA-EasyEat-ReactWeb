@@ -7,11 +7,14 @@ const API_BASE = import.meta.env.VITE_API_URL || '';
 // ─────────────────────────────────────────
 export function getStoredAuthToken() {
   try {
+    const directToken = localStorage.getItem('token');
+    if (directToken) return directToken;
+
     const stored = localStorage.getItem('auth_data');
     if (!stored) return null;
 
     const parsed = JSON.parse(stored);
-    return parsed?.accessToken ?? null;
+    return parsed?.accessToken ?? parsed?.token ?? null;
   } catch {
     return null;
   }
@@ -61,6 +64,8 @@ apiClient.interceptors.response.use(
     if (error.response?.status === 401) {
       console.warn('⚠️ Token inválido o expirado → limpiando sesión');
 
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
       localStorage.removeItem('auth_data');
       localStorage.removeItem('restaurant_data');
 

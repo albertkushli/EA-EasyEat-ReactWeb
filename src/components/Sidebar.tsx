@@ -6,9 +6,10 @@ interface SidebarProps {
   activeView: string;
   onViewChange: (view: string) => void;
   restaurantName: string;
+  restaurantAddress?: string;
 }
 
-export function Sidebar({ activeView, onViewChange, restaurantName }: SidebarProps) {
+export function Sidebar({ activeView, onViewChange, restaurantName, restaurantAddress }: SidebarProps) {
   const { user, logout } = useAuth();
   const menuItems = [
     { id: 'dashboard', icon: LayoutDashboard, label: 'Dashboard' },
@@ -29,6 +30,12 @@ export function Sidebar({ activeView, onViewChange, restaurantName }: SidebarPro
           </div>
           <div>
             <div className="text-lg font-black leading-tight text-white">{restaurantName}</div>
+            {restaurantAddress && (
+              <div className="mt-1 flex items-center gap-1 text-[10px] font-medium text-slate-400 opacity-80">
+                <span>📍</span>
+                <span className="truncate max-w-[150px]">{restaurantAddress}</span>
+              </div>
+            )}
           </div>
         </div>
       </div>

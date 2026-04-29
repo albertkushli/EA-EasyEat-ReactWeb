@@ -17,17 +17,23 @@ import PeakVisitHoursChart from '../../components/dashboard/PeakVisitHoursChart'
 import RealPredictionsChart from '../../components/dashboard/RealPredictionsChart';
 import TopDishCard from '../../components/dashboard/TopDishCard';
 import DashboardTrendsCard from '../../components/dashboard/DashboardTrendsCard';
+import DashboardCard from '../../components/dashboard/DashboardCard';
 import EmployeeCard from '../../components/EmployeeCard';
+
 import RestaurantTimetableCard from "../../components/dashboard/RestaurantTimetableCard";// Cliente API (axios)
 import apiClient from '../../lib/apiClient';
 import Clients from "../Clients";
+import Dishes from "../../components/Dish";
+import Rewards from "../../components/Rewards";
 // o la ruta correcta según tu estructura
+
 // Componentes de métricas
 import AvgPointsVisitCard from '../../components/dashboard/AvgPointsVisitCard';
 import LoyalCustomersCard from '../../components/dashboard/LoyalCustomersCard';
 import AvgRatingCard from '../../components/dashboard/AvgRatingCard';
 
 import { Sidebar } from '../../components/Sidebar';
+
 // ========================
 // CONSTANTES
 // ========================
@@ -186,13 +192,13 @@ export default function HomeEmployee() {
       setLoading(true);
 
       // Si no hay restaurante, no hacemos la petición
-      if (!user.restaurant_id) { 
-        setLoading(false); 
-        return; 
+      if (!user?.restaurant_id) {
+        setLoading(false);
+        return;
       }
 
       try {
-        const res = await apiClient.get(`/restaurants/${user.restaurant_id}/visits`, {
+        const res = await apiClient.get(`/restaurants/${user?.restaurant_id}/visits`, {
           params: { page: visitsPage, limit: VISITS_LIMIT }
         });
 
@@ -214,7 +220,7 @@ export default function HomeEmployee() {
     }
 
     fetchVisits();
-  }, [user.restaurant_id, token, visitsPage]);
+  }, [user?.restaurant_id, token, visitsPage]);
 
 
   // ========================
@@ -228,7 +234,7 @@ export default function HomeEmployee() {
         return;
       }
 
-      const visitsData = await fetchAllRestaurantVisits(user.restaurant_id);
+      const visitsData = await fetchAllRestaurantVisits(user?.restaurant_id);
       setAllVisits(visitsData);
     }
 
@@ -250,7 +256,7 @@ export default function HomeEmployee() {
       }
 
       try {
-        const currentRestaurantId = String(user.restaurant_id);
+        const currentRestaurantId = String(user?.restaurant_id ?? '');
 
         const stats = await getRestaurantStats(currentRestaurantId);
 
@@ -309,7 +315,7 @@ export default function HomeEmployee() {
         return;
       }
 
-      const employees = await fetchEmployeesWithStats(user.restaurant_id);
+      const employees = await fetchEmployeesWithStats(user?.restaurant_id);
       setEmployees(employees);
     }
 
@@ -354,148 +360,171 @@ export default function HomeEmployee() {
   // RENDER
   // ========================
 
-return (
-  <div className="he-layout">
+  return (
+    <div className="he-layout">
 
-    {/* SIDEBAR */}
-    <Sidebar
-      activeView={activeView}
-      onViewChange={handleSidebarViewChange}
-      restaurantName={restName}
-    />
+      {/* SIDEBAR */}
+      <Sidebar
+        activeView={activeView}
+        onViewChange={handleSidebarViewChange}
+        restaurantName={restName}
+        restaurantAddress={restAddress}
+      />
 
-    {/* CONTENIDO */}
-    <div className="he-content">
-      <main className="he-main">
+      {/* CONTENIDO */}
+      <div className="he-content">
+        <main className="he-main pt-8">
 
-        {/* HERO DEL RESTAURANTE - Siempre visible */}
-        <section className="he-hero">
-          <div className="he-hero__left">
-            <h1 className="he-hero__name">{restName}</h1>
-            {restAddress && <p className="he-hero__address">📍 {restAddress}</p>}
-          </div>
-          <div className="he-hero__orbs">
-            <div className="he-orb he-orb--1" />
-            <div className="he-orb he-orb--2" />
-          </div>
-        </section>
+          {/* ════════════════════════════════════════════ */}
+          {/* TAB: DASHBOARD - Estadísticas del restaurante */}
+          {/* ════════════════════════════════════════════ */}
+          {activeView === 'dashboard' && (
+            <div className="max-w-7xl mx-auto w-full space-y-10">
+              <div>
+                <h2 className="text-xl font-black text-gray-800 uppercase tracking-tight mb-6">Vista General</h2>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <AvgPointsVisitCard value={Number(averagePointsPerVisit ?? 0)} />
+                  <LoyalCustomersCard value={Number(loyalCustomers ?? 0)} />
+                  <AvgRatingCard value={Number(restRating ?? 0).toFixed(1)} />
+                </div>
+              </div>
 
-        {/* ════════════════════════════════════════════ */}
-        {/* TAB: DASHBOARD - Estadísticas del restaurante */}
-        {/* ════════════════════════════════════════════ */}
-        {activeView === 'dashboard' && (
-          <>
-            <h2 className="he-section__title">Estadísticas del restaurante</h2>
-            <div className="he-metrics-grid">
-              <AvgPointsVisitCard value={Number(averagePointsPerVisit ?? 0)} />
-              <LoyalCustomersCard value={Number(loyalCustomers ?? 0)} />
-              <AvgRatingCard value={Number(restRating ?? 0).toFixed(1)} />
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <DashboardCard title="Rendimiento de Reseñas">
+                  <RestaurantReviewsBarChart
+                    reviews={reviews}
+                    restaurantId={user?.restaurant_id}
+                  />
+                </DashboardCard>
+
+                <DashboardCard title="Horas Punta de Visitas">
+                  <PeakVisitHoursChart
+                    visits={visits}
+                    restaurantId={user?.restaurant_id}
+                  />
+                </DashboardCard>
+              </div>
+
+              <div className="grid grid-cols-1 gap-8">
+                <DashboardCard title="Ranking de Platos Estrellas">
+                  <TopDishCard
+                    restaurantId={user?.restaurant_id}
+                  />
+                </DashboardCard>
+              </div>
             </div>
+          )}
 
-            {/* Gráficos en el dashboard */}
+          {/* ════════════════════════════════════════════ */}
+          {/* TAB: EMPLEADOS */}
+          {/* ════════════════════════════════════════════ */}
+          {activeView === 'employees' && (
+            <div className="max-w-7xl mx-auto w-full space-y-6">
+              <div className="flex items-center justify-between mb-8">
+                <div>
+                  <h2 className="text-2xl font-black text-gray-800 tracking-tight">Equipo del Restaurante</h2>
+                  <p className="text-sm text-gray-500 font-medium">{employees.length} profesionales registrados</p>
+                </div>
+                <button className="bg-gradient-to-r from-orange-500 to-red-600 text-white px-6 py-2.5 rounded-2xl font-bold shadow-lg shadow-orange-200 hover:scale-105 transition-all duration-200 flex items-center gap-2">
+                  <User className="w-4 h-4" />
+                  <span>Nuevo Empleado</span>
+                </button>
+              </div>
+
+              <div className="space-y-4">
+                {employees.length > 0 ? (
+                  employees.map((employee) => (
+                    <EmployeeCard
+                      key={employee?._id || employee?.id || employee?.profile?.email}
+                      employee={employee}
+                      visits={visits}
+                    />
+                  ))
+                ) : (
+                  <div className="bg-gray-50 rounded-3xl p-16 text-center border-2 border-dashed border-gray-200">
+                    <div className="w-16 h-16 bg-white rounded-2xl shadow-sm flex items-center justify-center mx-auto mb-4">
+                      <User className="w-8 h-8 text-gray-300" />
+                    </div>
+                    <h3 className="text-lg font-bold text-gray-700">Sin miembros en el equipo</h3>
+                    <p className="text-gray-500 max-w-xs mx-auto mt-2 text-sm">Empieza a añadir a tu personal para gestionar su rendimiento.</p>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
+
+
+          {/* ════════════════════════════════════════════ */}
+          {/* TAB: Clientes */}
+          {/* ════════════════════════════════════════════ */}
+          {activeView === 'clients' && (
+            <section className="he-section">
+              <h2 className="he-section__title"></h2>
+              <Clients />
+            </section>
+          )}
+
+          {/* ════════════════════════════════════════════ */}
+          {/* TAB: Platos */}
+          {/* ════════════════════════════════════════════ */}
+          {activeView === 'dishes' && (
+            <section className="he-section">
+              <h2 className="he-section__title"></h2>
+              <Dishes />
+            </section>
+          )}
+
+          {/* ════════════════════════════════════════════ */}
+          {/* TAB: Recompensas */}
+          {/* ════════════════════════════════════════════ */}
+          {activeView === 'rewards' && (
+            <section className="he-section">
+              <h2 className="he-section__title"></h2>
+              <Rewards />
+            </section>
+          )}
+
+
+          {/* ════════════════════════════════════════════ */}
+          {/* TAB: ANÁLISIS - Gráficas */}
+          {/* ════════════════════════════════════════════ */}
+          {activeView === 'analytics' && (
             <div className="he-charts-grid">
               <div className="he-chart-slot">
-                <RestaurantReviewsBarChart
-                  reviews={reviews}
-                  restaurantId={user?.restaurant_id}
+                <RealPredictionsChart
+                  visits={allVisits.length ? allVisits : visits}
+                  daysToPredict={7}
+                  mode="real"
                 />
               </div>
 
               <div className="he-chart-slot">
-                <PeakVisitHoursChart
-                  visits={visits}
-                  restaurantId={user?.restaurant_id}
-                />
-              </div>
-
-              <div className="he-chart-slot">
-                <TopDishCard
-                  restaurantId={user?.restaurant_id}
-                  title="Top Dish"
+                <RealPredictionsChart
+                  visits={allVisits.length ? allVisits : visits}
+                  daysToPredict={7}
+                  mode="prediction"
                 />
               </div>
             </div>
-          </>
-        )}
-
-        {/* ════════════════════════════════════════════ */}
-        {/* TAB: EMPLEADOS */}
-        {/* ════════════════════════════════════════════ */}
-        {activeView === 'employees' && (
-          <section className="he-section">
-            <div className="he-section__head">
-              <h2 className="he-section__title">Empleados</h2>
-              <span className="he-section__count">{employees.length} empleados</span>
-            </div>
-
-            <div className="he-employees">
-              {employees.length > 0 ? (
-                employees.map((employee) => (
-                  <EmployeeCard
-                    key={employee?._id || employee?.id || employee?.profile?.email}
-                    employee={employee}
-                    visits={visits}
-                  />
-                ))
-              ) : (
-                <div className="he-empty">
-                  <User size={32} />
-                  <p>No hay empleados registrados</p>
-                </div>
-              )}
-            </div>
-          </section>
-        )}
-
-
-    {/* ════════════════════════════════════════════ */}
-        {/* TAB: Clientes */}
-        {/* ════════════════════════════════════════════ */}
-       {activeView === 'clients' && (
-  <section className="he-section">
-    <h2 className="he-section__title"></h2>
-    <Clients />
-  </section>
-)}
-        {/* ════════════════════════════════════════════ */}
-        {/* TAB: ANÁLISIS - Gráficas */}
-        {/* ════════════════════════════════════════════ */}
-        {activeView === 'analytics' && (
-          <div className="he-charts-grid">
-            <div className="he-chart-slot">
-              <RealPredictionsChart
-                visits={allVisits.length ? allVisits : visits}
-                daysToPredict={7}
-                mode="real"
-              />
-            </div>
-
-            <div className="he-chart-slot">
-              <RealPredictionsChart
-                visits={allVisits.length ? allVisits : visits}
-                daysToPredict={7}
-                mode="prediction"
-              />
-            </div>
-          </div>
-        )}
+          )}
 
 
 
 
-        {/* ════════════════════════════════════════════ */}
-        {/* TAB: CONFIGURACIÓN - Horario y ajustes */}
-        {/* ════════════════════════════════════════════ */}
-        {activeView === 'settings' && (
-          <>
-            <h2 className="he-section__title">Configuración</h2>
-            <RestaurantTimetableCard timetable={restaurant?.profile?.timetable} />
-          </>
-        )}
+          {/* ════════════════════════════════════════════ */}
+          {/* TAB: CONFIGURACIÓN - Horario y ajustes */}
+          {/* ════════════════════════════════════════════ */}
+          {activeView === 'settings' && (
+            <>
+              <h2 className="he-section__title">Configuración</h2>
+              <RestaurantTimetableCard timetable={restaurant?.profile?.timetable} />
+            </>
+          )}
 
-      </main>
+        </main>
 
-      <style>{`
+        <style>{`
         .he-layout {
           display: flex;
           width: 100%;
@@ -507,77 +536,30 @@ return (
           margin-left: 16rem;
           width: calc(100% - 16rem);
           min-height: 100vh;
-          background: #ffffff; /* área principal blanca */
-          color: #0b1220;
+          background: #f8fafc; /* Fondo SaaS suave */
+          color: #0f172a;
         }
 
-        .he-page { min-height: 100vh; background: var(--clr-bg); font-family: var(--font); color: var(--clr-text); }
-
-        .he-loading {
-          min-height: 100vh; display: flex; flex-direction: column;
-          align-items: center; justify-content: center; gap: 1rem; color: var(--clr-text-muted);
-        }
-        .he-loading__spinner {
-          width: 40px; height: 40px;
-          border: 3px solid var(--clr-border); border-top-color: var(--clr-primary);
-          border-radius: 50%; animation: he-spin 0.8s linear infinite;
-        }
-        @keyframes he-spin { to { transform: rotate(360deg); } }
-
-        /* Header */
-        .he-header {
-          position: sticky; top: 0; z-index: 100;
-          background: hsla(220,20%,6%,0.85); backdrop-filter: blur(20px);
-          border-bottom: 1px solid var(--glass-border);
-        }
-        .he-header__inner {
-          max-width: 1200px; margin: 0 auto; padding: 1rem 1.5rem;
-          display: flex; align-items: center; justify-content: space-between;
-        }
-        .he-brand { display: flex; align-items: center; gap: 0.6rem; }
-        .he-brand__icon { font-size: 1.4rem; }
-        .he-brand__name { font-size: 1.05rem; font-weight: 700; color: var(--clr-primary); margin-right: 0.4rem; }
-        .he-role-badge {
-          font-size: 0.65rem; font-weight: 800; padding: 2px 8px; border-radius: 999px;
-          letter-spacing: 0.06em; vertical-align: middle;
-        }
-        .he-role-badge--owner { background: hsla(26,95%,55%,0.2); color: var(--clr-primary); border: 1px solid hsla(26,95%,55%,0.3); }
-        .he-role-badge--staff { background: hsla(217,91%,60%,0.15); color: hsl(217,91%,70%); border: 1px solid hsla(217,91%,60%,0.25); }
-
-        .he-header__right { display: flex; align-items: center; gap: 0.75rem; }
-        .he-user-pill {
-          display: flex; align-items: center; gap: 0.5rem;
-          padding: 0.4rem 0.9rem;
-          background: var(--glass-bg); border: 1px solid var(--glass-border);
-          border-radius: 999px; font-size: 0.875rem; font-weight: 500;
-        }
-        .he-avatar {
-          width: 26px; height: 26px;
-          background: linear-gradient(135deg, hsl(217,91%,60%), hsl(142,71%,45%));
-          border-radius: 50%; display: flex; align-items: center; justify-content: center;
-          font-size: 0.75rem; font-weight: 800; color: #fff;
-        }
-        .he-logout-btn {
-          width: 36px; height: 36px; background: var(--glass-bg);
-          border: 1px solid var(--glass-border); border-radius: 10px;
-          color: var(--clr-text-muted); cursor: pointer;
-          display: flex; align-items: center; justify-content: center; transition: all 0.2s;
-        }
-        .he-logout-btn:hover { color: hsl(0,80%,65%); border-color: hsla(0,80%,50%,0.4); background: hsla(0,80%,50%,0.08); }
-
-        /* Main */
         .he-main {
-          max-width: 1200px; margin: 0 auto;
-          padding: 2rem 1.5rem 4rem;
-          display: flex; flex-direction: column; gap: 2.5rem;
+          max-width: 1400px;
+          margin: 0 auto;
+          padding: 3rem 2rem 5rem;
+          display: flex;
+          flex-direction: column;
+          gap: 3rem;
         }
 
         /* Hero */
         .he-hero {
-          position: relative; padding: 2.5rem;
-          background: linear-gradient(135deg, hsla(217,91%,60%,0.1) 0%, hsla(142,71%,45%,0.06) 100%);
-          border: 1px solid hsla(217,91%,60%,0.2); border-radius: 20px; overflow: hidden;
+          position: relative;
+          padding: 3.5rem;
+          background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+          border-radius: 24px;
+          overflow: hidden;
+          box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+          color: white;
         }
+
         .he-hero__left { position: relative; z-index: 1; }
         .he-hero__label { font-size: 0.8rem; color: hsl(217,91%,70%); font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; }
         .he-hero__name { font-size: clamp(1.6rem, 3.5vw, 2.2rem); font-weight: 800; margin: 0.25rem 0 0.75rem; }
@@ -1144,7 +1126,7 @@ return (
 
         
       `}</style>
+      </div>
     </div>
-  </div>
   );
 }

@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useCallback, useEffect } from 'react';
 import apiClient from '../lib/apiClient';
+import { loginUser, logoutUser } from '../services/authService';
 
 export const AuthContext = createContext(null);
 
@@ -7,7 +8,13 @@ export function AuthProvider({ children }) {
   const [auth, setAuth] = useState(() => {
     try {
       const stored = localStorage.getItem('auth_data');
-      return stored ? JSON.parse(stored) : null;
+      if (stored) return JSON.parse(stored);
+
+      const token = localStorage.getItem('token');
+      const userRaw = localStorage.getItem('user');
+      if (!token || !userRaw) return null;
+
+      return { accessToken: token, user: JSON.parse(userRaw) };
     } catch { return null; }
   });
   const [restaurant, setRestaurant] = useState(() => {
@@ -88,24 +95,12 @@ export function AuthProvider({ children }) {
 
   const login = useCallback(async (email, password, userType = 'customer') => {
     try {
-      const res = await apiClient.post('/auth/login', { email, password, role: userType });
-
-      if (res.status === 200) {
-        const { accessToken } = res.data;
-        const userPayload = res.data.customer || res.data.employee || res.data.admin;
-        const user = userPayload;
-        setAuth({ accessToken, user });
-        // Restaurant data will be fetched by the useEffect above
-
-        return { success: true };
-      }
+      const { token, user } = await loginUser(email, password, userType);
+      setAuth({ accessToken: token, user });
+      return { success: true };
     } catch (error) {
       console.error('Login error:', error);
-        console.error('Login error completo:', error);
-        console.error('Response:', error.response);
-        console.error('Status:', error.response?.status);
-        console.error('Data:', error.response?.data);
-      return { success: false, error: error.response?.data?.message || 'Login failed' };
+      return { success: false, error: error?.message || 'Login failed' };
     }
   }, []);
 
@@ -131,8 +126,7 @@ export function AuthProvider({ children }) {
     } finally {
       setAuth(null);
       setRestaurant(null);
-      localStorage.removeItem('auth_data');
-      localStorage.removeItem('restaurant_data');
+      logoutUser();
     }
   }, []);
 

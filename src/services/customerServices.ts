@@ -1,18 +1,22 @@
-import { Customer } from "../types/Customer";
+import apiClient from "../lib/apiClient";
 
-const API_URL = "http://localhost:1337/customers";
+export const getCustomersByRestaurant = async (restaurantId: string) => {
+  if (!restaurantId) {
+    console.warn("getCustomersByRestaurant: No restaurantId provided");
+    return [];
+  }
 
-type BackendResponse = {
-  data?: Customer[];
-  meta?: any;
+  try {
+    const response = await apiClient.get(`/customers/restaurant/${restaurantId}`);
+    
+    // apiClient (axios) returns the response data directly or in .data
+    // Based on how controllers work, it returns { data: [...], meta: ... }
+    const json = response.data;
+    
+    return Array.isArray(json?.data) ? json.data : (Array.isArray(json) ? json : []);
+  } catch (error: any) {
+    console.error("getCustomersByRestaurant error:", error.response?.data || error.message);
+    throw error;
+  }
 };
-
-export const getCustomers = async (): Promise<Customer[]> => {
-  const res = await fetch(API_URL);
-  if (!res.ok) throw new Error("Error fetching customers");
-
-  const json: BackendResponse = await res.json();
-  console.log("CLIENTS (raw):", json);
-
-  return json.data || [];
-};
+
