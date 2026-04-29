@@ -25,7 +25,8 @@ import apiClient from '../../lib/apiClient';
 import Clients from "../Clients";
 import Dishes from "../../components/Dish";
 import Rewards from "../../components/Rewards";
-// o la ruta correcta según tu estructura
+import Analytics from "../../components/Analytics";
+import SettingsView from "../../components/Settings";
 
 // Componentes de métricas
 import AvgPointsVisitCard from '../../components/dashboard/AvgPointsVisitCard';
@@ -490,23 +491,10 @@ export default function HomeEmployee() {
           {/* TAB: ANÁLISIS - Gráficas */}
           {/* ════════════════════════════════════════════ */}
           {activeView === 'analytics' && (
-            <div className="he-charts-grid">
-              <div className="he-chart-slot">
-                <RealPredictionsChart
-                  visits={allVisits.length ? allVisits : visits}
-                  daysToPredict={7}
-                  mode="real"
-                />
-              </div>
-
-              <div className="he-chart-slot">
-                <RealPredictionsChart
-                  visits={allVisits.length ? allVisits : visits}
-                  daysToPredict={7}
-                  mode="prediction"
-                />
-              </div>
-            </div>
+            <Analytics
+              visits={allVisits.length ? allVisits : visits}
+              restaurantId={user?.restaurant_id}
+            />
           )}
 
 
@@ -516,10 +504,7 @@ export default function HomeEmployee() {
           {/* TAB: CONFIGURACIÓN - Horario y ajustes */}
           {/* ════════════════════════════════════════════ */}
           {activeView === 'settings' && (
-            <>
-              <h2 className="he-section__title">Configuración</h2>
-              <RestaurantTimetableCard timetable={restaurant?.profile?.timetable} />
-            </>
+            <SettingsView restaurant={restaurant} />
           )}
 
         </main>
