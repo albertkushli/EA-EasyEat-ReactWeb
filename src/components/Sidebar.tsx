@@ -12,7 +12,7 @@ export function Sidebar({ activeView, onViewChange, restaurantName }: SidebarPro
   const { user, logout } = useAuth();
   const menuItems = [
     { id: 'dashboard', icon: LayoutDashboard, label: 'Dashboard' },
-    { id: 'customers', icon: Users, label: 'Clients' },
+    { id: 'clients', icon: Users, label: 'Clients' },
     { id: 'dishes', icon: UtensilsCrossed, label: 'Platos' },
     { id: 'employees', icon: Users2, label: 'Empleados' },
     { id: 'rewards', icon: Gift, label: 'Recompenses' },

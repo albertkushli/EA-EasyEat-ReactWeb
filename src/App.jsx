@@ -4,26 +4,21 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
 import Home from './pages/Home';
+import Clients from './pages/Clients';
 import './App.css';
 
-// Protected Route component
 function ProtectedRoute({ children }) {
   const { isAuthenticated, loading } = useAuth();
 
-  if (loading) {
-    return <div className="loading-screen">Cargando...</div>;
-  }
+  if (loading) return <div>Cargando...</div>;
 
   return isAuthenticated ? children : <Navigate to="/login" />;
 }
 
-// Public Route component (redirects to dashboard if already authenticated)
 function PublicRoute({ children }) {
   const { isAuthenticated, loading } = useAuth();
 
-  if (loading) {
-    return <div className="loading-screen">Cargando...</div>;
-  }
+  if (loading) return <div>Cargando...</div>;
 
   return isAuthenticated ? <Navigate to="/dashboard" /> : children;
 }
@@ -32,30 +27,27 @@ function App() {
   return (
     <AuthProvider>
       <Router>
-        <div className="App">
-          <Routes>
-            <Route path="/" element={
-              <PublicRoute>
-                <Home />
-              </PublicRoute>
-            } />
-            <Route path="/login" element={
-              <PublicRoute>
-                <Login />
-              </PublicRoute>
-            } />
-            <Route path="/register" element={
-              <PublicRoute>
-                <Register />
-              </PublicRoute>
-            } />
-            <Route path="/dashboard" element={
-              <ProtectedRoute>
-                <Dashboard />
-              </ProtectedRoute>
-            } />
-          </Routes>
-        </div>
+        <Routes>
+          <Route path="/" element={
+            <PublicRoute><Home /></PublicRoute>
+          } />
+
+          <Route path="/login" element={
+            <PublicRoute><Login /></PublicRoute>
+          } />
+
+          <Route path="/register" element={
+            <PublicRoute><Register /></PublicRoute>
+          } />
+
+          {/* DASHBOARD CON RUTAS HIJAS */}
+          <Route path="/dashboard" element={
+            <ProtectedRoute><Dashboard /></ProtectedRoute>
+          }>
+            <Route path="clients" element={<Clients />} />
+          </Route>
+
+        </Routes>
       </Router>
     </AuthProvider>
   );

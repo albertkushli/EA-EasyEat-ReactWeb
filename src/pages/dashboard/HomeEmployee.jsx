@@ -20,7 +20,8 @@ import DashboardTrendsCard from '../../components/dashboard/DashboardTrendsCard'
 import EmployeeCard from '../../components/EmployeeCard';
 import RestaurantTimetableCard from "../../components/dashboard/RestaurantTimetableCard";// Cliente API (axios)
 import apiClient from '../../lib/apiClient';
-
+import Clients from "../Clients";
+// o la ruta correcta según tu estructura
 // Componentes de métricas
 import AvgPointsVisitCard from '../../components/dashboard/AvgPointsVisitCard';
 import LoyalCustomersCard from '../../components/dashboard/LoyalCustomersCard';
@@ -446,6 +447,16 @@ return (
           </section>
         )}
 
+
+    {/* ════════════════════════════════════════════ */}
+        {/* TAB: Clientes */}
+        {/* ════════════════════════════════════════════ */}
+       {activeView === 'clients' && (
+  <section className="he-section">
+    <h2 className="he-section__title"></h2>
+    <Clients />
+  </section>
+)}
         {/* ════════════════════════════════════════════ */}
         {/* TAB: ANÁLISIS - Gráficas */}
         {/* ════════════════════════════════════════════ */}
@@ -468,6 +479,9 @@ return (
             </div>
           </div>
         )}
+
+
+
 
         {/* ════════════════════════════════════════════ */}
         {/* TAB: CONFIGURACIÓN - Horario y ajustes */}
