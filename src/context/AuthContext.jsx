@@ -1,6 +1,6 @@
 import { createContext, useContext, useState, useCallback, useEffect } from 'react';
-import apiClient from '../lib/apiClient';
-import { loginUser, logoutUser } from '../services/authService';
+import apiClient from '@/services/apiClient';
+import { loginUser, logoutUser } from '@/features/auth/services/authService';
 
 export const AuthContext = createContext(null);
 
@@ -156,3 +156,4 @@ export function useAuth() {
   if (!ctx) throw new Error('useAuth must be used inside <AuthProvider>');
   return ctx;
 }
+
