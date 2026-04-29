@@ -24,21 +24,19 @@ function extractEmployeeProfile(employee) {
 
 function extractEmployeeStats(employee, visits = []) {
   const stats = employee?.stats || {};
-  let visits_count = safeToNumber(stats?.visits || stats?.totalVisits || stats?.visit_count || employee?.visits, 0);
-  let revenue = safeToNumber(stats?.revenue || stats?.totalRevenue || stats?.bill_amount || employee?.revenue, 0);
+  console.log("Employee stats raw:", stats);
 
-  if (revenue === 0 && visits?.length > 0) {
-    const employeeVisits = visits.filter(v => String(v.employee_id) === String(employee?._id) && !v.deletedAt);
-    revenue = employeeVisits.reduce((sum, v) => sum + (v.billAmount || 0), 0);
-    visits_count = employeeVisits.length;
-  }
+  const visits_count = safeToNumber(stats?.totalVisits || stats?.visits || employee?.visits, 0);
+  const revenue = safeToNumber(stats?.revenue ?? 0, 0);
+  const rating = safeToNumber(stats?.averageRating || employee?.rating, 0);
 
-  let rating = safeToNumber(stats?.averageRating || stats?.average_rating || stats?.rating || employee?.rating, 0);
-
-  return { visits: visits_count, revenue, rating };
+  const result = { visits: visits_count, revenue, rating };
+  console.log("Employee stats processed:", result);
+  return result;
 }
 
 export default function EmployeeCard({ employee, visits = [], onEdit, onDelete }) {
+  console.log("Rendering EmployeeCard for:", employee?.profile?.name, "Full Object:", employee);
   const profile = extractEmployeeProfile(employee);
   const stats = extractEmployeeStats(employee, visits);
   const avatarLetter = profile.name?.[0]?.toUpperCase() || '?';
@@ -52,72 +50,75 @@ export default function EmployeeCard({ employee, visits = [], onEdit, onDelete }
   const roleClass = roleColors[profile.role] || roleColors.staff;
 
   return (
-    <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 hover:shadow-md transition-all duration-300 group">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        {/* Left: Info */}
-        <div className="flex items-center gap-4">
-          <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-orange-400 to-red-500 flex items-center justify-center text-white text-xl font-black shadow-lg shadow-orange-200 group-hover:scale-105 transition-transform duration-300">
+    <div className="bg-white rounded-3xl p-6 shadow-sm border border-gray-100 hover:shadow-xl hover:scale-[1.02] transition-all duration-300 group w-full min-h-[140px]">
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
+        {/* IZQUIERDA: Perfil */}
+        <div className="flex items-center gap-5 flex-1 min-w-0">
+          <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-orange-400 to-red-500 flex items-center justify-center text-white text-2xl font-black shadow-lg shadow-orange-100 group-hover:rotate-3 transition-transform duration-300 flex-shrink-0">
             {avatarLetter}
           </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <h3 className="font-bold text-gray-800">{profile.name}</h3>
-              <span className={`text-[10px] font-black px-2 py-0.5 rounded-full border uppercase tracking-wider ${roleClass}`}>
+          <div className="min-w-0">
+            <div className="flex flex-wrap items-center gap-2 mb-1">
+              <h3 className="text-xl font-bold text-gray-800 truncate leading-tight">{profile.name}</h3>
+              <span className={`text-[10px] font-black px-2.5 py-1 rounded-lg border uppercase tracking-wider ${roleClass}`}>
                 {profile.role}
               </span>
             </div>
-            <div className="flex flex-col text-xs text-gray-500 mt-0.5 gap-0.5">
-              <div className="flex items-center gap-1">
-                <Mail className="w-3 h-3" />
-                <span>{profile.email}</span>
+            <div className="flex flex-col text-sm text-gray-400 gap-1">
+              <div className="flex items-center gap-2">
+                <Mail className="w-3.5 h-3.5" />
+                <span className="truncate">{profile.email}</span>
               </div>
-              <div className="flex items-center gap-1">
-                <Phone className="w-3 h-3" />
+              <div className="flex items-center gap-2">
+                <Phone className="w-3.5 h-3.5" />
                 <span>{profile.phone}</span>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Center: Stats */}
-        <div className="flex items-center gap-6 px-4 md:border-x border-gray-50">
-          <div className="text-center">
-            <div className="flex items-center justify-center gap-1 text-gray-800">
-              <TrendingUp className="w-3.5 h-3.5 text-orange-500" />
-              <span className="font-bold">{stats.visits}</span>
+        {/* DERECHA: Stats y Acciones */}
+        <div className="flex items-center gap-8 w-full sm:w-auto pt-4 sm:pt-0 border-t sm:border-t-0 border-gray-50 justify-between sm:justify-end">
+          <div className="flex items-center gap-6 pr-6 sm:border-r border-gray-100">
+            <div className="text-center">
+              <div className="flex items-center justify-center gap-1.5 text-gray-800 mb-0.5">
+                <TrendingUp className="w-4 h-4 text-orange-500" />
+                <span className="text-lg font-black">{stats.visits}</span>
+              </div>
+              <p className="text-[10px] font-bold text-gray-400 uppercase tracking-tighter">Visitas</p>
             </div>
-            <span className="text-[10px] font-bold text-gray-400 uppercase tracking-tighter">Visitas</span>
-          </div>
-          <div className="text-center">
-            <div className="flex items-center justify-center gap-1 text-gray-800">
-              <DollarSign className="w-3.5 h-3.5 text-green-500" />
-              <span className="font-bold">{CURRENCY_FORMATTER.format(stats.revenue)}</span>
+            <div className="text-center">
+              <div className="flex items-center justify-center gap-1.5 text-gray-800 mb-0.5">
+                <DollarSign className="w-4 h-4 text-green-500" />
+                <span className="text-lg font-black">{CURRENCY_FORMATTER.format(stats.revenue)}</span>
+              </div>
+              <p className="text-[10px] font-bold text-gray-400 uppercase tracking-tighter">Ventas</p>
             </div>
-            <span className="text-[10px] font-bold text-gray-400 uppercase tracking-tighter">Ventas</span>
-          </div>
-          <div className="text-center">
-            <div className="flex items-center justify-center gap-1 text-gray-800">
-              <Star className="w-3.5 h-3.5 text-yellow-400 fill-current" />
-              <span className="font-bold">{stats.rating.toFixed(1)}</span>
+            <div className="text-center hidden lg:block">
+              <div className="flex items-center justify-center gap-1.5 text-gray-800 mb-0.5">
+                <Star className="w-4 h-4 text-yellow-400 fill-current" />
+                <span className="text-lg font-black">{stats.rating.toFixed(1)}</span>
+              </div>
+              <p className="text-[10px] font-bold text-gray-400 uppercase tracking-tighter">Rating</p>
             </div>
-            <span className="text-[10px] font-bold text-gray-400 uppercase tracking-tighter">Rating</span>
           </div>
-        </div>
 
-        {/* Right: Actions */}
-        <div className="flex items-center gap-2">
-          <button
-            onClick={() => onEdit?.(employee)}
-            className="p-2.5 rounded-xl text-gray-400 hover:text-blue-500 hover:bg-blue-50 transition-all duration-200"
-          >
-            <Edit2 className="w-4.5 h-4.5" />
-          </button>
-          <button
-            onClick={() => onDelete?.(employee?._id)}
-            className="p-2.5 rounded-xl text-gray-400 hover:text-red-500 hover:bg-red-50 transition-all duration-200"
-          >
-            <Trash2 className="w-4.5 h-4.5" />
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => onEdit?.(employee)}
+              className="p-3 rounded-2xl text-gray-400 hover:text-blue-500 hover:bg-blue-50 transition-all duration-200"
+              title="Editar empleado"
+            >
+              <Edit2 className="w-5 h-5" />
+            </button>
+            <button
+              onClick={() => onDelete?.(employee?._id)}
+              className="p-3 rounded-2xl text-gray-400 hover:text-red-500 hover:bg-red-50 transition-all duration-200"
+              title="Eliminar empleado"
+            >
+              <Trash2 className="w-5 h-5" />
+            </button>
+          </div>
         </div>
       </div>
     </div>

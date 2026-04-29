@@ -23,6 +23,7 @@ import EmployeeCard from '../../components/EmployeeCard';
 import RestaurantTimetableCard from "../../components/dashboard/RestaurantTimetableCard";// Cliente API (axios)
 import apiClient from '../../lib/apiClient';
 import Clients from "../Clients";
+import Employees from "../../components/Employees";
 import Dishes from "../../components/Dish";
 import Rewards from "../../components/Rewards";
 import Analytics from "../../components/Analytics";
@@ -420,38 +421,7 @@ export default function HomeEmployee() {
           {/* TAB: EMPLEADOS */}
           {/* ════════════════════════════════════════════ */}
           {activeView === 'employees' && (
-            <div className="max-w-7xl mx-auto w-full space-y-6">
-              <div className="flex items-center justify-between mb-8">
-                <div>
-                  <h2 className="text-2xl font-black text-gray-800 tracking-tight">Equipo del Restaurante</h2>
-                  <p className="text-sm text-gray-500 font-medium">{employees.length} profesionales registrados</p>
-                </div>
-                <button className="bg-gradient-to-r from-orange-500 to-red-600 text-white px-6 py-2.5 rounded-2xl font-bold shadow-lg shadow-orange-200 hover:scale-105 transition-all duration-200 flex items-center gap-2">
-                  <User className="w-4 h-4" />
-                  <span>Nuevo Empleado</span>
-                </button>
-              </div>
-
-              <div className="space-y-4">
-                {employees.length > 0 ? (
-                  employees.map((employee) => (
-                    <EmployeeCard
-                      key={employee?._id || employee?.id || employee?.profile?.email}
-                      employee={employee}
-                      visits={visits}
-                    />
-                  ))
-                ) : (
-                  <div className="bg-gray-50 rounded-3xl p-16 text-center border-2 border-dashed border-gray-200">
-                    <div className="w-16 h-16 bg-white rounded-2xl shadow-sm flex items-center justify-center mx-auto mb-4">
-                      <User className="w-8 h-8 text-gray-300" />
-                    </div>
-                    <h3 className="text-lg font-bold text-gray-700">Sin miembros en el equipo</h3>
-                    <p className="text-gray-500 max-w-xs mx-auto mt-2 text-sm">Empieza a añadir a tu personal para gestionar su rendimiento.</p>
-                  </div>
-                )}
-              </div>
-            </div>
+             <Employees />
           )}
 
 

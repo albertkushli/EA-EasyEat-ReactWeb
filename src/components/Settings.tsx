@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Store,
   Clock,
@@ -16,15 +16,21 @@ import {
   Mail as MailIcon,
   MessageSquare,
   Zap,
+  Loader2
 } from "lucide-react";
 import { motion } from "framer-motion";
+import { updateRestaurant } from "../services/restaurantService";
+import { useAuth } from "../context/AuthContext";
 
 interface SettingsProps {
   restaurant: any;
 }
 
-export default function Settings({ restaurant }: SettingsProps) {
+export default function Settings({ restaurant: initialRestaurant }: SettingsProps) {
+  const { user } = useAuth() as any;
   const [activeTab, setActiveTab] = useState("general");
+  const [loading, setLoading] = useState(false);
+  const [restaurant, setRestaurant] = useState(initialRestaurant);
   
   const timetable = restaurant?.profile?.timetable || {};
   const daysOrder = [
@@ -34,6 +40,22 @@ export default function Settings({ restaurant }: SettingsProps) {
   const today = new Date()
     .toLocaleDateString('en-US', { weekday: 'long' })
     .toLowerCase();
+
+  const handleSave = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      const restaurantId = user?.restaurant_id || restaurant?._id;
+      const updated = await updateRestaurant(restaurantId, restaurant);
+      setRestaurant(updated);
+      alert("Configuración guardada correctamente");
+    } catch (error) {
+      console.error("Error saving settings:", error);
+      alert("Error al guardar la configuración");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="max-w-7xl mx-auto p-6 space-y-10 animate-in fade-in duration-700">
@@ -90,20 +112,54 @@ export default function Settings({ restaurant }: SettingsProps) {
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <InputGroup label="Nombre del Establecimiento" defaultValue={restaurant?.profile?.name} />
-                <InputGroup label="Categoría / Tipo de Cocina" defaultValue="Mediterránea Moderna" />
-                <InputGroup label="Correo Electrónico" icon={Mail} defaultValue={restaurant?.profile?.email || "contacto@bodega.com"} />
-                <InputGroup label="Teléfono de Contacto" icon={Phone} defaultValue={restaurant?.profile?.phone || "+34 932 112 443"} />
+                <InputGroup 
+                  label="Nombre del Establecimiento" 
+                  value={restaurant?.profile?.name} 
+                  onChange={(val: string) => setRestaurant({ ...restaurant, profile: { ...restaurant.profile, name: val } })}
+                />
+                <InputGroup 
+                  label="Categoría / Tipo de Cocina" 
+                  value={restaurant?.profile?.category || "Mediterránea Moderna"} 
+                  onChange={(val: string) => setRestaurant({ ...restaurant, profile: { ...restaurant.profile, category: val } })}
+                />
+                <InputGroup 
+                  label="Correo Electrónico" 
+                  icon={Mail} 
+                  value={restaurant?.profile?.email || "contacto@bodega.com"} 
+                  onChange={(val: string) => setRestaurant({ ...restaurant, profile: { ...restaurant.profile, email: val } })}
+                />
+                <InputGroup 
+                  label="Teléfono de Contacto" 
+                  icon={Phone} 
+                  value={restaurant?.profile?.phone || "+34 932 112 443"} 
+                  onChange={(val: string) => setRestaurant({ ...restaurant, profile: { ...restaurant.profile, phone: val } })}
+                />
                 <div className="md:col-span-2">
-                  <InputGroup label="Dirección Completa" icon={MapPin} defaultValue={restaurant?.profile?.location?.address} />
+                  <InputGroup 
+                    label="Dirección Completa" 
+                    icon={MapPin} 
+                    value={restaurant?.profile?.location?.address} 
+                    onChange={(val: string) => setRestaurant({ ...restaurant, profile: { ...restaurant.profile, location: { ...restaurant.profile.location, address: val } } })}
+                  />
                 </div>
-                <InputGroup label="Sitio Web" icon={Globe} defaultValue="www.labodegadelmar.es" />
+                <InputGroup 
+                  label="Sitio Web" 
+                  icon={Globe} 
+                  value={restaurant?.profile?.website || "www.labodegadelmar.es"} 
+                  onChange={(val: string) => setRestaurant({ ...restaurant, profile: { ...restaurant.profile, website: val } })}
+                />
               </div>
 
               <div className="pt-6 border-t border-gray-50 flex justify-end gap-3">
-                <button className="px-5 py-2.5 rounded-xl text-gray-500 font-bold hover:bg-gray-50 transition-all">Cancelar</button>
-                <button className="px-6 py-2.5 bg-orange-500 text-white rounded-xl font-black shadow-lg shadow-orange-200 hover:bg-orange-600 hover:scale-105 transition-all flex items-center gap-2">
-                  <Save className="w-4 h-4" />
+                <button 
+                  onClick={() => setRestaurant(initialRestaurant)}
+                  className="px-5 py-2.5 rounded-xl text-gray-500 font-bold hover:bg-gray-50 transition-all">Cancelar</button>
+                <button 
+                  onClick={handleSave}
+                  disabled={loading}
+                  className="px-6 py-2.5 bg-orange-500 text-white rounded-xl font-black shadow-lg shadow-orange-200 hover:bg-orange-600 hover:scale-105 transition-all flex items-center gap-2 disabled:opacity-50"
+                >
+                  {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
                   GUARDAR CAMBIOS
                 </button>
               </div>
@@ -273,7 +329,7 @@ function NavButton({ label, icon: Icon, active, onClick }: any) {
   );
 }
 
-function InputGroup({ label, defaultValue, icon: Icon }: any) {
+function InputGroup({ label, value, onChange, icon: Icon }: any) {
   return (
     <div className="space-y-1.5">
       <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">{label}</label>
@@ -281,7 +337,8 @@ function InputGroup({ label, defaultValue, icon: Icon }: any) {
         {Icon && <Icon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-300" />}
         <input 
           type="text" 
-          defaultValue={defaultValue}
+          value={value || ""}
+          onChange={(e) => onChange(e.target.value)}
           className={`w-full p-3 bg-gray-50 border border-gray-100 rounded-xl text-sm font-bold text-gray-700 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all ${Icon ? 'pl-10' : ''}`}
         />
       </div>

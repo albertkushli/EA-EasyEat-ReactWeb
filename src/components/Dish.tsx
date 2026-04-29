@@ -1,22 +1,22 @@
 import { useEffect, useState } from "react";
-import { getDishesByRestaurant } from "../services/dishService";
+import { getDishesByRestaurant, createDish, updateDish, deleteDish } from "../services/dishService";
 import { Dish } from "../types/Dish";
 import { useAuth } from "../context/AuthContext";
 import {
   ChevronDown,
-  ChevronUp,
   Info,
   Euro,
   Clock,
-  Leaf,
-  Flame,
   AlertCircle,
   Loader2,
   Utensils,
   Plus,
   Edit2,
-  Trash2
+  Trash2,
+  Flame,
+  Leaf
 } from "lucide-react";
+import DishModal from "./DishModal";
 
 export default function Dishes() {
   const { user, restaurant } = useAuth() as any;
@@ -24,6 +24,10 @@ export default function Dishes() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [expandedDishId, setExpandedDishId] = useState<string | null>(null);
+
+  // Modal State
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedDish, setSelectedDish] = useState<Dish | null>(null);
 
   const restaurantId = user?.restaurant_id || restaurant?._id || restaurant?.id || "";
 
@@ -50,6 +54,44 @@ export default function Dishes() {
     }
   };
 
+  const handleAddClick = () => {
+    setSelectedDish(null);
+    setIsModalOpen(true);
+  };
+
+  const handleEditClick = (e: React.MouseEvent, dish: Dish) => {
+    e.stopPropagation();
+    setSelectedDish(dish);
+    setIsModalOpen(true);
+  };
+
+  const handleDeleteClick = async (e: React.MouseEvent, dishId: string) => {
+    e.stopPropagation();
+    if (window.confirm("¿Estás seguro de que quieres eliminar este plato?")) {
+      try {
+        await deleteDish(dishId);
+        setDishes(dishes.filter(d => d._id !== dishId));
+      } catch (err) {
+        alert("Error al eliminar el plato");
+      }
+    }
+  };
+
+  const handleSaveDish = async (dishData: Partial<Dish>) => {
+    try {
+      if (selectedDish) {
+        const updated = await updateDish(selectedDish._id, { ...dishData, restaurant_id: restaurantId });
+        setDishes(dishes.map(d => d._id === selectedDish._id ? updated : d));
+      } else {
+        const created = await createDish({ ...dishData, restaurant_id: restaurantId });
+        setDishes([...dishes, created]);
+      }
+    } catch (err) {
+      console.error("Error saving dish:", err);
+      throw err;
+    }
+  };
+
   const toggleExpand = (id: string) => {
     setExpandedDishId(expandedDishId === id ? null : id);
   };
@@ -71,7 +113,10 @@ export default function Dishes() {
           <h1 className="text-2xl font-black text-gray-800 tracking-tight">Carta de Platos</h1>
           <p className="text-sm text-gray-500 font-medium">Gestiona el menú de tu restaurante</p>
         </div>
-        <button className="bg-orange-500 text-white px-5 py-2.5 rounded-xl font-black text-sm shadow-lg shadow-orange-200 hover:bg-orange-600 hover:scale-105 transition-all duration-300 flex items-center gap-2">
+        <button 
+          onClick={handleAddClick}
+          className="bg-orange-500 text-white px-5 py-2.5 rounded-xl font-black text-sm shadow-lg shadow-orange-200 hover:bg-orange-600 hover:scale-105 transition-all duration-300 flex items-center gap-2"
+        >
           <Plus className="w-4 h-4" />
           <span>AÑADIR PLATO</span>
         </button>
@@ -126,7 +171,9 @@ export default function Dishes() {
 
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between">
-                      <h3 className="font-black text-gray-800 text-lg truncate leading-tight">{dish.name}</h3>
+                      <h3 className="font-black text-gray-800 text-lg truncate leading-tight group-hover:text-orange-600 transition-colors" onClick={() => toggleExpand(dish._id)}>
+                        {dish.name}
+                      </h3>
                       
                       <div className="flex items-center gap-4">
                         <div className="flex items-center gap-1 text-orange-600 font-black">
@@ -135,10 +182,14 @@ export default function Dishes() {
                         </div>
                         
                         <div className="flex items-center gap-1 border-l border-gray-100 pl-4 ml-2">
-                           <button className="p-2 rounded-lg text-gray-400 hover:text-blue-500 hover:bg-blue-50 transition-all duration-200" title="Editar">
+                           <button 
+                             onClick={(e) => handleEditClick(e, dish)}
+                             className="p-2 rounded-lg text-gray-400 hover:text-blue-500 hover:bg-blue-50 transition-all duration-200" title="Editar">
                              <Edit2 className="w-4 h-4" />
                            </button>
-                           <button className="p-2 rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 transition-all duration-200" title="Eliminar">
+                           <button 
+                             onClick={(e) => handleDeleteClick(e, dish._id)}
+                             className="p-2 rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 transition-all duration-200" title="Eliminar">
                              <Trash2 className="w-4 h-4" />
                            </button>
                         </div>
@@ -264,7 +315,14 @@ export default function Dishes() {
           })}
         </div>
       )}
+
+      {/* Dish Modal */}
+      <DishModal 
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onSave={handleSaveDish}
+        dish={selectedDish}
+      />
     </div>
   );
 }
-

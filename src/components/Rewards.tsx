@@ -1,13 +1,11 @@
 import { useEffect, useState } from "react";
 import { Reward } from "../types/Reward";
-import { getRewardsByRestaurant } from "../services/rewardService";
+import { getRewardsByRestaurant, createReward, updateReward, deleteReward } from "../services/rewardService";
 import { useAuth } from "../context/AuthContext";
 import {
   Gift,
   Star,
   Clock,
-  CheckCircle2,
-  XCircle,
   AlertCircle,
   Loader2,
   Trophy,
@@ -16,12 +14,17 @@ import {
   Trash2,
   BarChart3
 } from "lucide-react";
+import RewardModal from "./RewardModal";
 
 export default function Rewards() {
   const { user, restaurant } = useAuth() as any;
   const [rewards, setRewards] = useState<Reward[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  // Modal State
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedReward, setSelectedReward] = useState<Reward | null>(null);
 
   const restaurantId = user?.restaurant_id || restaurant?._id || restaurant?.id || "";
 
@@ -48,6 +51,42 @@ export default function Rewards() {
     }
   };
 
+  const handleAddClick = () => {
+    setSelectedReward(null);
+    setIsModalOpen(true);
+  };
+
+  const handleEditClick = (reward: Reward) => {
+    setSelectedReward(reward);
+    setIsModalOpen(true);
+  };
+
+  const handleDeleteClick = async (rewardId: string) => {
+    if (window.confirm("¿Estás seguro de que quieres eliminar esta recompensa?")) {
+      try {
+        await deleteReward(rewardId);
+        setRewards(rewards.filter(r => r._id !== rewardId));
+      } catch (err) {
+        alert("Error al eliminar la recompensa");
+      }
+    }
+  };
+
+  const handleSaveReward = async (rewardData: Partial<Reward>) => {
+    try {
+      if (selectedReward) {
+        const updated = await updateReward(selectedReward._id, { ...rewardData, restaurant_id: restaurantId });
+        setRewards(rewards.map(r => r._id === selectedReward._id ? updated : r));
+      } else {
+        const created = await createReward({ ...rewardData, restaurant_id: restaurantId });
+        setRewards([...rewards, created]);
+      }
+    } catch (err) {
+      console.error("Error saving reward:", err);
+      throw err;
+    }
+  };
+
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center h-64 space-y-4">
@@ -65,7 +104,10 @@ export default function Rewards() {
           <h1 className="text-2xl font-black text-gray-800 tracking-tight">Programa de Recompensas</h1>
           <p className="text-sm text-gray-500 font-medium">Gestiona los premios para tus clientes fieles</p>
         </div>
-        <button className="bg-orange-500 text-white px-5 py-2.5 rounded-xl font-black text-sm shadow-lg shadow-orange-200 hover:bg-orange-600 hover:scale-105 transition-all duration-300 flex items-center gap-2">
+        <button 
+          onClick={handleAddClick}
+          className="bg-orange-500 text-white px-5 py-2.5 rounded-xl font-black text-sm shadow-lg shadow-orange-200 hover:bg-orange-600 hover:scale-105 transition-all duration-300 flex items-center gap-2"
+        >
           <Plus className="w-4 h-4" />
           <span>AÑADIR RECOMPENSA</span>
         </button>
@@ -106,10 +148,14 @@ export default function Rewards() {
                 </div>
                 
                 <div className="flex items-center gap-1 bg-gray-50 p-1 rounded-xl">
-                   <button className="p-1.5 rounded-lg text-gray-400 hover:text-blue-500 hover:bg-white transition-all" title="Editar">
+                   <button 
+                     onClick={() => handleEditClick(reward)}
+                     className="p-1.5 rounded-lg text-gray-400 hover:text-blue-500 hover:bg-white transition-all" title="Editar">
                      <Edit2 className="w-3.5 h-3.5" />
                    </button>
-                   <button className="p-1.5 rounded-lg text-gray-400 hover:text-red-500 hover:bg-white transition-all" title="Eliminar">
+                   <button 
+                     onClick={() => handleDeleteClick(reward._id)}
+                     className="p-1.5 rounded-lg text-gray-400 hover:text-red-500 hover:bg-white transition-all" title="Eliminar">
                      <Trash2 className="w-3.5 h-3.5" />
                    </button>
                 </div>
@@ -125,28 +171,25 @@ export default function Rewards() {
                       ? "bg-green-100 text-green-600"
                       : "bg-gray-100 text-gray-400"
                     }`}>
-                    {reward?.active ? "Actiu" : "Inactiu"}
+                    {reward?.active ? "Activo" : "Inactivo"}
                   </div>
                 </div>
                 <p className="text-gray-500 text-sm font-medium line-clamp-2 leading-snug">
                   {reward?.description || "Sin descripción disponible."}
                 </p>
-                <div className="mt-2">
-                   <span className="bg-gray-100 px-2 py-0.5 rounded-md text-[9px] font-black text-gray-400 uppercase tracking-widest">Postres</span>
-                </div>
               </div>
 
               {/* Stats & Footer */}
               <div className="pt-4 border-t border-gray-50 mt-2 grid grid-cols-2 gap-4">
                   <div>
-                    <p className="text-[9px] font-black text-gray-300 uppercase tracking-widest mb-1">Cost en punts</p>
+                    <p className="text-[9px] font-black text-gray-300 uppercase tracking-widest mb-1">Coste en puntos</p>
                     <div className="flex items-center gap-1.5 text-orange-500 font-black">
                       <Star className="w-4 h-4 fill-current" />
                       <span className="text-xl">{reward?.pointsRequired}</span>
                     </div>
                   </div>
                   <div className="text-right">
-                    <p className="text-[9px] font-black text-gray-300 uppercase tracking-widest mb-1">Recanviades</p>
+                    <p className="text-[9px] font-black text-gray-300 uppercase tracking-widest mb-1">Canjeadas</p>
                     <div className="flex items-center justify-end gap-1.5 text-green-500 font-black">
                       <BarChart3 className="w-4 h-4" />
                       <span className="text-xl">{reward?.timesRedeemed || 0}</span>
@@ -167,7 +210,14 @@ export default function Rewards() {
           ))}
         </div>
       )}
+
+      {/* Reward Modal */}
+      <RewardModal 
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onSave={handleSaveReward}
+        reward={selectedReward}
+      />
     </div>
   );
 }
-
