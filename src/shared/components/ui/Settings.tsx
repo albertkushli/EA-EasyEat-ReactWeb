@@ -31,6 +31,7 @@ export default function Settings({ restaurant: initialRestaurant }: SettingsProp
   const [activeTab, setActiveTab] = useState("general");
   const [loading, setLoading] = useState(false);
   const [restaurant, setRestaurant] = useState(initialRestaurant);
+  const [isEditingSchedule, setIsEditingSchedule] = useState(false);
   
   const timetable = restaurant?.profile?.timetable || {};
   const daysOrder = [
@@ -48,12 +49,53 @@ export default function Settings({ restaurant: initialRestaurant }: SettingsProp
       const restaurantId = user?.restaurant_id || restaurant?._id;
       const updated = await updateRestaurant(restaurantId, restaurant);
       setRestaurant(updated);
+      setIsEditingSchedule(false);
       alert("Configuración guardada correctamente");
     } catch (error) {
       console.error("Error saving settings:", error);
       alert("Error al guardar la configuración");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleTimetableChange = (day: string, index: number, field: 'open' | 'close', value: string) => {
+    const newTimetable = { ...timetable };
+    if (!newTimetable[day]) newTimetable[day] = [{ open: "09:00", close: "22:00" }];
+    newTimetable[day][index][field] = value;
+    setRestaurant({
+      ...restaurant,
+      profile: {
+        ...restaurant.profile,
+        timetable: newTimetable
+      }
+    });
+  };
+
+  const addTimeSlot = (day: string) => {
+    const newTimetable = { ...timetable };
+    if (!newTimetable[day]) newTimetable[day] = [];
+    newTimetable[day].push({ open: "09:00", close: "22:00" });
+    setRestaurant({
+      ...restaurant,
+      profile: {
+        ...restaurant.profile,
+        timetable: newTimetable
+      }
+    });
+  };
+
+  const removeTimeSlot = (day: string, index: number) => {
+    const newTimetable = { ...timetable };
+    if (newTimetable[day]) {
+      newTimetable[day].splice(index, 1);
+      setRestaurant({
+        ...restaurant,
+        profile: {
+          ...restaurant.profile,
+          timetable: newTimetable
+        }
+      });
     }
   };
 
@@ -176,9 +218,21 @@ export default function Settings({ restaurant: initialRestaurant }: SettingsProp
                   </div>
                   <h3 className="text-xl font-black text-gray-800">Horario Semanal</h3>
                 </div>
-                <button className="px-4 py-2 bg-orange-500 text-white rounded-xl text-xs font-black hover:bg-orange-600 transition-all shadow-md shadow-orange-100">
-                  EDITAR HORARIO
-                </button>
+                {!isEditingSchedule ? (
+                  <button onClick={() => setIsEditingSchedule(true)} className="px-4 py-2 bg-orange-500 text-white rounded-xl text-xs font-black hover:bg-orange-600 transition-all shadow-md shadow-orange-100">
+                    EDITAR HORARIO
+                  </button>
+                ) : (
+                  <div className="flex gap-2">
+                    <button onClick={() => { setIsEditingSchedule(false); setRestaurant(initialRestaurant); }} className="px-4 py-2 text-gray-500 bg-gray-100 rounded-xl text-xs font-black hover:bg-gray-200 transition-all">
+                      CANCELAR
+                    </button>
+                    <button onClick={handleSave} disabled={loading} className="px-4 py-2 bg-green-500 text-white rounded-xl text-xs font-black hover:bg-green-600 transition-all shadow-md shadow-green-100 flex items-center gap-2">
+                      {loading && <Loader2 className="w-3 h-3 animate-spin" />}
+                      GUARDAR
+                    </button>
+                  </div>
+                )}
               </div>
 
               <div className="space-y-3">
@@ -201,7 +255,33 @@ export default function Settings({ restaurant: initialRestaurant }: SettingsProp
                       </span>
                       
                       <div className="flex items-center gap-4">
-                        {isClosed ? (
+                        {isEditingSchedule ? (
+                          <div className="flex flex-col gap-2">
+                            {slots?.map((s: any, i: number) => (
+                              <div key={i} className="flex items-center gap-2">
+                                <input 
+                                  type="time" 
+                                  value={s.open || ""} 
+                                  onChange={(e) => handleTimetableChange(day, i, 'open', e.target.value)}
+                                  className="p-1 border rounded text-xs"
+                                />
+                                <span>-</span>
+                                <input 
+                                  type="time" 
+                                  value={s.close || ""} 
+                                  onChange={(e) => handleTimetableChange(day, i, 'close', e.target.value)}
+                                  className="p-1 border rounded text-xs"
+                                />
+                                <button onClick={() => removeTimeSlot(day, i)} className="p-1 bg-red-100 text-red-600 rounded hover:bg-red-200">
+                                  <X className="w-3 h-3" />
+                                </button>
+                              </div>
+                            ))}
+                            <button onClick={() => addTimeSlot(day)} className="text-xs font-bold text-orange-500 hover:text-orange-600 text-left mt-1">
+                              + Añadir franja
+                            </button>
+                          </div>
+                        ) : isClosed ? (
                           <span className="px-3 py-1 bg-red-100 text-red-600 rounded-full text-[10px] font-black uppercase tracking-widest">
                             Cerrado
                           </span>
@@ -215,7 +295,7 @@ export default function Settings({ restaurant: initialRestaurant }: SettingsProp
                             ))}
                           </div>
                         )}
-                        <ChevronRight className={`w-4 h-4 ${isToday ? 'text-orange-400' : 'text-gray-300'}`} />
+                        {!isEditingSchedule && <ChevronRight className={`w-4 h-4 ${isToday ? 'text-orange-400' : 'text-gray-300'}`} />}
                       </div>
                     </div>
                   );

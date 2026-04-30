@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { getDishesByRestaurant, createDish, updateDish, deleteDish } from "@/features/dishes/services/dishService";
-import { Dish } from "@/features/dishes/components/Dish";
+import { Dish } from "@/types/Dish";
 import { useAuth } from "@/context/AuthContext";
 import {
   ChevronDown,
@@ -69,7 +69,7 @@ export default function Dishes() {
     e.stopPropagation();
     if (window.confirm("¿Estás seguro de que quieres eliminar este plato?")) {
       try {
-        await deleteDish(dishId);
+        await deleteDish(dishId, restaurantId);
         setDishes(dishes.filter(d => d._id !== dishId));
       } catch (err) {
         alert("Error al eliminar el plato");

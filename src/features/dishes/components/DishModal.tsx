@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { X, Save, Loader2, Utensils, Euro, List } from "lucide-react";
-import { Dish } from "@/features/dishes/components/Dish";
+import { Dish } from "@/types/Dish";
 import { motion, AnimatePresence } from "framer-motion";
 
 interface DishModalProps {

@@ -1,5 +1,5 @@
 import apiClient from "@/services/apiClient";
-import { Dish } from "@/features/dishes/components/Dish";
+import { Dish } from "@/types/Dish";
 
 export const getDishes = async () => {
   try {
@@ -48,9 +48,11 @@ export const updateDish = async (dishId: string, dishData: Partial<Dish>) => {
   }
 };
 
-export const deleteDish = async (dishId: string) => {
+export const deleteDish = async (dishId: string, restaurantId: string) => {
   try {
-    const response = await apiClient.delete(`/dishes/${dishId}/soft`);
+    const response = await apiClient.delete(`/dishes/${dishId}/soft`, {
+      params: { restaurant_id: restaurantId }
+    });
     return response.data;
   } catch (error) {
     console.error("Error deleting dish:", error);

@@ -1,5 +1,5 @@
 import apiClient from "@/services/apiClient";
-import { Reward } from "../types/Reward";
+import { Reward } from "@/types/Reward";
 
 export const getRewardsByRestaurant = async (restaurantId: string) => {
   if (!restaurantId) {
@@ -38,9 +38,11 @@ export const updateReward = async (rewardId: string, rewardData: Partial<Reward>
   }
 };
 
-export const deleteReward = async (rewardId: string) => {
+export const deleteReward = async (rewardId: string, restaurantId: string) => {
   try {
-    const response = await apiClient.delete(`/rewards/${rewardId}/soft`);
+    const response = await apiClient.delete(`/rewards/${rewardId}/soft`, {
+      params: { restaurant_id: restaurantId }
+    });
     return response.data;
   } catch (error: any) {
     console.error("deleteReward error:", error.response?.data || error.message);

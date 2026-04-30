@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Reward } from "../types/Reward";
+import { Reward } from "@/types/Reward";
 import { getRewardsByRestaurant, createReward, updateReward, deleteReward } from "@/features/rewards/services/rewardService";
 import { useAuth } from "@/context/AuthContext";
 import {
@@ -64,7 +64,7 @@ export default function Rewards() {
   const handleDeleteClick = async (rewardId: string) => {
     if (window.confirm("¿Estás seguro de que quieres eliminar esta recompensa?")) {
       try {
-        await deleteReward(rewardId);
+        await deleteReward(rewardId, restaurantId);
         setRewards(rewards.filter(r => r._id !== rewardId));
       } catch (err) {
         alert("Error al eliminar la recompensa");
