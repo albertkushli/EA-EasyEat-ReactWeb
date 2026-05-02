@@ -4,6 +4,7 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
 import Home from './pages/Home';
+import Configuration from './pages/Configuration';
 import './App.css';
 
 // Protected Route component
@@ -52,6 +53,11 @@ function App() {
             <Route path="/dashboard" element={
               <ProtectedRoute>
                 <Dashboard />
+              </ProtectedRoute>
+            } />
+            <Route path="/dashboard/config" element={
+              <ProtectedRoute>
+                <Configuration />
               </ProtectedRoute>
             } />
           </Routes>

@@ -136,6 +136,12 @@ export function AuthProvider({ children }) {
     }
   }, []);
 
+  const updateUser = useCallback((updatedUserFields) => {
+    setAuth(prev => {
+      if (!prev) return prev;
+      return { ...prev, user: { ...prev.user, ...updatedUserFields } };
+    });
+  }, []);
 
   return (
     <AuthContext.Provider value={{
@@ -146,6 +152,7 @@ export function AuthProvider({ children }) {
       register,
       logout,
       refreshSession,
+      updateUser,
       isAuthenticated,
       role,
       loading,
