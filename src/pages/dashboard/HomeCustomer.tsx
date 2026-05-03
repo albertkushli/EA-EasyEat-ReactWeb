@@ -73,8 +73,8 @@ export default function HomeCustomer() {
   const [success, setSuccess] = useState(false);
 
   // Metrics
-  const totalPoints = Array.isArray(pointsWallet) 
-    ? pointsWallet.reduce((sum, w) => sum + (w.points || 0), 0)
+  const totalPoints = Array.isArray(visits) 
+    ? visits.reduce((sum, v) => sum + (Number(v.pointsEarned) || 0), 0)
     : 0;
   const uniqueRestaurantsVisited = Array.isArray(visits)
     ? new Set(visits.map(v => v.restaurant_id?.profile?.name || v.restaurant_name || '')).size
