@@ -3138,3 +3138,322 @@ html {
 .hc-tab-panel { background: #fff !important; border-radius: 24px !important; box-shadow: 0 2px 16px rgba(0,0,0,0.04) !important; border: 1px solid rgba(0,0,0,0.04) !important; }
 .auth-card { background: #fff !important; box-shadow: 0 2px 16px rgba(0,0,0,0.04) !important; }
 .text-orange { color: #f97316 !important; }
+
+
+/* ═══════════════════════════════════════════════════════════════
+   POLISH PASS #2 — Final Professional Touches
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── Fix sidebar footer cutoff: reduce spacing ── */
+.hc-sidebar {
+  padding: 1.25rem 1.1rem !important;
+  gap: 0.75rem !important;
+}
+
+.hc-sidebar__brand {
+  padding: 0.6rem 0.6rem !important;
+  margin-bottom: 0.25rem !important;
+}
+
+.hc-sidebar-nav {
+  gap: 0.2rem !important;
+  flex: 1 !important;
+  overflow-y: auto !important;
+}
+
+.hc-sidebar-nav__item {
+  padding: 0.65rem 0.75rem !important;
+  font-size: 0.88rem !important;
+}
+
+.hc-sidebar-footer {
+  padding: 0.6rem !important;
+  border-radius: 12px !important;
+  margin-top: 0.5rem !important;
+}
+
+.hc-sidebar-user {
+  margin-bottom: 0.4rem !important;
+  gap: 0.6rem !important;
+}
+
+.hc-sidebar-user-avatar {
+  width: 32px !important;
+  height: 32px !important;
+  font-size: 0.8rem !important;
+}
+
+.hc-sidebar-user p {
+  font-size: 0.85rem !important;
+  line-height: 1.2 !important;
+}
+
+.hc-sidebar-user span {
+  font-size: 0.72rem !important;
+}
+
+.hc-sidebar-logout {
+  padding: 0.55rem 0.75rem !important;
+  font-size: 0.8rem !important;
+  border-radius: 8px !important;
+}
+
+/* ── Stat cards: responsive grid that doesn't overflow ── */
+.hc-stats {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)) !important;
+  gap: 1rem !important;
+}
+
+.hc-stat-card {
+  padding: 1.25rem !important;
+  border-radius: 18px !important;
+}
+
+.hc-stat-card__icon {
+  width: 44px !important;
+  height: 44px !important;
+  border-radius: 14px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.hc-stat-card--points .hc-stat-card__icon {
+  background: rgba(234, 88, 12, 0.12) !important;
+}
+
+.hc-stat-card--visits .hc-stat-card__icon {
+  background: rgba(37, 99, 235, 0.12) !important;
+}
+
+.hc-stat-card--badges .hc-stat-card__icon {
+  background: rgba(219, 39, 119, 0.12) !important;
+}
+
+.hc-stat-card--favs .hc-stat-card__icon {
+  background: rgba(22, 163, 74, 0.12) !important;
+}
+
+/* ── Favorite restaurant card improvements ── */
+.hc-cards--favs {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)) !important;
+  gap: 1.25rem !important;
+}
+
+.hc-res-card {
+  display: flex !important;
+  flex-direction: column !important;
+  background: #fff !important;
+}
+
+.hc-res-card__img {
+  height: 160px !important;
+  border-radius: 18px 18px 0 0 !important;
+  overflow: hidden !important;
+}
+
+.hc-res-card__img img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+}
+
+.hc-res-card__body {
+  padding: 1rem 1.25rem !important;
+}
+
+.hc-res-card__name {
+  font-size: 1.1rem !important;
+  font-weight: 700 !important;
+  color: #1e293b !important;
+  margin-bottom: 0.25rem !important;
+}
+
+.hc-res-card__desc {
+  font-size: 0.85rem !important;
+  color: #64748b !important;
+  display: -webkit-box !important;
+  -webkit-line-clamp: 2 !important;
+  -webkit-box-orient: vertical !important;
+  overflow: hidden !important;
+}
+
+.hc-res-card__meta {
+  margin-top: 0.75rem !important;
+  padding-top: 0.75rem !important;
+  border-top: 1px solid #f1f5f9 !important;
+  display: flex !important;
+  gap: 1rem !important;
+  font-size: 0.82rem !important;
+  color: #94a3b8 !important;
+}
+
+/* ── Badge cards improvements ── */
+.hc-badges-row {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)) !important;
+  gap: 1rem !important;
+}
+
+.hc-badge-card {
+  display: flex !important;
+  align-items: center !important;
+  gap: 1rem !important;
+  padding: 1rem 1.25rem !important;
+  background: #fff !important;
+  border-radius: 16px !important;
+  border: 1px solid #f1f5f9 !important;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.03) !important;
+}
+
+.hc-badge-card__icon {
+  width: 48px !important;
+  height: 48px !important;
+  border-radius: 14px !important;
+  background: linear-gradient(135deg, #fff7ed, #ffedd5) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: 1.4rem !important;
+  flex-shrink: 0 !important;
+}
+
+.hc-badge-card__info p {
+  font-weight: 700 !important;
+  font-size: 0.95rem !important;
+  color: #1e293b !important;
+  margin: 0 !important;
+}
+
+.hc-badge-card__info span {
+  font-size: 0.8rem !important;
+  color: #94a3b8 !important;
+}
+
+/* ── Objectives visual upgrade ── */
+.hc-objectives {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)) !important;
+  gap: 1rem !important;
+}
+
+.hc-objective-card {
+  background: #fff !important;
+  border-radius: 18px !important;
+  padding: 1.25rem 1.5rem !important;
+  border: 1px solid #f1f5f9 !important;
+}
+
+.hc-objective-card__header {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  margin-bottom: 0.75rem !important;
+}
+
+.hc-objective-card__header p {
+  font-weight: 600 !important;
+  color: #1e293b !important;
+  font-size: 0.9rem !important;
+  margin: 0 !important;
+}
+
+.hc-objective-card__header span {
+  font-weight: 700 !important;
+  color: #f97316 !important;
+  font-size: 0.85rem !important;
+}
+
+.hc-objective-card small {
+  color: #94a3b8 !important;
+  font-size: 0.78rem !important;
+  margin-top: 0.5rem !important;
+  display: block !important;
+}
+
+/* ── Discover header ── */
+.hc-discover-view h2 {
+  font-size: 1.75rem !important;
+  font-weight: 800 !important;
+  color: #1e293b !important;
+  letter-spacing: -0.02em !important;
+}
+
+.hc-results-count {
+  color: #94a3b8 !important;
+  font-size: 0.85rem !important;
+  margin: 0.5rem 0 1rem !important;
+}
+
+/* ── Large card body spacing ── */
+.hc-large-card__body {
+  padding: 1.25rem 1.5rem !important;
+}
+
+.hc-large-card__header p {
+  color: #94a3b8 !important;
+  font-size: 0.85rem !important;
+  margin: 0.15rem 0 0 !important;
+}
+
+.hc-large-card__footer {
+  padding-top: 0.75rem !important;
+  margin-top: 0.5rem !important;
+  border-top: 1px solid #f1f5f9 !important;
+}
+
+.hc-large-card__dist {
+  color: #94a3b8 !important;
+  font-size: 0.85rem !important;
+}
+
+/* ── Restaurant Detail polish ── */
+.hc-restaurant-detail__header {
+  padding: 0 0.25rem !important;
+}
+
+.hc-restaurant-detail__header p {
+  color: #94a3b8 !important;
+  font-size: 0.95rem !important;
+}
+
+.hc-restaurant-detail__section {
+  background: #fff !important;
+  border-radius: 20px !important;
+  padding: 1.5rem !important;
+  border: 1px solid #f1f5f9 !important;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.03) !important;
+}
+
+.hc-restaurant-detail__section h3 {
+  font-size: 1.15rem !important;
+  color: #1e293b !important;
+  margin: 0 0 0.75rem !important;
+}
+
+.hc-restaurant-detail__section p {
+  color: #64748b !important;
+  line-height: 1.7 !important;
+}
+
+/* ── Section spacing ── */
+.hc-section {
+  margin-bottom: 0.5rem !important;
+}
+
+.hc-section__head {
+  margin-bottom: 1rem !important;
+}
+
+/* ── Empty state ── */
+.hc-empty {
+  text-align: center !important;
+  padding: 2rem !important;
+  color: #94a3b8 !important;
+  font-size: 0.9rem !important;
+  background: #fff !important;
+  border-radius: 16px !important;
+  border: 1px dashed #e2e8f0 !important;
+}
