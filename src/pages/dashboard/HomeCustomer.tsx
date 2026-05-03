@@ -552,6 +552,7 @@ export default function HomeCustomer() {
               setSelectedCategory={setSelectedCategory}
               setShowQrModal={setShowQrModal}
               pointsWallet={pointsWallet}
+              visits={visits}
               favoriteRestaurants={favoriteRestaurants}
               onToggleFavorite={handleToggleFavorite}
             />
@@ -601,7 +602,7 @@ export default function HomeCustomer() {
 
 function DiscoverView({ 
   restaurants, allRewards, selectedRestaurant, setSelectedRestaurant, 
-  searchTerm, setSearchTerm, selectedCategory, setSelectedCategory, setShowQrModal, pointsWallet, favoriteRestaurants, onToggleFavorite
+  searchTerm, setSearchTerm, selectedCategory, setSelectedCategory, setShowQrModal, pointsWallet, visits, favoriteRestaurants, onToggleFavorite
 }: any) {
   const categories = [
     { name: 'Tots', icon: '🍽️' }, 
@@ -628,9 +629,19 @@ function DiscoverView({
     const rating = r?.profile?.globalRating ? Number(r.profile.globalRating).toFixed(1) : '4.5';
     
     // Find user points for this restaurant
-    const userPointsForRestaurant = Array.isArray(pointsWallet) 
+    let userPointsForRestaurant = Array.isArray(pointsWallet) 
       ? pointsWallet.find((pw: any) => pw.restaurant_id === r._id)?.points || 0 
       : 0;
+      
+    // Fallback: If pointsWallet is empty, compute from visits
+    if (userPointsForRestaurant === 0 && Array.isArray(visits)) {
+      userPointsForRestaurant = visits
+        .filter((v: any) => {
+           const rId = typeof v.restaurant_id === 'string' ? v.restaurant_id : (v.restaurant_id?._id || v.restaurant_id?.id);
+           return rId === r._id || rId === r.id;
+        })
+        .reduce((sum, v) => sum + (Number(v.pointsEarned) || 0), 0);
+    }
 
     const restaurantRewards = allRewards.filter((rw: any) => rw.restaurant_id === r._id);
 
