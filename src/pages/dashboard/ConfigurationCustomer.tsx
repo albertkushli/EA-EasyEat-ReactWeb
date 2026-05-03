@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
-import { ICustomer } from '../../models/customer-model';
+import { ICustomer } from '../../types';
 import { customerService } from '../../services/customer-service'
 import { Link } from 'react-router-dom';
 import { LogOut, Settings, User, Mail, Lock, Save, ArrowLeft, CheckCircle } from 'lucide-react';

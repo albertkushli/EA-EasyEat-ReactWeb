@@ -1,7 +1,7 @@
 
 import { useEffect, useState } from 'react';
 import axios, { CanceledError } from 'axios';
-import { ICustomer } from '../models/customer-model';
+import { ICustomer } from '../types';
 import apiClient from '../lib/apiClient';
 
 interface CustomerServiceReturn {
