@@ -25,12 +25,13 @@ export default function ConfigurationCustomer() {
 
   useEffect(() => {
     async function fetchCustomerData() {
-      if (!token || !user?._id) {
+      const customerId = user?._id || user?.id;
+      if (!token || !customerId) {
         setLoadingCustomerData(false);
         return;
       }
       try {
-        const data = await customerService.fetchCustomer(user._id!);
+        const data = await customerService.fetchCustomer(customerId);
         setCustomer(data);
         setCustomerName(data.name);
         setCustomerEmail(data.email);

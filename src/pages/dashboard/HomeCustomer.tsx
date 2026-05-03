@@ -67,16 +67,18 @@ export default function HomeCustomer() {
 
   useEffect(() => {
     async function fetchCustomerData() {
-      if (!token || !user?.id) {
+      // Backend returns _id (Mongoose) — fallback to id for safety
+      const customerId = user?._id || user?.id;
+      if (!token || !customerId) {
         setLoadingCustomerData(false);
         return;
       }
       try {
         const [favRes, ptsRes, badgesRes, visitsRes] = await Promise.allSettled([
-          apiClient.get(`/customers/${user.id}/favouriteRestaurants`, { params: { page: 1, limit: 10 } }),
-          apiClient.get(`/customers/${user.id}/pointsWallet`, { params: { page: 1, limit: 20 } }),
-          apiClient.get(`/customers/${user.id}/badges`, { params: { page: 1, limit: 10 } }),
-          apiClient.get(`/customers/${user.id}/visits`, { params: { page: 1, limit: 20 } }),
+          apiClient.get(`/customers/${customerId}/favouriteRestaurants`, { params: { page: 1, limit: 10 } }),
+          apiClient.get(`/customers/${customerId}/pointsWallet`, { params: { page: 1, limit: 20 } }),
+          apiClient.get(`/customers/${customerId}/badges`, { params: { page: 1, limit: 10 } }),
+          apiClient.get(`/customers/${customerId}/visits`, { params: { page: 1, limit: 20 } }),
         ]);
 
         if (favRes.status === 'fulfilled' && favRes.value.data) {
@@ -102,7 +104,7 @@ export default function HomeCustomer() {
       }
     }
     fetchCustomerData();
-  }, [token, user?.id]);
+  }, [token, user?._id, user?.id]);
 
   const loading = loadingRestaurants || loadingCustomerData;
 
