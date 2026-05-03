@@ -73,8 +73,8 @@ export default function HomeCustomer() {
   const [success, setSuccess] = useState(false);
 
   // Metrics
-  const totalPoints = Array.isArray(visits) 
-    ? visits.reduce((sum, v) => sum + (Number(v.pointsEarned) || 0), 0)
+  const totalPoints = Array.isArray(pointsWallet) 
+    ? pointsWallet.reduce((sum, w) => sum + (Number(w.points) || 0), 0)
     : 0;
   const uniqueRestaurantsVisited = Array.isArray(visits)
     ? new Set(visits.map(v => v.restaurant_id?.profile?.name || v.restaurant_name || '')).size
@@ -633,20 +633,10 @@ function DiscoverView({
     const img = r?.profile?.image?.[0] || r?.image?.[0];
     const rating = r?.profile?.globalRating ? Number(r.profile.globalRating).toFixed(1) : '4.5';
     
-    // Find user points for this restaurant
-    let userPointsForRestaurant = Array.isArray(pointsWallet) 
-      ? pointsWallet.find((pw: any) => pw.restaurant_id === r._id)?.points || 0 
+    // Find user points for this restaurant using pointsWallet
+    const userPointsForRestaurant = Array.isArray(pointsWallet) 
+      ? pointsWallet.find((pw: any) => pw.restaurant_id === r._id || pw.restaurant_id?.id === r._id || pw.restaurant_id?._id === r._id)?.points || 0 
       : 0;
-      
-    // Fallback: If pointsWallet is empty, compute from visits
-    if (userPointsForRestaurant === 0 && Array.isArray(visits)) {
-      userPointsForRestaurant = visits
-        .filter((v: any) => {
-           const rId = typeof v.restaurant_id === 'string' ? v.restaurant_id : (v.restaurant_id?._id || v.restaurant_id?.id);
-           return rId === r._id || rId === r.id;
-        })
-        .reduce((sum, v) => sum + (Number(v.pointsEarned) || 0), 0);
-    }
 
     const restaurantRewards = allRewards.filter((rw: any) => rw.restaurant_id === r._id);
 
