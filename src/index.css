@@ -1,4 +1,4 @@
-:root {
+﻿:root {
   --text: #6b6375;
   --text-h: #08060d;
   --bg: #fff;
@@ -984,7 +984,7 @@ html {
   }
 }
 
-/* ── Page ── */
+/* â”€â”€ Page â”€â”€ */
 .hc-page {
   min-height: 100vh;
   background: var(--clr-bg);
@@ -992,7 +992,7 @@ html {
   color: var(--clr-text);
 }
 
-/* ── Loading ── */
+/* â”€â”€ Loading â”€â”€ */
 .hc-loading {
   min-height: 100vh;
   display: flex;
@@ -1018,7 +1018,7 @@ html {
   }
 }
 
-/* ── Header ── */
+/* â”€â”€ Header â”€â”€ */
 .hc-header {
   position: sticky;
   top: 0;
@@ -1124,7 +1124,7 @@ html {
   background: hsl(0, 0%, 16%);
 }
 
-/* ── Main ── */
+/* â”€â”€ Main â”€â”€ */
 .hc-main {
   max-width: 1200px;
   margin: 0 auto;
@@ -1134,7 +1134,7 @@ html {
   gap: 2.5rem;
 }
 
-/* ── Hero ── */
+/* â”€â”€ Hero â”€â”€ */
 .hc-hero {
   position: relative;
   padding: 2.5rem;
@@ -1197,7 +1197,7 @@ html {
   right: 80px;
 }
 
-/* ── Stats ── */
+/* â”€â”€ Stats â”€â”€ */
 .hc-stats {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -1271,7 +1271,7 @@ html {
   margin-top: 3px;
 }
 
-/* ── Search ── */
+/* â”€â”€ Search â”€â”€ */
 .hc-search-wrap {}
 
 .hc-search {
@@ -1337,7 +1337,7 @@ html {
   color: var(--clr-text-muted);
 }
 
-/* ── Section ── */
+/* â”€â”€ Section â”€â”€ */
 .hc-section {
   display: flex;
   flex-direction: column;
@@ -1363,7 +1363,7 @@ html {
   color: var(--clr-text-muted);
 }
 
-/* ── Restaurant Cards ── */
+/* â”€â”€ Restaurant Cards â”€â”€ */
 .hc-cards {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
@@ -1468,7 +1468,7 @@ html {
   color: var(--clr-text-muted);
 }
 
-/* ── Visits ── */
+/* â”€â”€ Visits â”€â”€ */
 .hc-visits {
   border: 1px solid var(--glass-border);
   border-radius: 16px;
@@ -1529,7 +1529,7 @@ html {
   color: var(--clr-text-muted);
 }
 
-/* ── Badges ── */
+/* â”€â”€ Badges â”€â”€ */
 .hc-badges {
   display: flex;
   flex-wrap: wrap;
@@ -1566,7 +1566,7 @@ html {
   font-weight: 600;
 }
 
-/* ── Empty ── */
+/* â”€â”€ Empty â”€â”€ */
 .hc-empty {
   padding: 2.5rem;
   text-align: center;
@@ -1577,7 +1577,7 @@ html {
 }
 
 /* ============================================================ */
-/* HOME EMPLOYEE — .he-* classes                               */
+/* HOME EMPLOYEE â€” .he-* classes                               */
 /* (Previously inline <style> in HomeEmployee.jsx in develop)  */
 /* ============================================================ */
 
