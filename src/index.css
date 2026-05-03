@@ -1,4 +1,4 @@
-﻿:root {
+:root {
   --text: #6b6375;
   --text-h: #08060d;
   --bg: #fff;
@@ -1903,7 +1903,6 @@ html {
   .he-timetable-row { flex-direction: column; align-items: flex-start; gap: 4px; }
   .he-timetable-hours { text-align: left; justify-content: flex-start; }
 }
-`
         /* ÔöÇÔöÇ Page ÔöÇÔöÇ */
         .hc-page {
           min-height: 100vh;
@@ -2519,8 +2518,6 @@ html {
           border-radius: 16px;
           font-size: 0.9rem;
         }
-      `
-
 /* â”€â”€ Discover View â”€â”€ */
 .hc-discover-view {
   display: flex;
@@ -2926,3 +2923,218 @@ html {
   margin: 0 !important;
 }
 
+
+
+/* ═══════════════════════════════════════════════════════════════
+   COMPLETE VISUAL OVERHAUL — Professional Dashboard Design
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── Page & Layout ── */
+.hc-page {
+  background: #f8fafc !important;
+  min-height: 100vh;
+}
+
+.hc-layout {
+  display: flex !important;
+  gap: 0 !important;
+  padding: 0 !important;
+  max-width: 100% !important;
+  margin: 0 !important;
+}
+
+/* ── Sidebar: fixed, full-height, proper scrolling ── */
+.hc-sidebar {
+  width: 260px !important;
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  height: 100vh !important;
+  padding: 1.5rem 1.25rem !important;
+  border-radius: 0 !important;
+  z-index: 100 !important;
+  overflow-y: auto !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 1.25rem !important;
+  background: linear-gradient(180deg, #0a1628 0%, #0f2440 100%) !important;
+  box-shadow: 4px 0 30px rgba(0,0,0,0.12) !important;
+}
+
+.hc-sidebar-footer {
+  margin-top: auto !important;
+  padding: 0.75rem !important;
+  border-radius: 14px !important;
+  flex-shrink: 0 !important;
+}
+
+.hc-sidebar-user { margin-bottom: 0.5rem !important; }
+.hc-sidebar-user-avatar { width: 36px !important; height: 36px !important; font-size: 0.85rem !important; }
+.hc-sidebar-user p { font-size: 0.9rem !important; }
+.hc-sidebar-logout { padding: 0.65rem 0.85rem !important; font-size: 0.85rem !important; border-radius: 10px !important; }
+.hc-sidebar__brand { padding: 0.75rem 0.7rem !important; border-radius: 14px !important; }
+.hc-sidebar__logo { font-size: 1.4rem !important; }
+.hc-sidebar__title { font-size: 1rem !important; }
+.hc-sidebar__subtitle { font-size: 0.72rem !important; }
+.hc-sidebar-nav { gap: 0.35rem !important; }
+.hc-sidebar-nav__item { padding: 0.75rem 0.85rem !important; border-radius: 12px !important; font-size: 0.9rem !important; }
+
+/* ── Scrollbar for sidebar ── */
+.hc-sidebar::-webkit-scrollbar { width: 4px; }
+.hc-sidebar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 4px; }
+.hc-sidebar::-webkit-scrollbar-track { background: transparent; }
+
+/* ── Main Content ── */
+.hc-main {
+  margin-left: 260px !important;
+  width: calc(100% - 260px) !important;
+  min-height: 100vh !important;
+  background: #f8fafc !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  border: none !important;
+  padding: 2rem 2.5rem !important;
+}
+
+/* ── Hero Section ── */
+.hc-hero {
+  background: linear-gradient(135deg, #ff6b35 0%, #f7931e 50%, #ffb347 100%) !important;
+  border: none !important;
+  border-radius: 24px !important;
+  padding: 2.5rem !important;
+  color: #fff !important;
+  position: relative;
+  overflow: hidden;
+}
+.hc-hero::before {
+  content: '';
+  position: absolute;
+  top: -50%; right: -20%;
+  width: 400px; height: 400px;
+  background: radial-gradient(circle, rgba(255,255,255,0.15) 0%, transparent 70%);
+  border-radius: 50%;
+}
+.hc-hero__greeting, .hc-hero__sub { color: rgba(255,255,255,0.9) !important; }
+.hc-hero__name { color: #fff !important; font-size: 2.2rem !important; }
+
+/* ── Stat Cards with Pastel Backgrounds ── */
+.hc-stats { display: grid !important; grid-template-columns: repeat(4, 1fr) !important; gap: 1.25rem !important; }
+.hc-stat-card {
+  border-radius: 20px !important;
+  padding: 1.5rem !important;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.04) !important;
+  transition: transform 0.2s ease, box-shadow 0.2s ease !important;
+}
+.hc-stat-card:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.08) !important; }
+
+.hc-stat-card--points { background: linear-gradient(135deg, #fff7ed, #ffedd5) !important; border: 1px solid #fed7aa !important; }
+.hc-stat-card--points .hc-stat-card__icon { color: #ea580c !important; }
+.hc-stat-card--visits { background: linear-gradient(135deg, #eff6ff, #dbeafe) !important; border: 1px solid #bfdbfe !important; }
+.hc-stat-card--visits .hc-stat-card__icon { color: #2563eb !important; }
+.hc-stat-card--badges { background: linear-gradient(135deg, #fdf2f8, #fce7f3) !important; border: 1px solid #fbcfe8 !important; }
+.hc-stat-card--badges .hc-stat-card__icon { color: #db2777 !important; }
+.hc-stat-card--favs { background: linear-gradient(135deg, #f0fdf4, #dcfce7) !important; border: 1px solid #bbf7d0 !important; }
+.hc-stat-card--favs .hc-stat-card__icon { color: #16a34a !important; }
+
+.hc-stat-card__value { font-size: 2rem !important; font-weight: 800 !important; color: #1e293b !important; }
+.hc-stat-card__label { color: #64748b !important; font-weight: 500 !important; }
+
+/* ── Section titles ── */
+.hc-section__title { font-size: 1.2rem !important; color: #1e293b !important; }
+
+/* ── Restaurant Cards ── */
+.hc-res-card {
+  border-radius: 20px !important;
+  box-shadow: 0 2px 16px rgba(0,0,0,0.06) !important;
+  border: 1px solid rgba(0,0,0,0.04) !important;
+  transition: transform 0.2s ease, box-shadow 0.2s ease !important;
+}
+.hc-res-card:hover { transform: translateY(-3px); box-shadow: 0 12px 32px rgba(0,0,0,0.1) !important; }
+
+/* ── Badge & Objective cards ── */
+.hc-badge-card { border-radius: 16px !important; box-shadow: 0 2px 12px rgba(0,0,0,0.04) !important; border: 1px solid rgba(0,0,0,0.04) !important; }
+.hc-objective-card { border-radius: 16px !important; background: #fff !important; box-shadow: 0 2px 12px rgba(0,0,0,0.04) !important; border: 1px solid rgba(0,0,0,0.04) !important; padding: 1.25rem !important; }
+
+/* ── Progress bars ── */
+.hc-progress-bar { background: #e2e8f0 !important; border-radius: 999px !important; height: 8px !important; }
+.hc-progress-bar__fill { background: linear-gradient(90deg, #f97316, #fb923c) !important; border-radius: 999px !important; height: 100% !important; }
+
+/* ── Discover View ── */
+.hc-discover-view { animation: hc-fade-in 0.4s ease-out; }
+.hc-search-input {
+  background: #fff !important;
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 16px !important;
+  padding: 0.85rem 1.25rem !important;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04) !important;
+  transition: border-color 0.2s, box-shadow 0.2s !important;
+}
+.hc-search-input:focus-within { border-color: #f97316 !important; box-shadow: 0 0 0 3px rgba(249,115,22,0.1) !important; }
+.hc-filter-btn { background: #fff !important; border: 1px solid #e2e8f0 !important; border-radius: 16px !important; box-shadow: 0 2px 8px rgba(0,0,0,0.04) !important; }
+.hc-category-pill {
+  padding: 0.6rem 1.25rem !important;
+  border-radius: 999px !important;
+  font-size: 0.9rem !important;
+  font-weight: 600 !important;
+  border: 1px solid #e2e8f0 !important;
+  background: #fff !important;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.04) !important;
+  transition: all 0.2s ease !important;
+}
+.hc-category-pill:hover { border-color: #f97316 !important; color: #f97316 !important; }
+.hc-category-pill.active {
+  background: linear-gradient(135deg, #f97316, #fb923c) !important;
+  border-color: #f97316 !important;
+  color: #fff !important;
+  box-shadow: 0 4px 16px rgba(249,115,22,0.3) !important;
+}
+
+/* ── Large Restaurant Cards ── */
+.hc-large-card {
+  border-radius: 24px !important;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.06) !important;
+  border: 1px solid rgba(0,0,0,0.04) !important;
+  background: #fff !important;
+  transition: transform 0.25s ease, box-shadow 0.25s ease !important;
+}
+.hc-large-card:hover { transform: translateY(-6px) !important; box-shadow: 0 20px 48px rgba(0,0,0,0.12) !important; }
+.hc-large-card__banner { height: 220px !important; }
+.hc-large-card__header h3 { font-size: 1.3rem !important; color: #1e293b !important; }
+.hc-large-card__rating { background: linear-gradient(135deg, #fffbeb, #fef3c7) !important; color: #d97706 !important; font-weight: 700 !important; padding: 0.35rem 0.65rem !important; border-radius: 10px !important; }
+
+/* ── Restaurant Detail ── */
+.hc-restaurant-detail { animation: hc-fade-in 0.3s ease-out; }
+.hc-restaurant-detail__banner { height: 340px !important; border-radius: 24px !important; box-shadow: 0 8px 32px rgba(0,0,0,0.1) !important; }
+.hc-restaurant-detail__header h2 { font-size: 2rem !important; color: #1e293b !important; }
+.hc-restaurant-detail__rating { background: linear-gradient(135deg, #fffbeb, #fef3c7) !important; color: #d97706 !important; padding: 0.5rem 1rem !important; border-radius: 12px !important; font-weight: 700 !important; font-size: 1.1rem !important; }
+.hc-info-box { background: #fff !important; border-radius: 20px !important; padding: 1.5rem !important; box-shadow: 0 2px 12px rgba(0,0,0,0.04) !important; border: 1px solid #f1f5f9 !important; }
+.hc-reward-item { background: #fff !important; border-radius: 20px !important; padding: 1.5rem !important; box-shadow: 0 2px 12px rgba(0,0,0,0.04) !important; border: 1px solid #f1f5f9 !important; transition: transform 0.2s ease !important; }
+.hc-reward-item:hover { transform: translateX(4px); }
+
+.hc-checkin-btn {
+  background: linear-gradient(135deg, #f97316, #ea580c) !important;
+  border-radius: 20px !important;
+  padding: 1.25rem 2rem !important;
+  font-size: 1.15rem !important;
+  font-weight: 700 !important;
+  box-shadow: 0 8px 24px rgba(249,115,22,0.35) !important;
+  transition: transform 0.2s ease, box-shadow 0.2s ease !important;
+}
+.hc-checkin-btn:hover { transform: translateY(-2px) !important; box-shadow: 0 12px 32px rgba(249,115,22,0.45) !important; }
+
+.hc-points-multiplier-banner { background: linear-gradient(135deg, #f97316, #ea580c) !important; border-radius: 20px !important; box-shadow: 0 8px 24px rgba(249,115,22,0.25) !important; }
+.hc-modal { border-radius: 28px !important; box-shadow: 0 24px 64px rgba(0,0,0,0.2) !important; }
+.hc-modal h3 { font-size: 1.6rem !important; color: #1e293b !important; }
+.hc-back-btn { box-shadow: 0 4px 16px rgba(0,0,0,0.1) !important; transition: transform 0.2s ease !important; }
+.hc-back-btn:hover { transform: scale(1.1); }
+
+/* ── Animations ── */
+@keyframes hc-fade-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes hc-slide-up { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+.hc-animate-fade { animation: hc-fade-in 0.6s ease-out both; }
+.hc-animate-slide { opacity: 0; animation: hc-slide-up 0.5s ease-out both; }
+
+/* ── Tab panel fallback ── */
+.hc-tab-panel { background: #fff !important; border-radius: 24px !important; box-shadow: 0 2px 16px rgba(0,0,0,0.04) !important; border: 1px solid rgba(0,0,0,0.04) !important; }
+.auth-card { background: #fff !important; box-shadow: 0 2px 16px rgba(0,0,0,0.04) !important; }
+.text-orange { color: #f97316 !important; }
