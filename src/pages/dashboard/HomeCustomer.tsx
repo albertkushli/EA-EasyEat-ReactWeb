@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { 
   LogOut, User, MapPin, Star, Coins, Trophy, Heart, Clock, 
   Home, Compass, Gift, QrCode, Mail, Lock, Save, CheckCircle,
-  Search, SlidersHorizontal, ArrowLeft, Utensils, X
+  Search, SlidersHorizontal, ArrowLeft, Utensils, X, Wallet
 } from 'lucide-react';
 import { QRCodeCanvas } from 'qrcode.react';
 import { useAuth } from '../../context/AuthContext';
