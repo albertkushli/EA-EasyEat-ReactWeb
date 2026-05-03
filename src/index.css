@@ -3457,3 +3457,159 @@ html {
   border-radius: 16px !important;
   border: 1px dashed #e2e8f0 !important;
 }
+
+
+/* ── Layout width fix ── */
+.hc-main {
+  max-width: none !important;
+}
+
+/* ── Favorite toggle button ── */
+.hc-fav-btn {
+  background: rgba(255, 255, 255, 0.8) !important;
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 50% !important;
+  width: 44px !important;
+  height: 44px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  cursor: pointer !important;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05) !important;
+  transition: all 0.2s ease !important;
+}
+.hc-fav-btn:hover {
+  transform: scale(1.05) !important;
+  background: #fff !important;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.08) !important;
+}
+.hc-fav-btn.active {
+  color: #ef4444 !important;
+  border-color: #fecaca !important;
+  background: #fff5f5 !important;
+}
+
+/* ── Make cards clickable ── */
+.hc-res-card, .hc-large-card {
+  cursor: pointer !important;
+}
+
+
+/* ═══════════════════════════════════════════════════════════════
+   TOPBAR LAYOUT & ANIMATIONS
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── Sidebar to Topbar ── */
+.hc-sidebar {
+  width: 100% !important;
+  height: 80px !important;
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  padding: 0 2.5rem !important;
+  z-index: 1000 !important;
+}
+
+.hc-sidebar__brand {
+  margin-bottom: 0 !important;
+  padding: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.75rem !important;
+  flex: 0 0 auto !important;
+}
+
+.hc-sidebar__subtitle { display: none !important; }
+
+.hc-sidebar-nav {
+  flex-direction: row !important;
+  gap: 0.5rem !important;
+  justify-content: center !important;
+  flex: 1 !important;
+  overflow: visible !important;
+}
+
+.hc-sidebar-nav__item {
+  padding: 0.6rem 1.25rem !important;
+  border-radius: 99px !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.5rem !important;
+  white-space: nowrap !important;
+  transition: all 0.2s ease !important;
+}
+.hc-sidebar-nav__item:hover { transform: translateY(-2px) !important; }
+.hc-sidebar-nav__item span { display: inline-block !important; }
+
+.hc-sidebar-footer {
+  margin-top: 0 !important;
+  padding: 0 !important;
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  gap: 1.5rem !important;
+  flex: 0 0 auto !important;
+}
+
+.hc-sidebar-user {
+  margin-bottom: 0 !important;
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  gap: 0.75rem !important;
+}
+
+.hc-sidebar-user p, .hc-sidebar-user span { display: none !important; } /* Simplified for topbar */
+
+.hc-sidebar-logout { 
+  padding: 0.5rem 1rem !important; 
+  border-radius: 99px !important;
+  transition: all 0.2s ease !important;
+}
+.hc-sidebar-logout:hover { transform: translateY(-2px) !important; background: rgba(239,68,68,0.15) !important; }
+
+/* ── Main content adjustment ── */
+.hc-main {
+  margin-left: 0 !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  padding: 2.5rem !important;
+  padding-top: calc(80px + 2.5rem) !important; /* Topbar height + padding */
+}
+
+/* ── Staggered Animations for items ── */
+.hc-stat-card { animation: hc-slide-up 0.5s ease-out both; }
+.hc-stat-card:nth-child(1) { animation-delay: 0.1s; }
+.hc-stat-card:nth-child(2) { animation-delay: 0.2s; }
+.hc-stat-card:nth-child(3) { animation-delay: 0.3s; }
+.hc-stat-card:nth-child(4) { animation-delay: 0.4s; }
+
+.hc-cards--favs .hc-res-card { animation: hc-slide-up 0.5s ease-out both; }
+.hc-cards--favs .hc-res-card:nth-child(1) { animation-delay: 0.15s; }
+.hc-cards--favs .hc-res-card:nth-child(2) { animation-delay: 0.25s; }
+.hc-cards--favs .hc-res-card:nth-child(3) { animation-delay: 0.35s; }
+.hc-cards--favs .hc-res-card:nth-child(4) { animation-delay: 0.45s; }
+
+.hc-rewards-carousel .hc-reward-item { animation: hc-slide-up 0.5s ease-out both; }
+.hc-rewards-carousel .hc-reward-item:nth-child(1) { animation-delay: 0.2s; }
+.hc-rewards-carousel .hc-reward-item:nth-child(2) { animation-delay: 0.3s; }
+.hc-rewards-carousel .hc-reward-item:nth-child(3) { animation-delay: 0.4s; }
+.hc-rewards-carousel .hc-reward-item:nth-child(4) { animation-delay: 0.5s; }
+
+.hc-objectives .hc-objective-card { animation: hc-slide-up 0.5s ease-out both; }
+.hc-objectives .hc-objective-card:nth-child(1) { animation-delay: 0.1s; }
+.hc-objectives .hc-objective-card:nth-child(2) { animation-delay: 0.2s; }
+.hc-objectives .hc-objective-card:nth-child(3) { animation-delay: 0.3s; }
+
+/* Pulse animation for hero orbs */
+@keyframes hc-pulse {
+  0% { transform: scale(1); opacity: 0.5; }
+  50% { transform: scale(1.05); opacity: 0.7; }
+  100% { transform: scale(1); opacity: 0.5; }
+}
+.hc-hero::before {
+  animation: hc-pulse 6s infinite ease-in-out;
+}
