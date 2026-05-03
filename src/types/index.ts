@@ -88,10 +88,12 @@ export interface IVisit {
   id?: string;
   restaurant_id: string;
   customer_id: string;
+  employee_id?: string;
   date: Date | string;
   createdAt?: Date;
   updatedAt?: Date;
-  points?: number;
+  pointsEarned?: number;
+  billAmount?: number;
   duration?: number;
 }
 

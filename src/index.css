@@ -3617,3 +3617,154 @@ html {
 .hc-hero::before {
   animation: hc-pulse 6s infinite ease-in-out;
 }
+
+
+/* ═══════════════════════════════════════════════════════════════
+   REWARDS HISTORY DASHBOARD
+   ═══════════════════════════════════════════════════════════════ */
+
+.hc-rewards-dashboard {
+  width: 100% !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 2.5rem !important;
+}
+
+.hc-rewards-stats {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)) !important;
+  gap: 1.5rem !important;
+}
+
+.hc-stat-card--money {
+  background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%) !important;
+  border: 1px solid #a7f3d0 !important;
+}
+.hc-stat-card--money .hc-stat-card__icon {
+  background: #10b981 !important;
+  color: white !important;
+}
+
+.hc-stat-card--visits {
+  background: linear-gradient(135deg, #f3e8ff 0%, #e9d5ff 100%) !important;
+  border: 1px solid #d8b4fe !important;
+}
+.hc-stat-card--visits .hc-stat-card__icon {
+  background: #a855f7 !important;
+  color: white !important;
+}
+
+.hc-rewards-history-section {
+  background: #ffffff !important;
+  border-radius: 20px !important;
+  border: 1px solid #e2e8f0 !important;
+  padding: 2rem !important;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.03) !important;
+}
+
+.hc-rewards-history-title {
+  margin-top: 0 !important;
+  margin-bottom: 1.5rem !important;
+  font-size: 1.25rem !important;
+  color: #0f172a !important;
+  border-bottom: 1px solid #f1f5f9 !important;
+  padding-bottom: 1rem !important;
+}
+
+.hc-rewards-history-list {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 1rem !important;
+}
+
+.hc-history-item {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  padding: 1rem 1.25rem !important;
+  background: #f8fafc !important;
+  border: 1px solid #f1f5f9 !important;
+  border-radius: 16px !important;
+  transition: all 0.2s ease !important;
+}
+
+.hc-history-item:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.05) !important;
+  background: #ffffff !important;
+  border-color: #e2e8f0 !important;
+}
+
+.hc-history-item__left {
+  display: flex !important;
+  align-items: center !important;
+  gap: 1rem !important;
+}
+
+.hc-history-item__img {
+  width: 48px !important;
+  height: 48px !important;
+  border-radius: 12px !important;
+  overflow: hidden !important;
+  background: #e2e8f0 !important;
+  flex-shrink: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.hc-history-item__img img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+}
+
+.hc-history-item__info h4 {
+  margin: 0 0 0.25rem 0 !important;
+  font-size: 1.05rem !important;
+  color: #0f172a !important;
+}
+
+.hc-history-item__info p {
+  margin: 0 !important;
+  font-size: 0.85rem !important;
+  color: #64748b !important;
+}
+
+.hc-history-item__right {
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.75rem !important;
+}
+
+.hc-history-badge {
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.35rem !important;
+  padding: 0.5rem 0.85rem !important;
+  border-radius: 99px !important;
+  font-size: 0.9rem !important;
+  font-weight: 600 !important;
+}
+
+.hc-history-badge--points {
+  background: hsla(26, 95%, 55%, 0.1) !important;
+  color: hsla(26, 95%, 45%, 1) !important;
+}
+
+.hc-history-badge--money {
+  background: hsla(142, 71%, 45%, 0.1) !important;
+  color: hsla(142, 71%, 35%, 1) !important;
+}
+
+@media (max-width: 768px) {
+  .hc-history-item {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 1rem !important;
+  }
+  .hc-history-item__right {
+    width: 100% !important;
+    justify-content: flex-end !important;
+  }
+}

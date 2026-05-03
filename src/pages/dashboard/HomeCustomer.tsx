@@ -138,9 +138,23 @@ export default function HomeCustomer() {
       } finally {
         setLoadingCustomerData(false);
       }
+    };
+
+    if (user && (user._id || user.id)) {
+      fetchCustomerData();
     }
-    fetchCustomerData();
-  }, [token, user?._id, user?.id]);
+  }, [user]);
+
+  const handleToggleFavorite = async (restaurant: any) => {
+    const isFav = favoriteRestaurants.some((fav: any) => fav._id === restaurant._id);
+    if (isFav) {
+      setFavoriteRestaurants(favoriteRestaurants.filter((fav: any) => fav._id !== restaurant._id));
+      // Optionally call API to remove
+    } else {
+      setFavoriteRestaurants([...favoriteRestaurants, restaurant]);
+      // Optionally call API to add
+    }
+  };
 
   const handleSubmitProfile = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -320,13 +334,46 @@ export default function HomeCustomer() {
                 {displayFavorites.length > 0 ? (
                   <div className="hc-cards hc-cards--favs">
                     {displayFavorites.map((r, i) => (
-                      <RestaurantCard key={i} restaurant={r} />
+                      <RestaurantCard 
+                        key={i} 
+                        restaurant={r} 
+                        onClick={() => {
+                          setSelectedRestaurant(r);
+                          setActiveTab('discover');
+                        }} 
+                      />
                     ))}
                   </div>
                 ) : (
                   <div className="hc-empty">No tens restaurants favorits encara.</div>
                 )}
               </section>
+
+              {/* Recompensas (Carrusel) */}
+              {allRewards && allRewards.length > 0 && (
+                <section className="hc-section">
+                  <div className="hc-section__head">
+                    <h2 className="hc-section__title"><Gift size={18} /> Recompenses destacades</h2>
+                  </div>
+                  <div className="hc-rewards-carousel" style={{ display: 'flex', gap: '1rem', overflowX: 'auto', paddingBottom: '1rem' }}>
+                    {allRewards.slice(0, 10).map((rw: any, i: number) => {
+                      const rest = restaurants.find((r: any) => r._id === rw.restaurant_id);
+                      return (
+                        <div key={i} className="hc-reward-item" style={{ minWidth: '280px', flex: '0 0 auto' }}>
+                          <div>
+                            <h4>{rw.name}</h4>
+                            <span style={{ display: 'block', margin: '0.25rem 0', color: 'var(--clr-text-muted)' }}>
+                              {rest?.profile?.name || 'Restaurant'}
+                            </span>
+                            <span style={{ color: '#f97316', fontWeight: 'bold' }}>{rw.pointsRequired} punts</span>
+                          </div>
+                          <Gift size={20} className="text-orange" />
+                        </div>
+                      );
+                    })}
+                  </div>
+                </section>
+              )}
 
               {/* Badges */}
               {Array.isArray(badges) && badges.length > 0 && (
@@ -504,23 +551,22 @@ export default function HomeCustomer() {
               selectedCategory={selectedCategory}
               setSelectedCategory={setSelectedCategory}
               setShowQrModal={setShowQrModal}
+              pointsWallet={pointsWallet}
+              favoriteRestaurants={favoriteRestaurants}
+              onToggleFavorite={handleToggleFavorite}
             />
+          ) : activeTab === 'rewards' ? (
+            <HistoryRewardsView visits={visits} restaurants={restaurants} />
           ) : (
             <section className="hc-section hc-tab-panel">
               <div className="hc-tab-panel__hero">
                 <div>
-                  <p className="hc-tab-panel__label">
-                    {activeTab === 'discover' ? 'Descobrir' : activeTab === 'qr' ? 'El meu QR' : 'Recompenses'}
-                  </p>
-                  <h2>
-                    {activeTab === 'discover' ? 'Descobreix nous restaurants i ofertes' : activeTab === 'qr' ? 'El teu QR està preparat' : 'Les teves recompenses'}
-                  </h2>
+                  <p className="hc-tab-panel__label">El meu QR</p>
+                  <h2>El teu QR està preparat</h2>
                   <p className="hc-tab-panel__text">Aquí podràs accedir ràpidament a la funcionalitat corresponent.</p>
                 </div>
                 <div className="hc-tab-panel__icon">
-                  {activeTab === 'discover' && <Compass size={32} />}
-                  {activeTab === 'qr' && <QrCode size={32} />}
-                  {activeTab === 'rewards' && <Gift size={32} />}
+                  <QrCode size={32} />
                 </div>
               </div>
             </section>
@@ -555,9 +601,16 @@ export default function HomeCustomer() {
 
 function DiscoverView({ 
   restaurants, allRewards, selectedRestaurant, setSelectedRestaurant, 
-  searchTerm, setSearchTerm, selectedCategory, setSelectedCategory, setShowQrModal
+  searchTerm, setSearchTerm, selectedCategory, setSelectedCategory, setShowQrModal, pointsWallet, favoriteRestaurants, onToggleFavorite
 }: any) {
-  const categories = ['Tots', 'Sushi', 'Pizza', 'Burguer', 'Mexicà', 'Italià'];
+  const categories = [
+    { name: 'Tots', icon: '🍽️' }, 
+    { name: 'Sushi', icon: '🍣' }, 
+    { name: 'Pizza', icon: '🍕' }, 
+    { name: 'Burguer', icon: '🍔' }, 
+    { name: 'Mexicà', icon: '🌮' }, 
+    { name: 'Italià', icon: '🍝' }
+  ];
 
   const filteredRestaurants = restaurants.filter((r: any) => {
     const matchesSearch = (r.profile?.name || '').toLowerCase().includes(searchTerm.toLowerCase()) || 
@@ -572,31 +625,46 @@ function DiscoverView({
   if (selectedRestaurant) {
     const r = selectedRestaurant;
     const img = r?.profile?.image?.[0] || r?.image?.[0];
-    const distance = r?.profile?.distance || r?.profile?.location?.distance || '0.5 km';
     const rating = r?.profile?.globalRating ? Number(r.profile.globalRating).toFixed(1) : '4.5';
     
+    // Find user points for this restaurant
+    const userPointsForRestaurant = Array.isArray(pointsWallet) 
+      ? pointsWallet.find((pw: any) => pw.restaurant_id === r._id)?.points || 0 
+      : 0;
+
     const restaurantRewards = allRewards.filter((rw: any) => rw.restaurant_id === r._id);
+
+    const isFavorite = favoriteRestaurants?.some((fav: any) => fav._id === r._id);
 
     return (
       <div className="hc-restaurant-detail">
         <button className="hc-back-btn" onClick={() => setSelectedRestaurant(null)}>
           <ArrowLeft size={20} />
         </button>
-        <div className="hc-restaurant-detail__banner">
+        <div className="hc-restaurant-detail__banner hc-animate-fade">
           {img ? <img src={img} alt={r?.profile?.name} /> : <div className="hc-banner-placeholder" />}
         </div>
-        <div className="hc-restaurant-detail__header">
+        <div className="hc-restaurant-detail__header hc-animate-slide" style={{ animationDelay: '0.1s', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
           <div>
             <h2>{r?.profile?.name}</h2>
             <p>{(r?.profile?.category || []).join(', ')}</p>
           </div>
-          <div className="hc-restaurant-detail__rating">
-            <Star size={16} fill="currentColor" /> {rating}
+          <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+            <button 
+              className={`hc-fav-btn ${isFavorite ? 'active' : ''}`}
+              onClick={() => onToggleFavorite && onToggleFavorite(r)}
+              title={isFavorite ? 'Treure de favorits' : 'Afegir a favorits'}
+            >
+              <Heart size={20} fill={isFavorite ? 'currentColor' : 'none'} />
+            </button>
+            <div className="hc-restaurant-detail__rating">
+              <Star size={16} fill="currentColor" /> {rating}
+            </div>
           </div>
         </div>
 
         {r?.profile?.pointsMultiplier && (
-          <div className="hc-points-multiplier-banner">
+          <div className="hc-points-multiplier-banner hc-animate-slide" style={{ animationDelay: '0.2s' }}>
             <div>
               <p className="hc-pmb-title">Multiplica els teus punts!</p>
               <h3 className="hc-pmb-value">{r.profile.pointsMultiplier}x</h3>
@@ -606,12 +674,12 @@ function DiscoverView({
           </div>
         )}
 
-        <div className="hc-restaurant-detail__info-grid">
+        <div className="hc-restaurant-detail__info-grid hc-animate-slide" style={{ animationDelay: '0.3s' }}>
           <div className="hc-info-box">
-            <MapPin size={18} className="text-orange" />
+            <Coins size={18} className="text-orange" />
             <div>
-              <p>{distance}</p>
-              <span>Distància</span>
+              <p>{userPointsForRestaurant} punts</p>
+              <span>Els teus punts aquí</span>
             </div>
           </div>
           <div className="hc-info-box">
@@ -623,7 +691,7 @@ function DiscoverView({
           </div>
         </div>
 
-        <div className="hc-restaurant-detail__section">
+        <div className="hc-restaurant-detail__section hc-animate-slide" style={{ animationDelay: '0.4s' }}>
           <h3>Sobre el restaurant</h3>
           <p>{r?.profile?.description || 'El millor restaurant del barri amb ingredients frescos i de qualitat.'}</p>
         </div>
@@ -677,12 +745,12 @@ function DiscoverView({
         <div className="hc-category-pills">
           {categories.map(cat => (
             <button 
-              key={cat} 
-              className={`hc-category-pill ${selectedCategory === cat ? 'active' : ''}`}
-              onClick={() => setSelectedCategory(cat)}
+              key={cat.name} 
+              className={`hc-category-pill ${selectedCategory === cat.name ? 'active' : ''}`}
+              onClick={() => setSelectedCategory(cat.name)}
             >
-              {cat === 'Tots' && <Utensils size={14} />}
-              {cat}
+              <span style={{ fontSize: '1.2rem', lineHeight: 1 }}>{cat.icon}</span>
+              {cat.name}
             </button>
           ))}
         </div>
@@ -736,14 +804,14 @@ function LargeRestaurantCard({ restaurant: r, onClick }: { restaurant: any, onCl
   );
 }
 
-function RestaurantCard({ restaurant: r }: { restaurant: any }) {
+function RestaurantCard({ restaurant: r, onClick }: { restaurant: any, onClick?: () => void }) {
   const img = r?.profile?.image?.[0] || r?.image?.[0];
   const distance = r?.profile?.distance || r?.profile?.location?.distance || '—';
   const visitsCount = r?.profile?.visits ?? r?.visits ?? 0;
   const rating = r?.profile?.globalRating ? Number(r.profile.globalRating).toFixed(1) : null;
 
   return (
-    <div className="hc-res-card">
+    <div className="hc-res-card" onClick={onClick}>
       <div className="hc-res-card__img">
         {img
           ? <img src={img} alt={r?.profile?.name || r?.name} onError={e => { (e.target as any).style.display = 'none'; ((e.target as any).nextSibling as any).style.display = 'flex'; }} />
@@ -773,6 +841,90 @@ function RestaurantCard({ restaurant: r }: { restaurant: any }) {
           <span>
             <Clock size={12} /> {visitsCount} visites
           </span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function HistoryRewardsView({ visits, restaurants }: { visits: any[], restaurants: any[] }) {
+  const totalVisits = visits?.length || 0;
+  const totalMoneySpent = visits?.reduce((sum, v) => sum + (Number(v.billAmount) || 0), 0) || 0;
+  const totalPointsEarned = visits?.reduce((sum, v) => sum + (Number(v.pointsEarned) || 0), 0) || 0;
+
+  const getRestaurantInfo = (id: string) => {
+    return restaurants?.find(r => r._id === id || r.id === id);
+  };
+
+  return (
+    <div className="hc-rewards-dashboard hc-animate-fade">
+      <div className="hc-discover-header">
+        <h2 style={{ fontSize: '2rem', marginBottom: '0.5rem', marginTop: 0 }}>Les teves Estadístiques</h2>
+        <p style={{ color: 'var(--clr-text-muted)', marginBottom: '2rem' }}>Així és com has aprofitat EasyEat fins ara.</p>
+      </div>
+
+      <div className="hc-rewards-stats">
+        <div className="hc-stat-card hc-stat-card--money hc-animate-slide" style={{ animationDelay: '0.1s' }}>
+          <div className="hc-stat-card__icon"><Wallet size={24} /></div>
+          <div>
+            <h3>{totalMoneySpent.toFixed(2)}€</h3>
+            <p>Diners gastats</p>
+          </div>
+        </div>
+        <div className="hc-stat-card hc-stat-card--points hc-animate-slide" style={{ animationDelay: '0.2s' }}>
+          <div className="hc-stat-card__icon"><Coins size={24} /></div>
+          <div>
+            <h3>{totalPointsEarned}</h3>
+            <p>Punts acumulats</p>
+          </div>
+        </div>
+        <div className="hc-stat-card hc-stat-card--visits hc-animate-slide" style={{ animationDelay: '0.3s' }}>
+          <div className="hc-stat-card__icon"><Clock size={24} /></div>
+          <div>
+            <h3>{totalVisits}</h3>
+            <p>Visites realitzades</p>
+          </div>
+        </div>
+      </div>
+
+      <div className="hc-rewards-history-section hc-animate-slide" style={{ animationDelay: '0.4s' }}>
+        <h3 className="hc-rewards-history-title">Historial d'activitat i recompenses escanejades</h3>
+        <div className="hc-rewards-history-list">
+          {visits?.length > 0 ? (
+            visits.map((v: any, i: number) => {
+              const r = getRestaurantInfo(v.restaurant_id);
+              const img = r?.profile?.image?.[0] || r?.image?.[0];
+              const date = new Date(v.date || v.createdAt || new Date());
+              
+              return (
+                <div key={v._id || i} className="hc-history-item">
+                  <div className="hc-history-item__left">
+                    <div className="hc-history-item__img">
+                      {img ? <img src={img} alt={r?.profile?.name} /> : <div className="placeholder">🍽️</div>}
+                    </div>
+                    <div className="hc-history-item__info">
+                      <h4>{r?.profile?.name || 'Restaurant desconegut'}</h4>
+                      <p>{date.toLocaleDateString('ca-ES', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</p>
+                    </div>
+                  </div>
+                  <div className="hc-history-item__right">
+                    {v.pointsEarned ? (
+                      <div className="hc-history-badge hc-history-badge--points">
+                        <Coins size={14} /> +{v.pointsEarned}
+                      </div>
+                    ) : null}
+                    {v.billAmount ? (
+                      <div className="hc-history-badge hc-history-badge--money">
+                        <Wallet size={14} /> {v.billAmount.toFixed(2)}€
+                      </div>
+                    ) : null}
+                  </div>
+                </div>
+              );
+            })
+          ) : (
+            <div className="hc-empty">No tens cap visita ni recompensa registrada encara.</div>
+          )}
         </div>
       </div>
     </div>
