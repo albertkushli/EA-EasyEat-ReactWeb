@@ -3503,6 +3503,7 @@ html {
 .hc-sidebar {
   width: 100% !important;
   height: 80px !important;
+  min-height: 0 !important;
   position: fixed !important;
   top: 0 !important;
   left: 0 !important;
@@ -3525,6 +3526,7 @@ html {
 .hc-sidebar__subtitle { display: none !important; }
 
 .hc-sidebar-nav {
+  display: flex !important;
   flex-direction: row !important;
   gap: 0.5rem !important;
   justify-content: center !important;
