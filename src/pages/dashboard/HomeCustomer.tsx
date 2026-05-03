@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useSearchParams } from 'react-router-dom';
 import { 
   LogOut, User, MapPin, Star, Coins, Trophy, Heart, Clock, 
   Home, Compass, Gift, QrCode, Mail, Lock, Save, CheckCircle,
@@ -39,7 +40,8 @@ export default function HomeCustomer() {
   const { t } = useTranslation();
   const { user, logout, token, updateUser } = useAuth() as { user: ICustomer | null, logout: any, token: any, updateUser: any };
 
-  const [activeTab, setActiveTab] = useState('home');
+  const [searchParams, setSearchParams] = useSearchParams();
+  const activeTab = searchParams.get('tab') || 'home';
 
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('Tots');
@@ -47,7 +49,7 @@ export default function HomeCustomer() {
   const [showQrModal, setShowQrModal] = useState(false);
 
   const handleTabChange = (tab: string) => {
-    setActiveTab(tab);
+    setSearchParams({ tab });
     setSelectedRestaurant(null);
   };
 
@@ -360,7 +362,7 @@ export default function HomeCustomer() {
                       const rest = restaurants.find((r: any) => r._id === rw.restaurant_id || r.id === rw.restaurant_id);
                       const img = rest?.profile?.image?.[0] || rest?.image?.[0];
                       return (
-                        <div key={i} className="hc-reward-card-premium hc-animate-slide" style={{ animationDelay: \`\${0.1 * i}s\`, backgroundImage: img ? \`url(\${img})\` : 'linear-gradient(135deg, #f97316 0%, #ea580c 100%)' }}>
+                        <div key={i} className="hc-reward-card-premium hc-animate-slide" style={{ animationDelay: `${0.1 * i}s`, backgroundImage: img ? `url(${img})` : 'linear-gradient(135deg, #f97316 0%, #ea580c 100%)' }}>
                           <div className="hc-reward-card-premium__overlay"></div>
                           <div className="hc-reward-card-premium__content">
                             <div className="hc-reward-card-premium__badge">
