@@ -2,8 +2,10 @@ import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { 
   LogOut, User, MapPin, Star, Coins, Trophy, Heart, Clock, 
-  Home, Compass, Gift, QrCode, Mail, Lock, Save, CheckCircle
+  Home, Compass, Gift, QrCode, Mail, Lock, Save, CheckCircle,
+  Search, SlidersHorizontal, ArrowLeft, Utensils, X
 } from 'lucide-react';
+import { QRCodeCanvas } from 'qrcode.react';
 import { useAuth } from '../../context/AuthContext';
 import { ICustomer } from '../../types';
 import apiClient from '../../lib/apiClient';
@@ -39,10 +41,22 @@ export default function HomeCustomer() {
 
   const [activeTab, setActiveTab] = useState('home');
 
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('Tots');
+  const [selectedRestaurant, setSelectedRestaurant] = useState<any>(null);
+  const [showQrModal, setShowQrModal] = useState(false);
+
+  const handleTabChange = (tab: string) => {
+    setActiveTab(tab);
+    setSelectedRestaurant(null);
+  };
+
   const [favoriteRestaurants, setFavoriteRestaurants] = useState<any[]>([]);
   const [pointsWallet, setPointsWallet] = useState<any[]>([]);
   const [badges, setBadges] = useState<any[]>([]);
   const [visits, setVisits] = useState<any[]>([]);
+  const [restaurants, setRestaurants] = useState<any[]>([]);
+  const [allRewards, setAllRewards] = useState<any[]>([]);
   const [loadingCustomerData, setLoadingCustomerData] = useState(true);
 
   // Profile Form State
@@ -80,12 +94,14 @@ export default function HomeCustomer() {
         return;
       }
       try {
-        const [favRes, ptsRes, badgesRes, visitsRes, profileRes] = await Promise.allSettled([
+        const [favRes, ptsRes, badgesRes, visitsRes, profileRes, restRes, rewardsRes] = await Promise.allSettled([
           apiClient.get(`/customers/${customerId}/favouriteRestaurants`, { params: { page: 1, limit: 10 } }),
           apiClient.get(`/customers/${customerId}/pointsWallet`, { params: { page: 1, limit: 20 } }),
           apiClient.get(`/customers/${customerId}/badges`, { params: { page: 1, limit: 10 } }),
           apiClient.get(`/customers/${customerId}/visits`, { params: { page: 1, limit: 20 } }),
-          customerService.fetchCustomer(customerId)
+          customerService.fetchCustomer(customerId),
+          apiClient.get('/restaurants', { params: { page: 1, limit: 100 } }),
+          apiClient.get('/rewards', { params: { page: 1, limit: 500 } })
         ]);
 
         if (favRes.status === 'fulfilled' && favRes.value?.data) {
@@ -108,6 +124,14 @@ export default function HomeCustomer() {
           setCustomer(profileRes.value);
           setCustomerName(profileRes.value.name || '');
           setCustomerEmail(profileRes.value.email || '');
+        }
+        if (restRes.status === 'fulfilled' && restRes.value?.data) {
+          const parsedRest = parsePaginatedListResponse(restRes.value.data, 100);
+          setRestaurants(parsedRest.data);
+        }
+        if (rewardsRes.status === 'fulfilled' && rewardsRes.value?.data) {
+          const parsedRewards = parsePaginatedListResponse(rewardsRes.value.data, 500);
+          setAllRewards(parsedRewards.data);
         }
       } catch (err) {
         console.error('Error fetching customer data:', err);
@@ -189,7 +213,7 @@ export default function HomeCustomer() {
             <button
               type="button"
               className={activeTab === 'home' ? 'hc-sidebar-nav__item active' : 'hc-sidebar-nav__item'}
-              onClick={() => setActiveTab('home')}
+              onClick={() => handleTabChange('home')}
             >
               <Home size={18} />
               <span>Inici</span>
@@ -197,7 +221,7 @@ export default function HomeCustomer() {
             <button
               type="button"
               className={activeTab === 'discover' ? 'hc-sidebar-nav__item active' : 'hc-sidebar-nav__item'}
-              onClick={() => setActiveTab('discover')}
+              onClick={() => handleTabChange('discover')}
             >
               <Compass size={18} />
               <span>Descobrir</span>
@@ -205,7 +229,7 @@ export default function HomeCustomer() {
             <button
               type="button"
               className={activeTab === 'qr' ? 'hc-sidebar-nav__item active' : 'hc-sidebar-nav__item'}
-              onClick={() => setActiveTab('qr')}
+              onClick={() => handleTabChange('qr')}
             >
               <QrCode size={18} />
               <span>El meu QR</span>
@@ -213,7 +237,7 @@ export default function HomeCustomer() {
             <button
               type="button"
               className={activeTab === 'rewards' ? 'hc-sidebar-nav__item active' : 'hc-sidebar-nav__item'}
-              onClick={() => setActiveTab('rewards')}
+              onClick={() => handleTabChange('rewards')}
             >
               <Gift size={18} />
               <span>Recompenses</span>
@@ -221,7 +245,7 @@ export default function HomeCustomer() {
             <button
               type="button"
               className={activeTab === 'profile' ? 'hc-sidebar-nav__item active' : 'hc-sidebar-nav__item'}
-              onClick={() => setActiveTab('profile')}
+              onClick={() => handleTabChange('profile')}
             >
               <User size={18} />
               <span>Perfil</span>
@@ -469,6 +493,18 @@ export default function HomeCustomer() {
                 </form>
               </div>
             </section>
+          ) : activeTab === 'discover' ? (
+            <DiscoverView 
+              restaurants={restaurants} 
+              allRewards={allRewards} 
+              selectedRestaurant={selectedRestaurant}
+              setSelectedRestaurant={setSelectedRestaurant}
+              searchTerm={searchTerm}
+              setSearchTerm={setSearchTerm}
+              selectedCategory={selectedCategory}
+              setSelectedCategory={setSelectedCategory}
+              setShowQrModal={setShowQrModal}
+            />
           ) : (
             <section className="hc-section hc-tab-panel">
               <div className="hc-tab-panel__hero">
@@ -490,6 +526,211 @@ export default function HomeCustomer() {
             </section>
           )}
         </main>
+      </div>
+
+      {showQrModal && (
+        <div className="hc-modal-overlay" onClick={() => setShowQrModal(false)}>
+          <div className="hc-modal" onClick={e => e.stopPropagation()}>
+            <button className="hc-modal-close" onClick={() => setShowQrModal(false)}>
+              <X size={24} />
+            </button>
+            <h3>El teu Codi QR</h3>
+            <p>Mostra aquest codi al cambrer per fer el check-in i guanyar punts.</p>
+            <div className="hc-qr-container">
+              <QRCodeCanvas 
+                value={JSON.stringify({ userId: user?._id || user?.id })}
+                size={256}
+                level="H"
+                includeMargin={true}
+                fgColor="#08182f"
+              />
+            </div>
+            <p className="hc-qr-user-id">ID: {user?._id || user?.id}</p>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function DiscoverView({ 
+  restaurants, allRewards, selectedRestaurant, setSelectedRestaurant, 
+  searchTerm, setSearchTerm, selectedCategory, setSelectedCategory, setShowQrModal
+}: any) {
+  const categories = ['Tots', 'Sushi', 'Pizza', 'Burguer', 'Mexicà', 'Italià'];
+
+  const filteredRestaurants = restaurants.filter((r: any) => {
+    const matchesSearch = (r.profile?.name || '').toLowerCase().includes(searchTerm.toLowerCase()) || 
+                          (r.profile?.description || '').toLowerCase().includes(searchTerm.toLowerCase());
+    
+    const matchesCategory = selectedCategory === 'Tots' || 
+                            (r.profile?.category || []).some((c: string) => c.toLowerCase().includes(selectedCategory.toLowerCase()));
+    
+    return matchesSearch && matchesCategory;
+  });
+
+  if (selectedRestaurant) {
+    const r = selectedRestaurant;
+    const img = r?.profile?.image?.[0] || r?.image?.[0];
+    const distance = r?.profile?.distance || r?.profile?.location?.distance || '0.5 km';
+    const rating = r?.profile?.globalRating ? Number(r.profile.globalRating).toFixed(1) : '4.5';
+    
+    const restaurantRewards = allRewards.filter((rw: any) => rw.restaurant_id === r._id);
+
+    return (
+      <div className="hc-restaurant-detail">
+        <button className="hc-back-btn" onClick={() => setSelectedRestaurant(null)}>
+          <ArrowLeft size={20} />
+        </button>
+        <div className="hc-restaurant-detail__banner">
+          {img ? <img src={img} alt={r?.profile?.name} /> : <div className="hc-banner-placeholder" />}
+        </div>
+        <div className="hc-restaurant-detail__header">
+          <div>
+            <h2>{r?.profile?.name}</h2>
+            <p>{(r?.profile?.category || []).join(', ')}</p>
+          </div>
+          <div className="hc-restaurant-detail__rating">
+            <Star size={16} fill="currentColor" /> {rating}
+          </div>
+        </div>
+
+        {r?.profile?.pointsMultiplier && (
+          <div className="hc-points-multiplier-banner">
+            <div>
+              <p className="hc-pmb-title">Multiplica els teus punts!</p>
+              <h3 className="hc-pmb-value">{r.profile.pointsMultiplier}x</h3>
+              <p className="hc-pmb-desc">Aconsegueix punts extra per cada visita a aquest restaurant!</p>
+            </div>
+            <Gift size={48} opacity={0.5} />
+          </div>
+        )}
+
+        <div className="hc-restaurant-detail__info-grid">
+          <div className="hc-info-box">
+            <MapPin size={18} className="text-orange" />
+            <div>
+              <p>{distance}</p>
+              <span>Distància</span>
+            </div>
+          </div>
+          <div className="hc-info-box">
+            <Clock size={18} className="text-orange" />
+            <div>
+              <p>09:00 - 23:00</p>
+              <span>Horari</span>
+            </div>
+          </div>
+        </div>
+
+        <div className="hc-restaurant-detail__section">
+          <h3>Sobre el restaurant</h3>
+          <p>{r?.profile?.description || 'El millor restaurant del barri amb ingredients frescos i de qualitat.'}</p>
+        </div>
+
+        <div className="hc-restaurant-detail__section">
+          <h3>Recompenses disponibles</h3>
+          <div className="hc-rewards-list">
+            {restaurantRewards.length > 0 ? (
+              restaurantRewards.map((rw: any) => (
+                <div key={rw._id} className="hc-reward-item">
+                  <div>
+                    <h4>{rw.name}</h4>
+                    <span>{rw.pointsRequired} punts</span>
+                  </div>
+                  <Gift size={20} className="text-orange" />
+                </div>
+              ))
+            ) : (
+              <p className="hc-empty">Aquest restaurant no té recompenses encarades registrades.</p>
+            )}
+          </div>
+        </div>
+
+        <button className="hc-checkin-btn" onClick={() => setShowQrModal(true)}>
+          <QrCode size={20} /> Fer Check-in ara
+        </button>
+      </div>
+    );
+  }
+
+  return (
+    <div className="hc-discover-view">
+      <div className="hc-discover-header">
+        <h2 style={{ fontSize: '2rem', marginBottom: '1.5rem', marginTop: 0 }}>Descobreix</h2>
+        
+        <div className="hc-search-bar">
+          <div className="hc-search-input">
+            <Search size={18} />
+            <input 
+              type="text" 
+              placeholder="Busca per nom o cuina..." 
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </div>
+          <button className="hc-filter-btn">
+            <SlidersHorizontal size={18} />
+          </button>
+        </div>
+
+        <div className="hc-category-pills">
+          {categories.map(cat => (
+            <button 
+              key={cat} 
+              className={`hc-category-pill ${selectedCategory === cat ? 'active' : ''}`}
+              onClick={() => setSelectedCategory(cat)}
+            >
+              {cat === 'Tots' && <Utensils size={14} />}
+              {cat}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className="hc-discover-results">
+        <p className="hc-results-count"><strong>{filteredRestaurants.length}</strong> restaurants trobats</p>
+        <div className="hc-large-cards">
+          {filteredRestaurants.map((r: any) => (
+            <LargeRestaurantCard key={r._id} restaurant={r} onClick={() => setSelectedRestaurant(r)} />
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function LargeRestaurantCard({ restaurant: r, onClick }: { restaurant: any, onClick: () => void }) {
+  const img = r?.profile?.image?.[0] || r?.image?.[0];
+  const distance = r?.profile?.distance || r?.profile?.location?.distance || '0.5 km';
+  const rating = r?.profile?.globalRating ? Number(r.profile.globalRating).toFixed(1) : '4.5';
+
+  return (
+    <div className="hc-large-card" onClick={onClick}>
+      <div className="hc-large-card__banner">
+        {img ? <img src={img} alt={r?.profile?.name} /> : <div className="hc-banner-placeholder" />}
+        {r?.profile?.hasOffer && (
+          <div className="hc-large-card__badge">🔥 OFERTA</div>
+        )}
+      </div>
+      <div className="hc-large-card__body">
+        <div className="hc-large-card__header">
+          <div>
+            <h3>{r?.profile?.name}</h3>
+            <p>{(r?.profile?.category || []).join(', ')}</p>
+          </div>
+          <div className="hc-large-card__rating">
+            <Star size={14} fill="currentColor" /> {rating}
+          </div>
+        </div>
+        <div className="hc-large-card__footer">
+          <span className="hc-large-card__dist"><MapPin size={14} /> {distance}</span>
+          {r?.profile?.pointsMultiplier && (
+            <div className="hc-large-card__points-badge">
+              <Gift size={14} /> {r.profile.pointsMultiplier}x PUNTS
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

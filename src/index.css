@@ -2521,3 +2521,408 @@ html {
         }
       `
 
+/* â”€â”€ Discover View â”€â”€ */
+.hc-discover-view {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.hc-search-bar {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.hc-search-input {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  background: #ffffff;
+  border: 1px solid rgba(15,23,42,0.1);
+  border-radius: 12px;
+}
+
+.hc-search-input input {
+  border: none;
+  background: transparent;
+  width: 100%;
+  outline: none;
+  font-size: 0.95rem;
+}
+
+.hc-filter-btn {
+  padding: 0.75rem 1rem;
+  background: #ffffff;
+  border: 1px solid rgba(15,23,42,0.1);
+  border-radius: 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hc-category-pills {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.hc-category-pill {
+  padding: 0.5rem 1.25rem;
+  border-radius: 20px;
+  border: 1px solid rgba(15,23,42,0.1);
+  background: #ffffff;
+  cursor: pointer;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.2s;
+}
+
+.hc-category-pill.active {
+  background: #ff5a23;
+  color: #fff;
+  border-color: #ff5a23;
+}
+
+.hc-results-count {
+  font-size: 0.9rem;
+  color: var(--clr-text-muted);
+  margin-bottom: 1rem;
+}
+
+/* â”€â”€ Large Restaurant Card â”€â”€ */
+.hc-large-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.hc-large-card {
+  background: #ffffff;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+  cursor: pointer;
+  transition: transform 0.2s;
+  border: 1px solid rgba(0,0,0,0.05);
+}
+
+.hc-large-card:hover {
+  transform: translateY(-4px);
+}
+
+.hc-large-card__banner {
+  height: 200px;
+  width: 100%;
+  position: relative;
+  background: #f1f5f9;
+}
+
+.hc-large-card__banner img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.hc-large-card__badge {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: #ef4444;
+  color: #fff;
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: bold;
+}
+
+.hc-large-card__body {
+  padding: 1.5rem;
+}
+
+.hc-large-card__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1rem;
+}
+
+.hc-large-card__header h3 {
+  margin: 0;
+  font-size: 1.4rem;
+}
+
+.hc-large-card__header p {
+  margin: 0.25rem 0 0 0;
+  color: var(--clr-text-muted);
+  font-size: 0.9rem;
+}
+
+.hc-large-card__rating {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  background: #fffbeb;
+  color: #d97706;
+  padding: 0.25rem 0.5rem;
+  border-radius: 8px;
+  font-weight: bold;
+  font-size: 0.9rem;
+}
+
+.hc-large-card__footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(0,0,0,0.05);
+}
+
+.hc-large-card__dist {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--clr-text-muted);
+  font-size: 0.9rem;
+}
+
+.hc-large-card__points-badge {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: #ff5a23;
+  color: #fff;
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: bold;
+}
+
+/* â”€â”€ Restaurant Detail View â”€â”€ */
+.hc-restaurant-detail {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  position: relative;
+}
+
+.hc-back-btn {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  background: #ffffff;
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  z-index: 10;
+}
+
+.hc-restaurant-detail__banner {
+  height: 300px;
+  border-radius: 24px;
+  overflow: hidden;
+  background: #f1f5f9;
+}
+
+.hc-restaurant-detail__banner img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.hc-restaurant-detail__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.hc-restaurant-detail__header h2 {
+  font-size: 2rem;
+  margin: 0;
+}
+
+.hc-restaurant-detail__header p {
+  color: var(--clr-text-muted);
+  margin: 0.25rem 0 0 0;
+}
+
+.hc-points-multiplier-banner {
+  background: #ff5a23;
+  color: #fff;
+  padding: 1.5rem;
+  border-radius: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.hc-pmb-title {
+  margin: 0 0 0.5rem 0;
+  font-size: 0.9rem;
+  opacity: 0.9;
+}
+
+.hc-pmb-value {
+  margin: 0;
+  font-size: 2.5rem;
+  font-weight: 800;
+}
+
+.hc-pmb-desc {
+  margin: 0.5rem 0 0 0;
+  font-size: 0.9rem;
+  opacity: 0.9;
+}
+
+.hc-restaurant-detail__info-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.hc-info-box {
+  background: #ffffff;
+  border: 1px solid rgba(0,0,0,0.05);
+  border-radius: 16px;
+  padding: 1.25rem;
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.hc-info-box p {
+  margin: 0 0 0.25rem 0;
+  font-weight: bold;
+}
+
+.hc-info-box span {
+  color: var(--clr-text-muted);
+  font-size: 0.85rem;
+}
+
+.hc-restaurant-detail__section h3 {
+  font-size: 1.25rem;
+  margin: 0 0 1rem 0;
+}
+
+.hc-rewards-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.hc-reward-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.25rem;
+  background: #ffffff;
+  border: 1px solid rgba(0,0,0,0.05);
+  border-radius: 16px;
+}
+
+.hc-reward-item h4 {
+  margin: 0 0 0.25rem 0;
+  font-size: 1.1rem;
+}
+
+.hc-reward-item span {
+  color: var(--clr-text-muted);
+  font-size: 0.9rem;
+}
+
+.hc-checkin-btn {
+  background: #ff5a23;
+  color: #fff;
+  border: none;
+  padding: 1.25rem;
+  border-radius: 16px;
+  font-size: 1.1rem;
+  font-weight: bold;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.75rem;
+  cursor: pointer;
+  margin-top: 1rem;
+  transition: opacity 0.2s;
+}
+
+.hc-checkin-btn:hover {
+  opacity: 0.9;
+}
+
+/* â”€â”€ Modal â”€â”€ */
+.hc-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 1rem;
+  backdrop-filter: blur(4px);
+}
+
+.hc-modal {
+  background: #fff;
+  border-radius: 24px;
+  padding: 2.5rem;
+  width: 100%;
+  max-width: 400px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.hc-modal-close {
+  position: absolute;
+  top: 1.25rem;
+  right: 1.25rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--clr-text-muted);
+}
+
+.hc-modal h3 {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.5rem;
+}
+
+.hc-modal p {
+  color: var(--clr-text-muted);
+  margin: 0 0 2rem 0;
+  font-size: 0.95rem;
+}
+
+.hc-qr-container {
+  background: #fff;
+  padding: 1rem;
+  border-radius: 16px;
+  border: 2px solid rgba(0,0,0,0.05);
+  display: inline-block;
+  margin-bottom: 1rem;
+}
+
+.hc-qr-user-id {
+  font-family: monospace;
+  font-size: 0.85rem !important;
+  color: var(--clr-text-muted) !important;
+  margin: 0 !important;
+}
+
