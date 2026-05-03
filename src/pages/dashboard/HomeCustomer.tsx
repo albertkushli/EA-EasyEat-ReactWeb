@@ -852,8 +852,14 @@ function HistoryRewardsView({ visits, restaurants }: { visits: any[], restaurant
   const totalMoneySpent = visits?.reduce((sum, v) => sum + (Number(v.billAmount) || 0), 0) || 0;
   const totalPointsEarned = visits?.reduce((sum, v) => sum + (Number(v.pointsEarned) || 0), 0) || 0;
 
-  const getRestaurantInfo = (id: string) => {
-    return restaurants?.find(r => r._id === id || r.id === id);
+  const getRestaurantInfo = (restData: any) => {
+    if (!restData) return null;
+    if (typeof restData === 'object') {
+      // It's already populated by the backend
+      return restData;
+    }
+    // It's a string ID, try to find it in the frontend state
+    return restaurants?.find(r => r._id === restData || r.id === restData);
   };
 
   return (
