@@ -3768,3 +3768,81 @@ html {
     justify-content: flex-end !important;
   }
 }
+
+
+/* ═══════════════════════════════════════════════════════════════
+   PREMIUM REWARD CARDS
+   ═══════════════════════════════════════════════════════════════ */
+
+.hc-reward-card-premium {
+  position: relative !important;
+  min-width: 260px !important;
+  height: 160px !important;
+  border-radius: 20px !important;
+  overflow: hidden !important;
+  flex: 0 0 auto !important;
+  background-size: cover !important;
+  background-position: center !important;
+  background-color: #f1f5f9 !important;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.06) !important;
+  scroll-snap-align: start !important;
+  cursor: pointer !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.hc-reward-card-premium:hover {
+  transform: translateY(-4px) scale(1.02) !important;
+  box-shadow: 0 12px 25px rgba(249, 115, 22, 0.2) !important;
+}
+
+.hc-reward-card-premium__overlay {
+  position: absolute !important;
+  inset: 0 !important;
+  background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.3) 50%, rgba(0,0,0,0.1) 100%) !important;
+  z-index: 1 !important;
+}
+
+.hc-reward-card-premium__content {
+  position: absolute !important;
+  inset: 0 !important;
+  z-index: 2 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: space-between !important;
+  padding: 1.25rem !important;
+}
+
+.hc-reward-card-premium__badge {
+  align-self: flex-start !important;
+  background: rgba(255, 255, 255, 0.2) !important;
+  backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
+  color: #fff !important;
+  padding: 0.4rem 0.75rem !important;
+  border-radius: 99px !important;
+  font-size: 0.8rem !important;
+  font-weight: 700 !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.35rem !important;
+  border: 1px solid rgba(255,255,255,0.3) !important;
+}
+
+.hc-reward-card-premium__text {
+  color: white !important;
+}
+
+.hc-reward-card-premium__text h4 {
+  margin: 0 0 0.25rem 0 !important;
+  font-size: 1.1rem !important;
+  font-weight: 700 !important;
+  line-height: 1.2 !important;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.3) !important;
+}
+
+.hc-reward-card-premium__text p {
+  margin: 0 !important;
+  font-size: 0.85rem !important;
+  opacity: 0.9 !important;
+  font-weight: 500 !important;
+}

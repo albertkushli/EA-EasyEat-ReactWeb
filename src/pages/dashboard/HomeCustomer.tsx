@@ -355,19 +355,22 @@ export default function HomeCustomer() {
                   <div className="hc-section__head">
                     <h2 className="hc-section__title"><Gift size={18} /> Recompenses destacades</h2>
                   </div>
-                  <div className="hc-rewards-carousel" style={{ display: 'flex', gap: '1rem', overflowX: 'auto', paddingBottom: '1rem' }}>
-                    {allRewards.slice(0, 10).map((rw: any, i: number) => {
-                      const rest = restaurants.find((r: any) => r._id === rw.restaurant_id);
+                  <div className="hc-rewards-carousel" style={{ display: 'flex', gap: '1.5rem', overflowX: 'auto', paddingBottom: '1.5rem', scrollSnapType: 'x mandatory' }}>
+                    {allRewards.slice(0, 6).map((rw: any, i: number) => {
+                      const rest = restaurants.find((r: any) => r._id === rw.restaurant_id || r.id === rw.restaurant_id);
+                      const img = rest?.profile?.image?.[0] || rest?.image?.[0];
                       return (
-                        <div key={i} className="hc-reward-item" style={{ minWidth: '280px', flex: '0 0 auto' }}>
-                          <div>
-                            <h4>{rw.name}</h4>
-                            <span style={{ display: 'block', margin: '0.25rem 0', color: 'var(--clr-text-muted)' }}>
-                              {rest?.profile?.name || 'Restaurant'}
-                            </span>
-                            <span style={{ color: '#f97316', fontWeight: 'bold' }}>{rw.pointsRequired} punts</span>
+                        <div key={i} className="hc-reward-card-premium hc-animate-slide" style={{ animationDelay: \`\${0.1 * i}s\`, backgroundImage: img ? \`url(\${img})\` : 'linear-gradient(135deg, #f97316 0%, #ea580c 100%)' }}>
+                          <div className="hc-reward-card-premium__overlay"></div>
+                          <div className="hc-reward-card-premium__content">
+                            <div className="hc-reward-card-premium__badge">
+                              <Gift size={14} /> {rw.pointsRequired} pts
+                            </div>
+                            <div className="hc-reward-card-premium__text">
+                              <h4>{rw.name}</h4>
+                              <p>{rest?.profile?.name || 'Restaurant'}</p>
+                            </div>
                           </div>
-                          <Gift size={20} className="text-orange" />
                         </div>
                       );
                     })}
