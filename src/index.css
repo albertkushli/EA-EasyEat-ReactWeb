@@ -3510,7 +3510,8 @@ html {
   flex-direction: row !important;
   align-items: center !important;
   justify-content: space-between !important;
-  padding: 0 2.5rem !important;
+  padding: 0 2rem !important;
+  box-sizing: border-box !important;
   z-index: 1000 !important;
 }
 
@@ -3579,7 +3580,8 @@ html {
   width: 100% !important;
   max-width: 100% !important;
   padding: 2.5rem !important;
-  padding-top: calc(80px + 2.5rem) !important; /* Topbar height + padding */
+  padding-top: calc(80px + 2.5rem) !important;
+  box-sizing: border-box !important;
 }
 
 /* ── Staggered Animations for items ── */
