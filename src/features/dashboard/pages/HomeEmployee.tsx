@@ -174,93 +174,68 @@ const HomeEmployee: FC = () => {
       <div style={{ marginLeft: '16rem', minHeight: '100vh' }}>
         {activeView === 'dashboard' ? (
           <>
-      <header className="he-header">
-        <div className="he-header__inner">
-          <div className="he-brand">
-            <span className="he-brand__icon"><Store size={18} /></span>
-            <div>
-              <span className="he-brand__name">{t('navbar.logo')}</span>
-              <span className={`he-role-badge he-role-badge--${role}`}>
-                {role?.toUpperCase()}
-              </span>
-            </div>
-          </div>
-
-          <div className="he-header__right">
-            <div className="he-user-pill">
-              <div className="he-avatar">{user?.name?.[0]?.toUpperCase()}</div>
-              <span>{user?.name?.split(' ')[0]}</span>
-            </div>
-
-            <button
-              onClick={logout}
-              className="he-logout-btn"
-              title={t('navbar.links.logout')}
-            >
-              <LogOut size={18} />
-            </button>
-          </div>
-        </div>
-      </header>
-
-            <main className="he-main">
-              <div className="max-w-6xl mx-auto px-6 py-8">
-                <h1 className="text-2xl md:text-3xl font-extrabold text-slate-900 mb-6">VISTA GENERAL</h1>
+            <main className="flex-1 w-full h-full bg-slate-50/30">
+              <div className="max-w-[1200px] w-full mx-auto px-8 py-10">
+                <h1 className="text-2xl font-bold text-slate-800 mb-8 tracking-tight">VISTA GENERAL</h1>
 
                 {/* Top summary cards */}
-                <section className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mb-6">
-                  <div className="bg-slate-50 border border-slate-100 rounded-2xl p-6 shadow-sm flex items-center gap-4">
-                    <div className="w-12 h-12 rounded-lg bg-white flex items-center justify-center text-xl">🏆</div>
-                    <div>
-                      <div className="text-3xl font-bold text-slate-900">{Number(averagePointsPerVisit || 0)}</div>
-                      <div className="text-xs font-semibold tracking-widest text-slate-500">AVERAGE POINTS / VISIT</div>
+                <section className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                  <div className="bg-orange-50/60 rounded-2xl p-6 flex items-center gap-5 border border-orange-100/50">
+                    <div className="w-12 h-12 rounded-xl bg-white/80 flex items-center justify-center text-2xl shadow-sm text-orange-500">🏆</div>
+                    <div className="flex flex-col">
+                      <div className="text-[32px] leading-tight font-bold text-slate-800">{Number(averagePointsPerVisit || 0)}</div>
+                      <div className="text-[12px] font-semibold text-slate-500 tracking-wide uppercase">Average Points / Visit</div>
                     </div>
                   </div>
 
-                  <div className="bg-slate-50 border border-slate-100 rounded-2xl p-6 shadow-sm flex items-center gap-4">
-                    <div className="w-12 h-12 rounded-lg bg-white flex items-center justify-center text-xl">👥</div>
-                    <div>
-                      <div className="text-3xl font-bold text-slate-900">{Number(loyalCustomers || 0)}</div>
-                      <div className="text-xs font-semibold tracking-widest text-slate-500">LOYAL CUSTOMERS</div>
+                  <div className="bg-blue-50/60 rounded-2xl p-6 flex items-center gap-5 border border-blue-100/50">
+                    <div className="w-12 h-12 rounded-xl bg-white/80 flex items-center justify-center text-2xl shadow-sm text-blue-500">👥</div>
+                    <div className="flex flex-col">
+                      <div className="text-[32px] leading-tight font-bold text-slate-800">{Number(loyalCustomers || 0)}</div>
+                      <div className="text-[12px] font-semibold text-slate-500 tracking-wide uppercase">Loyal Customers</div>
                     </div>
                   </div>
 
-                  <div className="bg-slate-50 border border-slate-100 rounded-2xl p-6 shadow-sm flex items-center gap-4">
-                    <div className="w-12 h-12 rounded-lg bg-white flex items-center justify-center text-xl">⭐</div>
-                    <div>
-                      <div className="text-3xl font-bold text-slate-900">{Number(restRating ?? 0).toFixed(1)}</div>
-                      <div className="text-xs font-semibold tracking-widest text-slate-500">AVG RATING</div>
+                  <div className="bg-amber-50/60 rounded-2xl p-6 flex items-center gap-5 border border-amber-100/50">
+                    <div className="w-12 h-12 rounded-xl bg-white/80 flex items-center justify-center text-2xl shadow-sm text-amber-500">⭐</div>
+                    <div className="flex flex-col">
+                      <div className="text-[32px] leading-tight font-bold text-slate-800">{Number(restRating ?? 0).toFixed(1)}</div>
+                      <div className="text-[12px] font-semibold text-slate-500 tracking-wide uppercase">Avg Rating</div>
                     </div>
                   </div>
                 </section>
 
                 {/* Charts */}
-                <section className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                  <div className="bg-white border border-slate-100 rounded-2xl p-6 shadow-sm min-h-[320px]">
-                    <h3 className="text-sm font-semibold text-slate-700 mb-4">RENDIMIENTO DE RESEÑAS</h3>
-                    <div className="h-[260px]">
-                      <RestaurantReviewsBarChart
-                        reviews={reviews}
-                        restaurantId={user?.restaurant_id}
-                      />
+                <section className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                  <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 flex flex-col min-h-[380px]">
+                    <h3 className="text-sm font-semibold text-slate-500 mb-6 uppercase tracking-wide">Rendimiento de Reseñas</h3>
+                    <div className="flex-1 flex items-center justify-center w-full">
+                      <div className="w-full h-full min-h-[260px]">
+                        <RestaurantReviewsBarChart
+                          reviews={reviews}
+                          restaurantId={user?.restaurant_id}
+                        />
+                      </div>
                     </div>
                   </div>
 
-                  <div className="bg-white border border-slate-100 rounded-2xl p-6 shadow-sm min-h-[320px]">
-                    <h3 className="text-sm font-semibold text-slate-700 mb-4">HORAS PUNTA DE VISITAS</h3>
-                    <div className="h-[260px]">
-                      <PeakVisitHoursChart
-                        visits={visits}
-                        restaurantId={user?.restaurant_id}
-                      />
+                  <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 flex flex-col min-h-[380px]">
+                    <h3 className="text-sm font-semibold text-slate-500 mb-6 uppercase tracking-wide">Horas Punta de Visitas</h3>
+                    <div className="flex-1 flex items-center justify-center w-full">
+                      <div className="w-full h-full min-h-[260px]">
+                        <PeakVisitHoursChart
+                          visits={visits}
+                          restaurantId={user?.restaurant_id}
+                        />
+                      </div>
                     </div>
                   </div>
                 </section>
 
                 {/* Ranking */}
-                <section className="bg-white border border-slate-100 rounded-2xl p-6 shadow-sm">
-                  <h3 className="text-base font-semibold text-slate-800 mb-4">RANKING DE PLATOS ESTRELLAS</h3>
-                  <div className="space-y-3">
+                <section className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100">
+                  <h3 className="text-sm font-semibold text-slate-500 mb-4 uppercase tracking-wide">Ranking de Platos Estrellas</h3>
+                  <div className="flex flex-col">
                     {(() => {
                       const map: Record<string, { total: number; count: number }> = {};
                       (reviews || []).forEach((r: any) => {
@@ -287,12 +262,14 @@ const HomeEmployee: FC = () => {
                       list = list.sort((a, b) => b.score - a.score).slice(0, 10);
 
                       return list.map((d, i) => (
-                        <div key={i} className="flex items-center justify-between gap-4 py-3">
+                        <div key={i} className="flex items-center justify-between py-3 border-b border-slate-50 last:border-0">
                           <div className="flex items-center gap-3">
-                            <div className="w-9 h-9 rounded-md bg-orange-50 text-orange-600 flex items-center justify-center">★</div>
-                            <div className="text-sm text-slate-800">{d.name}</div>
+                            <span className="text-slate-300 text-lg">★</span>
+                            <span className="text-[15px] font-medium text-slate-700">{d.name}</span>
                           </div>
-                          <div className="text-sm font-medium text-slate-700">{d.score.toFixed(1)}</div>
+                          <div className="flex items-center gap-2">
+                            <span className="text-[15px] font-semibold text-slate-800">{d.score.toFixed(1)}</span>
+                          </div>
                         </div>
                       ));
                     })()}
