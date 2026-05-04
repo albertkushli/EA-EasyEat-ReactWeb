@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react";
-import { getDishesByRestaurant, createDish, updateDish, deleteDish } from "@/features/dishes/services/dishService";
-import { Dish } from "@/types/Dish";
-import { useAuth } from "@/context/AuthContext";
+import { useEffect, useState, type MouseEvent } from "react";
+import { getDishesByRestaurant, createDish, updateDish, deleteDish } from "../services/dishService";
+import type { Dish } from "../../../types/Dish";
+import { useAuth } from "../../../context/AuthContext";
 import {
   ChevronDown,
   Info,
@@ -16,10 +16,10 @@ import {
   Flame,
   Leaf
 } from "lucide-react";
-import DishModal from "@/features/dishes/components/DishModal";
+import DishModal from "./DishModal";
 
 export default function Dishes() {
-  const { user, restaurant } = useAuth() as any;
+  const { user, restaurant } = useAuth();
   const [dishes, setDishes] = useState<Dish[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -59,13 +59,13 @@ export default function Dishes() {
     setIsModalOpen(true);
   };
 
-  const handleEditClick = (e: React.MouseEvent, dish: Dish) => {
+  const handleEditClick = (e: MouseEvent<HTMLButtonElement>, dish: Dish) => {
     e.stopPropagation();
     setSelectedDish(dish);
     setIsModalOpen(true);
   };
 
-  const handleDeleteClick = async (e: React.MouseEvent, dishId: string) => {
+  const handleDeleteClick = async (e: MouseEvent<HTMLButtonElement>, dishId: string) => {
     e.stopPropagation();
     if (window.confirm("¿Estás seguro de que quieres eliminar este plato?")) {
       try {
@@ -242,7 +242,7 @@ export default function Dishes() {
                        <div className="bg-white p-6 rounded-[2rem] shadow-sm border border-gray-100 space-y-4">
                           <h4 className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Ingredientes</h4>
                           <div className="flex flex-wrap gap-2">
-                            {dish.ingredients?.length ? dish.ingredients.map((ing, i) => (
+                            {dish.ingredients?.length ? dish.ingredients.map((ing: string, i: number) => (
                               <span key={i} className="bg-gray-50 border border-gray-100 px-3 py-1.5 rounded-xl text-xs font-bold text-gray-600">
                                 {ing}
                               </span>
@@ -255,7 +255,7 @@ export default function Dishes() {
                             <AlertCircle className="w-3.5 h-3.5" /> Alérgenos
                           </h4>
                           <div className="flex flex-wrap gap-2">
-                            {dish.allergens?.length ? dish.allergens.map((alg, i) => (
+                            {dish.allergens?.length ? dish.allergens.map((alg: string, i: number) => (
                               <span key={i} className="bg-red-50 border border-red-100 px-3 py-1.5 rounded-xl text-[10px] font-black text-red-500 uppercase tracking-tighter">
                                 {alg}
                               </span>
@@ -272,7 +272,7 @@ export default function Dishes() {
                           <span>Dietético</span>
                         </div>
                         <div className="flex flex-wrap gap-1.5">
-                          {dish.dietaryFlags?.length ? dish.dietaryFlags.map((flag, i) => (
+                          {dish.dietaryFlags?.length ? dish.dietaryFlags.map((flag: string, i: number) => (
                             <span key={i} className="text-[10px] font-black bg-green-50 text-green-600 px-2 py-0.5 rounded-lg uppercase tracking-tighter">
                               {flag}
                             </span>
@@ -286,7 +286,7 @@ export default function Dishes() {
                           <span>Sabor</span>
                         </div>
                         <div className="flex flex-wrap gap-1.5">
-                          {dish.flavorProfile?.length ? dish.flavorProfile.map((flavor, i) => (
+                          {dish.flavorProfile?.length ? dish.flavorProfile.map((flavor: string, i: number) => (
                             <span key={i} className="text-[10px] font-black bg-orange-50 text-orange-600 px-2 py-0.5 rounded-lg uppercase tracking-tighter">
                               {flavor}
                             </span>
@@ -300,7 +300,7 @@ export default function Dishes() {
                           <span>Disponibilidad</span>
                         </div>
                         <div className="flex flex-wrap gap-1.5">
-                          {dish.availableAt?.length ? dish.availableAt.map((time, i) => (
+                          {dish.availableAt?.length ? dish.availableAt.map((time: string, i: number) => (
                             <span key={i} className="text-[10px] font-black bg-blue-50 text-blue-600 px-2 py-0.5 rounded-lg uppercase tracking-tighter">
                               {time}
                             </span>

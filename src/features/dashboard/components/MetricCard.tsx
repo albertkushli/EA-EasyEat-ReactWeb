@@ -1,6 +1,13 @@
-// Para las cards de arriba del dashboard, con el número grande y el texto debajo
- 
-export default function MetricCard({ icon, value, label, variant = '' }) {
+import type { ReactNode } from 'react';
+
+interface MetricCardProps {
+  icon: ReactNode;
+  value: ReactNode;
+  label: ReactNode;
+  variant?: 'visits' | 'customers' | 'rating' | 'default' | string;
+}
+
+export default function MetricCard({ icon, value, label, variant = '' }: MetricCardProps) {
   return (
     <div className={`he-stat ${variant ? `he-stat--${variant}` : ''}`}>
       <div className="he-stat__icon">{icon}</div>

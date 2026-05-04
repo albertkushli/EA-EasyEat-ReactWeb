@@ -1,7 +1,24 @@
 import { Star, MapPin, Utensils } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
-export default function RestaurantCard({ restaurant }) {
+type RestaurantCardRestaurant = {
+  profile?: {
+    name?: string;
+    description?: string;
+    image?: string[];
+    globalRating?: number | string;
+    category?: string[];
+    location?: {
+      city?: string;
+    };
+  };
+};
+
+interface RestaurantCardProps {
+  restaurant: RestaurantCardRestaurant;
+}
+
+export default function RestaurantCard({ restaurant }: RestaurantCardProps) {
   const { t } = useTranslation();
   const { profile } = restaurant;
   const imageUrl = profile.image?.[0] || 'https://images.unsplash.com/photo-1517248135467-4c7ed9d42c7b?auto=format&fit=crop&q=80&w=400';

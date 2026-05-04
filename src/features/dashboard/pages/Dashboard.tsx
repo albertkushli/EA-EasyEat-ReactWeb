@@ -11,26 +11,27 @@ export default function Dashboard() {
     return (
       <div className="dashboard-page">
         <div className="error-state">
-          <h2>{t("dashboard.noAuthorized")}</h2>
-          <p>{t("dashboard.noAuthorizedDesc")}</p>
+          <h2>{t('dashboard.noAuthorized')}</h2>
+          <p>{t('dashboard.noAuthorizedDesc')}</p>
         </div>
       </div>
     );
   }
 
-  // Show different dashboard based on role
   if (role === 'customer') {
     return <HomeCustomer />;
-  } else if (role === 'owner' || role === 'staff') {
-    return <HomeEmployee />;
-  } else {
-    return (
-      <div className="dashboard-page">
-        <div className="error-state">
-          <h2>{t("dashboard.unknownRole")}</h2>
-          <p>{t("dashboard.unknownRoleDesc")}</p>
-        </div>
-      </div>
-    );
   }
+
+  if (role === 'owner' || role === 'staff') {
+    return <HomeEmployee />;
+  }
+
+  return (
+    <div className="dashboard-page">
+      <div className="error-state">
+        <h2>{t('dashboard.unknownRole')}</h2>
+        <p>{t('dashboard.unknownRoleDesc')}</p>
+      </div>
+    </div>
+  );
 }

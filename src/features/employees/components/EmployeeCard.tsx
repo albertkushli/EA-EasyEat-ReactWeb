@@ -1,4 +1,4 @@
-import { User, Mail, Phone, Shield, Edit2, Trash2, Star, TrendingUp, DollarSign } from 'lucide-react';
+import { Mail, Phone, Edit2, Trash2, Star, TrendingUp, DollarSign } from 'lucide-react';
 
 const CURRENCY_FORMATTER = new Intl.NumberFormat('es-ES', {
   style: 'currency',
@@ -7,52 +7,75 @@ const CURRENCY_FORMATTER = new Intl.NumberFormat('es-ES', {
   maximumFractionDigits: 0,
 });
 
-function safeToNumber(value, fallback = 0) {
+type EmployeeProfile = {
+  name?: string;
+  email?: string;
+  phone?: string;
+  role?: string;
+};
+
+type EmployeeStats = {
+  totalVisits?: number;
+  visits?: number;
+  revenue?: number;
+  averageRating?: number;
+};
+
+type EmployeeCardEmployee = {
+  _id?: string;
+  profile?: EmployeeProfile;
+  stats?: EmployeeStats;
+  visits?: number;
+  rating?: number;
+};
+
+interface EmployeeCardProps {
+  employee?: EmployeeCardEmployee;
+  onEdit?: (employee?: EmployeeCardEmployee) => void;
+  onDelete?: (employeeId?: string) => void;
+}
+
+function safeToNumber(value: unknown, fallback = 0) {
   const parsed = Number(value);
   return Number.isFinite(parsed) ? parsed : fallback;
 }
 
-function extractEmployeeProfile(employee) {
+function extractEmployeeProfile(employee?: EmployeeCardEmployee) {
   const profile = employee?.profile || {};
   return {
-    name: profile?.name || 'Sin nombre',
-    email: profile?.email || 'Sin email',
-    phone: profile?.phone || 'Sin teléfono',
-    role: profile?.role || 'staff',
+    name: profile.name || 'Sin nombre',
+    email: profile.email || 'Sin email',
+    phone: profile.phone || 'Sin teléfono',
+    role: profile.role || 'staff',
   };
 }
 
-function extractEmployeeStats(employee, visits = []) {
+function extractEmployeeStats(employee?: EmployeeCardEmployee) {
   const stats = employee?.stats || {};
-  console.log("Employee stats raw:", stats);
 
-  const visits_count = safeToNumber(stats?.totalVisits || stats?.visits || employee?.visits, 0);
-  const revenue = safeToNumber(stats?.revenue ?? 0, 0);
-  const rating = safeToNumber(stats?.averageRating || employee?.rating, 0);
+  const visits = safeToNumber(stats.totalVisits ?? stats.visits ?? employee?.visits, 0);
+  const revenue = safeToNumber(stats.revenue ?? 0, 0);
+  const rating = safeToNumber(stats.averageRating ?? employee?.rating, 0);
 
-  const result = { visits: visits_count, revenue, rating };
-  console.log("Employee stats processed:", result);
-  return result;
+  return { visits, revenue, rating };
 }
 
-export default function EmployeeCard({ employee, visits = [], onEdit, onDelete }) {
-  console.log("Rendering EmployeeCard for:", employee?.profile?.name, "Full Object:", employee);
+export default function EmployeeCard({ employee, onEdit, onDelete }: EmployeeCardProps) {
   const profile = extractEmployeeProfile(employee);
-  const stats = extractEmployeeStats(employee, visits);
+  const stats = extractEmployeeStats(employee);
   const avatarLetter = profile.name?.[0]?.toUpperCase() || '?';
 
-  const roleColors = {
+  const roleColors: Record<string, string> = {
     owner: 'bg-purple-50 text-purple-600 border-purple-100',
     admin: 'bg-blue-50 text-blue-600 border-blue-100',
     staff: 'bg-green-50 text-green-600 border-green-100',
   };
 
-  const roleClass = roleColors[profile.role] || roleColors.staff;
+  const roleClass = roleColors[profile.role || 'staff'] || roleColors.staff;
 
   return (
     <div className="bg-white rounded-3xl p-6 shadow-sm border border-gray-100 hover:shadow-xl hover:scale-[1.02] transition-all duration-300 group w-full min-h-[140px]">
       <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
-        {/* IZQUIERDA: Perfil */}
         <div className="flex items-center gap-5 flex-1 min-w-0">
           <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-orange-400 to-red-500 flex items-center justify-center text-white text-2xl font-black shadow-lg shadow-orange-100 group-hover:rotate-3 transition-transform duration-300 flex-shrink-0">
             {avatarLetter}
@@ -77,7 +100,6 @@ export default function EmployeeCard({ employee, visits = [], onEdit, onDelete }
           </div>
         </div>
 
-        {/* DERECHA: Stats y Acciones */}
         <div className="flex items-center gap-8 w-full sm:w-auto pt-4 sm:pt-0 border-t sm:border-t-0 border-gray-50 justify-between sm:justify-end">
           <div className="flex items-center gap-6 pr-6 sm:border-r border-gray-100">
             <div className="text-center">
