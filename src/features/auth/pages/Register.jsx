@@ -1,7 +1,8 @@
 import { useState, useMemo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Mail, Lock, Eye, EyeOff, AlertCircle, User, Check, X } from 'lucide-react';
-export { default } from '../features/auth/pages/Register';
+import { useAuth } from '@/context/AuthContext';
+import { useTranslation } from 'react-i18next';
 
 export default function Register() {
   const { t } = useTranslation();

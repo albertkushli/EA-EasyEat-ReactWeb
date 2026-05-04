@@ -1581,7 +1581,23 @@ html {
 /* (Previously inline <style> in HomeEmployee.jsx in develop)  */
 /* ============================================================ */
 
-.he-page { min-height: 100vh; background: var(--clr-bg); font-family: var(--font); color: var(--clr-text); }
+.he-page {
+  min-height: 100vh;
+  background: #ffffff;
+  font-family: var(--font);
+  color: #0f172a;
+  --clr-bg: #ffffff;
+  --clr-surface: #ffffff;
+  --clr-card: #ffffff;
+  --clr-border: rgba(15, 23, 42, 0.08);
+  --glass-bg: rgba(255, 255, 255, 0.86);
+  --glass-border: rgba(15, 23, 42, 0.08);
+  --clr-text: #0f172a;
+  --clr-text-muted: #64748b;
+  --clr-primary: #f97316;
+  --clr-accent: #22c55e;
+  --shadow-md: 0 18px 40px rgba(15, 23, 42, 0.08);
+}
 
 /* Loading */
 .he-loading {
@@ -1598,9 +1614,9 @@ html {
 /* Header */
 .he-header {
   position: sticky; top: 0; z-index: 100;
-  background: hsla(220, 20%, 6%, 0.85);
+  background: rgba(255, 255, 255, 0.9);
   backdrop-filter: blur(20px);
-  border-bottom: 1px solid var(--glass-border);
+  border-bottom: 1px solid rgba(15, 23, 42, 0.08);
 }
 .he-header__inner {
   max-width: 1200px; margin: 0 auto;

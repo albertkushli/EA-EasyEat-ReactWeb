@@ -1,4 +1,7 @@
-export { default } from '../features/dashboard/pages/Dashboard';
+import { useAuth } from '@/context/AuthContext';
+import HomeCustomer from '@/features/dashboard/pages/HomeCustomer';
+import HomeEmployee from '@/features/dashboard/pages/HomeEmployee';
+import { useTranslation } from 'react-i18next';
 
 export default function Dashboard() {
   const { t } = useTranslation();

@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Mail, Lock, Eye, EyeOff, AlertCircle, User as UserIcon, Briefcase } from 'lucide-react';
-export { default } from '../features/auth/pages/Login';
+import { useAuth } from '@/context/AuthContext';
+import { useTranslation } from 'react-i18next';
 
 export default function Login() {
   const { t } = useTranslation();

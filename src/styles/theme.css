@@ -1,0 +1,32 @@
+:root {
+  --clr-bg: #0f172a;
+  --clr-surface: #111827;
+  --clr-card: rgba(255, 255, 255, 0.05);
+  --clr-border: rgba(255, 255, 255, 0.1);
+
+  --clr-primary: #f97316;
+  --clr-accent: #22c55e;
+
+  --clr-text: #ffffff;
+  --clr-text-muted: #9ca3af;
+
+  --font: system-ui, -apple-system, sans-serif;
+
+  --shadow-md: 0 10px 20px rgba(0,0,0,0.3);
+}
+
+/* 🔥 APLICACIÓN GLOBAL */
+body {
+  background: var(--clr-bg);
+  color: var(--clr-text);
+  font-family: var(--font);
+}
+
+/* SCROLLBAR (opcional pero pro) */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--clr-primary);
+  border-radius: 10px;
+}
