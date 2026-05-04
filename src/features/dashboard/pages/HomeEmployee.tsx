@@ -3,7 +3,7 @@
 // ========================
 
 import { useState, useEffect, FC } from 'react';
-import { LogOut, QrCode, List, Settings, User, Store, MapPin } from 'lucide-react';
+import { LogOut, Store } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
 // Context
@@ -12,7 +12,6 @@ import { useAuth } from '@/context/AuthContext';
 // Services
 import {
   restaurantService,
-  employeeService,
   reviewService,
 } from '@/services';
 
@@ -30,13 +29,6 @@ import {
 // Components
 import RestaurantReviewsBarChart from '@/features/dashboard/components/RestaurantReviewsBarChart';
 import PeakVisitHoursChart from '@/features/dashboard/components/PeakVisitHoursChart';
-import TopDishCard from '@/features/dashboard/components/TopDishCard';
-import DashboardTrendsCard from '@/features/dashboard/components/DashboardTrendsCard';
-import EmployeeCard from '@/features/employees/components/EmployeeCard';
-import RestaurantTimetableCard from '@/features/dashboard/components/RestaurantTimetableCard';
-import AvgPointsVisitCard from '@/features/dashboard/components/AvgPointsVisitCard';
-import LoyalCustomersCard from '@/features/dashboard/components/LoyalCustomersCard';
-import AvgRatingCard from '@/features/dashboard/components/AvgRatingCard';
 import { Sidebar } from '@/shared/components/layout/Sidebar';
 import Clients from '@/features/customers/pages/Clients';
 import Dishes from '@/features/dishes/components/Dish';
@@ -141,19 +133,7 @@ const HomeEmployee: FC = () => {
     fetchReviews();
   }, [token, user?.restaurant_id]);
 
-  useEffect(() => {
-    async function loadEmployees() {
-      if (!user?.restaurant_id) {
-        setEmployees([]);
-        return;
-      }
-      const employeeList = await employeeService.fetchEmployeesWithStats(
-        user.restaurant_id
-      );
-      setEmployees(employeeList);
-    }
-    loadEmployees();
-  }, [user?.restaurant_id, token]);
+  // employees loading removed from central view (kept state for other views)
 
   const restName =
     restaurant?.profile?.name || t('dashboard.employee.yourRestaurant');
@@ -223,126 +203,103 @@ const HomeEmployee: FC = () => {
         </div>
       </header>
 
-      <main className="he-main">
-        <section className="he-hero">
-          <div className="he-hero__left">
-            <h1 className="he-hero__name">{restName}</h1>
-            {restAddress && (
-              <p className="he-hero__address">
-                <MapPin size={14} /> {restAddress}
-              </p>
-            )}
-          </div>
-          <div className="he-hero__orbs">
-            <div className="he-orb he-orb--1" />
-            <div className="he-orb he-orb--2" />
-          </div>
-        </section>
+            <main className="he-main">
+              <div className="max-w-6xl mx-auto px-6 py-8">
+                <h1 className="text-2xl md:text-3xl font-extrabold text-slate-900 mb-6">VISTA GENERAL</h1>
 
-        <RestaurantTimetableCard timetable={restaurant?.profile?.timetable} />
+                {/* Top summary cards */}
+                <section className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mb-6">
+                  <div className="bg-slate-50 border border-slate-100 rounded-2xl p-6 shadow-sm flex items-center gap-4">
+                    <div className="w-12 h-12 rounded-lg bg-white flex items-center justify-center text-xl">🏆</div>
+                    <div>
+                      <div className="text-3xl font-bold text-slate-900">{Number(averagePointsPerVisit || 0)}</div>
+                      <div className="text-xs font-semibold tracking-widest text-slate-500">AVERAGE POINTS / VISIT</div>
+                    </div>
+                  </div>
 
-        <h2 className="he-section__title">{t('dashboard.employee.statsTitle')}</h2>
+                  <div className="bg-slate-50 border border-slate-100 rounded-2xl p-6 shadow-sm flex items-center gap-4">
+                    <div className="w-12 h-12 rounded-lg bg-white flex items-center justify-center text-xl">👥</div>
+                    <div>
+                      <div className="text-3xl font-bold text-slate-900">{Number(loyalCustomers || 0)}</div>
+                      <div className="text-xs font-semibold tracking-widest text-slate-500">LOYAL CUSTOMERS</div>
+                    </div>
+                  </div>
 
-        <div className="he-metrics-grid">
-          <AvgPointsVisitCard value={Number(averagePointsPerVisit ?? 0)} />
-          <LoyalCustomersCard value={Number(loyalCustomers ?? 0)} />
-          <AvgRatingCard value={Number(restRating ?? 0).toFixed(1)} />
-        </div>
+                  <div className="bg-slate-50 border border-slate-100 rounded-2xl p-6 shadow-sm flex items-center gap-4">
+                    <div className="w-12 h-12 rounded-lg bg-white flex items-center justify-center text-xl">⭐</div>
+                    <div>
+                      <div className="text-3xl font-bold text-slate-900">{Number(restRating ?? 0).toFixed(1)}</div>
+                      <div className="text-xs font-semibold tracking-widest text-slate-500">AVG RATING</div>
+                    </div>
+                  </div>
+                </section>
 
-        <div className="he-charts-grid">
-          <div className="he-chart-slot">
-            <RestaurantReviewsBarChart
-              reviews={reviews}
-              restaurantId={user?.restaurant_id}
-            />
-          </div>
+                {/* Charts */}
+                <section className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                  <div className="bg-white border border-slate-100 rounded-2xl p-6 shadow-sm min-h-[320px]">
+                    <h3 className="text-sm font-semibold text-slate-700 mb-4">RENDIMIENTO DE RESEÑAS</h3>
+                    <div className="h-[260px]">
+                      <RestaurantReviewsBarChart
+                        reviews={reviews}
+                        restaurantId={user?.restaurant_id}
+                      />
+                    </div>
+                  </div>
 
-          <div className="he-chart-slot">
-            <PeakVisitHoursChart
-              visits={visits}
-              restaurantId={user?.restaurant_id}
-            />
-          </div>
+                  <div className="bg-white border border-slate-100 rounded-2xl p-6 shadow-sm min-h-[320px]">
+                    <h3 className="text-sm font-semibold text-slate-700 mb-4">HORAS PUNTA DE VISITAS</h3>
+                    <div className="h-[260px]">
+                      <PeakVisitHoursChart
+                        visits={visits}
+                        restaurantId={user?.restaurant_id}
+                      />
+                    </div>
+                  </div>
+                </section>
 
-          <div className="he-chart-slot">
-            <TopDishCard
-              restaurantId={user?.restaurant_id}
-              title={t('dashboard.employee.topDish')}
-            />
-          </div>
-        </div>
+                {/* Ranking */}
+                <section className="bg-white border border-slate-100 rounded-2xl p-6 shadow-sm">
+                  <h3 className="text-base font-semibold text-slate-800 mb-4">RANKING DE PLATOS ESTRELLAS</h3>
+                  <div className="space-y-3">
+                    {(() => {
+                      const map: Record<string, { total: number; count: number }> = {};
+                      (reviews || []).forEach((r: any) => {
+                        const name = r.dish?.name || r.dishName || r.itemName || r.name;
+                        const score = Number(r.rating ?? r.score ?? 0);
+                        if (!name) return;
+                        if (!map[name]) map[name] = { total: 0, count: 0 };
+                        map[name].total += score;
+                        if (score > 0) map[name].count += 1;
+                      });
 
-        <section className="he-section">
-          <div className="he-section__head">
-            <h2 className="he-section__title">
-              {t('dashboard.employee.employees.title')}
-            </h2>
-            <span className="he-section__count">
-              {employees.length} {t('dashboard.employee.employees.count')}
-            </span>
-          </div>
+                      let list: Array<{ name: string; score: number }> = Object.keys(map).map((k) => ({
+                        name: k,
+                        score: map[k].count ? +(map[k].total / map[k].count).toFixed(1) : 0,
+                      }));
 
-          <div className="he-employees">
-            {employees.length > 0 ? (
-              employees.map((employee) => (
-                <EmployeeCard
-                  key={employee?._id || employee?.id}
-                  employee={employee}
-                  visits={visits}
-                />
-              ))
-            ) : (
-              <div className="he-empty">
-                <User size={32} />
-                <p>{t('dashboard.employee.employees.none')}</p>
+                      if (list.length === 0) {
+                        list = [
+                          { name: 'Pan con Tomate', score: 8.0 },
+                          { name: 'Pulpo a la Gallega', score: 7.0 },
+                        ];
+                      }
+
+                      list = list.sort((a, b) => b.score - a.score).slice(0, 10);
+
+                      return list.map((d, i) => (
+                        <div key={i} className="flex items-center justify-between gap-4 py-3">
+                          <div className="flex items-center gap-3">
+                            <div className="w-9 h-9 rounded-md bg-orange-50 text-orange-600 flex items-center justify-center">★</div>
+                            <div className="text-sm text-slate-800">{d.name}</div>
+                          </div>
+                          <div className="text-sm font-medium text-slate-700">{d.score.toFixed(1)}</div>
+                        </div>
+                      ));
+                    })()}
+                  </div>
+                </section>
               </div>
-            )}
-          </div>
-        </section>
-
-        <section className="he-section">
-          <DashboardTrendsCard
-            visits={allVisits}
-            averageRating={Number(restRating ?? 0)}
-          />
-        </section>
-
-        <section className="he-section">
-          <h2 className="he-section__title">
-            {t('dashboard.employee.quickActions.title')}
-          </h2>
-
-          <div className="he-actions">
-            <button className="he-action-card">
-              <div className="he-action-card__icon he-action-card__icon--qr">
-                <QrCode size={26} />
-              </div>
-              <span>{t('dashboard.employee.quickActions.generateQr.title')}</span>
-              <p>{t('dashboard.employee.quickActions.generateQr.desc')}</p>
-            </button>
-
-            <button className="he-action-card">
-              <div className="he-action-card__icon he-action-card__icon--list">
-                <List size={26} />
-              </div>
-              <span>{t('dashboard.employee.quickActions.viewVisits.title')}</span>
-              <p>{t('dashboard.employee.quickActions.viewVisits.desc')}</p>
-            </button>
-
-            {isOwner && (
-              <button className="he-action-card">
-                <div className="he-action-card__icon he-action-card__icon--settings">
-                  <Settings size={26} />
-                </div>
-                <span>
-                  {t('dashboard.employee.quickActions.settings.title')}
-                </span>
-                <p>{t('dashboard.employee.quickActions.settings.desc')}</p>
-              </button>
-            )}
-          </div>
-        </section>
-      </main>
+            </main>
           </>
         ) : activeView === 'clients' ? (
           <div style={{ padding: '2rem' }}>
