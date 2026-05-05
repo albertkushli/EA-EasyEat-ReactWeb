@@ -22,6 +22,7 @@ export interface CustomerRestaurantProfile {
   hasOffer?: boolean;
   distance?: string;
   location?: CustomerRestaurantLocation;
+  visits?: number;
 }
 
 export interface CustomerRestaurant {
@@ -49,6 +50,8 @@ export interface CustomerBadge {
 }
 
 export interface CustomerPointsWalletEntry {
+  _id?: string,
+  id?: string,
   restaurant_id?: string | CustomerRestaurant | { _id?: string; id?: string };
   points?: number;
 }

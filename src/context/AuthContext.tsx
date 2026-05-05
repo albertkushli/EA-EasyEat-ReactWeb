@@ -121,6 +121,8 @@ export const AuthProvider: FC<{ children: ReactNode }> = ({ children }) => {
           // Restaurant data will be fetched by the useEffect above
 
           return { success: true };
+        } else {
+          return { success: false, error: "Unexpected response: " + res.status + " " + res.data };
         }
       } catch (error: any) {
         console.error('Login error:', error);
@@ -142,6 +144,8 @@ export const AuthProvider: FC<{ children: ReactNode }> = ({ children }) => {
         if (res.status === 201) {
           // 2. Perform auto-login using the credentials provided during registration
           return await login(userData.email, userData.password, 'customer');
+        } else {
+          return { success: false, error: "Unexpected response: " + res.status + " " + res.data };
         }
       } catch (error: any) {
         console.error('Register error:', error);
@@ -157,7 +161,7 @@ export const AuthProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const logout = useCallback(async () => {
     try {
       // Optional: notify backend we're logging out
-      await apiClient.post('/auth/logout', {}).catch(() => {});
+      await apiClient.post('/auth/logout', {}).catch(() => { });
     } finally {
       setAuth(null);
       setRestaurant(null);

@@ -1,7 +1,7 @@
 import { type FormEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { QRCodeCanvas } from 'qrcode.react';
-import { ArrowLeft, CheckCircle, Clock, Coins, Gift, Heart, Home, MapPin, QrCode, Save, Search, SlidersHorizontal, Star, Trophy, User, Wallet, X } from 'lucide-react';
+import { ArrowLeft, CheckCircle, Clock, Coins, Gift, Heart, Home, MapPin, QrCode, Save, Search, SlidersHorizontal, Star, Trophy, User, Wallet, X, Mail, Lock } from 'lucide-react';
 import type { ICustomer } from '@/types';
 import type { CustomerBadge, CustomerPointsWalletEntry, CustomerRestaurant, CustomerReward, CustomerTabId, CustomerVisit } from '../../hooks/useCustomerDashboard';
 
@@ -56,6 +56,7 @@ interface CustomerDiscoverViewProps {
   onToggleFavorite: (restaurant: CustomerRestaurant) => void;
   onBack: () => void;
   onOpenQrModal: () => void;
+  onSelectRestaurant: (restaurant: CustomerRestaurant) => void;
 }
 
 interface CustomerHistoryRewardsViewProps {
@@ -629,6 +630,7 @@ export function CustomerDiscoverView({
   restaurants,
   allRewards,
   selectedRestaurant,
+  onSelectRestaurant,
   searchTerm,
   onSearchTermChange,
   selectedCategory,
@@ -642,10 +644,11 @@ export function CustomerDiscoverView({
   const categories = [
     { name: 'Tots', icon: '🍽️' },
     { name: 'Sushi', icon: '🍣' },
-    { name: 'Pizza', icon: '🍕' },
+    { name: 'Pizzeria', icon: '🍕' },
     { name: 'Burguer', icon: '🍔' },
     { name: 'Mexicà', icon: '🌮' },
     { name: 'Italià', icon: '🍝' },
+    { name: 'Marisc', icon: '🐟️' },
   ];
 
   const filteredRestaurants = restaurants.filter((restaurant) => {

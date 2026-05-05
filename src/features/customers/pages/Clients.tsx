@@ -1,5 +1,5 @@
 import { useEffect, useState, useMemo } from "react";
-import { Customer } from "../types/Customer";
+import { Customer } from "@/types/Customer";
 import { getCustomersByRestaurant } from "@/features/customers/services/customerServices";
 import { useAuth } from "@/context/AuthContext";
 import { Search, User, Mail, ChevronRight, AlertCircle, Loader2 } from "lucide-react";
@@ -80,7 +80,7 @@ export default function Clients() {
         <div className="mb-6 p-4 bg-red-50 border border-red-100 rounded-xl flex items-center gap-3 text-red-600">
           <AlertCircle className="w-5 h-5" />
           <p>{error}</p>
-          <button 
+          <button
             onClick={loadClients}
             className="ml-auto text-sm font-semibold underline hover:text-red-700"
           >
@@ -108,11 +108,10 @@ export default function Clients() {
             >
               {/* Status Badge */}
               <div className="absolute top-4 right-4">
-                <span className={`px-2 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider ${
-                  client.isActive 
-                    ? "bg-green-100 text-green-600" 
+                <span className={`px-2 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider ${client.isActive
+                    ? "bg-green-100 text-green-600"
                     : "bg-gray-100 text-gray-500"
-                }`}>
+                  }`}>
                   {client.isActive ? "Activo" : "Inactivo"}
                 </span>
               </div>
@@ -138,7 +137,7 @@ export default function Clients() {
                     <Mail className="w-3.5 h-3.5" />
                     <span className="text-xs truncate">{client.email}</span>
                   </div>
-                  
+
                   <div className="mt-4 flex items-center justify-between">
                     <div className="text-[10px] text-gray-400">
                       Miembro desde {new Date(client.createdAt).toLocaleDateString()}
@@ -153,4 +152,5 @@ export default function Clients() {
       )}
     </div>
   );
-}
+}
+
