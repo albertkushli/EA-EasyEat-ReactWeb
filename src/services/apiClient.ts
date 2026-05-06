@@ -38,11 +38,8 @@ const apiClient: AxiosInstance = axios.create({
 apiClient.interceptors.request.use((config) => {
   const token = getStoredAuthToken();
 
-  if (token && !config.headers?.Authorization) {
-    config.headers = {
-      ...config.headers,
-      Authorization: `Bearer ${token}`,
-    };
+  if (token && config.headers && !config.headers.has('Authorization')) {
+    config.headers.set('Authorization', `Bearer ${token}`);
   }
 
   return config;

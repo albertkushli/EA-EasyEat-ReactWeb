@@ -40,7 +40,7 @@ export default function HomeEmployee() {
           <EmployeeOverviewPanel
             visits={dashboard.visits}
             reviews={dashboard.reviews}
-            restaurantId={dashboard.user?.restaurant_id}
+            restaurantId={dashboard.user?.restaurant_id!}
             averagePointsPerVisit={dashboard.averagePointsPerVisit}
             loyalCustomers={dashboard.loyalCustomers}
             restRating={dashboard.restRating}
@@ -63,7 +63,7 @@ export default function HomeEmployee() {
           </div>
         ) : dashboard.activeView === 'analytics' ? (
           <div style={{ padding: '2rem' }}>
-            <Analytics visits={dashboard.allVisits} restaurantId={dashboard.user?.restaurant_id} />
+            <Analytics visits={dashboard.allVisits} restaurantId={dashboard.user?.restaurant_id!} />
           </div>
         ) : dashboard.activeView === 'settings' ? (
           <div style={{ padding: '2rem' }}>

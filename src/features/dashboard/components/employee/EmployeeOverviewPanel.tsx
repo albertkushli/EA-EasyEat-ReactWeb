@@ -6,7 +6,7 @@ import PeakVisitHoursChart from '../PeakVisitHoursChart';
 interface EmployeeOverviewPanelProps {
   visits: IVisit[];
   reviews: IReview[];
-  restaurantId?: string;
+  restaurantId: string;
   averagePointsPerVisit: number;
   loyalCustomers: number;
   restRating?: number | string;

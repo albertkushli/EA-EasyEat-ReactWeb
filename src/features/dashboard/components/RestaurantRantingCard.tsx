@@ -1,8 +1,6 @@
 import { useEffect, useState } from 'react';
-import { useAuth } from '../../context/AuthContext';
-import apiClient from '../../lib/apiClient';
-import { useTranslation } from 'react-i18next';
 import { useAuth } from '@/context/AuthContext';
+import { useTranslation } from 'react-i18next';
 import apiClient from '@/services/apiClient';
 
 type RestaurantData = {

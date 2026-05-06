@@ -338,7 +338,7 @@ export function useCustomerDashboard(): UseCustomerDashboardResult {
   const uniqueRestaurantsVisited = useMemo(
     () => new Set(visits.map((visit) => {
       if (isRecord(visit.restaurant_id)) {
-        const restaurantProfile = isRecord(visit.restaurant_id.profile) ? visit.restaurant_id.profile : null;
+        const restaurantProfile = isRecord((visit.restaurant_id as any).profile) ? (visit.restaurant_id as any).profile : null;
         return String(restaurantProfile?.name ?? visit.restaurant_name ?? '');
       }
 

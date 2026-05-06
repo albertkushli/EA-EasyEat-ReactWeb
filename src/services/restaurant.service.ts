@@ -32,7 +32,8 @@ export async function fetchRestaurantStats(restaurantId: string): Promise<IResta
     );
 
     // Soporta distintos formatos de respuesta
-    if (res.data?.data && typeof res.data.data === 'object') return res.data.data;
+    const resData = res.data as any;
+    if (resData?.data && typeof resData.data === 'object') return resData.data;
     if (res.data && typeof res.data === 'object') return res.data;
     return null;
   } catch (err) {

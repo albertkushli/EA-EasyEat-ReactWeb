@@ -2,7 +2,7 @@ import { Users } from 'lucide-react';
 import MetricCard from '@/shared/components/ui/MetricCard';
 import { useTranslation } from 'react-i18next';
 
-export default function LoyalCustomersCard({ value }) {
+export default function LoyalCustomersCard({ value }: { value: number }) {
   const { t } = useTranslation();
   return (
     <MetricCard

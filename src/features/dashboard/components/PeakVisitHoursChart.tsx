@@ -1,3 +1,4 @@
+import { IVisit } from '@/types';
 import { useTranslation } from 'react-i18next';
 import {
   LineChart,
@@ -16,25 +17,25 @@ const DEFAULT_DATA = [
   { hour: '20:00', visits: 2300 },
 ];
 
-function normalizeRestaurantId(value) {
+function normalizeRestaurantId(value: any) {
   return String(value?._id ?? value ?? '');
 }
 
-function buildPeakVisitStats(visits, restaurantId) {
+function buildPeakVisitStats(visits: any, restaurantId: any) {
   const currentRestaurantId = normalizeRestaurantId(restaurantId);
 
   const filteredVisits = Array.isArray(visits)
     ? visits.filter(
-        (visit) =>
-          normalizeRestaurantId(visit?.restaurant_id) === currentRestaurantId,
-      )
+      (visit) =>
+        normalizeRestaurantId(visit?.restaurant_id) === currentRestaurantId,
+    )
     : [];
 
   if (!filteredVisits.length) {
     return DEFAULT_DATA;
   }
 
-  const hourMap = {};
+  const hourMap: Record<string, number> = {};
 
   filteredVisits.forEach((visit) => {
     const date = new Date(visit?.date || visit?.createdAt);
@@ -57,7 +58,7 @@ function buildPeakVisitStats(visits, restaurantId) {
     .filter((item) => item.visits > 0);
 }
 
-export default function PeakVisitHoursChart({ visits = [], restaurantId }) {
+export default function PeakVisitHoursChart({ visits, restaurantId }: { visits: IVisit[], restaurantId: string }) {
   const { t } = useTranslation();
   const data = buildPeakVisitStats(visits, restaurantId);
   const hasVisits = data.length > 0;

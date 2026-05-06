@@ -31,8 +31,17 @@ export interface ICustomer extends IUser {
   reviews?: string[];
 }
 
-export interface IEmployee extends IUser {
+export interface IEmployee {
+  _id?: string;
   restaurant_id: string;
+  profile: {
+    name: string;
+    password?: string;
+    email?: string;
+    phone?: string;
+    role?: string;
+  };
+  isActive: boolean;
 }
 
 export interface IAuthResponse {

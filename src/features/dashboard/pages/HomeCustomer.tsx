@@ -77,6 +77,7 @@ export default function HomeCustomer() {
               favoriteRestaurants={dashboard.favoriteRestaurants}
               onToggleFavorite={dashboard.handleToggleFavorite}
               onBack={() => dashboard.setSelectedRestaurant(null)}
+              onSelectRestaurant={dashboard.setSelectedRestaurant}
               onOpenQrModal={() => dashboard.setShowQrModal(true)}
             />
           ) : dashboard.activeTab === 'rewards' ? (

@@ -1,3 +1,5 @@
+import { IVisit } from '@/types';
+import { TFunction } from 'i18next';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -12,28 +14,30 @@ import {
 
 const DEFAULT_REVENUE_THRESHOLD = 300;
 
-function toValidDate(value) {
+function toValidDate(value: Date | string) {
   const date = new Date(value);
   return Number.isNaN(date.getTime()) ? null : date;
 }
 
-function startOfDayTimestamp(date) {
+function startOfDayTimestamp(date: Date) {
   return new Date(date.getFullYear(), date.getMonth(), date.getDate()).getTime();
 }
 
-function addDays(date, amount) {
+function addDays(date: Date, amount: number) {
   const nextDate = new Date(date);
   nextDate.setDate(nextDate.getDate() + amount);
   return nextDate;
 }
 
-function groupVisitsByDay(visits = [], locale) {
+function groupVisitsByDay(visits: IVisit[], locale: string | string[]) {
+  if (!visits) return;
+
   const groupedVisits = new Map();
-  const dateOptions = { day: '2-digit', month: '2-digit', year: 'numeric' };
-  const shortDateOptions = { day: '2-digit', month: '2-digit' };
+  const dateOptions: Intl.DateTimeFormatOptions = { day: '2-digit', month: '2-digit', year: 'numeric' };
+  const shortDateOptions: Intl.DateTimeFormatOptions = { day: '2-digit', month: '2-digit' };
 
   visits.forEach((visit) => {
-    const date = toValidDate(visit?.date || visit?.createdAt);
+    const date = toValidDate(visit.date ?? visit.createdAt!);
     if (!date) return;
 
     const timestamp = startOfDayTimestamp(date);
@@ -53,14 +57,16 @@ function groupVisitsByDay(visits = [], locale) {
   return Array.from(groupedVisits.values()).sort((a, b) => a.timestamp - b.timestamp);
 }
 
-function getDailyLookup(visits = [], locale) {
-  return groupVisitsByDay(visits, locale).reduce((lookup, day) => {
+function getDailyLookup(visits: IVisit[], locale: string | string[]) {
+  if (!visits) return;
+
+  return groupVisitsByDay(visits, locale)?.reduce((lookup, day) => {
     lookup.set(day.timestamp, day);
     return lookup;
   }, new Map());
 }
 
-function getPeriodTotals(dailyLookup, startDate, endDate) {
+function getPeriodTotals(dailyLookup: any, startDate: Date | string, endDate: Date | string) {
   let visits = 0;
   let revenue = 0;
 
@@ -75,25 +81,25 @@ function getPeriodTotals(dailyLookup, startDate, endDate) {
   return { visits, revenue };
 }
 
-function calculatePercentageChange(current, previous) {
+function calculatePercentageChange(current: number, previous: number) {
   if (!previous) return null;
   return ((current - previous) / previous) * 100;
 }
 
-function formatChangeLabel(change, t) {
+function formatChangeLabel(change: number | null, t: TFunction<"translation", undefined>) {
   if (change == null || Number.isNaN(change)) return t("common.noComparison");
   const sign = change >= 0 ? '+' : '';
   return `${change >= 0 ? '📈' : '📉'} ${sign}${Math.abs(change).toFixed(1)}% vs ${t("dashboard.employee.status.sevenPreviousDays")}`;
 }
 
-function getChangeTone(change) {
+function getChangeTone(change: number | null) {
   if (change == null) return 'neutral';
   if (change > 0) return 'positive';
   if (change < 0) return 'negative';
   return 'neutral';
 }
 
-function buildPredictedDays(dailyData, locale) {
+function buildPredictedDays(dailyData: any[], locale: string | string[]) {
   if (!dailyData.length) return [];
 
   const recentDays = dailyData.slice(-7);
@@ -101,8 +107,8 @@ function buildPredictedDays(dailyData, locale) {
   const predictedVisits = Math.max(0, Math.round(averageVisits));
   const lastTimestamp = dailyData[dailyData.length - 1].timestamp;
 
-  const dateOptions = { day: '2-digit', month: '2-digit', year: 'numeric' };
-  const shortDateOptions = { day: '2-digit', month: '2-digit' };
+  const dateOptions: Intl.DateTimeFormatOptions = { day: '2-digit', month: '2-digit', year: 'numeric' };
+  const shortDateOptions: Intl.DateTimeFormatOptions = { day: '2-digit', month: '2-digit' };
 
   return Array.from({ length: 7 }, (_, index) => {
     const futureDate = addDays(new Date(lastTimestamp), index + 1);
@@ -117,8 +123,12 @@ function buildPredictedDays(dailyData, locale) {
   });
 }
 
-function buildChartData(visits, locale) {
+function buildChartData(visits: IVisit[], locale: string | string[]) {
+  if (!visits) return;
+
   const groupedDays = groupVisitsByDay(visits, locale);
+
+  if (!groupedDays) return;
 
   const realDays = groupedDays.map((day) => ({
     ...day,
@@ -136,7 +146,7 @@ function buildChartData(visits, locale) {
   return [...realDays, ...predictedDays];
 }
 
-function splitChartData(chartData) {
+function splitChartData(chartData: any[]) {
   return {
     realData: chartData
       .filter((item) => item.predicted === false)
@@ -153,7 +163,10 @@ function splitChartData(chartData) {
   };
 }
 
-function buildAlerts({ averageRating, visitsChange, currentRevenue, revenueThreshold, t }) {
+function buildAlerts(
+  { averageRating, visitsChange, currentRevenue, revenueThreshold, t }:
+    { averageRating: number | null, visitsChange: number | null, currentRevenue: number, revenueThreshold: number, t: TFunction<"translation", undefined> }
+) {
   const alerts = [];
 
   if (averageRating != null && averageRating < 7) {
@@ -175,7 +188,7 @@ function buildAlerts({ averageRating, visitsChange, currentRevenue, revenueThres
   return alerts;
 }
 
-function TrendsTooltip({ active, payload, label, t }) {
+function TrendsTooltip({ active, payload, label, t }: { active?: boolean, payload?: any[], label?: string, t: TFunction<"translation", undefined> }) {
   if (!active || !payload?.length) return null;
 
   const point = payload[0];
@@ -205,17 +218,21 @@ export default function TrendCard({
   visits = [],
   averageRating = null,
   revenueThreshold = DEFAULT_REVENUE_THRESHOLD,
+}: {
+  visits?: IVisit[];
+  averageRating?: number | null;
+  revenueThreshold?: number;
 }) {
   const { t, i18n } = useTranslation();
   const locale = i18n.language;
 
-  const chartData = useMemo(() => buildChartData(visits, locale), [visits, locale]);
+  const chartData = useMemo(() => buildChartData(visits, locale) || [], [visits, locale]);
   const { realData, predictedData } = useMemo(() => splitChartData(chartData), [chartData]);
 
   const { currentPeriod, previousPeriod } = useMemo(() => {
     const orderedDays = groupVisitsByDay(visits, locale);
 
-    if (!orderedDays.length) {
+    if (!orderedDays?.length) {
       return {
         currentPeriod: { visits: 0, revenue: 0 },
         previousPeriod: { visits: 0, revenue: 0 },

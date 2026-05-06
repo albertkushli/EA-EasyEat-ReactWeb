@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { X, Save, Loader2, Trophy, Star, MessageSquare } from "lucide-react";
-import { Reward } from "../types/Reward";
+import { Reward } from "@/types/Reward";
 import { motion, AnimatePresence } from "framer-motion";
 
 interface RewardModalProps {

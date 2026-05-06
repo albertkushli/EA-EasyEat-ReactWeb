@@ -1,3 +1,4 @@
+import { IReview } from '@/types';
 import { useTranslation } from 'react-i18next';
 import {
   BarChart,
@@ -10,17 +11,17 @@ import {
   ResponsiveContainer,
 } from 'recharts';
 
-function normalizeRestaurantId(value) {
+function normalizeRestaurantId(value: any) {
   return String(value?._id ?? value ?? '');
 }
 
-function average(values) {
+function average(values: number[]) {
   if (!values.length) return 0;
-  const total = values.reduce((sum, value) => sum + value, 0);
+  const total = values.reduce((sum: number, value: number) => sum + value, 0);
   return total / values.length;
 }
 
-function buildReviewStats(reviews, restaurantId, t) {
+function buildReviewStats(reviews: any, restaurantId: any, t: any) {
   const chartKeys = [
     { key: 'foodQuality', name: t("components.reviewScores.categories.food") },
     { key: 'staffService', name: t("components.reviewScores.categories.service") },
@@ -31,8 +32,8 @@ function buildReviewStats(reviews, restaurantId, t) {
   const currentRestaurantId = normalizeRestaurantId(restaurantId);
   const restaurantReviews = Array.isArray(reviews)
     ? reviews.filter((review) =>
-        normalizeRestaurantId(review?.restaurant_id) === currentRestaurantId,
-      )
+      normalizeRestaurantId(review?.restaurant_id) === currentRestaurantId,
+    )
     : [];
 
   return chartKeys.map(({ key, name }) => {
@@ -47,7 +48,7 @@ function buildReviewStats(reviews, restaurantId, t) {
   });
 }
 
-export default function RestaurantReviewsBarChart({ reviews = [], restaurantId }) {
+export default function RestaurantReviewsBarChart({ reviews, restaurantId }: { reviews: IReview[], restaurantId: string }) {
   const { t } = useTranslation();
   const data = buildReviewStats(reviews, restaurantId, t);
   const hasReviews = Array.isArray(reviews) && reviews.some(

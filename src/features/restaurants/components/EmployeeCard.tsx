@@ -1,6 +1,6 @@
 import { FC } from 'react';
 import { useTranslation } from 'react-i18next';
-import { IEmployeeStats, IVisit } from '../types';
+import { IEmployee, IEmployeeStats, IVisit } from '@/types';
 
 // ════════════════════════════════════════════════
 // TYPES
@@ -34,13 +34,13 @@ function safeToNumber(value: any, fallback: number = 0): number {
   return Number.isFinite(parsed) ? parsed : fallback;
 }
 
-function extractEmployeeProfile(employee: IEmployeeStats, t: any): EmployeeProfile {
+function extractEmployeeProfile(employee: IEmployee, t: any): EmployeeProfile {
   const profile = employee?.profile as any || {};
   return {
-    name: profile?.name || employee?.name || t('components.employeeCard.noName'),
-    email: profile?.email || employee?.email || t('components.employeeCard.noEmail'),
+    name: profile?.name || t('components.employeeCard.noName'),
+    email: profile?.email || t('components.employeeCard.noEmail'),
     phone: profile?.phone || t('components.employeeCard.noPhone'),
-    role: profile?.role || employee?.role || 'staff',
+    role: profile?.role || 'staff',
   };
 }
 
@@ -141,7 +141,7 @@ const EmployeeStatusBadge: FC<{ status: EmployeeStatus }> = ({ status }) => (
 // ════════════════════════════════════════════════
 
 interface EmployeeCardProps {
-  employee: IEmployeeStats;
+  employee: IEmployee;
   visits?: IVisit[];
 }
 
@@ -150,8 +150,8 @@ const EmployeeCard: FC<EmployeeCardProps> = ({ employee, visits = [] }) => {
   const locale = i18n.language;
 
   const profile = extractEmployeeProfile(employee, t);
-  const stats = extractEmployeeStats(employee, visits);
-  const status = extractEmployeeStatus(employee, t);
+  const stats = extractEmployeeStats(employee as any, visits);
+  const status = extractEmployeeStatus(employee as any, t);
 
   const avatarLetter = profile.name?.[0]?.toUpperCase() || '?';
 
