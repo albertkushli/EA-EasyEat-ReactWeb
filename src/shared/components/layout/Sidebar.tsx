@@ -1,6 +1,7 @@
 import { LayoutDashboard, Users, Gift, BarChart3, Settings, LogOut, Store, UtensilsCrossed, Users2 } from "lucide-react";
 import { motion } from "framer-motion";
 import { useAuth } from "@/context/AuthContext";
+import { useTranslation } from "react-i18next";
 
 interface SidebarProps {
   activeView: string;
@@ -11,14 +12,16 @@ interface SidebarProps {
 
 export function Sidebar({ activeView, onViewChange, restaurantName, restaurantAddress }: SidebarProps) {
   const { user, logout } = useAuth();
+  const { t } = useTranslation();
+
   const menuItems = [
-    { id: 'dashboard', icon: LayoutDashboard, label: 'Dashboard' },
-    { id: 'clients', icon: Users, label: 'Clients' },
-    { id: 'dishes', icon: UtensilsCrossed, label: 'Platos' },
-    { id: 'employees', icon: Users2, label: 'Empleados' },
-    { id: 'rewards', icon: Gift, label: 'Recompenses' },
-    { id: 'analytics', icon: BarChart3, label: 'Anàlisi' },
-    { id: 'settings', icon: Settings, label: 'Configuració' }
+    { id: 'dashboard', icon: LayoutDashboard, label: t('sidebar.dashboard') },
+    { id: 'clients', icon: Users, label: t('sidebar.clients') },
+    { id: 'dishes', icon: UtensilsCrossed, label: t('sidebar.dishes') },
+    { id: 'employees', icon: Users2, label: t('sidebar.employees') },
+    { id: 'rewards', icon: Gift, label: t('sidebar.rewards') },
+    { id: 'analytics', icon: BarChart3, label: t('sidebar.analytics') },
+    { id: 'settings', icon: Settings, label: t('sidebar.settings') }
   ];
 
   return (
@@ -68,7 +71,7 @@ export function Sidebar({ activeView, onViewChange, restaurantName, restaurantAd
             {user?.name?.[0]?.toUpperCase() || 'U'}
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-bold truncate">{user?.name || 'Usuario'}</p>
+            <p className="text-sm font-bold truncate">{user?.name || t('auth.login.tabs.customer')}</p>
             <p className="text-xs text-slate-300/70 truncate">{user?.role || 'Owner'}</p>
           </div>
         </div>
@@ -79,10 +82,10 @@ export function Sidebar({ activeView, onViewChange, restaurantName, restaurantAd
           whileTap={{ scale: 0.99 }}
           onClick={logout}
           className="flex w-full items-center gap-3 rounded-lg px-4 py-2.5 text-slate-200/85 transition-all duration-200 hover:bg-red-500/10 hover:text-red-400"
-          title="Cerrar sesión"
+          title={t('navbar.links.logout')}
         >
           <LogOut className="h-5 w-5" />
-          <span className="text-sm font-semibold">Logout</span>
+          <span className="text-sm font-semibold">{t('sidebar.logout')}</span>
         </motion.button>
       </div>
     </aside>

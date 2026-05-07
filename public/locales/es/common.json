@@ -7,7 +7,8 @@
       "howItWorks": "Cómo funciona",
       "access": "Acceder",
       "logout": "Cerrar sesión"
-    }
+    },
+    "back": "Volver"
   },
   "hero": {
     "title": {
@@ -20,7 +21,8 @@
       "customer": "Soy cliente",
       "restaurant": "Soy restaurante",
       "admin": "¿Eres administrador? Accede aquí"
-    }
+    },
+    "tagline": "Únete a la revolución del food-loyalty"
   },
   "features": {
     "foodie": {
@@ -224,6 +226,20 @@
       }
     }
   },
+  "profile": {
+    "settings": "Configuración",
+    "title": "Configuración del perfil",
+    "subtitle": "Cambia tu información de perfil",
+    "form": {
+      "password": "Contraseña",
+      "passwordHint": "(Deja en blanco para mantener la misma)",
+      "passwordError": "La contraseña debe tener al menos 8 caracteres, 1 letra mayúscula y 1 número.",
+      "emailError": "Correo electrónico no válido.",
+      "nameError": "El nombre debe tener entre 2 i 100 caracteres.",
+      "save": "Guardar",
+      "updated": "¡Perfil actualizado correctamente!"
+    }
+  },
   "components": {
     "employeeCard": {
       "noName": "Sin nombre",
@@ -286,6 +302,213 @@
         "service": "Servicio",
         "cleanliness": "Limpieza",
         "environment": "Ambiente"
+      }
+    }
+  },
+  "sidebar": {
+    "dashboard": "Dashboard",
+    "clients": "Clientes",
+    "dishes": "Platos",
+    "employees": "Empleados",
+    "rewards": "Recompensas",
+    "analytics": "Análisis",
+    "settings": "Configuración",
+    "logout": "Logout"
+  },
+  "analytics": {
+    "title": "ANÁLISIS",
+    "subtitle": "Panel de rendimiento y tendencias estratégicas",
+    "loading": "Analizando datos reales del restaurante...",
+    "errorTitle": "Error de Conexión",
+    "errorLoading": "No se pudieron cargar algunos datos de análisis.",
+    "retry": "Reintentar",
+    "exportData": "Exportar Datos",
+    "export": {
+      "date": "Fecha",
+      "visits": "Visitas",
+      "rewards": "Recompensas"
+    },
+    "kpi": {
+      "retention": "Tasa de Retención",
+      "activeCustomers": "Clientes Activos",
+      "revenue": "Ingresos Estimados",
+      "loyaltyRoi": "Fidelización (ROI)"
+    },
+    "chart": {
+      "title": "Tendencias del último mes",
+      "subtitle": "Visitas vs Recompensas canjeadas",
+      "visits": "Visitas",
+      "rewards": "Premios"
+    },
+    "prediction": {
+      "title": "Predicción",
+      "nextMonth": "Próximo Mes",
+      "growthTagline": "CRECIMIENTO ESPERADO EN VISITAS"
+    },
+    "alerts": {
+      "title": "Alertas Inteligentes",
+      "visitsDrop": "Ligera bajada de visitas en horario nocturno",
+      "recurrenceIncrease": "El programa de puntos ha aumentado la recurrencia un 8%",
+      "newSegment": "Nuevo segmento de clientes activos detectado"
+    }
+  },
+  "clients": {
+    "title": "Clientes",
+    "subtitle": "Gestiona y visualiza los clientes de tu restaurante",
+    "searchPlaceholder": "Buscar por nombre o email...",
+    "loading": "Cargando clientes...",
+    "errorNoRestaurant": "No se pudo identificar el restaurante del usuario.",
+    "errorLoading": "No se pudieron cargar los clientes.",
+    "retry": "Reintentar",
+    "noResults": "No se encontraron clientes",
+    "noResultsSearch": "Intenta con otro término de búsqueda.",
+    "noResultsEmpty": "Aún no hay clientes registrados en este restaurante.",
+    "active": "Activo",
+    "inactive": "Inactivo",
+    "memberSince": "Miembro desde"
+  },
+  "employees": {
+    "title": "Empleados",
+    "subtitle": "Gestiona el equipo de tu restaurante",
+    "addEmployee": "Añadir Empleado",
+    "editEmployee": "Editar Empleado",
+    "loading": "Cargando empleados...",
+    "noEmployees": "No se encontraron empleados",
+    "form": {
+      "name": "Nombre",
+      "email": "Email",
+      "phone": "Teléfono",
+      "role": "Rol",
+      "password": "Contraseña",
+      "submit": "Guardar Empleado"
+    }
+  },
+  "dishes": {
+    "title": "Tu Carta",
+    "subtitle": "Gestiona los platos y categorías de tu menú",
+    "addDish": "Añadir Plato",
+    "editDish": "Editar Plato",
+    "deleteDish": "Eliminar Plato",
+    "loading": "Cargando carta...",
+    "errorLoading": "No se pudo cargar la carta.",
+    "confirmDelete": "¿Estás seguro de que quieres eliminar este plato?",
+    "errorDelete": "Error al eliminar el plato.",
+    "noDishes": "No hay platos en la carta",
+    "noDishesSubtitle": "Empieza añadiendo platos a tu menú desde el panel de gestión.",
+    "viewDetails": "Ver detalles",
+    "details": {
+      "description": "Descripción",
+      "noDescription": "Este plato no tiene una descripción detallada todavía.",
+      "ingredients": "Ingredientes",
+      "notSpecified": "No especificados",
+      "allergens": "Alérgenos",
+      "noCriticalAllergens": "Sin alérgenos críticos",
+      "dietary": "Dietético",
+      "flavor": "Sabor",
+      "availability": "Disponibilidad",
+      "allDay": "Todo el día"
+    },
+    "form": {
+      "name": "Nombre del plato",
+      "namePlaceholder": "Ej: Patatas Bravas",
+      "description": "Descripción",
+      "descriptionPlaceholder": "Describe los ingredientes o preparación...",
+      "price": "Precio",
+      "section": "Sección",
+      "submit": "Guardar Plato"
+    },
+    "sections": {
+      "starters": "Entrantes",
+      "mains": "Principales",
+      "desserts": "Postres",
+      "drinks": "Bebidas"
+    }
+  },
+  "rewards": {
+    "title": "Programa de Recompensas",
+    "subtitle": "Configura los premios que tus clientes pueden canjear",
+    "addReward": "Añadir Recompensa",
+    "editReward": "Editar Recompensa",
+    "deleteReward": "Eliminar Recompensa",
+    "loading": "Cargando recompensas...",
+    "errorLoading": "No se pudieron cargar las recompensas.",
+    "confirmDelete": "¿Estás seguro de que quieres eliminar esta recompensa?",
+    "errorDelete": "Error al eliminar la recompensa.",
+    "noRewards": "No hay recompensas configuradas",
+    "noRewardsSubtitle": "Empieza creando recompensas para incentivar las visitas de tus clientes.",
+    "details": {
+      "noDescription": "Sin descripción disponible.",
+      "pointsCost": "Coste en puntos",
+      "expires": "Expira",
+      "description": "Descripción del beneficio"
+    },
+    "form": {
+      "name": "Nombre de la recompensa",
+      "namePlaceholder": "Ej: Postre Gratis",
+      "description": "¿Qué se obtiene?",
+      "descriptionPlaceholder": "Explica qué obtendrá el cliente...",
+      "activeTagline": "Recompensa activa y disponible para canje",
+      "submit": "Guardar Recompensa"
+    }
+  },
+  "settings": {
+    "title": "Configuración",
+    "subtitle": "Gestiona los detalles y preferencias de tu establecimiento",
+    "successSave": "Configuración guardada correctamente",
+    "errorSave": "Error al guardar la configuración",
+    "tabs": {
+      "general": "Información",
+      "schedule": "Horario Comercial",
+      "notifications": "Notificaciones",
+      "points": "Sistema de Puntos"
+    },
+    "general": {
+      "title": "Perfil del Restaurante",
+      "name": "Nombre del Establecimiento",
+      "category": "Categoría / Tipo de Cocina",
+      "address": "Dirección Completa",
+      "website": "Sitio Web",
+      "submit": "Guardar Cambios"
+    },
+    "schedule": {
+      "title": "Horario Semanal",
+      "edit": "Editar Horario",
+      "addSlot": "Añadir franja",
+      "closed": "Cerrado",
+      "days": {
+        "monday": "Lunes",
+        "tuesday": "Martes",
+        "wednesday": "Miércoles",
+        "thursday": "Jueves",
+        "friday": "Viernes",
+        "saturday": "Sábado",
+        "sunday": "Domingo"
+      }
+    },
+    "notifications": {
+      "title": "Centro de Notificaciones",
+      "realTime": {
+        "title": "Alertas en Tiempo Real",
+        "description": "Recibir notificaciones cuando un cliente canjea un premio"
+      },
+      "weeklyReport": {
+        "title": "Resumen Semanal",
+        "description": "Informe de rendimiento enviado a tu correo cada lunes"
+      },
+      "feedback": {
+        "title": "Feedback de Clientes",
+        "description": "Avisar cuando un cliente deja una valoración nueva"
+      }
+    },
+    "points": {
+      "title": "Sistema de Puntos",
+      "accumulationRatio": "Ratio de Acumulación",
+      "configureMultipliers": "Configurar multiplicadores",
+      "welcomeBonus": "Bonus por Bienvenida",
+      "welcomeBonusTagline": "PUNTOS OTORGADOS EN LA PRIMERA VISITA",
+      "fraudProtection": {
+        "title": "Protección contra Fraude",
+        "description": "Validación automática de tickets mediante QR"
       }
     }
   }

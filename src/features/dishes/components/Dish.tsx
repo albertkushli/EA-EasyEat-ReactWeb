@@ -17,8 +17,10 @@ import {
   Leaf
 } from "lucide-react";
 import DishModal from "./DishModal";
+import { useTranslation } from "react-i18next";
 
 export default function Dishes() {
+  const { t } = useTranslation();
   const { user, restaurant } = useAuth();
   const [dishes, setDishes] = useState<Dish[]>([]);
   const [loading, setLoading] = useState(true);
@@ -36,9 +38,9 @@ export default function Dishes() {
       loadDishes();
     } else {
       setLoading(false);
-      setError("No se pudo identificar el restaurante del usuario.");
+      setError(t('employees.errorNoRestaurant') || "No se pudo identificar el restaurante del usuario.");
     }
-  }, [restaurantId]);
+  }, [restaurantId, t]);
 
   const loadDishes = async () => {
     try {
@@ -48,7 +50,7 @@ export default function Dishes() {
       setDishes(data);
     } catch (err: any) {
       console.error("Error loading dishes:", err);
-      setError(err.message || "No se pudieron cargar los platos.");
+      setError(err.message || t('dishes.errorLoading') || "No se pudieron cargar los platos.");
     } finally {
       setLoading(false);
     }
@@ -67,12 +69,12 @@ export default function Dishes() {
 
   const handleDeleteClick = async (e: MouseEvent<HTMLButtonElement>, dishId: string) => {
     e.stopPropagation();
-    if (window.confirm("¿Estás seguro de que quieres eliminar este plato?")) {
+    if (window.confirm(t('dishes.confirmDelete') || "¿Estás seguro de que quieres eliminar este plato?")) {
       try {
         await deleteDish(dishId, restaurantId);
         setDishes(dishes.filter(d => d._id !== dishId));
       } catch (err) {
-        alert("Error al eliminar el plato");
+        alert(t('dishes.errorDelete') || "Error al eliminar el plato");
       }
     }
   };
@@ -100,7 +102,7 @@ export default function Dishes() {
     return (
       <div className="flex flex-col items-center justify-center h-64 space-y-4">
         <Loader2 className="w-8 h-8 text-orange-500 animate-spin" />
-        <p className="text-gray-500 font-medium tracking-tight">Cargando la carta...</p>
+        <p className="text-gray-500 font-medium tracking-tight">{t('dishes.loading')}</p>
       </div>
     );
   }
@@ -110,15 +112,15 @@ export default function Dishes() {
       {/* Header with Add Button */}
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="text-2xl font-black text-gray-800 tracking-tight">Carta de Platos</h1>
-          <p className="text-sm text-gray-500 font-medium">Gestiona el menú de tu restaurante</p>
+          <h1 className="text-2xl font-black text-gray-800 tracking-tight">{t('dishes.title')}</h1>
+          <p className="text-sm text-gray-500 font-medium">{t('dishes.subtitle')}</p>
         </div>
         <button
           onClick={handleAddClick}
           className="bg-orange-500 text-white px-5 py-2.5 rounded-xl font-black text-sm shadow-lg shadow-orange-200 hover:bg-orange-600 hover:scale-105 transition-all duration-300 flex items-center gap-2"
         >
           <Plus className="w-4 h-4" />
-          <span>AÑADIR PLATO</span>
+          <span>{t('dishes.addDish').toUpperCase()}</span>
         </button>
       </div>
 
@@ -130,7 +132,7 @@ export default function Dishes() {
             onClick={loadDishes}
             className="ml-auto text-xs font-black uppercase tracking-widest hover:underline"
           >
-            Reintentar
+            {t('clients.retry')}
           </button>
         </div>
       )}
@@ -140,8 +142,8 @@ export default function Dishes() {
           <div className="w-20 h-20 bg-gray-50 rounded-3xl flex items-center justify-center mx-auto mb-6">
             <Utensils className="w-10 h-10 text-gray-200" />
           </div>
-          <h3 className="text-xl font-black text-gray-800">No hay platos registrados</h3>
-          <p className="text-gray-500 mt-2 max-w-xs mx-auto text-sm leading-relaxed">Empieza añadiendo platos a tu menú desde el panel de gestión.</p>
+          <h3 className="text-xl font-black text-gray-800">{t('dishes.noDishes')}</h3>
+          <p className="text-gray-500 mt-2 max-w-xs mx-auto text-sm leading-relaxed">{t('dishes.noDishesSubtitle')}</p>
         </div>
       ) : (
         <div className="space-y-4">
@@ -184,12 +186,12 @@ export default function Dishes() {
                         <div className="flex items-center gap-1 border-l border-gray-100 pl-4 ml-2">
                           <button
                             onClick={(e) => handleEditClick(e, dish)}
-                            className="p-2 rounded-lg text-gray-400 hover:text-blue-500 hover:bg-blue-50 transition-all duration-200" title="Editar">
+                            className="p-2 rounded-lg text-gray-400 hover:text-blue-500 hover:bg-blue-50 transition-all duration-200" title={t('dishes.editDish')}>
                             <Edit2 className="w-4 h-4" />
                           </button>
                           <button
                             onClick={(e) => handleDeleteClick(e, dish._id)}
-                            className="p-2 rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 transition-all duration-200" title="Eliminar">
+                            className="p-2 rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 transition-all duration-200" title={t('dishes.deleteDish')}>
                             <Trash2 className="w-4 h-4" />
                           </button>
                         </div>
@@ -208,7 +210,7 @@ export default function Dishes() {
                         className="flex items-center gap-1.5 bg-orange-50 px-2 py-1 rounded-lg group transition-all"
                       >
                         <Info className="w-3 h-3 text-orange-400" />
-                        <span className="text-orange-500 font-black text-[9px] tracking-widest group-hover:underline">VER DETALLES</span>
+                        <span className="text-orange-500 font-black text-[9px] tracking-widest group-hover:underline">{t('dishes.viewDetails').toUpperCase()}</span>
                       </button>
                     </div>
                   </div>
@@ -231,35 +233,35 @@ export default function Dishes() {
                     <div className="space-y-2">
                       <h4 className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] flex items-center gap-2">
                         <div className="w-1.5 h-1.5 rounded-full bg-orange-500" />
-                        Descripción
+                        {t('dishes.details.description')}
                       </h4>
                       <p className="text-gray-600 text-sm leading-relaxed font-medium">
-                        {dish.description || "Este plato no tiene una descripción detallada todavía."}
+                        {dish.description || t('dishes.details.noDescription')}
                       </p>
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
                       <div className="bg-white p-6 rounded-[2rem] shadow-sm border border-gray-100 space-y-4">
-                        <h4 className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Ingredientes</h4>
+                        <h4 className="text-[10px] font-black text-gray-400 uppercase tracking-widest">{t('dishes.details.ingredients')}</h4>
                         <div className="flex flex-wrap gap-2">
                           {dish.ingredients?.length ? dish.ingredients.map((ing: string, i: number) => (
                             <span key={i} className="bg-gray-50 border border-gray-100 px-3 py-1.5 rounded-xl text-xs font-bold text-gray-600">
                               {ing}
                             </span>
-                          )) : <span className="text-xs italic text-gray-300">No especificados</span>}
+                          )) : <span className="text-xs italic text-gray-300">{t('dishes.details.notSpecified')}</span>}
                         </div>
                       </div>
 
                       <div className="bg-white p-6 rounded-[2rem] shadow-sm border border-gray-100 space-y-4">
                         <h4 className="text-[10px] font-black text-red-400 uppercase tracking-widest flex items-center gap-1.5">
-                          <AlertCircle className="w-3.5 h-3.5" /> Alérgenos
+                          <AlertCircle className="w-3.5 h-3.5" /> {t('dishes.details.allergens')}
                         </h4>
                         <div className="flex flex-wrap gap-2">
                           {dish.allergens?.length ? dish.allergens.map((alg: string, i: number) => (
                             <span key={i} className="bg-red-50 border border-red-100 px-3 py-1.5 rounded-xl text-[10px] font-black text-red-500 uppercase tracking-tighter">
                               {alg}
                             </span>
-                          )) : <span className="text-xs italic text-gray-300">Sin alérgenos críticos</span>}
+                          )) : <span className="text-xs italic text-gray-300">{t('dishes.details.noCriticalAllergens')}</span>}
                         </div>
                       </div>
                     </div>
@@ -269,42 +271,42 @@ export default function Dishes() {
                       <div className="space-y-2">
                         <div className="flex items-center gap-1.5 text-gray-800 font-black text-[10px] uppercase tracking-widest">
                           <Leaf className="w-3.5 h-3.5 text-green-500" />
-                          <span>Dietético</span>
+                          <span>{t('dishes.details.dietary')}</span>
                         </div>
                         <div className="flex flex-wrap gap-1.5">
                           {dish.dietaryFlags?.length ? dish.dietaryFlags.map((flag: string, i: number) => (
                             <span key={i} className="text-[10px] font-black bg-green-50 text-green-600 px-2 py-0.5 rounded-lg uppercase tracking-tighter">
                               {flag}
                             </span>
-                          )) : <span className="text-[10px] text-gray-400 italic">No especificado</span>}
+                          )) : <span className="text-[10px] text-gray-400 italic">{t('dishes.details.notSpecified')}</span>}
                         </div>
                       </div>
 
                       <div className="space-y-2">
                         <div className="flex items-center gap-1.5 text-gray-800 font-black text-[10px] uppercase tracking-widest">
                           <Flame className="w-3.5 h-3.5 text-orange-500" />
-                          <span>Sabor</span>
+                          <span>{t('dishes.details.flavor')}</span>
                         </div>
                         <div className="flex flex-wrap gap-1.5">
                           {dish.flavorProfile?.length ? dish.flavorProfile.map((flavor: string, i: number) => (
                             <span key={i} className="text-[10px] font-black bg-orange-50 text-orange-600 px-2 py-0.5 rounded-lg uppercase tracking-tighter">
                               {flavor}
                             </span>
-                          )) : <span className="text-[10px] text-gray-400 italic">No especificado</span>}
+                          )) : <span className="text-[10px] text-gray-400 italic">{t('dishes.details.notSpecified')}</span>}
                         </div>
                       </div>
 
                       <div className="space-y-2">
                         <div className="flex items-center gap-1.5 text-gray-800 font-black text-[10px] uppercase tracking-widest">
                           <Clock className="w-3.5 h-3.5 text-blue-500" />
-                          <span>Disponibilidad</span>
+                          <span>{t('dishes.details.availability')}</span>
                         </div>
                         <div className="flex flex-wrap gap-1.5">
                           {dish.availableAt?.length ? dish.availableAt.map((time: string, i: number) => (
                             <span key={i} className="text-[10px] font-black bg-blue-50 text-blue-600 px-2 py-0.5 rounded-lg uppercase tracking-tighter">
                               {time}
                             </span>
-                          )) : <span className="text-[10px] text-gray-400 italic">Todo el día</span>}
+                          )) : <span className="text-[10px] text-gray-400 italic">{t('dishes.details.allDay')}</span>}
                         </div>
                       </div>
                     </div>

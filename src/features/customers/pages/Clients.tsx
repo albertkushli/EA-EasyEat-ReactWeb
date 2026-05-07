@@ -3,9 +3,11 @@ import { Customer } from "@/types/Customer";
 import { getCustomersByRestaurant } from "@/services/customer.service";
 import { useAuth } from "@/context/AuthContext";
 import { Search, User, Mail, ChevronRight, AlertCircle, Loader2 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 export default function Clients() {
   const { user, restaurant } = useAuth() as any;
+  const { t } = useTranslation();
   const [clients, setClients] = useState<Customer[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -18,9 +20,9 @@ export default function Clients() {
       loadClients();
     } else {
       setLoading(false);
-      setError("No se pudo identificar el restaurante del usuario.");
+      setError(t('clients.errorNoRestaurant'));
     }
-  }, [restaurantId]);
+  }, [restaurantId, t]);
 
   const loadClients = async () => {
     try {
@@ -30,7 +32,7 @@ export default function Clients() {
       setClients(data);
     } catch (err: any) {
       console.error("Error loading clients:", err);
-      setError(err.message || "No se pudieron cargar los clientes.");
+      setError(err.message || t('clients.errorLoading'));
     } finally {
       setLoading(false);
     }
@@ -50,7 +52,7 @@ export default function Clients() {
     return (
       <div className="flex flex-col items-center justify-center h-64 space-y-4">
         <Loader2 className="w-8 h-8 text-orange-500 animate-spin" />
-        <p className="text-gray-500 font-medium">Cargando clientes...</p>
+        <p className="text-gray-500 font-medium">{t('clients.loading')}</p>
       </div>
     );
   }
@@ -60,15 +62,15 @@ export default function Clients() {
       {/* Header & Search */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
         <div>
-          <h1 className="text-2xl font-bold text-gray-800">Clientes</h1>
-          <p className="text-gray-500 text-sm">Gestiona y visualiza los clientes de tu restaurante</p>
+          <h1 className="text-2xl font-bold text-gray-800">{t('clients.title')}</h1>
+          <p className="text-gray-500 text-sm">{t('clients.subtitle')}</p>
         </div>
 
         <div className="relative w-full md:w-96">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
           <input
             type="text"
-            placeholder="Buscar por nombre o email..."
+            placeholder={t('clients.searchPlaceholder')}
             className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all bg-white shadow-sm"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
@@ -84,7 +86,7 @@ export default function Clients() {
             onClick={loadClients}
             className="ml-auto text-sm font-semibold underline hover:text-red-700"
           >
-            Reintentar
+            {t('clients.retry')}
           </button>
         </div>
       )}
@@ -94,9 +96,9 @@ export default function Clients() {
           <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-4">
             <User className="w-8 h-8 text-gray-300" />
           </div>
-          <h3 className="text-lg font-semibold text-gray-700">No se encontraron clientes</h3>
+          <h3 className="text-lg font-semibold text-gray-700">{t('clients.noResults')}</h3>
           <p className="text-gray-500 mt-1">
-            {searchTerm ? "Intenta con otro término de búsqueda." : "Aún no hay clientes registrados en este restaurante."}
+            {searchTerm ? t('clients.noResultsSearch') : t('clients.noResultsEmpty')}
           </p>
         </div>
       ) : (
@@ -112,7 +114,7 @@ export default function Clients() {
                   ? "bg-green-100 text-green-600"
                   : "bg-gray-100 text-gray-500"
                   }`}>
-                  {client.isActive ? "Activo" : "Inactivo"}
+                  {client.isActive ? t('clients.active') : t('clients.inactive')}
                 </span>
               </div>
 
@@ -140,7 +142,7 @@ export default function Clients() {
 
                   <div className="mt-4 flex items-center justify-between">
                     <div className="text-[10px] text-gray-400">
-                      Miembro desde {new Date(client.createdAt).toLocaleDateString()}
+                      {t('clients.memberSince')} {new Date(client.createdAt).toLocaleDateString()}
                     </div>
                     <ChevronRight className="w-4 h-4 text-gray-300 group-hover:text-orange-400 group-hover:translate-x-0.5 transition-all" />
                   </div>

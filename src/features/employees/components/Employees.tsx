@@ -11,9 +11,11 @@ import {
 } from "lucide-react";
 import EmployeeCard from "@/features/employees/components/EmployeeCard";
 import EmployeeModal from "@/features/employees/components/EmployeeModal";
+import { useTranslation } from "react-i18next";
 
 export default function Employees() {
   const { user, restaurant } = useAuth() as any;
+  const { t } = useTranslation();
   const [employees, setEmployees] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -29,9 +31,9 @@ export default function Employees() {
       loadEmployees();
     } else {
       setLoading(false);
-      setError("No se pudo identificar el restaurante del usuario.");
+      setError(t('employees.errorNoRestaurant') || "No se pudo identificar el restaurante del usuario.");
     }
-  }, [restaurantId]);
+  }, [restaurantId, t]);
 
   const loadEmployees = async () => {
     try {
@@ -42,7 +44,7 @@ export default function Employees() {
       setEmployees(data);
     } catch (err: any) {
       console.error("Error loading employees:", err);
-      setError(err.message || "No se pudieron cargar los empleados.");
+      setError(err.message || t('employees.errorLoading') || "No se pudieron cargar los empleados.");
     } finally {
       setLoading(false);
     }
@@ -59,12 +61,12 @@ export default function Employees() {
   };
 
   const handleDeleteClick = async (employeeId: string) => {
-    if (window.confirm("¿Estás seguro de que quieres eliminar este empleado?")) {
+    if (window.confirm(t('employees.confirmDelete') || "¿Estás seguro de que quieres eliminar este empleado?")) {
       try {
         await deleteEmployee(employeeId);
         setEmployees(employees.filter(e => e._id !== employeeId));
       } catch (err) {
-        alert("Error al eliminar el empleado");
+        alert(t('employees.errorDelete') || "Error al eliminar el empleado");
       }
     }
   };
@@ -88,7 +90,7 @@ export default function Employees() {
     return (
       <div className="flex flex-col items-center justify-center h-64 space-y-4">
         <Loader2 className="w-8 h-8 text-orange-500 animate-spin" />
-        <p className="text-gray-500 font-medium tracking-tight">Cargando equipo...</p>
+        <p className="text-gray-500 font-medium tracking-tight">{t('employees.loading')}</p>
       </div>
     );
   }
@@ -98,15 +100,15 @@ export default function Employees() {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
         <div>
-          <h1 className="text-2xl font-black text-gray-800 tracking-tight">Gestión de Empleados</h1>
-          <p className="text-sm text-gray-500 font-medium">Administra los accesos y roles de tu personal</p>
+          <h1 className="text-2xl font-black text-gray-800 tracking-tight">{t('employees.title')}</h1>
+          <p className="text-sm text-gray-500 font-medium">{t('employees.subtitle')}</p>
         </div>
         <button
           onClick={handleAddClick}
           className="bg-orange-500 text-white px-5 py-2.5 rounded-xl font-black text-sm shadow-lg shadow-orange-200 hover:bg-orange-600 hover:scale-105 transition-all duration-300 flex items-center justify-center gap-2"
         >
           <Plus className="w-4 h-4" />
-          <span>AÑADIR EMPLEADO</span>
+          <span>{t('employees.addEmployee').toUpperCase()}</span>
         </button>
       </div>
 
@@ -116,14 +118,14 @@ export default function Employees() {
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-300" />
           <input
             type="text"
-            placeholder="Buscar por nombre o email..."
+            placeholder={t('clients.searchPlaceholder')}
             className="w-full pl-10 pr-4 py-2 bg-gray-50 border border-transparent rounded-xl text-sm focus:bg-white focus:border-orange-500 outline-none transition-all"
           />
         </div>
         <div className="flex items-center gap-2 w-full md:w-auto">
           <button className="flex items-center gap-2 px-4 py-2 bg-gray-50 text-gray-500 rounded-xl text-sm font-bold hover:bg-gray-100 transition-all flex-1 md:flex-none justify-center">
             <Filter className="w-4 h-4" />
-            Filtrar
+            {t('dashboard.employee.pagination.of') === 'of' ? 'Filter' : 'Filtrar'}
           </button>
         </div>
       </div>
@@ -136,7 +138,7 @@ export default function Employees() {
             onClick={loadEmployees}
             className="ml-auto text-xs font-black uppercase tracking-widest hover:underline"
           >
-            Reintentar
+            {t('clients.retry')}
           </button>
         </div>
       )}
@@ -146,8 +148,8 @@ export default function Employees() {
           <div className="w-20 h-20 bg-gray-50 rounded-3xl flex items-center justify-center mx-auto mb-6">
             <Users className="w-10 h-10 text-gray-200" />
           </div>
-          <h3 className="text-xl font-black text-gray-800">No hay empleados registrados</h3>
-          <p className="text-gray-500 mt-2 max-w-xs mx-auto text-sm leading-relaxed">Tu equipo aparecerá aquí cuando empieces a añadir miembros.</p>
+          <h3 className="text-xl font-black text-gray-800">{t('employees.noEmployees')}</h3>
+          <p className="text-gray-500 mt-2 max-w-xs mx-auto text-sm leading-relaxed">{t('dashboard.employee.employees.none')}</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">

@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { X, Save, Loader2, Utensils, Euro, List } from "lucide-react";
 import type { Dish } from "../../../types/Dish";
 import { motion, AnimatePresence } from "framer-motion";
+import { useTranslation } from "react-i18next";
 
 interface DishModalProps {
   isOpen: boolean;
@@ -11,6 +12,7 @@ interface DishModalProps {
 }
 
 export default function DishModal({ isOpen, onClose, onSave, dish }: DishModalProps) {
+  const { t } = useTranslation();
   const [formData, setFormData] = useState<Partial<Dish>>({
     name: "",
     price: 0,
@@ -70,7 +72,7 @@ export default function DishModal({ isOpen, onClose, onSave, dish }: DishModalPr
                   <Utensils className="w-6 h-6" />
                 </div>
                 <h2 className="text-2xl font-black tracking-tight">
-                  {dish ? "EDITAR PLATO" : "NUEVO PLATO"}
+                  {dish ? t('dishes.editDish').toUpperCase() : t('dishes.addDish').toUpperCase()}
                 </h2>
               </div>
               <button onClick={onClose} className="p-2 hover:bg-white/20 rounded-full transition-colors">
@@ -82,20 +84,20 @@ export default function DishModal({ isOpen, onClose, onSave, dish }: DishModalPr
           <form onSubmit={handleSubmit} className="p-8 space-y-6">
             <div className="space-y-4">
               <div className="space-y-1.5">
-                <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Nombre del Plato</label>
+                <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">{t('dishes.form.name')}</label>
                 <input
                   required
                   type="text"
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                   className="w-full p-3 bg-gray-50 border border-gray-100 rounded-xl text-sm font-bold text-gray-700 focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 outline-none transition-all"
-                  placeholder="Ej: Patatas Bravas"
+                  placeholder={t('dishes.form.namePlaceholder')}
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Precio (€)</label>
+                  <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">{t('dishes.form.price')} (€)</label>
                   <div className="relative">
                     <Euro className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-300" />
                     <input
@@ -110,7 +112,7 @@ export default function DishModal({ isOpen, onClose, onSave, dish }: DishModalPr
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Sección</label>
+                  <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">{t('dishes.form.section')}</label>
                   <div className="relative">
                     <List className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-300" />
                     <select
@@ -118,22 +120,22 @@ export default function DishModal({ isOpen, onClose, onSave, dish }: DishModalPr
                       onChange={(e) => setFormData({ ...formData, section: e.target.value as any })}
                       className="w-full p-3 pl-10 bg-gray-50 border border-gray-100 rounded-xl text-sm font-bold text-gray-700 focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 outline-none transition-all appearance-none"
                     >
-                      <option value="Starters">Entrantes</option>
-                      <option value="Mains">Principales</option>
-                      <option value="Desserts">Postres</option>
-                      <option value="Drinks">Bebidas</option>
+                      <option value="Starters">{t('dishes.sections.starters')}</option>
+                      <option value="Mains">{t('dishes.sections.mains')}</option>
+                      <option value="Desserts">{t('dishes.sections.desserts')}</option>
+                      <option value="Drinks">{t('dishes.sections.drinks')}</option>
                     </select>
                   </div>
                 </div>
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Descripción</label>
+                <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">{t('dishes.details.description')}</label>
                 <textarea
                   value={formData.description}
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                   className="w-full p-3 bg-gray-50 border border-gray-100 rounded-xl text-sm font-bold text-gray-700 focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 outline-none transition-all h-24 resize-none"
-                  placeholder="Describe los ingredientes o preparación..."
+                  placeholder={t('dishes.form.descriptionPlaceholder')}
                 />
               </div>
             </div>
@@ -144,7 +146,7 @@ export default function DishModal({ isOpen, onClose, onSave, dish }: DishModalPr
                 onClick={onClose}
                 className="px-6 py-3 rounded-xl text-gray-500 font-bold hover:bg-gray-50 transition-all"
               >
-                Cancelar
+                {t('navbar.back')}
               </button>
               <button
                 type="submit"
@@ -156,7 +158,7 @@ export default function DishModal({ isOpen, onClose, onSave, dish }: DishModalPr
                 ) : (
                   <Save className="w-5 h-5" />
                 )}
-                GUARDAR PLATO
+                {t('dishes.form.submit').toUpperCase()}
               </button>
             </div>
           </form>

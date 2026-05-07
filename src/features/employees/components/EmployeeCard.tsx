@@ -1,4 +1,5 @@
 import { Mail, Phone, Edit2, Trash2, Star, TrendingUp, DollarSign } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 const CURRENCY_FORMATTER = new Intl.NumberFormat('es-ES', {
   style: 'currency',
@@ -40,29 +41,22 @@ function safeToNumber(value: unknown, fallback = 0) {
   return Number.isFinite(parsed) ? parsed : fallback;
 }
 
-function extractEmployeeProfile(employee?: EmployeeCardEmployee) {
-  const profile = employee?.profile || {};
-  return {
-    name: profile.name || 'Sin nombre',
-    email: profile.email || 'Sin email',
-    phone: profile.phone || 'Sin teléfono',
-    role: profile.role || 'staff',
-  };
-}
-
-function extractEmployeeStats(employee?: EmployeeCardEmployee) {
-  const stats = employee?.stats || {};
-
-  const visits = safeToNumber(stats.totalVisits ?? stats.visits ?? employee?.visits, 0);
-  const revenue = safeToNumber(stats.revenue ?? 0, 0);
-  const rating = safeToNumber(stats.averageRating ?? employee?.rating, 0);
-
-  return { visits, revenue, rating };
-}
-
 export default function EmployeeCard({ employee, onEdit, onDelete }: EmployeeCardProps) {
-  const profile = extractEmployeeProfile(employee);
-  const stats = extractEmployeeStats(employee);
+  const { t } = useTranslation();
+
+  const profile = {
+    name: employee?.profile?.name || t('components.employeeCard.noName'),
+    email: employee?.profile?.email || t('components.employeeCard.noEmail'),
+    phone: employee?.profile?.phone || t('components.employeeCard.noPhone'),
+    role: employee?.profile?.role || 'staff',
+  };
+
+  const stats = {
+    visits: safeToNumber(employee?.stats?.totalVisits ?? employee?.stats?.visits ?? employee?.visits, 0),
+    revenue: safeToNumber(employee?.stats?.revenue ?? 0, 0),
+    rating: safeToNumber(employee?.stats?.averageRating ?? employee?.rating, 0),
+  };
+
   const avatarLetter = profile.name?.[0]?.toUpperCase() || '?';
 
   const roleColors: Record<string, string> = {
@@ -107,21 +101,21 @@ export default function EmployeeCard({ employee, onEdit, onDelete }: EmployeeCar
                 <TrendingUp className="w-4 h-4 text-orange-500" />
                 <span className="text-lg font-black">{stats.visits}</span>
               </div>
-              <p className="text-[10px] font-bold text-gray-400 uppercase tracking-tighter">Visitas</p>
+              <p className="text-[10px] font-bold text-gray-400 uppercase tracking-tighter">{t('dashboard.customer.stats.visits')}</p>
             </div>
             <div className="text-center">
               <div className="flex items-center justify-center gap-1.5 text-gray-800 mb-0.5">
                 <DollarSign className="w-4 h-4 text-green-500" />
                 <span className="text-lg font-black">{CURRENCY_FORMATTER.format(stats.revenue)}</span>
               </div>
-              <p className="text-[10px] font-bold text-gray-400 uppercase tracking-tighter">Ventas</p>
+              <p className="text-[10px] font-bold text-gray-400 uppercase tracking-tighter">{t('analytics.export.rewards')}</p>
             </div>
             <div className="text-center hidden lg:block">
               <div className="flex items-center justify-center gap-1.5 text-gray-800 mb-0.5">
                 <Star className="w-4 h-4 text-yellow-400 fill-current" />
                 <span className="text-lg font-black">{stats.rating.toFixed(1)}</span>
               </div>
-              <p className="text-[10px] font-bold text-gray-400 uppercase tracking-tighter">Rating</p>
+              <p className="text-[10px] font-bold text-gray-400 uppercase tracking-tighter">{t('components.trends.rating')}</p>
             </div>
           </div>
 
@@ -129,14 +123,14 @@ export default function EmployeeCard({ employee, onEdit, onDelete }: EmployeeCar
             <button
               onClick={() => onEdit?.(employee)}
               className="p-3 rounded-2xl text-gray-400 hover:text-blue-500 hover:bg-blue-50 transition-all duration-200"
-              title="Editar empleado"
+              title={t('employees.editEmployee')}
             >
               <Edit2 className="w-5 h-5" />
             </button>
             <button
               onClick={() => onDelete?.(employee?._id)}
               className="p-3 rounded-2xl text-gray-400 hover:text-red-500 hover:bg-red-50 transition-all duration-200"
-              title="Eliminar empleado"
+              title={t('employees.errorDelete')}
             >
               <Trash2 className="w-5 h-5" />
             </button>

@@ -29,6 +29,7 @@ import {
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { getRewardsByRestaurant } from "@/services/reward.service";
+import { useTranslation } from "react-i18next";
 
 interface AnalyticsProps {
   visits: any[];
@@ -36,6 +37,7 @@ interface AnalyticsProps {
 }
 
 export default function Analytics({ visits, restaurantId }: AnalyticsProps) {
+  const { t } = useTranslation();
   const [rewards, setRewards] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -64,7 +66,7 @@ export default function Analytics({ visits, restaurantId }: AnalyticsProps) {
       setRewards(rewardData);
     } catch (err: any) {
       console.error("Error loading analytics data:", err);
-      setError("No se pudieron cargar algunos datos de análisis.");
+      setError(t('analytics.errorLoading') || "No se pudieron cargar algunos datos de análisis.");
     } finally {
       setLoading(false);
     }
@@ -160,7 +162,7 @@ export default function Analytics({ visits, restaurantId }: AnalyticsProps) {
 
   const exportData = () => {
     const csv = [
-      ["Fecha", "Visitas", "Recompensas"],
+      [t('analytics.export.date'), t('analytics.export.visits'), t('analytics.export.rewards')],
       ...chartData.map(d => [d.name, d.visitas, d.recompensas])
     ].map(e => e.join(",")).join("\n");
 
@@ -179,7 +181,7 @@ export default function Analytics({ visits, restaurantId }: AnalyticsProps) {
     return (
       <div className="flex flex-col items-center justify-center h-96 space-y-4">
         <Loader2 className="w-10 h-10 text-orange-500 animate-spin" />
-        <p className="text-gray-500 font-medium tracking-tight">Analizando datos reales del restaurante...</p>
+        <p className="text-gray-500 font-medium tracking-tight">{t('analytics.loading')}</p>
       </div>
     );
   }
@@ -188,13 +190,13 @@ export default function Analytics({ visits, restaurantId }: AnalyticsProps) {
     return (
       <div className="flex flex-col items-center justify-center h-96 space-y-4 p-6 bg-red-50 rounded-[2rem] border border-red-100">
         <AlertTriangle className="w-12 h-12 text-red-400" />
-        <h3 className="text-lg font-black text-red-800 uppercase tracking-tight">Error de Conexión</h3>
+        <h3 className="text-lg font-black text-red-800 uppercase tracking-tight">{t('analytics.errorTitle')}</h3>
         <p className="text-red-600 text-center text-sm font-medium">{error}</p>
         <button
           onClick={loadData}
           className="mt-4 px-6 py-2 bg-red-600 text-white rounded-xl font-bold hover:bg-red-700 transition-all shadow-lg shadow-red-200"
         >
-          Reintentar
+          {t('analytics.retry')}
         </button>
       </div>
     );
@@ -205,43 +207,43 @@ export default function Analytics({ visits, restaurantId }: AnalyticsProps) {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-black text-gray-800 tracking-tight">ANÁLISIS</h1>
-          <p className="text-gray-500 font-medium">Panel de rendimiento y tendencias estratégicas</p>
+          <h1 className="text-3xl font-black text-gray-800 tracking-tight">{t('analytics.title')}</h1>
+          <p className="text-gray-500 font-medium">{t('analytics.subtitle')}</p>
         </div>
         <button
           onClick={exportData}
           className="flex items-center gap-2 px-5 py-2.5 bg-white border border-gray-200 rounded-xl text-gray-700 font-bold hover:bg-gray-50 hover:border-gray-300 transition-all shadow-sm"
         >
           <Download className="w-4 h-4" />
-          Exportar Datos
+          {t('analytics.exportData')}
         </button>
       </div>
 
       {/* KPI Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <KPICard
-          title="Tasa de Retención"
+          title={t('analytics.kpi.retention')}
           value={`${stats.retentionRate}x`}
           variation={stats.visitsVar}
           icon={Target}
           gradient="from-blue-600 to-indigo-700"
         />
         <KPICard
-          title="Clientes Activos"
+          title={t('analytics.kpi.activeCustomers')}
           value={stats.uniqueCustomers}
           variation={stats.customersVar}
           icon={Users}
           gradient="from-emerald-500 to-teal-600"
         />
         <KPICard
-          title="Ingresos Estimados"
+          title={t('analytics.kpi.revenue')}
           value={`${stats.revenue.toFixed(0)}€`}
           variation={stats.revenueVar}
           icon={CreditCard}
           gradient="from-orange-500 to-red-600"
         />
         <KPICard
-          title="Fidelización (ROI)"
+          title={t('analytics.kpi.loyaltyRoi')}
           value={`${((stats.totalRewards / (stats.totalVisits || 1)) * 100).toFixed(1)}%`}
           variation={5.2}
           icon={Zap}
@@ -254,17 +256,17 @@ export default function Analytics({ visits, restaurantId }: AnalyticsProps) {
         <div className="lg:col-span-2 bg-white p-8 rounded-[2rem] shadow-sm border border-gray-100">
           <div className="flex items-center justify-between mb-8">
             <div>
-              <h3 className="text-xl font-black text-gray-800">Tendencias del último mes</h3>
-              <p className="text-sm text-gray-400 font-medium italic">Visitas vs Recompensas canjeadas</p>
+              <h3 className="text-xl font-black text-gray-800">{t('analytics.chart.title')}</h3>
+              <p className="text-sm text-gray-400 font-medium italic">{t('analytics.chart.subtitle')}</p>
             </div>
             <div className="flex gap-4">
               <div className="flex items-center gap-2">
                 <div className="w-3 h-3 rounded-full bg-blue-500" />
-                <span className="text-xs font-bold text-gray-500 uppercase tracking-tighter">Visitas</span>
+                <span className="text-xs font-bold text-gray-500 uppercase tracking-tighter">{t('analytics.chart.visits')}</span>
               </div>
               <div className="flex items-center gap-2">
                 <div className="w-3 h-3 rounded-full bg-emerald-500" />
-                <span className="text-xs font-bold text-gray-500 uppercase tracking-tighter">Premios</span>
+                <span className="text-xs font-bold text-gray-500 uppercase tracking-tighter">{t('analytics.chart.rewards')}</span>
               </div>
             </div>
           </div>
@@ -315,19 +317,19 @@ export default function Analytics({ visits, restaurantId }: AnalyticsProps) {
                 <div className="p-2 bg-orange-500 rounded-xl shadow-lg shadow-orange-500/20">
                   <Flame className="w-5 h-5 text-white" />
                 </div>
-                <h3 className="text-lg font-black uppercase tracking-tight">Predicción</h3>
+                <h3 className="text-lg font-black uppercase tracking-tight">{t('analytics.prediction.title')}</h3>
               </div>
 
               <div className="space-y-6">
                 <div>
-                  <p className="text-slate-400 text-xs font-bold uppercase tracking-[0.2em] mb-1">Próximo Mes</p>
+                  <p className="text-slate-400 text-xs font-bold uppercase tracking-[0.2em] mb-1">{t('analytics.prediction.nextMonth')}</p>
                   <div className="flex items-end gap-2">
                     <span className="text-4xl font-black">{Math.floor(stats.totalVisits * 1.12)}</span>
                     <span className="text-emerald-400 font-bold mb-1 flex items-center">
                       <ArrowUpRight className="w-4 h-4" /> 12%
                     </span>
                   </div>
-                  <p className="text-slate-500 text-[10px] mt-1 font-bold">CRECIMIENTO ESPERADO EN VISITAS</p>
+                  <p className="text-slate-500 text-[10px] mt-1 font-bold">{t('analytics.prediction.growthTagline')}</p>
                 </div>
 
                 <div className="h-2 w-full bg-slate-700 rounded-full overflow-hidden">
@@ -346,20 +348,20 @@ export default function Analytics({ visits, restaurantId }: AnalyticsProps) {
 
           {/* Alert Alerts */}
           <div className="space-y-3">
-            <h4 className="text-[10px] font-black text-gray-400 uppercase tracking-[0.3em] ml-4">Alertas Inteligentes</h4>
+            <h4 className="text-[10px] font-black text-gray-400 uppercase tracking-[0.3em] ml-4">{t('analytics.alerts.title')}</h4>
             <SmartAlert
               type="warning"
-              message="Ligera bajada de visitas en horario nocturno"
+              message={t('analytics.alerts.visitsDrop')}
               icon={AlertTriangle}
             />
             <SmartAlert
               type="success"
-              message="El programa de puntos ha aumentado la recurrencia un 8%"
+              message={t('analytics.alerts.recurrenceIncrease')}
               icon={TrendingUp}
             />
             <SmartAlert
               type="info"
-              message="Nuevo segmento de clientes activos detectado"
+              message={t('analytics.alerts.newSegment')}
               icon={Users}
             />
           </div>

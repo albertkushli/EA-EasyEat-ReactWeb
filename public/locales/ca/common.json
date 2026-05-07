@@ -7,7 +7,8 @@
       "howItWorks": "Com funciona",
       "access": "Accedir",
       "logout": "Tancar sessió"
-    }
+    },
+    "back": "Tornar"
   },
   "hero": {
     "title": {
@@ -225,6 +226,20 @@
       }
     }
   },
+  "profile": {
+    "settings": "Configuració",
+    "title": "Configuració del perfil",
+    "subtitle": "Canvia la teva informació de perfil",
+    "form": {
+      "password": "Contrasenya",
+      "passwordHint": "(Deixa en blanc per mantenir la mateixa)",
+      "passwordError": "La contrasenya ha de tenir almenys 8 caràcters, 1 lletra majúscula i 1 número.",
+      "emailError": "Correu electrònic no vàlid.",
+      "nameError": "El nom ha de tenir entre 2 i 100 caràcters.",
+      "save": "Guardar",
+      "updated": "Perfil actualitzat correctament!"
+    }
+  },
   "components": {
     "employeeCard": {
       "noName": "Sense nom",
@@ -287,6 +302,213 @@
         "service": "Servei",
         "cleanliness": "Neteja",
         "environment": "Ambient"
+      }
+    }
+  },
+  "sidebar": {
+    "dashboard": "Dashboard",
+    "clients": "Clients",
+    "dishes": "Plats",
+    "employees": "Empleats",
+    "rewards": "Recompenses",
+    "analytics": "Anàlisi",
+    "settings": "Configuració",
+    "logout": "Logout"
+  },
+  "analytics": {
+    "title": "ANÀLISI",
+    "subtitle": "Panel de rendiment i tendències estratègiques",
+    "loading": "Analitzant dades reals del restaurant...",
+    "errorTitle": "Error de Connexió",
+    "errorLoading": "No s'han pogut carregar algunes dades d'anàlisi.",
+    "retry": "Reintentar",
+    "exportData": "Exportar Dades",
+    "export": {
+      "date": "Data",
+      "visits": "Visites",
+      "rewards": "Recompenses"
+    },
+    "kpi": {
+      "retention": "Taxa de Retenció",
+      "activeCustomers": "Clients Actius",
+      "revenue": "Ingressos Estimats",
+      "loyaltyRoi": "Fidelització (ROI)"
+    },
+    "chart": {
+      "title": "Tendències de l'últim mes",
+      "subtitle": "Visites vs Recompenses canviades",
+      "visits": "Visites",
+      "rewards": "Premis"
+    },
+    "prediction": {
+      "title": "Predicció",
+      "nextMonth": "Proper Mes",
+      "growthTagline": "CREIXEMENT ESPERAT EN VISITES"
+    },
+    "alerts": {
+      "title": "Alertes Intel·ligents",
+      "visitsDrop": "Lleugera baixada de visites en horari nocturn",
+      "recurrenceIncrease": "El programa de punts ha augmentat la recurrència un 8%",
+      "newSegment": "Nou segment de clients actius detectat"
+    }
+  },
+  "clients": {
+    "title": "Clients",
+    "subtitle": "Gestiona i visualitza els clients del teu restaurant",
+    "searchPlaceholder": "Buscar per nom o email...",
+    "loading": "Carregant clients...",
+    "errorNoRestaurant": "No s'ha pogut identificar el restaurant de l'usuari.",
+    "errorLoading": "No s'han pogut carregar els clients.",
+    "retry": "Reintentar",
+    "noResults": "No s'han trobat clients",
+    "noResultsSearch": "Intenta amb un altre terme de cerca.",
+    "noResultsEmpty": "Encara no hi ha clients registrats en aquest restaurant.",
+    "active": "Actiu",
+    "inactive": "Inactiu",
+    "memberSince": "Membre des de"
+  },
+  "employees": {
+    "title": "Empleats",
+    "subtitle": "Gestiona l'equip del teu restaurant",
+    "addEmployee": "Afegir Empleat",
+    "editEmployee": "Editar Empleat",
+    "loading": "Carregant empleats...",
+    "noEmployees": "No s'han trobat empleats",
+    "form": {
+      "name": "Nom",
+      "email": "Email",
+      "phone": "Telèfon",
+      "role": "Rol",
+      "password": "Contrasenya",
+      "submit": "Guardar Empleat"
+    }
+  },
+  "dishes": {
+    "title": "La teva Carta",
+    "subtitle": "Gestiona els plats i categories del teu menú",
+    "addDish": "Afegir Plat",
+    "editDish": "Editar Plat",
+    "deleteDish": "Eliminar Plat",
+    "loading": "Carregant carta...",
+    "errorLoading": "No s'ha pogut carregar la carta.",
+    "confirmDelete": "Estàs segur que vols eliminar aquest plat?",
+    "errorDelete": "Error en eliminar el plat.",
+    "noDishes": "No hi ha plats a la carta",
+    "noDishesSubtitle": "Comença afegint plats al teu menú des del panell de gestió.",
+    "viewDetails": "Veure detalls",
+    "details": {
+      "description": "Descripció",
+      "noDescription": "Aquest plat encara no té una descripció detallada.",
+      "ingredients": "Ingredients",
+      "notSpecified": "No especificat",
+      "allergens": "Al·lèrgens",
+      "noCriticalAllergens": "Sense al·lèrgens crítics",
+      "dietary": "Dietètic",
+      "flavor": "Sabor",
+      "availability": "Disponibilitat",
+      "allDay": "Tot el dia"
+    },
+    "form": {
+      "name": "Nom del plat",
+      "namePlaceholder": "Ex: Patates Braves",
+      "description": "Descripció",
+      "descriptionPlaceholder": "Descriu els ingredients o preparació...",
+      "price": "Preu",
+      "section": "Secció",
+      "submit": "Guardar Plat"
+    },
+    "sections": {
+      "starters": "Entrants",
+      "mains": "Principals",
+      "desserts": "Postres",
+      "drinks": "Begudes"
+    }
+  },
+  "rewards": {
+    "title": "Programa de Recompenses",
+    "subtitle": "Configura els premis que els teus clients poden canviar",
+    "addReward": "Afegir Recompensa",
+    "editReward": "Editar Recompensa",
+    "deleteReward": "Eliminar Recompensa",
+    "loading": "Carregant recompenses...",
+    "errorLoading": "No s'han pogut carregar les recompenses.",
+    "confirmDelete": "Estàs segur que vols eliminar aquesta recompensa?",
+    "errorDelete": "Error en eliminar la recompensa.",
+    "noRewards": "No hi ha recompenses configurades",
+    "noRewardsSubtitle": "Comença creant recompenses per incentivar les visites dels teus clients.",
+    "details": {
+      "noDescription": "Sense descripció disponible.",
+      "pointsCost": "Cost en punts",
+      "expires": "Expira",
+      "description": "Descripció del benefici"
+    },
+    "form": {
+      "name": "Nom de la recompensa",
+      "namePlaceholder": "Ex: Postre Gratis",
+      "description": "Què s'obté?",
+      "descriptionPlaceholder": "Explica què obtindrà el client...",
+      "activeTagline": "Recompensa activa i disponible per a canvi",
+      "submit": "Guardar Recompensa"
+    }
+  },
+  "settings": {
+    "title": "Configuració",
+    "subtitle": "Gestiona els detalls i preferències del teu establiment",
+    "successSave": "Configuració guardada correctament",
+    "errorSave": "Error en guardar la configuració",
+    "tabs": {
+      "general": "Informació",
+      "schedule": "Horari Comercial",
+      "notifications": "Notificacions",
+      "points": "Sistema de Punts"
+    },
+    "general": {
+      "title": "Perfil del Restaurant",
+      "name": "Nom de l'establiment",
+      "category": "Categoria / Tipus de Cuina",
+      "address": "Adreça completa",
+      "website": "Lloc Web",
+      "submit": "Guardar Canvis"
+    },
+    "schedule": {
+      "title": "Horari Setmanal",
+      "edit": "Editar Horari",
+      "addSlot": "Afegir franja",
+      "closed": "Tancat",
+      "days": {
+        "monday": "Dilluns",
+        "tuesday": "Dimarts",
+        "wednesday": "Dimecres",
+        "thursday": "Dijous",
+        "friday": "Divendres",
+        "saturday": "Dissabte",
+        "sunday": "Diumenge"
+      }
+    },
+    "notifications": {
+      "title": "Centre de Notificacions",
+      "realTime": {
+        "title": "Alertes en Temps Real",
+        "description": "Rebre notificacions quan un client canvia un premi"
+      },
+      "weeklyReport": {
+        "title": "Resum Setmanal",
+        "description": "Informe de rendiment enviat al teu correu cada dilluns"
+      },
+      "feedback": {
+        "title": "Feedback de Clients",
+        "description": "Avisar quan un client deixa una valoració nova"
+      }
+    },
+    "points": {
+      "title": "Sistema de Punts",
+      "accumulationRatio": "Ràtio d'Acumulació",
+      "configureMultipliers": "Configurar multiplicadors",
+      "welcomeBonus": "Bonus per Benvinguda",
+      "welcomeBonusTagline": "PUNTS ATORGATS EN LA PRIMERA VISITA",
+      "fraudProtection": {
+        "title": "Protecció contra Frau",
+        "description": "Validació automàtica de tiquets mitjançant QR"
       }
     }
   }

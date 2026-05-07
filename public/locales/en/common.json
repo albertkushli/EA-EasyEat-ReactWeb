@@ -21,7 +21,8 @@
       "customer": "I am a customer",
       "restaurant": "I am a restaurant",
       "admin": "Are you an admin? Access here"
-    }
+    },
+    "tagline": "Join the food-loyalty revolution"
   },
   "features": {
     "foodie": {
@@ -225,7 +226,7 @@
       }
     }
   },
-  "settings": {
+  "profile": {
     "settings": "Settings",
     "title": "Profile settings",
     "subtitle": "Change your profile information",
@@ -301,6 +302,213 @@
         "service": "Service",
         "cleanliness": "Cleanliness",
         "environment": "Environment"
+      }
+    }
+  },
+  "sidebar": {
+    "dashboard": "Dashboard",
+    "clients": "Customers",
+    "dishes": "Dishes",
+    "employees": "Employees",
+    "rewards": "Rewards",
+    "analytics": "Analytics",
+    "settings": "Settings",
+    "logout": "Logout"
+  },
+  "analytics": {
+    "title": "ANALYTICS",
+    "subtitle": "Performance dashboard and strategic trends",
+    "loading": "Analyzing real restaurant data...",
+    "errorTitle": "Connection Error",
+    "errorLoading": "Could not load some analytics data.",
+    "retry": "Retry",
+    "exportData": "Export Data",
+    "export": {
+      "date": "Date",
+      "visits": "Visits",
+      "rewards": "Rewards"
+    },
+    "kpi": {
+      "retention": "Retention Rate",
+      "activeCustomers": "Active Customers",
+      "revenue": "Estimated Revenue",
+      "loyaltyRoi": "Loyalty (ROI)"
+    },
+    "chart": {
+      "title": "Trends from last month",
+      "subtitle": "Visits vs Rewards redeemed",
+      "visits": "Visits",
+      "rewards": "Rewards"
+    },
+    "prediction": {
+      "title": "Prediction",
+      "nextMonth": "Next Month",
+      "growthTagline": "EXPECTED GROWTH IN VISITS"
+    },
+    "alerts": {
+      "title": "Smart Alerts",
+      "visitsDrop": "Slight drop in visits during night hours",
+      "recurrenceIncrease": "The points program has increased recurrence by 8%",
+      "newSegment": "New active customer segment detected"
+    }
+  },
+  "clients": {
+    "title": "Customers",
+    "subtitle": "Manage and view your restaurant's customers",
+    "searchPlaceholder": "Search by name or email...",
+    "loading": "Loading customers...",
+    "errorNoRestaurant": "Could not identify the user's restaurant.",
+    "errorLoading": "Could not load customers.",
+    "retry": "Retry",
+    "noResults": "No customers found",
+    "noResultsSearch": "Try another search term.",
+    "noResultsEmpty": "No customers registered in this restaurant yet.",
+    "active": "Active",
+    "inactive": "Inactive",
+    "memberSince": "Member since"
+  },
+  "employees": {
+    "title": "Employees",
+    "subtitle": "Manage your restaurant's team",
+    "addEmployee": "Add Employee",
+    "editEmployee": "Edit Employee",
+    "loading": "Loading employees...",
+    "noEmployees": "No employees found",
+    "form": {
+      "name": "Name",
+      "email": "Email",
+      "phone": "Phone",
+      "role": "Role",
+      "password": "Password",
+      "submit": "Save Employee"
+    }
+  },
+  "dishes": {
+    "title": "Your Menu",
+    "subtitle": "Manage dishes and categories in your menu",
+    "addDish": "Add Dish",
+    "editDish": "Edit Dish",
+    "deleteDish": "Delete Dish",
+    "loading": "Loading menu...",
+    "errorLoading": "Could not load the menu.",
+    "confirmDelete": "Are you sure you want to delete this dish?",
+    "errorDelete": "Error deleting dish.",
+    "noDishes": "No dishes in the menu",
+    "noDishesSubtitle": "Start adding dishes to your menu from the management panel.",
+    "viewDetails": "View details",
+    "details": {
+      "description": "Description",
+      "noDescription": "This dish doesn't have a detailed description yet.",
+      "ingredients": "Ingredients",
+      "notSpecified": "Not specified",
+      "allergens": "Allergens",
+      "noCriticalAllergens": "No critical allergens",
+      "dietary": "Dietary",
+      "flavor": "Flavor",
+      "availability": "Availability",
+      "allDay": "All day"
+    },
+    "form": {
+      "name": "Dish name",
+      "namePlaceholder": "E.g: Bravas Potatoes",
+      "description": "Description",
+      "descriptionPlaceholder": "Describe ingredients or preparation...",
+      "price": "Price",
+      "section": "Section",
+      "submit": "Save Dish"
+    },
+    "sections": {
+      "starters": "Starters",
+      "mains": "Mains",
+      "desserts": "Desserts",
+      "drinks": "Drinks"
+    }
+  },
+  "rewards": {
+    "title": "Rewards Program",
+    "subtitle": "Set up the prizes your customers can redeem",
+    "addReward": "Add Reward",
+    "editReward": "Edit Reward",
+    "deleteReward": "Delete Reward",
+    "loading": "Loading rewards...",
+    "errorLoading": "Could not load rewards.",
+    "confirmDelete": "Are you sure you want to delete this reward?",
+    "errorDelete": "Error deleting reward.",
+    "noRewards": "No rewards configured",
+    "noRewardsSubtitle": "Start creating rewards to incentivize your customers' visits.",
+    "details": {
+      "noDescription": "No description available.",
+      "pointsCost": "Cost in points",
+      "expires": "Expires",
+      "description": "Benefit description"
+    },
+    "form": {
+      "name": "Reward name",
+      "namePlaceholder": "E.g: Free Dessert",
+      "description": "What is earned?",
+      "descriptionPlaceholder": "Explain what the customer will get...",
+      "activeTagline": "Reward active and available for redemption",
+      "submit": "Save Reward"
+    }
+  },
+  "settings": {
+    "title": "Configuration",
+    "subtitle": "Manage the details and preferences of your establishment",
+    "successSave": "Settings saved successfully",
+    "errorSave": "Error saving settings",
+    "tabs": {
+      "general": "Information",
+      "schedule": "Business Hours",
+      "notifications": "Notifications",
+      "points": "Points System"
+    },
+    "general": {
+      "title": "Restaurant Profile",
+      "name": "Establishment Name",
+      "category": "Category / Cuisine Type",
+      "address": "Full Address",
+      "website": "Website",
+      "submit": "Save Changes"
+    },
+    "schedule": {
+      "title": "Weekly Schedule",
+      "edit": "Edit Schedule",
+      "addSlot": "Add slot",
+      "closed": "Closed",
+      "days": {
+        "monday": "Monday",
+        "tuesday": "Tuesday",
+        "wednesday": "Wednesday",
+        "thursday": "Thursday",
+        "friday": "Friday",
+        "saturday": "Saturday",
+        "sunday": "Sunday"
+      }
+    },
+    "notifications": {
+      "title": "Notifications Center",
+      "realTime": {
+        "title": "Real-Time Alerts",
+        "description": "Receive notifications when a customer redeems a prize"
+      },
+      "weeklyReport": {
+        "title": "Weekly Summary",
+        "description": "Performance report sent to your email every Monday"
+      },
+      "feedback": {
+        "title": "Customer Feedback",
+        "description": "Notify when a customer leaves a new rating"
+      }
+    },
+    "points": {
+      "title": "Points System",
+      "accumulationRatio": "Accumulation Ratio",
+      "configureMultipliers": "Configure multipliers",
+      "welcomeBonus": "Welcome Bonus",
+      "welcomeBonusTagline": "POINTS AWARDED ON THE FIRST VISIT",
+      "fraudProtection": {
+        "title": "Fraud Protection",
+        "description": "Automatic ticket validation via QR"
       }
     }
   }
