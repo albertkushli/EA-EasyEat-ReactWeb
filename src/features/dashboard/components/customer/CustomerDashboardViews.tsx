@@ -26,6 +26,7 @@ interface CustomerHomeTabProps {
   objective3Progress: number;
   onSelectRestaurant: (restaurant: CustomerRestaurant) => void;
   onOpenDiscover: () => void;
+  onOpenQrModal: () => void;
 }
 
 interface CustomerProfileTabProps {
@@ -67,7 +68,7 @@ interface CustomerHistoryRewardsViewProps {
 interface CustomerQrModalProps {
   open: boolean;
   onClose: () => void;
-  userId?: string;
+  userId: string;
 }
 
 function getRestaurantId(entry: CustomerRestaurant | CustomerReward | CustomerPointsWalletEntry | CustomerVisit | null | undefined): string | undefined {
@@ -359,6 +360,7 @@ export function CustomerHomeTab({
   objective3Progress,
   onSelectRestaurant,
   onOpenDiscover,
+  onOpenQrModal,
 }: CustomerHomeTabProps) {
   return (
     <>
@@ -403,6 +405,12 @@ export function CustomerHomeTab({
             <span className="hc-stat-card__label">Favorits</span>
           </div>
         </div>
+      </section>
+
+      <section>
+        <button className="hc-checkin-btn" onClick={onOpenQrModal}>
+          <QrCode size={20} /> Mostrar el codi QR
+        </button>
       </section>
 
       <section className="hc-section">
@@ -824,7 +832,7 @@ export function CustomerQrModal({ open, onClose, userId }: CustomerQrModalProps)
         <p>Mostra aquest codi al cambrer per fer el check-in i guanyar punts.</p>
         <div className="hc-qr-container">
           <QRCodeCanvas
-            value={JSON.stringify({ userId })}
+            value={userId}
             size={256}
             level="H"
             includeMargin={true}

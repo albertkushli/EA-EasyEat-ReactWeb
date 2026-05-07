@@ -48,6 +48,7 @@ export default function HomeCustomer() {
               objective3Progress={dashboard.objective3Progress}
               onSelectRestaurant={dashboard.setSelectedRestaurant}
               onOpenDiscover={() => dashboard.handleTabChange('discover')}
+              onOpenQrModal={() => dashboard.setShowQrModal(true)}
             />
           ) : dashboard.activeTab === 'profile' ? (
             <CustomerProfileTab
@@ -105,7 +106,7 @@ export default function HomeCustomer() {
       <CustomerQrModal
         open={dashboard.showQrModal}
         onClose={() => dashboard.setShowQrModal(false)}
-        userId={dashboard.user?._id || dashboard.user?.id}
+        userId={dashboard.user?._id! || dashboard.user?.id!}
       />
     </div>
   );
