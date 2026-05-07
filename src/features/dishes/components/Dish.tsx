@@ -1,5 +1,5 @@
 import { useEffect, useState, type MouseEvent } from "react";
-import { getDishesByRestaurant, createDish, updateDish, deleteDish } from "../services/dishService";
+import { getDishesByRestaurant, createDish, updateDish, deleteDish } from "../../../services/dish.service";
 import type { Dish } from "../../../types/Dish";
 import { useAuth } from "../../../context/AuthContext";
 import {
@@ -113,7 +113,7 @@ export default function Dishes() {
           <h1 className="text-2xl font-black text-gray-800 tracking-tight">Carta de Platos</h1>
           <p className="text-sm text-gray-500 font-medium">Gestiona el menú de tu restaurante</p>
         </div>
-        <button 
+        <button
           onClick={handleAddClick}
           className="bg-orange-500 text-white px-5 py-2.5 rounded-xl font-black text-sm shadow-lg shadow-orange-200 hover:bg-orange-600 hover:scale-105 transition-all duration-300 flex items-center gap-2"
         >
@@ -174,24 +174,24 @@ export default function Dishes() {
                       <h3 className="font-black text-gray-800 text-lg truncate leading-tight group-hover:text-orange-600 transition-colors" onClick={() => toggleExpand(dish._id)}>
                         {dish.name}
                       </h3>
-                      
+
                       <div className="flex items-center gap-4">
                         <div className="flex items-center gap-1 text-orange-600 font-black">
                           <span className="text-sm">€</span>
                           <span className="text-xl">{dish.price.toFixed(2)}</span>
                         </div>
-                        
+
                         <div className="flex items-center gap-1 border-l border-gray-100 pl-4 ml-2">
-                           <button 
-                             onClick={(e) => handleEditClick(e, dish)}
-                             className="p-2 rounded-lg text-gray-400 hover:text-blue-500 hover:bg-blue-50 transition-all duration-200" title="Editar">
-                             <Edit2 className="w-4 h-4" />
-                           </button>
-                           <button 
-                             onClick={(e) => handleDeleteClick(e, dish._id)}
-                             className="p-2 rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 transition-all duration-200" title="Eliminar">
-                             <Trash2 className="w-4 h-4" />
-                           </button>
+                          <button
+                            onClick={(e) => handleEditClick(e, dish)}
+                            className="p-2 rounded-lg text-gray-400 hover:text-blue-500 hover:bg-blue-50 transition-all duration-200" title="Editar">
+                            <Edit2 className="w-4 h-4" />
+                          </button>
+                          <button
+                            onClick={(e) => handleDeleteClick(e, dish._id)}
+                            className="p-2 rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 transition-all duration-200" title="Eliminar">
+                            <Trash2 className="w-4 h-4" />
+                          </button>
                         </div>
                       </div>
                     </div>
@@ -203,7 +203,7 @@ export default function Dishes() {
                           <span className="text-[10px] font-black text-gray-500 uppercase tracking-widest">{dish.portionSize}</span>
                         </div>
                       )}
-                      <button 
+                      <button
                         onClick={() => toggleExpand(dish._id)}
                         className="flex items-center gap-1.5 bg-orange-50 px-2 py-1 rounded-lg group transition-all"
                       >
@@ -213,7 +213,7 @@ export default function Dishes() {
                     </div>
                   </div>
 
-                  <button 
+                  <button
                     onClick={() => toggleExpand(dish._id)}
                     className={`p-2 rounded-xl transition-all duration-300 ${isExpanded ? "bg-orange-500 text-white rotate-180 shadow-md shadow-orange-200" : "bg-gray-50 text-gray-400 hover:bg-gray-100"}`}
                   >
@@ -230,8 +230,8 @@ export default function Dishes() {
                     {/* Description */}
                     <div className="space-y-2">
                       <h4 className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] flex items-center gap-2">
-                         <div className="w-1.5 h-1.5 rounded-full bg-orange-500" />
-                         Descripción
+                        <div className="w-1.5 h-1.5 rounded-full bg-orange-500" />
+                        Descripción
                       </h4>
                       <p className="text-gray-600 text-sm leading-relaxed font-medium">
                         {dish.description || "Este plato no tiene una descripción detallada todavía."}
@@ -239,29 +239,29 @@ export default function Dishes() {
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-                       <div className="bg-white p-6 rounded-[2rem] shadow-sm border border-gray-100 space-y-4">
-                          <h4 className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Ingredientes</h4>
-                          <div className="flex flex-wrap gap-2">
-                            {dish.ingredients?.length ? dish.ingredients.map((ing: string, i: number) => (
-                              <span key={i} className="bg-gray-50 border border-gray-100 px-3 py-1.5 rounded-xl text-xs font-bold text-gray-600">
-                                {ing}
-                              </span>
-                            )) : <span className="text-xs italic text-gray-300">No especificados</span>}
-                          </div>
-                       </div>
+                      <div className="bg-white p-6 rounded-[2rem] shadow-sm border border-gray-100 space-y-4">
+                        <h4 className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Ingredientes</h4>
+                        <div className="flex flex-wrap gap-2">
+                          {dish.ingredients?.length ? dish.ingredients.map((ing: string, i: number) => (
+                            <span key={i} className="bg-gray-50 border border-gray-100 px-3 py-1.5 rounded-xl text-xs font-bold text-gray-600">
+                              {ing}
+                            </span>
+                          )) : <span className="text-xs italic text-gray-300">No especificados</span>}
+                        </div>
+                      </div>
 
-                       <div className="bg-white p-6 rounded-[2rem] shadow-sm border border-gray-100 space-y-4">
-                          <h4 className="text-[10px] font-black text-red-400 uppercase tracking-widest flex items-center gap-1.5">
-                            <AlertCircle className="w-3.5 h-3.5" /> Alérgenos
-                          </h4>
-                          <div className="flex flex-wrap gap-2">
-                            {dish.allergens?.length ? dish.allergens.map((alg: string, i: number) => (
-                              <span key={i} className="bg-red-50 border border-red-100 px-3 py-1.5 rounded-xl text-[10px] font-black text-red-500 uppercase tracking-tighter">
-                                {alg}
-                              </span>
-                            )) : <span className="text-xs italic text-gray-300">Sin alérgenos críticos</span>}
-                          </div>
-                       </div>
+                      <div className="bg-white p-6 rounded-[2rem] shadow-sm border border-gray-100 space-y-4">
+                        <h4 className="text-[10px] font-black text-red-400 uppercase tracking-widest flex items-center gap-1.5">
+                          <AlertCircle className="w-3.5 h-3.5" /> Alérgenos
+                        </h4>
+                        <div className="flex flex-wrap gap-2">
+                          {dish.allergens?.length ? dish.allergens.map((alg: string, i: number) => (
+                            <span key={i} className="bg-red-50 border border-red-100 px-3 py-1.5 rounded-xl text-[10px] font-black text-red-500 uppercase tracking-tighter">
+                              {alg}
+                            </span>
+                          )) : <span className="text-xs italic text-gray-300">Sin alérgenos críticos</span>}
+                        </div>
+                      </div>
                     </div>
 
                     {/* Meta Info */}
@@ -317,7 +317,7 @@ export default function Dishes() {
       )}
 
       {/* Dish Modal */}
-      <DishModal 
+      <DishModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         onSave={handleSaveDish}

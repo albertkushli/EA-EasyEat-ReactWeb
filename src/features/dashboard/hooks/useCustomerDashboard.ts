@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { useSearchParams } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
 import apiClient from '@/services/apiClient';
-import { customerService } from '@/services/customer-service';
+import { fetchCustomer, updateCustomer } from '@/services/customer.service';
 import type { ICustomer, IRestaurant } from '@/types';
 
 export interface CustomerRestaurantLocation {
@@ -218,7 +218,7 @@ export function useCustomerDashboard(): UseCustomerDashboardResult {
           apiClient.get(`/customers/${customerId}/pointsWallet`, { params: { page: 1, limit: 20 } }),
           apiClient.get(`/customers/${customerId}/badges`, { params: { page: 1, limit: 10 } }),
           apiClient.get(`/customers/${customerId}/visits`, { params: { page: 1, limit: 20 } }),
-          customerService.fetchCustomer(customerId),
+          fetchCustomer(customerId),
           apiClient.get('/restaurants', { params: { page: 1, limit: 100 } }),
           apiClient.get('/rewards', { params: { page: 1, limit: 500 } }),
         ]);
@@ -311,12 +311,14 @@ export function useCustomerDashboard(): UseCustomerDashboardResult {
     setSuccess(false);
 
     try {
-      const updatedCustomer = await customerService.updateCustomer(customer._id, {
+      const updatedCustomer = await updateCustomer(customer._id, {
         ...customer,
         name: customerName,
         email: customerEmail,
         password: customerPassword.length > 0 ? customerPassword : undefined,
       });
+
+      if (!updatedCustomer) return;
 
       setCustomer(updatedCustomer);
       updateUser({ name: updatedCustomer.name, email: updatedCustomer.email });

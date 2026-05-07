@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Reward } from "@/types/Reward";
-import { getRewardsByRestaurant, createReward, updateReward, deleteReward } from "@/features/rewards/services/rewardService";
+import { getRewardsByRestaurant, createReward, updateReward, deleteReward } from "@/services/reward.service";
 import { useAuth } from "@/context/AuthContext";
 import {
   Gift,
@@ -104,7 +104,7 @@ export default function Rewards() {
           <h1 className="text-2xl font-black text-gray-800 tracking-tight">Programa de Recompensas</h1>
           <p className="text-sm text-gray-500 font-medium">Gestiona los premios para tus clientes fieles</p>
         </div>
-        <button 
+        <button
           onClick={handleAddClick}
           className="bg-orange-500 text-white px-5 py-2.5 rounded-xl font-black text-sm shadow-lg shadow-orange-200 hover:bg-orange-600 hover:scale-105 transition-all duration-300 flex items-center gap-2"
         >
@@ -146,18 +146,18 @@ export default function Rewards() {
                 <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center text-orange-500 group-hover:scale-110 group-hover:bg-orange-500 group-hover:text-white transition-all duration-300 shadow-inner">
                   <Trophy className="w-6 h-6" />
                 </div>
-                
+
                 <div className="flex items-center gap-1 bg-gray-50 p-1 rounded-xl">
-                   <button 
-                     onClick={() => handleEditClick(reward)}
-                     className="p-1.5 rounded-lg text-gray-400 hover:text-blue-500 hover:bg-white transition-all" title="Editar">
-                     <Edit2 className="w-3.5 h-3.5" />
-                   </button>
-                   <button 
-                     onClick={() => handleDeleteClick(reward._id)}
-                     className="p-1.5 rounded-lg text-gray-400 hover:text-red-500 hover:bg-white transition-all" title="Eliminar">
-                     <Trash2 className="w-3.5 h-3.5" />
-                   </button>
+                  <button
+                    onClick={() => handleEditClick(reward)}
+                    className="p-1.5 rounded-lg text-gray-400 hover:text-blue-500 hover:bg-white transition-all" title="Editar">
+                    <Edit2 className="w-3.5 h-3.5" />
+                  </button>
+                  <button
+                    onClick={() => handleDeleteClick(reward._id)}
+                    className="p-1.5 rounded-lg text-gray-400 hover:text-red-500 hover:bg-white transition-all" title="Eliminar">
+                    <Trash2 className="w-3.5 h-3.5" />
+                  </button>
                 </div>
               </div>
 
@@ -168,8 +168,8 @@ export default function Rewards() {
                     {reward?.name}
                   </h3>
                   <div className={`px-1.5 py-0.5 rounded text-[8px] font-black uppercase tracking-tighter ${reward?.active
-                      ? "bg-green-100 text-green-600"
-                      : "bg-gray-100 text-gray-400"
+                    ? "bg-green-100 text-green-600"
+                    : "bg-gray-100 text-gray-400"
                     }`}>
                     {reward?.active ? "Activo" : "Inactivo"}
                   </div>
@@ -181,20 +181,20 @@ export default function Rewards() {
 
               {/* Stats & Footer */}
               <div className="pt-4 border-t border-gray-50 mt-2 grid grid-cols-2 gap-4">
-                  <div>
-                    <p className="text-[9px] font-black text-gray-300 uppercase tracking-widest mb-1">Coste en puntos</p>
-                    <div className="flex items-center gap-1.5 text-orange-500 font-black">
-                      <Star className="w-4 h-4 fill-current" />
-                      <span className="text-xl">{reward?.pointsRequired}</span>
-                    </div>
+                <div>
+                  <p className="text-[9px] font-black text-gray-300 uppercase tracking-widest mb-1">Coste en puntos</p>
+                  <div className="flex items-center gap-1.5 text-orange-500 font-black">
+                    <Star className="w-4 h-4 fill-current" />
+                    <span className="text-xl">{reward?.pointsRequired}</span>
                   </div>
-                  <div className="text-right">
-                    <p className="text-[9px] font-black text-gray-300 uppercase tracking-widest mb-1">Canjeadas</p>
-                    <div className="flex items-center justify-end gap-1.5 text-green-500 font-black">
-                      <BarChart3 className="w-4 h-4" />
-                      <span className="text-xl">{reward?.timesRedeemed || 0}</span>
-                    </div>
+                </div>
+                <div className="text-right">
+                  <p className="text-[9px] font-black text-gray-300 uppercase tracking-widest mb-1">Canjeadas</p>
+                  <div className="flex items-center justify-end gap-1.5 text-green-500 font-black">
+                    <BarChart3 className="w-4 h-4" />
+                    <span className="text-xl">{reward?.timesRedeemed || 0}</span>
                   </div>
+                </div>
               </div>
 
               {reward?.expiry && (
@@ -212,7 +212,7 @@ export default function Rewards() {
       )}
 
       {/* Reward Modal */}
-      <RewardModal 
+      <RewardModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         onSave={handleSaveReward}

@@ -1,6 +1,6 @@
 import { useEffect, useState, useMemo } from "react";
 import { Customer } from "@/types/Customer";
-import { getCustomersByRestaurant } from "@/features/customers/services/customerServices";
+import { getCustomersByRestaurant } from "@/services/customer.service";
 import { useAuth } from "@/context/AuthContext";
 import { Search, User, Mail, ChevronRight, AlertCircle, Loader2 } from "lucide-react";
 
@@ -109,8 +109,8 @@ export default function Clients() {
               {/* Status Badge */}
               <div className="absolute top-4 right-4">
                 <span className={`px-2 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider ${client.isActive
-                    ? "bg-green-100 text-green-600"
-                    : "bg-gray-100 text-gray-500"
+                  ? "bg-green-100 text-green-600"
+                  : "bg-gray-100 text-gray-500"
                   }`}>
                   {client.isActive ? "Activo" : "Inactivo"}
                 </span>

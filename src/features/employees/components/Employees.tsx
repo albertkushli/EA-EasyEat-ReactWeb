@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getEmployeesByRestaurant, createEmployee, updateEmployee, deleteEmployee } from "@/features/employees/services/employeeService";
+import { getEmployeesByRestaurant, createEmployee, updateEmployee, deleteEmployee } from "@/services/employee.service";
 import { useAuth } from "@/context/AuthContext";
 import {
   Users,
@@ -17,7 +17,7 @@ export default function Employees() {
   const [employees, setEmployees] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  
+
   // Modal State
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedEmployee, setSelectedEmployee] = useState<any | null>(null);
@@ -101,7 +101,7 @@ export default function Employees() {
           <h1 className="text-2xl font-black text-gray-800 tracking-tight">Gestión de Empleados</h1>
           <p className="text-sm text-gray-500 font-medium">Administra los accesos y roles de tu personal</p>
         </div>
-        <button 
+        <button
           onClick={handleAddClick}
           className="bg-orange-500 text-white px-5 py-2.5 rounded-xl font-black text-sm shadow-lg shadow-orange-200 hover:bg-orange-600 hover:scale-105 transition-all duration-300 flex items-center justify-center gap-2"
         >
@@ -114,17 +114,17 @@ export default function Employees() {
       <div className="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 mb-6 flex flex-col md:flex-row gap-4 items-center">
         <div className="relative flex-1 w-full">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-300" />
-          <input 
-            type="text" 
+          <input
+            type="text"
             placeholder="Buscar por nombre o email..."
             className="w-full pl-10 pr-4 py-2 bg-gray-50 border border-transparent rounded-xl text-sm focus:bg-white focus:border-orange-500 outline-none transition-all"
           />
         </div>
         <div className="flex items-center gap-2 w-full md:w-auto">
-           <button className="flex items-center gap-2 px-4 py-2 bg-gray-50 text-gray-500 rounded-xl text-sm font-bold hover:bg-gray-100 transition-all flex-1 md:flex-none justify-center">
-              <Filter className="w-4 h-4" />
-              Filtrar
-           </button>
+          <button className="flex items-center gap-2 px-4 py-2 bg-gray-50 text-gray-500 rounded-xl text-sm font-bold hover:bg-gray-100 transition-all flex-1 md:flex-none justify-center">
+            <Filter className="w-4 h-4" />
+            Filtrar
+          </button>
         </div>
       </div>
 
@@ -152,9 +152,9 @@ export default function Employees() {
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {employees.map((employee) => (
-            <EmployeeCard 
-              key={employee._id} 
-              employee={employee} 
+            <EmployeeCard
+              key={employee._id}
+              employee={employee}
               onEdit={() => handleEditClick(employee)}
               onDelete={() => handleDeleteClick(employee._id)}
             />
@@ -163,7 +163,7 @@ export default function Employees() {
       )}
 
       {/* Employee Modal */}
-      <EmployeeModal 
+      <EmployeeModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         onSave={handleSaveEmployee}

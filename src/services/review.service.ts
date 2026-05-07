@@ -2,7 +2,7 @@
 // SERVICIO DE RESEÑAS
 // ============================================
 
-import apiClient from '../lib/apiClient';
+import apiClient from '@/services/apiClient';
 import { API_ENDPOINTS } from '../constants';
 import { IReview } from '../types';
 import { extractArray } from '../utils/response-parser';

@@ -4,7 +4,6 @@ import { AuthProvider, useAuth } from '@/context/AuthContext';
 import { Login, Register } from '@/features/auth';
 import { Dashboard, Home } from '@/features/dashboard';
 import { Clients } from '@/features/customers';
-import './App.css';
 
 function ProtectedRoute({ children }: { children: ReactNode }) {
   const { isAuthenticated, loading } = useAuth();

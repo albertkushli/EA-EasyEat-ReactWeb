@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useCallback, useEffect, ReactNode, FC } from 'react';
-import apiClient from '../lib/apiClient';
+import apiClient from '@/services/apiClient';
 import { IAuthState, IUser, IRestaurant, UserRole } from '../types';
 import { restaurantService } from '../services';
 import { STORAGE_KEYS, USER_ROLES } from '../constants';

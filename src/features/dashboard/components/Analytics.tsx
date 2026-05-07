@@ -28,7 +28,7 @@ import {
   Loader2,
 } from "lucide-react";
 import { motion } from "framer-motion";
-import { getRewardsByRestaurant } from "@/features/rewards/services/rewardService";
+import { getRewardsByRestaurant } from "@/services/reward.service";
 
 interface AnalyticsProps {
   visits: any[];
@@ -95,7 +95,7 @@ export default function Analytics({ visits, restaurantId }: AnalyticsProps) {
     });
 
     const getUniqueCustomers = (vList: any[]) => new Set(vList.map(v => v.customer_id?._id || v.customer_id)).size;
-    
+
     const uniqueCustomers = getUniqueCustomers(lastMonthVisits);
     const prevUniqueCustomers = getUniqueCustomers(prevMonthVisits);
 
@@ -134,18 +134,18 @@ export default function Analytics({ visits, restaurantId }: AnalyticsProps) {
   const chartData = useMemo(() => {
     const data: any[] = [];
     const now = new Date();
-    
+
     for (let i = 29; i >= 0; i--) {
       const date = new Date(now.getTime() - i * 24 * 60 * 60 * 1000);
       const dateStr = date.toLocaleDateString('es-ES', { day: 'numeric', month: 'short' });
-      
+
       const dayVisitsList = visits.filter(v => {
         const d = new Date(v.date || v.createdAt);
         return d.toDateString() === date.toDateString();
       });
 
       const dayVisits = dayVisitsList.length;
-      
+
       // Try to find rewards in visits (assuming visit might have reward_id or pointsUsed)
       const dayRewards = dayVisitsList.filter(v => v.reward_id || v.rewardId || (v.pointsUsed && v.pointsUsed > 0)).length;
 
@@ -163,7 +163,7 @@ export default function Analytics({ visits, restaurantId }: AnalyticsProps) {
       ["Fecha", "Visitas", "Recompensas"],
       ...chartData.map(d => [d.name, d.visitas, d.recompensas])
     ].map(e => e.join(",")).join("\n");
-    
+
     const blob = new Blob([csv], { type: 'text/csv' });
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -190,7 +190,7 @@ export default function Analytics({ visits, restaurantId }: AnalyticsProps) {
         <AlertTriangle className="w-12 h-12 text-red-400" />
         <h3 className="text-lg font-black text-red-800 uppercase tracking-tight">Error de Conexión</h3>
         <p className="text-red-600 text-center text-sm font-medium">{error}</p>
-        <button 
+        <button
           onClick={loadData}
           className="mt-4 px-6 py-2 bg-red-600 text-white rounded-xl font-bold hover:bg-red-700 transition-all shadow-lg shadow-red-200"
         >
@@ -208,7 +208,7 @@ export default function Analytics({ visits, restaurantId }: AnalyticsProps) {
           <h1 className="text-3xl font-black text-gray-800 tracking-tight">ANÁLISIS</h1>
           <p className="text-gray-500 font-medium">Panel de rendimiento y tendencias estratégicas</p>
         </div>
-        <button 
+        <button
           onClick={exportData}
           className="flex items-center gap-2 px-5 py-2.5 bg-white border border-gray-200 rounded-xl text-gray-700 font-bold hover:bg-gray-50 hover:border-gray-300 transition-all shadow-sm"
         >
@@ -219,31 +219,31 @@ export default function Analytics({ visits, restaurantId }: AnalyticsProps) {
 
       {/* KPI Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <KPICard 
-          title="Tasa de Retención" 
-          value={`${stats.retentionRate}x`} 
-          variation={stats.visitsVar} 
+        <KPICard
+          title="Tasa de Retención"
+          value={`${stats.retentionRate}x`}
+          variation={stats.visitsVar}
           icon={Target}
           gradient="from-blue-600 to-indigo-700"
         />
-        <KPICard 
-          title="Clientes Activos" 
-          value={stats.uniqueCustomers} 
-          variation={stats.customersVar} 
+        <KPICard
+          title="Clientes Activos"
+          value={stats.uniqueCustomers}
+          variation={stats.customersVar}
           icon={Users}
           gradient="from-emerald-500 to-teal-600"
         />
-        <KPICard 
-          title="Ingresos Estimados" 
-          value={`${stats.revenue.toFixed(0)}€`} 
-          variation={stats.revenueVar} 
+        <KPICard
+          title="Ingresos Estimados"
+          value={`${stats.revenue.toFixed(0)}€`}
+          variation={stats.revenueVar}
           icon={CreditCard}
           gradient="from-orange-500 to-red-600"
         />
-        <KPICard 
-          title="Fidelización (ROI)" 
-          value={`${((stats.totalRewards / (stats.totalVisits || 1)) * 100).toFixed(1)}%`} 
-          variation={5.2} 
+        <KPICard
+          title="Fidelización (ROI)"
+          value={`${((stats.totalRewards / (stats.totalVisits || 1)) * 100).toFixed(1)}%`}
+          variation={5.2}
           icon={Zap}
           gradient="from-purple-600 to-fuchsia-700"
         />
@@ -258,44 +258,44 @@ export default function Analytics({ visits, restaurantId }: AnalyticsProps) {
               <p className="text-sm text-gray-400 font-medium italic">Visitas vs Recompensas canjeadas</p>
             </div>
             <div className="flex gap-4">
-               <div className="flex items-center gap-2">
-                 <div className="w-3 h-3 rounded-full bg-blue-500" />
-                 <span className="text-xs font-bold text-gray-500 uppercase tracking-tighter">Visitas</span>
-               </div>
-               <div className="flex items-center gap-2">
-                 <div className="w-3 h-3 rounded-full bg-emerald-500" />
-                 <span className="text-xs font-bold text-gray-500 uppercase tracking-tighter">Premios</span>
-               </div>
+              <div className="flex items-center gap-2">
+                <div className="w-3 h-3 rounded-full bg-blue-500" />
+                <span className="text-xs font-bold text-gray-500 uppercase tracking-tighter">Visitas</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-3 h-3 rounded-full bg-emerald-500" />
+                <span className="text-xs font-bold text-gray-500 uppercase tracking-tighter">Premios</span>
+              </div>
             </div>
           </div>
-          
+
           <div className="h-[350px] w-full">
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={chartData}>
                 <defs>
                   <linearGradient id="colorVisits" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.1}/>
-                    <stop offset="95%" stopColor="#3b82f6" stopOpacity={0}/>
+                    <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.1} />
+                    <stop offset="95%" stopColor="#3b82f6" stopOpacity={0} />
                   </linearGradient>
                   <linearGradient id="colorRewards" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#10b981" stopOpacity={0.1}/>
-                    <stop offset="95%" stopColor="#10b981" stopOpacity={0}/>
+                    <stop offset="5%" stopColor="#10b981" stopOpacity={0.1} />
+                    <stop offset="95%" stopColor="#10b981" stopOpacity={0} />
                   </linearGradient>
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
-                <XAxis 
-                  dataKey="name" 
-                  axisLine={false} 
-                  tickLine={false} 
-                  tick={{fill: '#94a3b8', fontSize: 10, fontWeight: 700}}
+                <XAxis
+                  dataKey="name"
+                  axisLine={false}
+                  tickLine={false}
+                  tick={{ fill: '#94a3b8', fontSize: 10, fontWeight: 700 }}
                   dy={10}
                 />
-                <YAxis 
-                  axisLine={false} 
-                  tickLine={false} 
-                  tick={{fill: '#94a3b8', fontSize: 10, fontWeight: 700}}
+                <YAxis
+                  axisLine={false}
+                  tickLine={false}
+                  tick={{ fill: '#94a3b8', fontSize: 10, fontWeight: 700 }}
                 />
-                <Tooltip 
+                <Tooltip
                   contentStyle={{ borderRadius: '16px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)', fontWeight: 800 }}
                   itemStyle={{ fontWeight: 800 }}
                 />
@@ -312,12 +312,12 @@ export default function Analytics({ visits, restaurantId }: AnalyticsProps) {
           <div className="bg-gradient-to-br from-slate-800 to-slate-900 p-8 rounded-[2rem] text-white shadow-xl relative overflow-hidden group">
             <div className="relative z-10">
               <div className="flex items-center gap-3 mb-6">
-                 <div className="p-2 bg-orange-500 rounded-xl shadow-lg shadow-orange-500/20">
-                    <Flame className="w-5 h-5 text-white" />
-                 </div>
-                 <h3 className="text-lg font-black uppercase tracking-tight">Predicción</h3>
+                <div className="p-2 bg-orange-500 rounded-xl shadow-lg shadow-orange-500/20">
+                  <Flame className="w-5 h-5 text-white" />
+                </div>
+                <h3 className="text-lg font-black uppercase tracking-tight">Predicción</h3>
               </div>
-              
+
               <div className="space-y-6">
                 <div>
                   <p className="text-slate-400 text-xs font-bold uppercase tracking-[0.2em] mb-1">Próximo Mes</p>
@@ -331,37 +331,37 @@ export default function Analytics({ visits, restaurantId }: AnalyticsProps) {
                 </div>
 
                 <div className="h-2 w-full bg-slate-700 rounded-full overflow-hidden">
-                   <motion.div 
+                  <motion.div
                     initial={{ width: 0 }}
                     animate={{ width: '75%' }}
                     transition={{ duration: 1.5, ease: "easeOut" }}
-                    className="h-full bg-gradient-to-r from-orange-500 to-red-500" 
-                   />
+                    className="h-full bg-gradient-to-r from-orange-500 to-red-500"
+                  />
                 </div>
               </div>
             </div>
-            
+
             <div className="absolute -bottom-10 -right-10 w-40 h-40 bg-orange-500/10 rounded-full blur-3xl group-hover:bg-orange-500/20 transition-all duration-700" />
           </div>
 
           {/* Alert Alerts */}
           <div className="space-y-3">
-             <h4 className="text-[10px] font-black text-gray-400 uppercase tracking-[0.3em] ml-4">Alertas Inteligentes</h4>
-             <SmartAlert 
-               type="warning" 
-               message="Ligera bajada de visitas en horario nocturno" 
-               icon={AlertTriangle} 
-             />
-             <SmartAlert 
-               type="success" 
-               message="El programa de puntos ha aumentado la recurrencia un 8%" 
-               icon={TrendingUp} 
-             />
-             <SmartAlert 
-               type="info" 
-               message="Nuevo segmento de clientes activos detectado" 
-               icon={Users} 
-             />
+            <h4 className="text-[10px] font-black text-gray-400 uppercase tracking-[0.3em] ml-4">Alertas Inteligentes</h4>
+            <SmartAlert
+              type="warning"
+              message="Ligera bajada de visitas en horario nocturno"
+              icon={AlertTriangle}
+            />
+            <SmartAlert
+              type="success"
+              message="El programa de puntos ha aumentado la recurrencia un 8%"
+              icon={TrendingUp}
+            />
+            <SmartAlert
+              type="info"
+              message="Nuevo segmento de clientes activos detectado"
+              icon={Users}
+            />
           </div>
         </div>
       </div>
@@ -371,9 +371,9 @@ export default function Analytics({ visits, restaurantId }: AnalyticsProps) {
 
 function KPICard({ title, value, variation, icon: Icon, gradient }: any) {
   const isPositive = variation >= 0;
-  
+
   return (
-    <motion.div 
+    <motion.div
       whileHover={{ y: -5, scale: 1.02 }}
       className={`relative p-6 rounded-[2rem] bg-gradient-to-br ${gradient} text-white shadow-lg overflow-hidden group`}
     >

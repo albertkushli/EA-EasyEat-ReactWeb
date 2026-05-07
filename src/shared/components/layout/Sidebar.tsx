@@ -45,17 +45,16 @@ export function Sidebar({ activeView, onViewChange, restaurantName, restaurantAd
           {menuItems.map((item) => (
             <motion.li key={item.id}>
               <motion.button
-              whileHover={{ x: 2 }}
-              whileTap={{ scale: 0.99 }}
-              onClick={() => onViewChange(item.id)}
-              className={`flex w-full items-center gap-3 rounded-2xl px-4 py-3 text-left transition-all duration-200 ${
-                activeView === item.id
-                  ? 'bg-gradient-to-r from-orange-500 to-red-500 text-white shadow-lg shadow-orange-500/20'
-                  : 'text-slate-200/85 hover:bg-white/5 hover:text-white'
-              }`}
-            >
-              <item.icon className={`h-5 w-5 ${activeView === item.id ? 'text-white' : 'text-slate-300/90'}`} />
-              <span className="text-base font-semibold">{item.label}</span>
+                whileHover={{ x: 2 }}
+                whileTap={{ scale: 0.99 }}
+                onClick={() => onViewChange(item.id)}
+                className={`flex w-full items-center gap-3 rounded-2xl px-4 py-3 text-left transition-all duration-200 ${activeView === item.id
+                    ? 'bg-gradient-to-r from-orange-500 to-red-500 text-white shadow-lg shadow-orange-500/20'
+                    : 'text-slate-200/85 hover:bg-white/5 hover:text-white'
+                  }`}
+              >
+                <item.icon className={`h-5 w-5 ${activeView === item.id ? 'text-white' : 'text-slate-300/90'}`} />
+                <span className="text-base font-semibold">{item.label}</span>
               </motion.button>
             </motion.li>
           ))}

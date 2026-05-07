@@ -2,7 +2,7 @@
 // SERVICIO DE RESTAURANTES
 // ============================================
 
-import apiClient from '../lib/apiClient';
+import apiClient from '@/services/apiClient';
 import { API_ENDPOINTS } from '../constants';
 import { IRestaurant, IRestaurantStats, IVisit, IPaginatedResponse } from '../types';
 import { parsePaginatedResponse, sortByDateDesc, extractArray } from '../utils/response-parser';
@@ -114,9 +114,31 @@ export async function fetchAllRestaurantVisits(
   }
 }
 
+export const updateRestaurant = async (restaurantId: string, restaurantData: any) => {
+  try {
+    const response = await apiClient.put(`/restaurants/${restaurantId}`, restaurantData);
+    return response.data?.data || response.data;
+  } catch (error) {
+    console.error("Error updating restaurant:", error);
+    throw error;
+  }
+};
+
+export const getRestaurant = async (restaurantId: string) => {
+  try {
+    const response = await apiClient.get(`/restaurants/${restaurantId}`);
+    return response.data?.data || response.data;
+  } catch (error) {
+    console.error("Error fetching restaurant:", error);
+    throw error;
+  }
+};
+
 export const restaurantService = {
   fetchRestaurantFull,
   fetchRestaurantStats,
   fetchRestaurantVisits,
   fetchAllRestaurantVisits,
+  updateRestaurant,
+  getRestaurant,
 };
