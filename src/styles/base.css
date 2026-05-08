@@ -36,7 +36,10 @@ body {
 
 /* Allow full width for pages that need it */
 #root:has(.landing-page),
-#root:has(.auth-page) {
+#root:has(.auth-page),
+#root:has(.he-page),
+#root:has(.hc-page),
+#root:has(.dashboard-page) {
   max-width: none;
   border: none;
   padding: 0;

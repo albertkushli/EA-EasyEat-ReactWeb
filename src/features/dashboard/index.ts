@@ -16,4 +16,5 @@ export { default as AvgRatingCard } from './components/AvgRatingCard';
 export { default as LoyalCustomersCard } from './components/LoyalCustomersCard';
 export { default as PeakVisitHoursCard } from './components/PeakVisitHoursCard';
 export { default as ReviewScoresCard } from './components/ReviewScoresCard';
+export { default as StaffProfilePanel } from './components/employee/StaffProfilePanel';
 export { default as RestaurantTimetableCard } from './components/RestaurantTimetableCard';

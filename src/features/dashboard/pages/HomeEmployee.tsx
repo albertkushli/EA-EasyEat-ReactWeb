@@ -8,6 +8,7 @@ import { Employees } from '@/features/employees';
 import { Rewards } from '@/features/rewards';
 import Analytics from '../components/Analytics';
 import RestaurantSettings from '@/shared/components/ui/Settings';
+import StaffProfilePanel from '../components/employee/StaffProfilePanel';
 
 export default function HomeEmployee() {
   const { t } = useTranslation();
@@ -36,7 +37,12 @@ export default function HomeEmployee() {
       />
 
       <div style={{ marginLeft: '16rem', minHeight: '100vh' }}>
-        {dashboard.activeView === 'dashboard' ? (
+        {dashboard.activeView === 'profile' ? (
+          <StaffProfilePanel
+            user={dashboard.user}
+            restaurant={dashboard.restaurant}
+          />
+        ) : dashboard.activeView === 'dashboard' ? (
           <EmployeeOverviewPanel
             visits={dashboard.visits}
             reviews={dashboard.reviews}
