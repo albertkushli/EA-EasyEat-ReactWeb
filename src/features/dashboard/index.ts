@@ -5,7 +5,7 @@ export { default as HomeEmployee } from './pages/HomeEmployee';
 export { useCustomerDashboard } from './hooks/useCustomerDashboard';
 export { useEmployeeDashboard } from './hooks/useEmployeeDashboard';
 export { default as EmployeeOverviewPanel } from './components/employee/EmployeeOverviewPanel';
-export { CustomerSidebar, CustomerHomeTab, CustomerProfileTab, CustomerDiscoverView, CustomerHistoryRewardsView, CustomerQrModal } from './components/customer/CustomerDashboardViews';
+export { CustomerSidebar, CustomerHomeTab, CustomerProfileTab, CustomerDiscoverView, CustomerHistoryRewardsView, CustomerQrModal, RewardQrModal } from './components/customer/CustomerDashboardViews';
 export { default as Analytics } from './components/Analytics';
 export { default as RestaurantReviewsBarChart } from './components/RestaurantReviewsBarChart';
 export { default as PeakVisitHoursChart } from './components/PeakVisitHoursChart';

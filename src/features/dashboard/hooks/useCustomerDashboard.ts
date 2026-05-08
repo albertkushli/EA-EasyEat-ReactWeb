@@ -88,8 +88,12 @@ interface UseCustomerDashboardResult {
   setSelectedCategory: (value: string) => void;
   selectedRestaurant: CustomerRestaurant | null;
   setSelectedRestaurant: (restaurant: CustomerRestaurant | null) => void;
+  selectedReward: CustomerReward | null;
+  setSelectedReward: (reward: CustomerReward | null) => void;
   showQrModal: boolean;
   setShowQrModal: (value: boolean) => void;
+  showRewardQrModal: boolean;
+  setShowRewardQrModal: (value: boolean) => void;
   favoriteRestaurants: CustomerRestaurant[];
   pointsWallet: CustomerPointsWalletEntry[];
   badges: CustomerBadge[];
@@ -179,7 +183,9 @@ export function useCustomerDashboard(): UseCustomerDashboardResult {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('Tots');
   const [selectedRestaurant, setSelectedRestaurant] = useState<CustomerRestaurant | null>(null);
+  const [selectedReward, setSelectedReward] = useState<CustomerReward | null>(null);
   const [showQrModal, setShowQrModal] = useState(false);
+  const [showRewardQrModal, setShowRewardQrModal] = useState(false);
 
   const [favoriteRestaurants, setFavoriteRestaurants] = useState<CustomerRestaurant[]>([]);
   const [pointsWallet, setPointsWallet] = useState<CustomerPointsWalletEntry[]>([]);
@@ -202,6 +208,7 @@ export function useCustomerDashboard(): UseCustomerDashboardResult {
   const handleTabChange = useCallback((tab: CustomerTabId) => {
     setSearchParams({ tab });
     setSelectedRestaurant(null);
+    setSelectedReward(null);
   }, [setSearchParams]);
 
   useEffect(() => {
@@ -367,8 +374,12 @@ export function useCustomerDashboard(): UseCustomerDashboardResult {
     setSelectedCategory,
     selectedRestaurant,
     setSelectedRestaurant,
+    selectedReward,
+    setSelectedReward,
     showQrModal,
     setShowQrModal,
+    showRewardQrModal,
+    setShowRewardQrModal,
     favoriteRestaurants,
     pointsWallet,
     badges,
