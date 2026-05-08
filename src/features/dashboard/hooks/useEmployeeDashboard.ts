@@ -44,9 +44,8 @@ export function useEmployeeDashboard(): UseEmployeeDashboardResult {
   const [reviews, setReviews] = useState<IReview[]>([]);
   const [employees] = useState<IEmployeeStats[]>([]);
   const [loading, setLoading] = useState(true);
-  const [activeView, setActiveView] = useState('dashboard');
-
   const isOwner = role === USER_ROLES.OWNER;
+  const [activeView, setActiveView] = useState(isOwner ? 'dashboard' : 'profile');
 
   useEffect(() => {
     async function fetchVisits() {

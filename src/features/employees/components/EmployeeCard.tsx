@@ -68,73 +68,71 @@ export default function EmployeeCard({ employee, onEdit, onDelete }: EmployeeCar
   const roleClass = roleColors[profile.role || 'staff'] || roleColors.staff;
 
   return (
-    <div className="bg-white rounded-3xl p-6 shadow-sm border border-gray-100 hover:shadow-xl hover:scale-[1.02] transition-all duration-300 group w-full min-h-[140px]">
-      <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
-        <div className="flex items-center gap-5 flex-1 min-w-0">
-          <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-orange-400 to-red-500 flex items-center justify-center text-white text-2xl font-black shadow-lg shadow-orange-100 group-hover:rotate-3 transition-transform duration-300 flex-shrink-0">
+    <div className="bg-white rounded-3xl p-5 shadow-sm border border-gray-100 hover:shadow-xl hover:scale-[1.02] transition-all duration-300 w-full relative overflow-hidden">
+      <div className="flex items-start justify-between gap-4 mb-5">
+        <div className="flex items-center gap-4 min-w-0 flex-1">
+          <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-orange-400 to-red-500 flex items-center justify-center text-white text-xl font-black shadow-lg shadow-orange-100 shrink-0">
             {avatarLetter}
           </div>
-          <div className="min-w-0">
+          <div className="min-w-0 flex-1">
             <div className="flex flex-wrap items-center gap-2 mb-1">
-              <h3 className="text-xl font-bold text-gray-800 truncate leading-tight">{profile.name}</h3>
-              <span className={`text-[10px] font-black px-2.5 py-1 rounded-lg border uppercase tracking-wider ${roleClass}`}>
+              <h3 className="text-lg font-bold text-gray-800 truncate m-0 p-0 leading-tight">{profile.name}</h3>
+              <span className={`text-[10px] font-black px-2 py-0.5 rounded border uppercase tracking-wider whitespace-nowrap shrink-0 ${roleClass}`}>
                 {profile.role}
               </span>
             </div>
-            <div className="flex flex-col text-sm text-gray-400 gap-1">
-              <div className="flex items-center gap-2">
-                <Mail className="w-3.5 h-3.5" />
+            <div className="flex flex-col text-sm text-gray-400 gap-0.5">
+              <div className="flex items-center gap-1.5 w-full">
+                <Mail className="w-3.5 h-3.5 shrink-0" />
                 <span className="truncate">{profile.email}</span>
               </div>
-              <div className="flex items-center gap-2">
-                <Phone className="w-3.5 h-3.5" />
-                <span>{profile.phone}</span>
+              <div className="flex items-center gap-1.5 w-full">
+                <Phone className="w-3.5 h-3.5 shrink-0" />
+                <span className="truncate">{profile.phone}</span>
               </div>
             </div>
           </div>
         </div>
 
-        <div className="flex items-center gap-8 w-full sm:w-auto pt-4 sm:pt-0 border-t sm:border-t-0 border-gray-50 justify-between sm:justify-end">
-          <div className="flex items-center gap-6 pr-6 sm:border-r border-gray-100">
-            <div className="text-center">
-              <div className="flex items-center justify-center gap-1.5 text-gray-800 mb-0.5">
-                <TrendingUp className="w-4 h-4 text-orange-500" />
-                <span className="text-lg font-black">{stats.visits}</span>
-              </div>
-              <p className="text-[10px] font-bold text-gray-400 uppercase tracking-tighter">{t('dashboard.customer.stats.visits')}</p>
-            </div>
-            <div className="text-center">
-              <div className="flex items-center justify-center gap-1.5 text-gray-800 mb-0.5">
-                <DollarSign className="w-4 h-4 text-green-500" />
-                <span className="text-lg font-black">{CURRENCY_FORMATTER.format(stats.revenue)}</span>
-              </div>
-              <p className="text-[10px] font-bold text-gray-400 uppercase tracking-tighter">{t('analytics.export.rewards')}</p>
-            </div>
-            <div className="text-center hidden lg:block">
-              <div className="flex items-center justify-center gap-1.5 text-gray-800 mb-0.5">
-                <Star className="w-4 h-4 text-yellow-400 fill-current" />
-                <span className="text-lg font-black">{stats.rating.toFixed(1)}</span>
-              </div>
-              <p className="text-[10px] font-bold text-gray-400 uppercase tracking-tighter">{t('components.trends.rating')}</p>
-            </div>
-          </div>
+        <div className="flex items-center gap-1 shrink-0">
+          <button
+            onClick={() => onEdit?.(employee)}
+            className="p-2 rounded-xl text-gray-400 hover:text-blue-500 hover:bg-blue-50 transition-colors"
+            title={t('employees.editEmployee')}
+          >
+            <Edit2 className="w-4 h-4" />
+          </button>
+          <button
+            onClick={() => onDelete?.(employee?._id)}
+            className="p-2 rounded-xl text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors"
+            title={t('employees.errorDelete')}
+          >
+            <Trash2 className="w-4 h-4" />
+          </button>
+        </div>
+      </div>
 
-          <div className="flex items-center gap-2">
-            <button
-              onClick={() => onEdit?.(employee)}
-              className="p-3 rounded-2xl text-gray-400 hover:text-blue-500 hover:bg-blue-50 transition-all duration-200"
-              title={t('employees.editEmployee')}
-            >
-              <Edit2 className="w-5 h-5" />
-            </button>
-            <button
-              onClick={() => onDelete?.(employee?._id)}
-              className="p-3 rounded-2xl text-gray-400 hover:text-red-500 hover:bg-red-50 transition-all duration-200"
-              title={t('employees.errorDelete')}
-            >
-              <Trash2 className="w-5 h-5" />
-            </button>
+      <div className="grid grid-cols-3 gap-2 pt-4 border-t border-gray-100">
+        <div className="text-center">
+          <div className="flex items-center justify-center gap-1 text-gray-800 mb-0.5">
+            <TrendingUp className="w-4 h-4 text-orange-500 shrink-0" />
+            <span className="text-base font-black truncate">{stats.visits}</span>
           </div>
+          <p className="text-[10px] font-bold text-gray-400 uppercase tracking-tighter truncate">{t('dashboard.customer.stats.visits')}</p>
+        </div>
+        <div className="text-center border-l border-r border-gray-100">
+          <div className="flex items-center justify-center gap-1 text-gray-800 mb-0.5">
+            <DollarSign className="w-4 h-4 text-green-500 shrink-0" />
+            <span className="text-base font-black truncate">{CURRENCY_FORMATTER.format(stats.revenue)}</span>
+          </div>
+          <p className="text-[10px] font-bold text-gray-400 uppercase tracking-tighter truncate">{t('analytics.export.rewards')}</p>
+        </div>
+        <div className="text-center">
+          <div className="flex items-center justify-center gap-1 text-gray-800 mb-0.5">
+            <Star className="w-4 h-4 text-yellow-400 fill-current shrink-0" />
+            <span className="text-base font-black truncate">{stats.rating.toFixed(1)}</span>
+          </div>
+          <p className="text-[10px] font-bold text-gray-400 uppercase tracking-tighter truncate">{t('components.trends.rating')}</p>
         </div>
       </div>
     </div>
