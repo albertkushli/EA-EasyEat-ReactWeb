@@ -48,6 +48,9 @@ interface CustomerDiscoverViewProps {
   restaurants: CustomerRestaurant[];
   allRewards: CustomerReward[];
   selectedRestaurant: CustomerRestaurant | null;
+  onSelectRestaurant: (restaurant: CustomerRestaurant) => void;
+  selectedReward: CustomerReward | null;
+  onSelectedReward: (reward: CustomerReward) => void;
   searchTerm: string;
   onSearchTermChange: (value: string) => void;
   selectedCategory: string;
@@ -57,7 +60,7 @@ interface CustomerDiscoverViewProps {
   onToggleFavorite: (restaurant: CustomerRestaurant) => void;
   onBack: () => void;
   onOpenQrModal: () => void;
-  onSelectRestaurant: (restaurant: CustomerRestaurant) => void;
+  onOpenRewardQrModal: () => void;
 }
 
 interface CustomerHistoryRewardsViewProps {
@@ -69,6 +72,14 @@ interface CustomerQrModalProps {
   open: boolean;
   onClose: () => void;
   userId: string;
+}
+
+interface RewardQrModalProps {
+  open: boolean;
+  onClose: () => void;
+  userId: string;
+  restaurantId: string;
+  rewardId: string;
 }
 
 function getRestaurantId(entry: CustomerRestaurant | CustomerReward | CustomerPointsWalletEntry | CustomerVisit | null | undefined): string | undefined {
@@ -194,17 +205,21 @@ function CustomerRestaurantDetail({
   pointsWallet,
   allRewards,
   favoriteRestaurants,
+  onSelectedReward,
   onBack,
   onToggleFavorite,
   onOpenQrModal,
+  onOpenRewardQrModal,
 }: {
   restaurant: CustomerRestaurant;
   pointsWallet: CustomerPointsWalletEntry[];
   allRewards: CustomerReward[];
   favoriteRestaurants: CustomerRestaurant[];
+  onSelectedReward: (reward: CustomerReward) => void;
   onBack: () => void;
   onToggleFavorite: (restaurant: CustomerRestaurant) => void;
   onOpenQrModal: () => void;
+  onOpenRewardQrModal: () => void;
 }) {
   const img = getRestaurantImage(restaurant);
   const rating = getRestaurantRating(restaurant);
@@ -282,7 +297,9 @@ function CustomerRestaurantDetail({
                   <h4>{reward.name}</h4>
                   <span>{reward.pointsRequired} punts</span>
                 </div>
-                <Gift size={20} className="text-orange" />
+                <button className='hc-reward-btn' onClick={() => { onSelectedReward(reward); return onOpenRewardQrModal() }}>
+                  <Gift size={20} className="text-orange" /> Reclamar
+                </button>
               </div>
             ))
           ) : (
@@ -639,6 +656,8 @@ export function CustomerDiscoverView({
   allRewards,
   selectedRestaurant,
   onSelectRestaurant,
+  selectedReward,
+  onSelectedReward,
   searchTerm,
   onSearchTermChange,
   selectedCategory,
@@ -648,6 +667,7 @@ export function CustomerDiscoverView({
   onToggleFavorite,
   onBack,
   onOpenQrModal,
+  onOpenRewardQrModal,
 }: CustomerDiscoverViewProps) {
   const categories = [
     { name: 'Tots', icon: '🍽️' },
@@ -676,9 +696,11 @@ export function CustomerDiscoverView({
         pointsWallet={pointsWallet}
         allRewards={allRewards}
         favoriteRestaurants={favoriteRestaurants}
+        onSelectedReward={onSelectedReward}
         onBack={onBack}
         onToggleFavorite={onToggleFavorite}
         onOpenQrModal={onOpenQrModal}
+        onOpenRewardQrModal={onOpenRewardQrModal}
       />
     );
   }
@@ -840,6 +862,34 @@ export function CustomerQrModal({ open, onClose, userId }: CustomerQrModalProps)
           />
         </div>
         <p className="hc-qr-user-id">ID: {userId}</p>
+      </div>
+    </div>
+  );
+}
+
+export function RewardQrModal({ open, onClose, userId, restaurantId, rewardId }: RewardQrModalProps) {
+  if (!open) return null;
+
+  return (
+    <div className="hc-modal-overlay" onClick={onClose}>
+      <div className="hc-modal" onClick={(event) => event.stopPropagation()}>
+        <button className="hc-modal-close" onClick={onClose}>
+          <X size={24} />
+        </button>
+        <h3>El Codi QR de la recompensa</h3>
+        <p>Mostra aquest codi al cambrer per reclamar la recompensa.</p>
+        <div className="hc-qr-container">
+          <QRCodeCanvas
+            value={JSON.stringify({
+              userId,
+              restaurantId,
+              rewardId,
+            })}
+            size={256}
+            level="H"
+            fgColor="#08182f"
+          />
+        </div>
       </div>
     </div>
   );

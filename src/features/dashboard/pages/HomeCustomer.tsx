@@ -7,6 +7,7 @@ import {
   CustomerProfileTab,
   CustomerQrModal,
   CustomerSidebar,
+  RewardQrModal,
 } from '../components/customer/CustomerDashboardViews';
 
 export default function HomeCustomer() {
@@ -70,6 +71,9 @@ export default function HomeCustomer() {
               restaurants={dashboard.restaurants}
               allRewards={dashboard.allRewards}
               selectedRestaurant={dashboard.selectedRestaurant}
+              onSelectRestaurant={dashboard.setSelectedRestaurant}
+              selectedReward={dashboard.selectedReward}
+              onSelectedReward={dashboard.setSelectedReward}
               searchTerm={dashboard.searchTerm}
               onSearchTermChange={dashboard.setSearchTerm}
               selectedCategory={dashboard.selectedCategory}
@@ -78,8 +82,8 @@ export default function HomeCustomer() {
               favoriteRestaurants={dashboard.favoriteRestaurants}
               onToggleFavorite={dashboard.handleToggleFavorite}
               onBack={() => dashboard.setSelectedRestaurant(null)}
-              onSelectRestaurant={dashboard.setSelectedRestaurant}
               onOpenQrModal={() => dashboard.setShowQrModal(true)}
+              onOpenRewardQrModal={() => dashboard.setShowRewardQrModal(true)}
             />
           ) : dashboard.activeTab === 'rewards' ? (
             <CustomerHistoryRewardsView
@@ -107,6 +111,13 @@ export default function HomeCustomer() {
         open={dashboard.showQrModal}
         onClose={() => dashboard.setShowQrModal(false)}
         userId={dashboard.user?._id! || dashboard.user?.id!}
+      />
+      <RewardQrModal
+        open={dashboard.showRewardQrModal}
+        onClose={() => dashboard.setShowRewardQrModal(false)}
+        userId={dashboard.user?._id! || dashboard.user?.id!}
+        restaurantId={dashboard.selectedRestaurant?._id! || dashboard.selectedRestaurant?.id!}
+        rewardId={dashboard.selectedReward?._id! || dashboard.selectedReward?.id!}
       />
     </div>
   );
