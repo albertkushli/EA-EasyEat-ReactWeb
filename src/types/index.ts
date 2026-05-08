@@ -68,12 +68,17 @@ export interface IRestaurantLocation {
   longitude?: number;
 }
 
+export interface IRestaurantContact {
+  phone?: string;
+  email?: string;
+  website?: string;
+}
+
 export interface IRestaurantProfile {
   name: string;
   description?: string;
   location: IRestaurantLocation;
-  phone?: string;
-  email?: string;
+  contact?: IRestaurantContact;
   globalRating?: number;
   images?: string[];
 }

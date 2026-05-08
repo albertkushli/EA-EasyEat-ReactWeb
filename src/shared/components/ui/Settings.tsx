@@ -35,6 +35,19 @@ export default function Settings({ restaurant: initialRestaurant }: SettingsProp
   const [restaurant, setRestaurant] = useState(initialRestaurant);
   const [isEditingSchedule, setIsEditingSchedule] = useState(false);
 
+  useEffect(() => {
+    console.log("⚙️ Settings: initialRestaurant received", initialRestaurant);
+    if (initialRestaurant) {
+      setRestaurant(initialRestaurant);
+    }
+  }, [initialRestaurant]);
+
+  console.log("⚙️ Settings: rendering with restaurant data", {
+    name: restaurant?.profile?.name,
+    contact: restaurant?.profile?.contact,
+    location: restaurant?.profile?.location?.address
+  });
+
   const timetable = restaurant?.profile?.timetable || {};
   const daysOrder = [
     'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'
@@ -166,17 +179,29 @@ export default function Settings({ restaurant: initialRestaurant }: SettingsProp
                   value={restaurant?.profile?.category}
                   onChange={(val: string) => setRestaurant({ ...restaurant, profile: { ...restaurant.profile, category: val } })}
                 />
-                <InputGroup
+                 <InputGroup
                   label={t('employees.form.email')}
                   icon={Mail}
-                  value={restaurant?.profile?.email}
-                  onChange={(val: string) => setRestaurant({ ...restaurant, profile: { ...restaurant.profile, email: val } })}
+                  value={restaurant?.profile?.contact?.email}
+                  onChange={(val: string) => setRestaurant({
+                    ...restaurant,
+                    profile: {
+                      ...restaurant.profile,
+                      contact: { ...restaurant.profile?.contact, email: val }
+                    }
+                  })}
                 />
                 <InputGroup
                   label={t('employees.form.phone')}
                   icon={Phone}
-                  value={restaurant?.profile?.phone}
-                  onChange={(val: string) => setRestaurant({ ...restaurant, profile: { ...restaurant.profile, phone: val } })}
+                  value={restaurant?.profile?.contact?.phone}
+                  onChange={(val: string) => setRestaurant({
+                    ...restaurant,
+                    profile: {
+                      ...restaurant.profile,
+                      contact: { ...restaurant.profile?.contact, phone: val }
+                    }
+                  })}
                 />
                 <div className="md:col-span-2">
                   <InputGroup
@@ -186,11 +211,17 @@ export default function Settings({ restaurant: initialRestaurant }: SettingsProp
                     onChange={(val: string) => setRestaurant({ ...restaurant, profile: { ...restaurant.profile, location: { ...restaurant.profile.location, address: val } } })}
                   />
                 </div>
-                <InputGroup
+                 <InputGroup
                   label={t('settings.general.website')}
                   icon={Globe}
-                  value={restaurant?.profile?.website}
-                  onChange={(val: string) => setRestaurant({ ...restaurant, profile: { ...restaurant.profile, website: val } })}
+                  value={restaurant?.profile?.contact?.website}
+                  onChange={(val: string) => setRestaurant({
+                    ...restaurant,
+                    profile: {
+                      ...restaurant.profile,
+                      contact: { ...restaurant.profile?.contact, website: val }
+                    }
+                  })}
                 />
               </div>
 
