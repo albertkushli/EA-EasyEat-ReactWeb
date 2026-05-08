@@ -60,7 +60,7 @@ export const updateEmployee = async (employeeId: string, employeeData: any) => {
 
 export const deleteEmployee = async (employeeId: string) => {
   try {
-    const response = await apiClient.delete(`/employees/${employeeId}/soft`);
+    const response = await apiClient.delete(`/employees/${employeeId}/hard`);
     return response.data;
   } catch (error) {
     console.error("Error deleting employee:", error);

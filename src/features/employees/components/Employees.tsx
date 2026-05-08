@@ -40,7 +40,7 @@ export default function Employees() {
       setLoading(true);
       setError(null);
       const data = await getEmployeesByRestaurant(restaurantId);
-      console.log("Employees data received:", data);
+      console.log("Employees data received after refetch:", data);
       setEmployees(data);
     } catch (err: any) {
       console.error("Error loading employees:", err);
@@ -62,10 +62,18 @@ export default function Employees() {
 
   const handleDeleteClick = async (employeeId: string) => {
     if (window.confirm(t('employees.confirmDelete') || "¿Estás seguro de que quieres eliminar este empleado?")) {
+      console.log("Attempting to delete employee with ID:", employeeId);
+      const deleteUrl = `/employees/${employeeId}/hard`;
+      console.log("DELETE Request URL:", deleteUrl);
+
       try {
-        await deleteEmployee(employeeId);
-        setEmployees(employees.filter(e => e._id !== employeeId));
+        const response = await deleteEmployee(employeeId);
+        console.log("Backend response for deletion:", response);
+        
+        // Refetch the list to ensure synchronization
+        await loadEmployees();
       } catch (err) {
+        console.error("Error deleting employee from backend:", err);
         alert(t('employees.errorDelete') || "Error al eliminar el empleado");
       }
     }
