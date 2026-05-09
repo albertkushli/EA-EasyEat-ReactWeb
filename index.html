@@ -5,6 +5,16 @@
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>ea-easyeat-web-new</title>
+
+    <!-- React DevTools Standalone (Development Only) -->
+    <script type="module">
+      if (import.meta.env.DEV) {
+        const script = document.createElement('script');
+        script.src = 'http://localhost:8097';
+        script.async = true;
+        document.head.appendChild(script);
+      }
+    </script>
   </head>
   <body>
     <div id="root"></div>

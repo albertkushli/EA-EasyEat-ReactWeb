@@ -3,9 +3,9 @@
 // ============================================
 
 import apiClient from '@/services/apiClient';
-import { API_ENDPOINTS } from '../constants';
-import { IRestaurant, IRestaurantStats, IVisit, IPaginatedResponse } from '../types';
-import { parsePaginatedResponse, sortByDateDesc, extractArray } from '../utils/response-parser';
+import { API_ENDPOINTS } from '@/constants';
+import { IRestaurant, IRestaurantStats, IVisit, IPaginatedResponse } from '@/types';
+import { parsePaginatedResponse, sortByDateDesc } from '@/utils/response-parser';
 
 /**
  * Obtiene restaurante completo por ID
@@ -133,6 +133,56 @@ export const getRestaurant = async (restaurantId: string) => {
     throw error;
   }
 };
+
+/**
+ * Obtiene lista de restaurantes (con paginación opcional)
+ */
+export async function fetchRestaurants(
+  page: number = 1,
+  limit: number = 50
+): Promise<IPaginatedResponse<IRestaurant>> {
+  try {
+    const res = await apiClient.get(
+      API_ENDPOINTS.RESTAURANTS,
+      { params: { page, limit } }
+    );
+
+    // Parsea la respuesta paginada
+    return parsePaginatedResponse<IRestaurant>(res.data, limit);
+  } catch (err) {
+    console.error('Error fetching restaurants:', err);
+    return {
+      data: [],
+      meta: {
+        total: 0,
+        page: 1,
+        limit,
+        totalPages: 1,
+      },
+    };
+  }
+}
+
+/**
+ * Obtiene restaurantes cercanos a una ubicación
+ */
+export async function fetchNearbyRestaurants(
+  lat: number,
+  lng: number,
+  maxDistance: number = 5000
+): Promise<IRestaurant[]> {
+  try {
+    const res = await apiClient.get(
+      API_ENDPOINTS.RESTAURANTS_NEAR_BY(lng, lat, maxDistance)
+    );
+
+    const data = res.data?.data || res.data || [];
+    return Array.isArray(data) ? data : [];
+  } catch (err) {
+    console.error('Error fetching nearby restaurants:', err);
+    return [];
+  }
+}
 
 export const restaurantService = {
   fetchRestaurantFull,

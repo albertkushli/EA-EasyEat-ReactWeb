@@ -5,6 +5,7 @@ import App from './App'
 import './i18n'
 import '@/styles/tailwind.css';
 import '@/styles/theme.css';
+import '@/styles/premium.css';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

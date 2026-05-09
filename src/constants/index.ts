@@ -65,6 +65,8 @@ export const API_ENDPOINTS = {
   RESTAURANT_BY_ID: (id: string) => `/restaurants/${id}`,
   RESTAURANT_FULL: (id: string) => `/restaurants/${id}/full`,
   RESTAURANT_VISITS: (id: string) => `/restaurants/${id}/visits`,
+  RESTAURANTS_NEAR_BY: (lng: number, lat: number, maxDistance: number = 5000) =>
+    `/restaurants/near-by?lng=${lng}&lat=${lat}&maxDistance=${maxDistance}`,
 
   // Statistics
   STATISTICS: '/statistics',
