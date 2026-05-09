@@ -173,7 +173,7 @@ export default function Rewards() {
                     ? "bg-green-100 text-green-600"
                     : "bg-gray-100 text-gray-400"
                     }`}>
-                    {reward?.active ? t('clients.status.active') : t('clients.status.inactive')}
+                    {reward?.active ? t('clients.active') : t('clients.inactive')}
                   </div>
                 </div>
                 <p className="text-gray-500 text-sm font-medium line-clamp-2 leading-snug">

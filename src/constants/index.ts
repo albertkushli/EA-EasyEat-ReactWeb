@@ -51,6 +51,7 @@ export const API_ENDPOINTS = {
   // Customers
   CUSTOMERS: '/customers',
   CUSTOMER_BY_ID: (id: string) => `/customers/${id}`,
+  CUSTOMER_FULL: (id: string) => `/customers/${id}/full`,
 
   // Employees
   EMPLOYEES: '/employees',
@@ -79,4 +80,9 @@ export const API_ENDPOINTS = {
   REVIEWS: '/reviews',
   REVIEWS_BY_RESTAURANT: (restaurantId: string) =>
     `/restaurants/${restaurantId}/reviews`,
+
+  // Reward Redemptions
+  REWARD_REDEMPTIONS: '/rewardRedemptions',
+  REWARD_REDEMPTIONS_BY_RESTAURANT: (restaurantId: string) =>
+    `/rewardRedemptions/restaurant/${restaurantId}`,
 } as const;

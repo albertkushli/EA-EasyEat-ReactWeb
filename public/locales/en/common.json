@@ -85,7 +85,12 @@
       "privacy": "Privacy",
       "cookies": "Cookies"
     },
-    "copy": "© 2026 EasyEat · Academic Project · UPC · Barcelona"
+    "copy": "© 2026 EasyEat · Academic Project · UPC · Barcelona",
+    "links": {
+      "legalNotice": "Legal Notice",
+      "privacy": "Privacy Policy",
+      "cookies": "Cookies Policy"
+    }
   },
   "auth": {
     "login": {
@@ -365,7 +370,23 @@
     "noResultsEmpty": "No customers registered in this restaurant yet.",
     "active": "Active",
     "inactive": "Inactive",
-    "memberSince": "Member since"
+    "memberSince": "Member since",
+    "details": {
+      "stats": "Statistics",
+      "totalVisits": "Total Visits",
+      "avgRating": "Average Rating",
+      "totalSpent": "Total Spent",
+      "lastVisit": "Last Visit",
+      "loyalty": "Loyalty",
+      "currentLevel": "Current level",
+      "rewardsRedeemed": "Rewards redeemed",
+      "preferences": "Preferences",
+      "visitHistory": "Visit History",
+      "lastReviews": "Last Reviews",
+      "close": "CLOSE",
+      "noReviews": "No reviews yet.",
+      "noHistory": "No visits registered yet."
+    }
   },
   "employees": {
     "title": "Employees",
@@ -381,6 +402,17 @@
       "role": "Role",
       "password": "Password",
       "submit": "Save Employee"
+    },
+    "filters": {
+      "title": "Filters",
+      "search": "Search employees...",
+      "role": "Role",
+      "minRating": "Min Rating",
+      "minVisits": "Min Visits",
+      "minRewards": "Min Rewards",
+      "clear": "Clear filters",
+      "allRoles": "All roles",
+      "noResults": "No employees found matching these criteria."
     }
   },
   "dishes": {
@@ -415,7 +447,26 @@
       "descriptionPlaceholder": "Describe ingredients or preparation...",
       "price": "Price",
       "section": "Section",
+      "image": "Image (URL)",
+      "imagePlaceholder": "https://link-to-your-image.jpg",
+      "portionSize": "Portion Size",
+      "ingredients": "Ingredients",
+      "ingredientsPlaceholder": "E.g: potatoes, salt, oil (comma separated)",
+      "allergens": "Allergens",
+      "allergensPlaceholder": "E.g: gluten, dairy (comma separated)",
+      "dietary": "Dietary tags",
+      "dietaryPlaceholder": "E.g: vegan, vegetarian",
+      "flavor": "Flavor profile",
+      "flavorPlaceholder": "E.g: spicy, salty",
+      "availability": "Availability",
+      "availabilityPlaceholder": "E.g: lunch, dinner",
       "submit": "Save Dish"
+    },
+    "portionSizes": {
+      "small": "Small",
+      "medium": "Medium",
+      "large": "Large",
+      "sharing": "Sharing"
     },
     "sections": {
       "starters": "Starters",
@@ -502,6 +553,17 @@
     },
     "points": {
       "title": "Points System",
+      "method": "Accumulation Method",
+      "simple": {
+        "title": "Simple Method (Linear)",
+        "description": "Fixed accumulation for every euro spent. Easy for the customer to understand.",
+        "pointsPerEuro": "Points per Euro (1€ = X pts)"
+      },
+      "exponential": {
+        "title": "Intelligent Method (Dynamic)",
+        "description": "Advanced logic that automatically rewards loyalty and recurrence.",
+        "maxPoints": "Maximum points per visit"
+      },
       "accumulationRatio": "Accumulation Ratio",
       "configureMultipliers": "Configure multipliers",
       "welcomeBonus": "Welcome Bonus",

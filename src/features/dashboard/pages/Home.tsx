@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import Footer from '@/shared/components/Footer';
 import {
   BarChart3,
   ArrowRight,
@@ -179,33 +180,7 @@ export default function Home() {
         </div>
       </section>
 
-      <footer className="lp-footer">
-        <div className="footer-grid">
-          <div>
-            <div className="footer-logo">{t('navbar.logo')}</div>
-            <p className="footer-tagline">{t('footer.tagline')}</p>
-          </div>
-          <div>
-            <h4 className="footer-title">{t('footer.sections.platform')}</h4>
-            <ul className="footer-links">
-              <li><a href="#clientes" className="footer-link">{t('navbar.links.customers')}</a></li>
-              <li><a href="#restaurantes" className="footer-link">{t('navbar.links.restaurants')}</a></li>
-              <li><a href="#funciona" className="footer-link">{t('navbar.links.howItWorks')}</a></li>
-            </ul>
-          </div>
-          <div>
-            <h4 className="footer-title">{t('footer.sections.legal')}</h4>
-            <ul className="footer-links">
-              <li><a href="#" className="footer-link">{t('footer.links.terms')}</a></li>
-              <li><a href="#" className="footer-link">{t('footer.links.privacy')}</a></li>
-              <li><a href="#" className="footer-link">{t('footer.links.cookies')}</a></li>
-            </ul>
-          </div>
-        </div>
-        <div className="footer-bottom">
-          <p>{t('footer.copy')}</p>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 }

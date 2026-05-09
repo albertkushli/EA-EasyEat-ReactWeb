@@ -28,7 +28,7 @@ export async function fetchRestaurantReviews(restaurantId: string): Promise<IRev
 
   try {
     const res = await apiClient.get(
-      API_ENDPOINTS.REVIEWS_BY_RESTAURANT(restaurantId)
+      `${API_ENDPOINTS.REVIEWS_BY_RESTAURANT(restaurantId)}?limit=1000`
     );
     return extractArray<IReview>(res.data);
   } catch (err) {
