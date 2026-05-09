@@ -359,8 +359,8 @@ export function CustomerSidebar({ activeTab, onTabChange, user, onLogout }: Cust
           </div>
         </div>
         <button onClick={onLogout} className="hc-sidebar-logout">Logout</button>
-        <Link 
-          to="/aviso-legal" 
+        <Link
+          to="/aviso-legal"
           className="block text-center text-[10px] text-slate-400 hover:text-orange-600 transition-colors pt-4 uppercase tracking-widest font-bold"
         >
           {t('footer.links.legalNotice')}

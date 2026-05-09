@@ -100,8 +100,8 @@ export function Sidebar({ activeView, onViewChange, restaurantName, restaurantAd
         </motion.button>
 
         {/* Enlace Legal */}
-        <Link 
-          to="/aviso-legal" 
+        <Link
+          to="/aviso-legal"
           className="block text-center text-[10px] text-slate-500 hover:text-orange-400 transition-colors pt-2 uppercase tracking-widest font-bold"
         >
           {t('footer.links.legalNotice')}

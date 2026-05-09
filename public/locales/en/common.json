@@ -553,6 +553,17 @@
     },
     "points": {
       "title": "Points System",
+      "method": "Accumulation Method",
+      "simple": {
+        "title": "Simple Method (Linear)",
+        "description": "Fixed accumulation for every euro spent. Easy for the customer to understand.",
+        "pointsPerEuro": "Points per Euro (1€ = X pts)"
+      },
+      "exponential": {
+        "title": "Intelligent Method (Dynamic)",
+        "description": "Advanced logic that automatically rewards loyalty and recurrence.",
+        "maxPoints": "Maximum points per visit"
+      },
       "accumulationRatio": "Accumulation Ratio",
       "configureMultipliers": "Configure multipliers",
       "welcomeBonus": "Welcome Bonus",

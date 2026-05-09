@@ -372,34 +372,127 @@ export default function Settings({ restaurant: initialRestaurant }: SettingsProp
             </section>
           )}
 
-          {/* Section: Points */}
+             {/* Section: Points */}
           {activeTab === 'points' && (
             <section className="bg-white rounded-[2rem] p-8 shadow-sm border border-gray-100 space-y-8 animate-in slide-in-from-bottom-4">
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-yellow-50 rounded-xl text-yellow-600">
-                  <Zap className="w-5 h-5" />
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 bg-yellow-50 rounded-xl text-yellow-600">
+                    <Zap className="w-5 h-5" />
+                  </div>
+                  <h3 className="text-xl font-black text-gray-800">{t('settings.points.title')}</h3>
                 </div>
-                <h3 className="text-xl font-black text-gray-800">{t('settings.points.title')}</h3>
+                <button
+                  onClick={handleSave}
+                  disabled={loading}
+                  className="px-6 py-2 bg-orange-500 text-white rounded-xl text-xs font-black hover:bg-orange-600 transition-all shadow-md shadow-orange-100 flex items-center gap-2 disabled:opacity-50"
+                >
+                  {loading ? <Loader2 className="w-3 h-3 animate-spin" /> : <Save className="w-3 h-3" />}
+                  {t('settings.general.submit').toUpperCase()}
+                </button>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <div className="p-6 bg-gray-50 rounded-3xl border border-gray-100 space-y-4">
-                  <p className="text-xs font-black text-gray-400 uppercase tracking-[0.2em]">{t('settings.points.accumulationRatio')}</p>
-                  <div className="flex items-end gap-2">
-                    <span className="text-4xl font-black text-gray-800">1€</span>
-                    <span className="text-gray-400 font-bold mb-1">=</span>
-                    <span className="text-4xl font-black text-orange-500">10 pts</span>
-                  </div>
-                  <button className="text-xs font-bold text-blue-600 hover:underline">{t('settings.points.configureMultipliers')}</button>
-                </div>
+              <div className="space-y-2">
+                <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">{t('settings.points.method')}</p>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <button
+                    type="button"
+                    onClick={() => setRestaurant({
+                      ...restaurant,
+                      profile: {
+                        ...restaurant.profile,
+                        pointsSystem: { ...(restaurant.profile.pointsSystem || {}), method: 'simple' }
+                      }
+                    })}
+                    className={`p-6 rounded-3xl border-2 transition-all text-left space-y-2 ${
+                      restaurant.profile.pointsSystem?.method === 'simple'
+                        ? 'border-orange-500 bg-orange-50'
+                        : 'border-gray-100 bg-gray-50 hover:border-gray-200'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between">
+                      <h4 className="font-black text-gray-800">{t('settings.points.simple.title')}</h4>
+                      {restaurant.profile.pointsSystem?.method === 'simple' && <div className="w-4 h-4 bg-orange-500 rounded-full border-4 border-white shadow-sm" />}
+                    </div>
+                    <p className="text-xs text-gray-500 leading-relaxed">{t('settings.points.simple.description')}</p>
+                  </button>
 
-                <div className="p-6 bg-gray-50 rounded-3xl border border-gray-100 space-y-4">
-                  <p className="text-xs font-black text-gray-400 uppercase tracking-[0.2em]">{t('settings.points.welcomeBonus')}</p>
-                  <div className="flex items-end gap-2">
-                    <span className="text-4xl font-black text-emerald-500">50 pts</span>
-                  </div>
-                  <p className="text-[10px] text-gray-400 font-medium">{t('settings.points.welcomeBonusTagline')}</p>
+                  <button
+                    type="button"
+                    onClick={() => setRestaurant({
+                      ...restaurant,
+                      profile: {
+                        ...restaurant.profile,
+                        pointsSystem: { ...(restaurant.profile.pointsSystem || {}), method: 'exponential' }
+                      }
+                    })}
+                    className={`p-6 rounded-3xl border-2 transition-all text-left space-y-2 ${
+                      restaurant.profile.pointsSystem?.method === 'exponential'
+                        ? 'border-orange-500 bg-orange-50'
+                        : 'border-gray-100 bg-gray-50 hover:border-gray-200'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between">
+                      <h4 className="font-black text-gray-800">{t('settings.points.exponential.title')}</h4>
+                      {restaurant.profile.pointsSystem?.method === 'exponential' && <div className="w-4 h-4 bg-orange-500 rounded-full border-4 border-white shadow-sm" />}
+                    </div>
+                    <p className="text-xs text-gray-500 leading-relaxed">{t('settings.points.exponential.description')}</p>
+                  </button>
                 </div>
+              </div>
+
+              <div className="p-8 bg-gray-50 rounded-[2rem] border border-gray-100 animate-in fade-in duration-500">
+                {restaurant.profile.pointsSystem?.method === 'simple' ? (
+                  <div className="space-y-6">
+                    <div className="flex items-center gap-4 text-orange-600 mb-2">
+                      <Coins className="w-6 h-6" />
+                      <h4 className="font-black text-lg">Configuración Método Simple</h4>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-end">
+                      <InputGroup
+                        label={t('settings.points.simple.pointsPerEuro')}
+                        type="number"
+                        value={restaurant.profile.pointsSystem?.pointsPerEuro}
+                        onChange={(val: string) => setRestaurant({
+                          ...restaurant,
+                          profile: {
+                            ...restaurant.profile,
+                            pointsSystem: { ...(restaurant.profile.pointsSystem || {}), pointsPerEuro: Number(val) }
+                          }
+                        })}
+                      />
+                      <div className="bg-white p-4 rounded-2xl border border-orange-100 shadow-sm flex items-center justify-center gap-3">
+                        <span className="text-2xl font-black text-gray-400">1€</span>
+                        <span className="text-gray-300 font-black">=</span>
+                        <span className="text-2xl font-black text-orange-500">{restaurant.profile.pointsSystem?.pointsPerEuro || 10} pts</span>
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="space-y-6">
+                    <div className="flex items-center gap-4 text-orange-600 mb-2">
+                      <Zap className="w-6 h-6" />
+                      <h4 className="font-black text-lg">Configuración Método Inteligente</h4>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
+                      <InputGroup
+                        label={t('settings.points.exponential.maxPoints')}
+                        type="number"
+                        value={restaurant.profile.pointsSystem?.maxPointsVisit ?? restaurant.profile.maxPointsVisit}
+                        onChange={(val: string) => setRestaurant({
+                          ...restaurant,
+                          profile: {
+                            ...restaurant.profile,
+                            pointsSystem: { ...(restaurant.profile.pointsSystem || {}), maxPointsVisit: Number(val) }
+                          }
+                        })}
+                      />
+                      <div className="text-xs text-gray-500 bg-white p-5 rounded-2xl border border-gray-100 leading-relaxed italic">
+                        "Este método ajusta los puntos según el gasto del cliente, su frecuencia de visita y el ticket medio de tu local. Es ideal para fomentar la recurrencia real."
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
 
               <div className="flex items-center justify-between p-6 bg-blue-50 rounded-3xl border border-blue-100">
@@ -413,7 +506,7 @@ export default function Settings({ restaurant: initialRestaurant }: SettingsProp
                   </div>
                 </div>
                 <div className="w-12 h-6 bg-blue-600 rounded-full flex items-center justify-end px-1 cursor-pointer">
-                  <div className="w-4 h-4 bg-white rounded-full" />
+                  <div className="w-4 h-4 bg-white rounded-full shadow-sm" />
                 </div>
               </div>
             </section>
@@ -440,15 +533,15 @@ function NavButton({ label, icon: Icon, active, onClick }: any) {
   );
 }
 
-function InputGroup({ label, value, onChange, icon: Icon }: any) {
+function InputGroup({ label, value, onChange, icon: Icon, type = "text" }: any) {
   return (
     <div className="space-y-1.5">
       <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">{label}</label>
       <div className="relative">
         {Icon && <Icon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-300" />}
         <input
-          type="text"
-          value={value || ""}
+          type={type}
+          value={value === undefined || value === null ? "" : value}
           onChange={(e) => onChange(e.target.value)}
           className={`w-full p-3 bg-gray-50 border border-gray-100 rounded-xl text-sm font-bold text-gray-700 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all ${Icon ? 'pl-10' : ''}`}
         />
