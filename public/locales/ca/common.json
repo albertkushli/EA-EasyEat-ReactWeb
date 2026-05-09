@@ -85,7 +85,12 @@
       "privacy": "Privadesa",
       "cookies": "Cookies"
     },
-    "copy": "© 2026 EasyEat · Projecte Acadèmic · UPC · Barcelona"
+    "copy": "© 2026 EasyEat · Projecte Acadèmic · UPC · Barcelona",
+    "links": {
+      "legalNotice": "Avís Legal",
+      "privacy": "Política de Privadesa",
+      "cookies": "Política de Cookies"
+    }
   },
   "auth": {
     "login": {

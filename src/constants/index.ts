@@ -80,4 +80,9 @@ export const API_ENDPOINTS = {
   REVIEWS: '/reviews',
   REVIEWS_BY_RESTAURANT: (restaurantId: string) =>
     `/restaurants/${restaurantId}/reviews`,
+
+  // Reward Redemptions
+  REWARD_REDEMPTIONS: '/rewardRedemptions',
+  REWARD_REDEMPTIONS_BY_RESTAURANT: (restaurantId: string) =>
+    `/rewardRedemptions/restaurant/${restaurantId}`,
 } as const;

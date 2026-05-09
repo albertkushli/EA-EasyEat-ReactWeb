@@ -28,7 +28,7 @@ import {
   Loader2,
 } from "lucide-react";
 import { motion } from "framer-motion";
-import { getRewardsByRestaurant } from "@/services/reward.service";
+import { getRewardsByRestaurant, fetchRedemptionsByRestaurant } from "@/services/reward.service";
 import { useTranslation } from "react-i18next";
 
 interface AnalyticsProps {
@@ -39,6 +39,7 @@ interface AnalyticsProps {
 export default function Analytics({ visits, restaurantId }: AnalyticsProps) {
   const { t } = useTranslation();
   const [rewards, setRewards] = useState<any[]>([]);
+  const [redemptions, setRedemptions] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -54,16 +55,21 @@ export default function Analytics({ visits, restaurantId }: AnalyticsProps) {
       visitsCount: visits.length,
       restaurantId,
       firstVisit: visits[0],
-      rewardsCount: rewards.length
+      rewardsCount: rewards.length,
+      redemptionsCount: redemptions.length
     });
-  }, [visits, rewards, restaurantId]);
+  }, [visits, rewards, redemptions, restaurantId]);
 
   const loadData = async () => {
     try {
       setLoading(true);
       setError(null);
-      const rewardData = await getRewardsByRestaurant(restaurantId);
+      const [rewardData, redemptionData] = await Promise.all([
+        getRewardsByRestaurant(restaurantId),
+        fetchRedemptionsByRestaurant(restaurantId)
+      ]);
       setRewards(rewardData);
+      setRedemptions(redemptionData);
     } catch (err: any) {
       console.error("Error loading analytics data:", err);
       setError(t('analytics.errorLoading') || "No se pudieron cargar algunos datos de análisis.");
@@ -83,82 +89,144 @@ export default function Analytics({ visits, restaurantId }: AnalyticsProps) {
       revenueVar: 0,
       retentionRate: 0,
       totalRewards: 0,
-      recurrentRate: 0
+      totalPointsEarned: 0,
+      loyaltyRoi: "Sin datos",
+      prediction: 0
     };
+
+    const restaurantVisits = visits.filter(
+      (visit) => {
+        const vRestId = String(visit.restaurant_id?._id || visit.restaurant_id || "").toLowerCase();
+        const rId = String(restaurantId || "").toLowerCase();
+        return vRestId === rId && visit.deletedAt === null;
+      }
+    );
 
     const now = new Date();
     const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
     const sixtyDaysAgo = new Date(now.getTime() - 60 * 24 * 60 * 60 * 1000);
 
-    const lastMonthVisits = visits.filter(v => new Date(v.date || v.createdAt) >= thirtyDaysAgo);
-    const prevMonthVisits = visits.filter(v => {
+    const lastMonthVisits = restaurantVisits.filter(v => new Date(v.date || v.createdAt) >= thirtyDaysAgo);
+    const prevMonthVisits = restaurantVisits.filter(v => {
       const d = new Date(v.date || v.createdAt);
       return d >= sixtyDaysAgo && d < thirtyDaysAgo;
     });
 
-    const getUniqueCustomers = (vList: any[]) => new Set(vList.map(v => v.customer_id?._id || v.customer_id)).size;
+    const getUniqueCustomers = (vList: any[]) => new Set(vList.map(v => String(v.customer_id?._id || v.customer_id))).size;
 
-    const uniqueCustomers = getUniqueCustomers(lastMonthVisits);
+    const uniqueCustomers = getUniqueCustomers(restaurantVisits);
+    const lastMonthUniqueCustomers = getUniqueCustomers(lastMonthVisits);
     const prevUniqueCustomers = getUniqueCustomers(prevMonthVisits);
 
-    // Retention: Customers with more than 1 visit in the last month
-    const customerVisitCounts = lastMonthVisits.reduce((acc: any, v) => {
-      const id = v.customer_id?._id || v.customer_id;
+    // Retention: Customers with more than 1 visit ever
+    const customerVisitCounts = restaurantVisits.reduce((acc: any, v) => {
+      const id = String(v.customer_id?._id || v.customer_id);
       acc[id] = (acc[id] || 0) + 1;
       return acc;
     }, {});
     const recurrentCustomers = Object.values(customerVisitCounts).filter((count: any) => count > 1).length;
 
-    const revenue = lastMonthVisits.reduce((sum, v) => sum + (v.billAmount || 0), 0);
-    const prevRevenue = prevMonthVisits.reduce((sum, v) => sum + (v.billAmount || 0), 0);
+    const revenue = restaurantVisits.reduce((sum, v) => sum + Number(v.billAmount || 0), 0);
+    const lastMonthRevenue = lastMonthVisits.reduce((sum, v) => sum + Number(v.billAmount || 0), 0);
+    const prevRevenue = prevMonthVisits.reduce((sum, v) => sum + Number(v.billAmount || 0), 0);
 
-    const totalRewards = rewards.reduce((sum, r) => sum + (r.timesRedeemed || 0), 0);
+    const totalPointsEarned = restaurantVisits.reduce((sum, v) => sum + Number(v.pointsEarned || 0), 0);
+
+    const totalRedemptions = redemptions.filter(r => r.status === 'redeemed' || r.status === 'approved').length;
 
     const calcVar = (curr: number, prev: number) => {
       if (prev === 0) return curr > 0 ? 100 : 0;
       return ((curr - prev) / prev) * 100;
     };
 
+    // Simple ROI: Revenue / (Redemptions * estimated cost 5€)
+    const estimatedCostPerRedemption = 5; 
+    const roi = totalRedemptions > 0 
+      ? (revenue / (totalRedemptions * estimatedCostPerRedemption)).toFixed(1) + "x"
+      : "Sin datos";
+
+    // Simple Prediction: (Last Month Visits + Total Visits / 2) * 1.1 (growth)
+    const prediction = Math.round(((lastMonthVisits.length || restaurantVisits.length) * 1.1));
+
     return {
-      totalVisits: lastMonthVisits.length,
+      totalVisits: restaurantVisits.length,
       visitsVar: calcVar(lastMonthVisits.length, prevMonthVisits.length),
       uniqueCustomers,
-      customersVar: calcVar(uniqueCustomers, prevUniqueCustomers),
+      customersVar: calcVar(lastMonthUniqueCustomers, prevUniqueCustomers),
       revenue,
-      revenueVar: calcVar(revenue, prevRevenue),
+      revenueVar: calcVar(lastMonthRevenue, prevRevenue),
       retentionRate: uniqueCustomers > 0 ? (recurrentCustomers / uniqueCustomers) * 100 : 0,
-      totalRewards,
-      recurrentRate: uniqueCustomers > 0 ? (recurrentCustomers / uniqueCustomers) * 100 : 0
+      totalRewards: totalRedemptions,
+      totalPointsEarned,
+      loyaltyRoi: roi,
+      prediction
     };
-  }, [visits, rewards]);
+  }, [visits, rewards, redemptions, restaurantId]);
 
   // Chart Data (Real data grouping by day)
   const chartData = useMemo(() => {
     const data: any[] = [];
-    const now = new Date();
+    
+    // 1. Filtrar visitas válidas para este restaurante
+    const restaurantVisits = visits.filter(v => {
+      const vRestId = String(v.restaurant_id?._id || v.restaurant_id || "").toLowerCase();
+      const rId = String(restaurantId || "").toLowerCase();
+      return vRestId === rId && v.deletedAt === null;
+    });
 
+    // 2. Filtrar canjes válidos
+    const restaurantRedemptions = redemptions.filter(r => {
+      const rRestId = String(r.restaurant_id?._id || r.restaurant_id || "").toLowerCase();
+      const rId = String(restaurantId || "").toLowerCase();
+      return rRestId === rId;
+    });
+
+    if (restaurantVisits.length === 0) return [];
+
+    // 3. Función segura para obtener la clave del día (YYYY-MM-DD)
+    const getDayKey = (dateStr: string) => {
+      if (!dateStr) return "";
+      return dateStr.split('T')[0];
+    };
+
+    // 4. Mapear datos por día
+    const statsByDay = new Map<string, { visitas: number; recompensas: number }>();
+
+    restaurantVisits.forEach(v => {
+      const key = getDayKey(v.date || v.createdAt);
+      if (!key) return;
+      const current = statsByDay.get(key) || { visitas: 0, recompensas: 0 };
+      statsByDay.set(key, { ...current, visitas: current.visitas + 1 });
+    });
+
+    restaurantRedemptions.forEach(r => {
+      const key = getDayKey(r.redeemedAt || r.createdAt);
+      if (!key) return;
+      const current = statsByDay.get(key) || { visitas: 0, recompensas: 0 };
+      statsByDay.set(key, { ...current, recompensas: current.recompensas + 1 });
+    });
+
+    // 5. Calcular el rango: 30 días desde la última visita
+    const visitDates = restaurantVisits.map(v => new Date(v.date || v.createdAt).getTime());
+    const maxVisitTime = Math.max(...visitDates);
+    const endDate = new Date(maxVisitTime);
+
+    // 6. Generar los 30 días exactos
     for (let i = 29; i >= 0; i--) {
-      const date = new Date(now.getTime() - i * 24 * 60 * 60 * 1000);
+      const date = new Date(endDate.getTime() - i * 24 * 60 * 60 * 1000);
+      const key = date.toISOString().split('T')[0];
+      const dayStats = statsByDay.get(key) || { visitas: 0, recompensas: 0 };
+      
       const dateStr = date.toLocaleDateString('es-ES', { day: 'numeric', month: 'short' });
-
-      const dayVisitsList = visits.filter(v => {
-        const d = new Date(v.date || v.createdAt);
-        return d.toDateString() === date.toDateString();
-      });
-
-      const dayVisits = dayVisitsList.length;
-
-      // Try to find rewards in visits (assuming visit might have reward_id or pointsUsed)
-      const dayRewards = dayVisitsList.filter(v => v.reward_id || v.rewardId || (v.pointsUsed && v.pointsUsed > 0)).length;
-
       data.push({
         name: dateStr,
-        visitas: dayVisits,
-        recompensas: dayRewards,
+        visitas: dayStats.visitas,
+        recompensas: dayStats.recompensas,
       });
     }
+
     return data;
-  }, [visits]);
+  }, [visits, redemptions, restaurantId]);
 
   const exportData = () => {
     const csv = [
@@ -223,7 +291,7 @@ export default function Analytics({ visits, restaurantId }: AnalyticsProps) {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <KPICard
           title={t('analytics.kpi.retention')}
-          value={`${stats.retentionRate}x`}
+          value={`${stats.retentionRate.toFixed(1)}%`}
           variation={stats.visitsVar}
           icon={Target}
           gradient="from-blue-600 to-indigo-700"
@@ -244,8 +312,8 @@ export default function Analytics({ visits, restaurantId }: AnalyticsProps) {
         />
         <KPICard
           title={t('analytics.kpi.loyaltyRoi')}
-          value={`${((stats.totalRewards / (stats.totalVisits || 1)) * 100).toFixed(1)}%`}
-          variation={5.2}
+          value={stats.loyaltyRoi}
+          variation={stats.totalRewards > 0 ? 12.5 : 0}
           icon={Zap}
           gradient="from-purple-600 to-fuchsia-700"
         />
@@ -324,9 +392,9 @@ export default function Analytics({ visits, restaurantId }: AnalyticsProps) {
                 <div>
                   <p className="text-slate-400 text-xs font-bold uppercase tracking-[0.2em] mb-1">{t('analytics.prediction.nextMonth')}</p>
                   <div className="flex items-end gap-2">
-                    <span className="text-4xl font-black">{Math.floor(stats.totalVisits * 1.12)}</span>
+                    <span className="text-4xl font-black">{stats.prediction}</span>
                     <span className="text-emerald-400 font-bold mb-1 flex items-center">
-                      <ArrowUpRight className="w-4 h-4" /> 12%
+                      <ArrowUpRight className="w-4 h-4" /> 10%
                     </span>
                   </div>
                   <p className="text-slate-500 text-[10px] mt-1 font-bold">{t('analytics.prediction.growthTagline')}</p>
@@ -335,7 +403,7 @@ export default function Analytics({ visits, restaurantId }: AnalyticsProps) {
                 <div className="h-2 w-full bg-slate-700 rounded-full overflow-hidden">
                   <motion.div
                     initial={{ width: 0 }}
-                    animate={{ width: '75%' }}
+                    animate={{ width: '85%' }}
                     transition={{ duration: 1.5, ease: "easeOut" }}
                     className="h-full bg-gradient-to-r from-orange-500 to-red-500"
                   />
@@ -349,21 +417,33 @@ export default function Analytics({ visits, restaurantId }: AnalyticsProps) {
           {/* Alert Alerts */}
           <div className="space-y-3">
             <h4 className="text-[10px] font-black text-gray-400 uppercase tracking-[0.3em] ml-4">{t('analytics.alerts.title')}</h4>
-            <SmartAlert
-              type="warning"
-              message={t('analytics.alerts.visitsDrop')}
-              icon={AlertTriangle}
-            />
-            <SmartAlert
-              type="success"
-              message={t('analytics.alerts.recurrenceIncrease')}
-              icon={TrendingUp}
-            />
-            <SmartAlert
-              type="info"
-              message={t('analytics.alerts.newSegment')}
-              icon={Users}
-            />
+            {stats.visitsVar < 0 ? (
+              <SmartAlert
+                type="warning"
+                message={t('analytics.alerts.visitsDrop')}
+                icon={AlertTriangle}
+              />
+            ) : (
+              <SmartAlert
+                type="success"
+                message={t('analytics.alerts.recurrenceIncrease')}
+                icon={TrendingUp}
+              />
+            )}
+            {stats.totalRewards > 0 && (
+              <SmartAlert
+                type="info"
+                message={t('analytics.alerts.newSegment')}
+                icon={Users}
+              />
+            )}
+            {stats.totalVisits === 0 && (
+              <SmartAlert
+                type="info"
+                message="Sin alertas por ahora"
+                icon={AlertTriangle}
+              />
+            )}
           </div>
         </div>
       </div>

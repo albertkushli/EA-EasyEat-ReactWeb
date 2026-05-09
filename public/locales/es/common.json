@@ -85,7 +85,12 @@
       "privacy": "Privacidad",
       "cookies": "Cookies"
     },
-    "copy": "© 2026 EasyEat · Proyecto Académico · UPC · Barcelona"
+    "copy": "© 2026 EasyEat · Proyecto Académico · UPC · Barcelona",
+    "links": {
+      "legalNotice": "Aviso Legal",
+      "privacy": "Política de Privacidad",
+      "cookies": "Política de Cookies"
+    }
   },
   "auth": {
     "login": {
@@ -371,6 +376,7 @@
       "totalVisits": "Total Visitas",
       "avgRating": "Valoración Media",
       "totalSpent": "Total Gastado",
+      "lastVisit": "Última Visita",
       "loyalty": "Fidelización",
       "currentLevel": "Nivel actual",
       "rewardsRedeemed": "Premios canjeados",

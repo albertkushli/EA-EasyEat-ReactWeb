@@ -89,10 +89,22 @@ export const getCustomersByRestaurant = async (restaurantId: string) => {
   }
 };
 
+export const getAllCustomers = async () => {
+  try {
+    const response = await apiClient.get(`/customers?limit=1000`);
+    const json = response.data;
+    return Array.isArray(json?.data) ? json.data : (Array.isArray(json) ? json : []);
+  } catch (error: any) {
+    console.error("getAllCustomers error:", error.response?.data || error.message);
+    throw error;
+  }
+};
+
 export const customerService = {
   fetchCustomer,
   fetchCustomerFull,
   updateCustomer,
   deleteCustomer,
   getCustomersByRestaurant,
+  getAllCustomers,
 };

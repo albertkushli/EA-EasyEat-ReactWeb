@@ -4,6 +4,7 @@ import { AuthProvider, useAuth } from '@/context/AuthContext';
 import { Login, Register } from '@/features/auth';
 import { Dashboard, Home } from '@/features/dashboard';
 import { Clients } from '@/features/customers';
+import LegalNotice from '@/features/legal/LegalNotice';
 
 function ProtectedRoute({ children }: { children: ReactNode }) {
   const { isAuthenticated, loading } = useAuth();
@@ -63,6 +64,8 @@ export default function App() {
           >
             <Route path="clients" element={<Clients />} />
           </Route>
+
+          <Route path="/aviso-legal" element={<LegalNotice />} />
         </Routes>
       </Router>
     </AuthProvider>

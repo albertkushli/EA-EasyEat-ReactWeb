@@ -2,6 +2,7 @@ import { LayoutDashboard, Users, Gift, BarChart3, Settings, LogOut, Store, Utens
 import { motion } from "framer-motion";
 import { useAuth } from "@/context/AuthContext";
 import { useTranslation } from "react-i18next";
+import { Link } from "react-router-dom";
 
 interface SidebarProps {
   activeView: string;
@@ -97,6 +98,14 @@ export function Sidebar({ activeView, onViewChange, restaurantName, restaurantAd
           <LogOut className="h-5 w-5" />
           <span className="text-sm font-semibold">{t('sidebar.logout')}</span>
         </motion.button>
+
+        {/* Enlace Legal */}
+        <Link 
+          to="/aviso-legal" 
+          className="block text-center text-[10px] text-slate-500 hover:text-orange-400 transition-colors pt-2 uppercase tracking-widest font-bold"
+        >
+          {t('footer.links.legalNotice')}
+        </Link>
       </div>
     </aside>
   );

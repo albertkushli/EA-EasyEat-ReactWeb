@@ -1,9 +1,10 @@
 import { useState, useEffect, useMemo } from "react";
 import { Customer } from "@/types/Customer";
-import { fetchCustomerFull } from "@/services/customer.service";
-import { IVisit, IReview } from "@/types";
+import { fetchRestaurantReviews } from "@/services/review.service";
+import * as customerService from "@/services/customer.service";
+import { IReview } from "@/types";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Calendar, Star, TrendingUp, Utensils, History, Award, DollarSign, Mail, Loader2, ThumbsUp } from "lucide-react";
+import { X, Calendar, Star, TrendingUp, History, Award, Mail, Loader2, ThumbsUp } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
 interface CustomerDetailModalProps {
@@ -11,77 +12,84 @@ interface CustomerDetailModalProps {
   onClose: () => void;
   customer: Customer | null;
   restaurantId: string;
+  restaurantVisits: any[];
 }
 
-export default function CustomerDetailModal({ isOpen, onClose, customer, restaurantId }: CustomerDetailModalProps) {
+export default function CustomerDetailModal({ 
+  isOpen, 
+  onClose, 
+  customer, 
+  restaurantId,
+  restaurantVisits 
+}: CustomerDetailModalProps) {
   const { t } = useTranslation();
-  const [fullCustomer, setFullCustomer] = useState<any | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [fullCustomer, setFullCustomer] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const [restaurantReviews, setRestaurantReviews] = useState<IReview[]>([]);
 
   useEffect(() => {
-    if (isOpen && customer?._id) {
-      loadFullCustomer();
-    } else {
-      setFullCustomer(null);
+    if (isOpen && customer) {
+      loadData();
     }
-  }, [isOpen, customer?._id]);
+  }, [isOpen, customer, restaurantId]);
 
-  const loadFullCustomer = async () => {
-    if (!customer?._id) return;
-    setLoading(true);
+  const loadData = async () => {
     try {
-      const data = await fetchCustomerFull(customer._id);
+      setLoading(true);
+      const data = await customerService.fetchCustomerFull(customer!._id);
       setFullCustomer(data);
+
+      const reviews = await fetchRestaurantReviews(restaurantId);
+      setRestaurantReviews(reviews);
     } catch (error) {
-      console.error("Error loading full customer:", error);
+      console.error("Error loading full customer data:", error);
     } finally {
       setLoading(false);
     }
   };
 
-  // Data processing filtered by current restaurant
   const stats = useMemo(() => {
-    if (!fullCustomer) return null;
+    if (!customer) return null;
 
-    const visits = (fullCustomer.visitHistory || []) as IVisit[];
-    const restaurantVisits = visits.filter(v => 
-      (typeof v.restaurant_id === 'string' ? v.restaurant_id : v.restaurant_id?._id) === restaurantId
+    const customerVisits = restaurantVisits.filter(
+      (visit: any) => 
+        String(visit.restaurant_id?._id || visit.restaurant_id) === String(restaurantId) &&
+        String(visit.customer_id?._id || visit.customer_id) === String(customer._id)
     );
 
-    const reviews = (fullCustomer.reviews || []) as IReview[];
-    const restaurantReviews = reviews.filter(r => 
-      (typeof r.restaurant_id === 'string' ? r.restaurant_id : r.restaurant_id?._id) === restaurantId
+    const totalVisits = customerVisits.length;
+    const totalSpent = customerVisits.reduce((sum, visit) => sum + Number(visit.billAmount || 0), 0);
+    const totalPoints = customerVisits.reduce((sum, visit) => sum + Number(visit.pointsEarned || 0), 0);
+
+    const sortedVisits = [...customerVisits].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+    const lastVisit = sortedVisits[0];
+
+    const filteredReviews = restaurantReviews.filter(
+      (review: any) =>
+        String(review.restaurant_id?._id || review.restaurant_id) === String(restaurantId) &&
+        String(review.customer_id?._id || review.customer_id) === String(customer._id)
     );
 
-    const totalSpent = restaurantVisits.reduce((acc, v) => acc + (v.billAmount || 0), 0);
-    
-    const validRatings = restaurantReviews
-      .map(r => Number(r.globalRating))
-      .filter(rating => !Number.isNaN(rating));
+    const ratings = filteredReviews
+      .map((review: any) => Number(review.globalRating))
+      .filter((rating) => !Number.isNaN(rating));
 
-    const avgRating = validRatings.length > 0 
-      ? validRatings.reduce((acc, r) => acc + r, 0) / validRatings.length 
-      : null;
-
-    // Points for this restaurant
-    const pointsWallets = fullCustomer.pointsWallet || [];
-    const restaurantPoints = pointsWallets.find((pw: any) => 
-      (typeof pw.restaurant_id === 'string' ? pw.restaurant_id : pw.restaurant_id?._id) === restaurantId
-    );
+    const averageRating = ratings.length > 0
+        ? ratings.reduce((sum, rating) => sum + rating, 0) / ratings.length
+        : null;
 
     return {
-      totalVisits: restaurantVisits.length,
+      totalVisits,
       totalSpent: totalSpent.toFixed(2),
-      avgRating: avgRating !== null ? avgRating.toFixed(1) : null,
-      points: restaurantPoints?.points || 0,
-      recentHistory: restaurantVisits
-        .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
-        .slice(0, 5),
-      recentReviews: restaurantReviews
+      totalPoints,
+      avgRating: averageRating !== null ? averageRating.toFixed(1) : null,
+      lastVisit: lastVisit ? new Date(lastVisit.date).toLocaleDateString() : t('clients.details.noHistory'),
+      recentHistory: sortedVisits.slice(0, 5),
+      recentReviews: filteredReviews
         .sort((a, b) => new Date(b.date || b.createdAt!).getTime() - new Date(a.date || a.createdAt!).getTime())
         .slice(0, 3)
     };
-  }, [fullCustomer, restaurantId]);
+  }, [customer, restaurantId, restaurantVisits, restaurantReviews, t]);
 
   if (!customer) return null;
 
@@ -163,6 +171,10 @@ export default function CustomerDetailModal({ isOpen, onClose, customer, restaur
                           <span className="text-lg font-black text-gray-800">{stats.totalVisits}</span>
                         </div>
                         <div className="flex justify-between items-center">
+                          <span className="text-sm text-gray-500 font-medium">{t('clients.details.lastVisit')}</span>
+                          <span className="text-sm font-black text-gray-700">{stats.lastVisit}</span>
+                        </div>
+                        <div className="flex justify-between items-center">
                           <span className="text-sm text-gray-500 font-medium">{t('clients.details.avgRating')}</span>
                           <div className="flex items-center gap-1">
                             {stats.avgRating !== null ? (
@@ -179,6 +191,10 @@ export default function CustomerDetailModal({ isOpen, onClose, customer, restaur
                           <span className="text-sm text-gray-500 font-medium">{t('clients.details.totalSpent')}</span>
                           <span className="text-lg font-black text-gray-800">{stats.totalSpent}€</span>
                         </div>
+                        <div className="flex justify-between items-center">
+                          <span className="text-sm text-gray-500 font-medium">Puntos ganados</span>
+                          <span className="text-lg font-black text-orange-600">{stats.totalPoints}</span>
+                        </div>
                       </div>
                     </div>
 
@@ -187,12 +203,12 @@ export default function CustomerDetailModal({ isOpen, onClose, customer, restaur
                         <div className="p-2 bg-white rounded-xl shadow-sm">
                           <Award className="w-5 h-5 text-slate-600" />
                         </div>
-                        <span className="text-[10px] font-black text-slate-600 uppercase tracking-widest">{t('clients.details.loyalty')}</span>
+                        <span className="text-[10px] font-black text-slate-600 uppercase tracking-widest">FIDELIZACIÓN</span>
                       </div>
                       <div className="space-y-3">
                         <div>
-                          <span className="text-xs text-gray-400 block mb-1">{t('clients.details.points')} acumulados</span>
-                          <span className="text-lg font-black text-gray-800">{stats.points}</span>
+                          <span className="text-xs text-gray-400 block mb-1">Puntos acumulados</span>
+                          <span className="text-lg font-black text-gray-800">{stats.totalPoints}</span>
                         </div>
                       </div>
                     </div>
@@ -251,7 +267,7 @@ export default function CustomerDetailModal({ isOpen, onClose, customer, restaur
                               <span className="text-[10px] text-gray-400 font-bold uppercase">{new Date(review.date || review.createdAt!).toLocaleDateString()}</span>
                             </div>
                             <p className="text-sm text-gray-600 leading-relaxed font-medium">{review.comment ? `"${review.comment}"` : "Sin comentario"}</p>
-                            {review.likes > 0 && (
+                            {(review.likes || 0) > 0 && (
                               <div className="mt-3 flex items-center gap-1.5 text-[10px] text-gray-400 font-black uppercase tracking-wider">
                                 <ThumbsUp className="w-3 h-3 text-orange-500" />
                                 <span>{review.likes} likes</span>
@@ -259,7 +275,7 @@ export default function CustomerDetailModal({ isOpen, onClose, customer, restaur
                             )}
                           </div>
                         )) : (
-                          <p className="text-sm text-gray-400 italic p-4">{t('clients.details.noReviews')}</p>
+                          <p className="text-sm text-gray-400 italic p-4">No ha realizado reseñas todavía</p>
                         )}
                       </div>
                     </div>
