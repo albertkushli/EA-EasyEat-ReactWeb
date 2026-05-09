@@ -48,7 +48,9 @@ export default function DiscoverScreen() {
           {restaurants.map((r: Restaurant, index: number) => {
             const image = r.profile.image?.[0] || '';
             const categories = r.profile.category?.slice(0, MAX_DISPLAYED_CATEGORIES).join(' · ') || 'Restaurant';
-            const detailLine = r.profile.category?.join(', ') || 'Loyalty rewards available';
+            const detailLine = r.profile.category?.length
+              ? `${r.profile.category.length} cuisine categories · Loyalty rewards available`
+              : 'Loyalty rewards available';
             const rating = typeof r.profile.globalRating === 'number'
               ? r.profile.globalRating.toFixed(1)
               : 'N/A';
@@ -83,7 +85,7 @@ export default function DiscoverScreen() {
 
                 <div className="space-y-2 p-4">
                   <h3 className="truncate text-base font-semibold text-slate-900">{r.profile.name}</h3>
-                  <p className="min-h-10 text-sm text-slate-500">{detailLine}</p>
+                  <p className="line-clamp-2 text-sm text-slate-500">{detailLine}</p>
                 </div>
               </motion.button>
             );
