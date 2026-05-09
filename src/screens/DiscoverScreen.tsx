@@ -6,6 +6,9 @@ import type { Restaurant } from '@/types/Restaurant';
 import { motion } from 'framer-motion';
 
 const MAX_DISPLAYED_CATEGORIES = 2;
+const CARD_STAGGER_STEP = 0.03;
+const CARD_STAGGER_MAX = 0.18;
+const LOYALTY_LABEL = 'Loyalty rewards available';
 
 export default function DiscoverScreen() {
   const restaurants = useRestaurantStore((s: any) => s.restaurants);
@@ -47,20 +50,24 @@ export default function DiscoverScreen() {
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
           {restaurants.map((r: Restaurant, index: number) => {
             const image = r.profile.image?.[0] || '';
-            const categories = r.profile.category?.slice(0, MAX_DISPLAYED_CATEGORIES).join(' · ') || 'Restaurant';
-            const detailLine = r.profile.category?.length
-              ? `${r.profile.category.length} cuisine categories · Loyalty rewards available`
-              : 'Loyalty rewards available';
+            const categoryCount = r.profile.category?.length || 0;
+            const categories = categoryCount > 0
+              ? r.profile.category.slice(0, MAX_DISPLAYED_CATEGORIES).join(' · ')
+              : 'Restaurant';
+            const detailLine = categoryCount > 0
+              ? `${categoryCount} cuisine categories · ${LOYALTY_LABEL}`
+              : LOYALTY_LABEL;
             const rating = typeof r.profile.globalRating === 'number'
               ? r.profile.globalRating.toFixed(1)
               : 'N/A';
+            const animationDelay = Math.min(index * CARD_STAGGER_STEP, CARD_STAGGER_MAX);
 
             return (
               <motion.button
                 key={r._id}
                 initial={{ opacity: 0, y: 18 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.3, delay: index * 0.03 }}
+                transition={{ duration: 0.3, delay: animationDelay }}
                 className="group relative overflow-hidden rounded-2xl border border-slate-200/70 bg-white text-left shadow-sm transition-all hover:-translate-y-1 hover:shadow-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400"
                 onClick={() => navigate('/map', { state: { openRestaurantId: r._id } })}
               >
