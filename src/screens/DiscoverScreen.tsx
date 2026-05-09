@@ -74,7 +74,7 @@ export default function DiscoverScreen() {
                 <div className="relative h-40 w-full overflow-hidden">
                   <img
                     src={image}
-                    alt={r.profile.name}
+                    alt={`Photo of ${r.profile.name} restaurant`}
                     className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                   />
                   <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-slate-950/55 via-slate-900/10 to-transparent" />
