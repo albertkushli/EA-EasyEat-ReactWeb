@@ -317,6 +317,7 @@ function CustomerRestaurantDetail({
 }
 
 export function CustomerSidebar({ activeTab, onTabChange, user, onLogout }: CustomerSidebarProps) {
+  const { t } = useTranslation();
   return (
     <aside className="hc-sidebar">
       <div className="hc-sidebar__brand">
