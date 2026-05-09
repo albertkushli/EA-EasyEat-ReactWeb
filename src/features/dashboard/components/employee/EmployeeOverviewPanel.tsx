@@ -2,53 +2,41 @@ import { useMemo } from 'react';
 import type { IReview, IVisit } from '@/types';
 import RestaurantReviewsBarChart from '../RestaurantReviewsBarChart';
 import PeakVisitHoursChart from '../PeakVisitHoursChart';
+import type { Dish } from '@/types/Dish';
 
 interface EmployeeOverviewPanelProps {
   visits: IVisit[];
   reviews: IReview[];
+  dishes: Dish[];
   restaurantId: string;
   averagePointsPerVisit: number;
   loyalCustomers: number;
   restRating?: number | string;
 }
 
-function buildRatingRanking(reviews: IReview[]) {
-  const map: Record<string, { total: number; count: number }> = {};
+function buildRatingRanking(dishes: Dish[]) {
+  const ranking = dishes
+    .filter((dish) => dish.avgRating !== undefined && dish.avgRating > 0)
+    .sort((a, b) => (b.avgRating || 0) - (a.avgRating || 0))
+    .slice(0, 10)
+    .map(dish => ({
+      name: dish.name,
+      score: dish.avgRating || 0
+    }));
 
-  reviews.forEach((review) => {
-    const dish = (review as IReview & { dish?: { name?: string }; dishName?: string; itemName?: string; name?: string }).dish;
-    const name = dish?.name || (review as IReview & { dishName?: string; itemName?: string; name?: string }).dishName || (review as IReview & { itemName?: string; name?: string }).itemName || (review as IReview & { name?: string }).name;
-    const score = Number((review as IReview & { rating?: number; score?: number }).rating ?? (review as IReview & { score?: number }).score ?? 0);
-    if (!name) return;
-    if (!map[name]) map[name] = { total: 0, count: 0 };
-    map[name].total += score;
-    if (score > 0) map[name].count += 1;
-  });
-
-  let ranking = Object.keys(map).map((name) => ({
-    name,
-    score: map[name].count ? +(map[name].total / map[name].count).toFixed(1) : 0,
-  }));
-
-  if (ranking.length === 0) {
-    ranking = [
-      { name: 'Pan con Tomate', score: 8.0 },
-      { name: 'Pulpo a la Gallega', score: 7.0 },
-    ];
-  }
-
-  return ranking.sort((a, b) => b.score - a.score).slice(0, 10);
+  return ranking;
 }
 
 export default function EmployeeOverviewPanel({
   visits,
   reviews,
+  dishes,
   restaurantId,
   averagePointsPerVisit,
   loyalCustomers,
   restRating,
 }: EmployeeOverviewPanelProps) {
-  const ranking = useMemo(() => buildRatingRanking(reviews), [reviews]);
+  const ranking = useMemo(() => buildRatingRanking(dishes), [dishes]);
 
   return (
     <main className="flex-1 w-full h-full bg-slate-50/30">
@@ -110,17 +98,23 @@ export default function EmployeeOverviewPanel({
         <section className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100">
           <h3 className="text-sm font-semibold text-slate-500 mb-4 uppercase tracking-wide">Ranking de Platos Estrellas</h3>
           <div className="flex flex-col">
-            {ranking.map((dish, index) => (
-              <div key={`${dish.name}-${index}`} className="flex items-center justify-between py-3 border-b border-slate-50 last:border-0">
-                <div className="flex items-center gap-3">
-                  <span className="text-slate-300 text-lg">★</span>
-                  <span className="text-[15px] font-medium text-slate-700">{dish.name}</span>
+            {ranking.length > 0 ? (
+              ranking.map((dish, index) => (
+                <div key={`${dish.name}-${index}`} className="flex items-center justify-between py-3 border-b border-slate-50 last:border-0">
+                  <div className="flex items-center gap-3">
+                    <span className="text-slate-300 text-lg">★</span>
+                    <span className="text-[15px] font-medium text-slate-700">{dish.name}</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-[15px] font-semibold text-slate-800">{dish.score.toFixed(1)}</span>
+                  </div>
                 </div>
-                <div className="flex items-center gap-2">
-                  <span className="text-[15px] font-semibold text-slate-800">{dish.score.toFixed(1)}</span>
-                </div>
+              ))
+            ) : (
+              <div className="py-8 text-center">
+                <p className="text-slate-400 text-sm italic">No hay datos suficientes para generar el ranking de platos.</p>
               </div>
-            ))}
+            )}
           </div>
         </section>
       </div>

@@ -6,6 +6,7 @@ import { Dashboard, Home } from '@/features/dashboard';
 import { Clients } from '@/features/customers';
 import MapScreen from '@/screens/MapScreen';
 import DiscoverScreen from '@/screens/DiscoverScreen';
+import LegalNotice from '@/features/legal/LegalNotice';
 
 function ProtectedRoute({ children }: { children: ReactNode }) {
   const { isAuthenticated, loading } = useAuth();
@@ -68,6 +69,8 @@ export default function App() {
           <Route path="/discover" element={<DiscoverScreen />} />
           <Route path="/map" element={<MapScreen />} />
           <Route path="/restaurant/:id" element={<div className="p-4">Restaurant details placeholder</div>} />
+
+          <Route path="/aviso-legal" element={<LegalNotice />} />
         </Routes>
       </Router>
     </AuthProvider>

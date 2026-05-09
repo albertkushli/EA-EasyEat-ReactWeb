@@ -85,7 +85,12 @@
       "privacy": "Privacidad",
       "cookies": "Cookies"
     },
-    "copy": "© 2026 EasyEat · Proyecto Académico · UPC · Barcelona"
+    "copy": "© 2026 EasyEat · Proyecto Académico · UPC · Barcelona",
+    "links": {
+      "legalNotice": "Aviso Legal",
+      "privacy": "Política de Privacidad",
+      "cookies": "Política de Cookies"
+    }
   },
   "auth": {
     "login": {
@@ -365,7 +370,23 @@
     "noResultsEmpty": "Aún no hay clientes registrados en este restaurante.",
     "active": "Activo",
     "inactive": "Inactivo",
-    "memberSince": "Miembro desde"
+    "memberSince": "Miembro desde",
+    "details": {
+      "stats": "Estadísticas",
+      "totalVisits": "Total Visitas",
+      "avgRating": "Valoración Media",
+      "totalSpent": "Total Gastado",
+      "lastVisit": "Última Visita",
+      "loyalty": "Fidelización",
+      "currentLevel": "Nivel actual",
+      "rewardsRedeemed": "Premios canjeados",
+      "preferences": "Preferencias",
+      "visitHistory": "Historial de Visitas",
+      "lastReviews": "Últimas Reseñas",
+      "close": "CERRAR",
+      "noReviews": "No ha realizado reseñas todavía.",
+      "noHistory": "No hay visitas registradas todavía."
+    }
   },
   "employees": {
     "title": "Empleados",
@@ -381,6 +402,17 @@
       "role": "Rol",
       "password": "Contraseña",
       "submit": "Guardar Empleado"
+    },
+    "filters": {
+      "title": "Filtros",
+      "search": "Buscar empleados...",
+      "role": "Rol",
+      "minRating": "Rating mínimo",
+      "minVisits": "Visitas mínimas",
+      "minRewards": "Recompensas mínimas",
+      "clear": "Limpiar filtros",
+      "allRoles": "Todos los roles",
+      "noResults": "No se encontraron empleados con estos criterios."
     }
   },
   "dishes": {
@@ -415,7 +447,26 @@
       "descriptionPlaceholder": "Describe los ingredientes o preparación...",
       "price": "Precio",
       "section": "Sección",
+      "image": "Imagen (URL)",
+      "imagePlaceholder": "https://enlace-a-tu-imagen.jpg",
+      "portionSize": "Tamaño de la porción",
+      "ingredients": "Ingredientes",
+      "ingredientsPlaceholder": "Ej: patatas, sal, aceite (separados por comas)",
+      "allergens": "Alérgenos",
+      "allergensPlaceholder": "Ej: gluten, lácteos (separados por comas)",
+      "dietary": "Etiquetas dietéticas",
+      "dietaryPlaceholder": "Ej: vegano, vegetariano",
+      "flavor": "Perfil de sabor",
+      "flavorPlaceholder": "Ej: picante, salado",
+      "availability": "Disponibilidad",
+      "availabilityPlaceholder": "Ej: lunch, dinner",
       "submit": "Guardar Plato"
+    },
+    "portionSizes": {
+      "small": "Pequeño",
+      "medium": "Mediano",
+      "large": "Grande",
+      "sharing": "Para compartir"
     },
     "sections": {
       "starters": "Entrantes",
@@ -502,6 +553,17 @@
     },
     "points": {
       "title": "Sistema de Puntos",
+      "method": "Método de Acumulación",
+      "simple": {
+        "title": "Método Simple (Lineal)",
+        "description": "Acumulación fija por cada euro gastado. Fácil de entender para el cliente.",
+        "pointsPerEuro": "Puntos por cada Euro (1€ = X pts)"
+      },
+      "exponential": {
+        "title": "Método Inteligente (Dinámico)",
+        "description": "Lógica avanzada que premia la fidelidad y recurrencia automáticamente.",
+        "maxPoints": "Máximo de puntos por visita"
+      },
       "accumulationRatio": "Ratio de Acumulación",
       "configureMultipliers": "Configurar multiplicadores",
       "welcomeBonus": "Bonus por Bienvenida",

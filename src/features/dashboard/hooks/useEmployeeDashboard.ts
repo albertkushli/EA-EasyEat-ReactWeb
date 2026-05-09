@@ -2,8 +2,10 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '@/context/AuthContext';
 import { restaurantService, reviewService } from '@/services';
+import { getDishesByRestaurant } from '@/services/dish.service';
 import { DEFAULT_META, USER_ROLES, VISITS_LIMIT, VISITS_PAGE_SIZE } from '@/constants';
 import type { IEmployeeStats, IRestaurantStats, IReview, IVisit, UserRole } from '@/types';
+import type { Dish } from '@/types/Dish';
 
 interface UseEmployeeDashboardResult {
   t: ReturnType<typeof useTranslation>['t'];
@@ -22,6 +24,7 @@ interface UseEmployeeDashboardResult {
   restaurantKpis: IRestaurantStats | null;
   reviews: IReview[];
   employees: IEmployeeStats[];
+  dishes: Dish[];
   loading: boolean;
   restName: string;
   restRating?: number;
@@ -43,6 +46,7 @@ export function useEmployeeDashboard(): UseEmployeeDashboardResult {
   const [restaurantKpis, setRestaurantKpis] = useState<IRestaurantStats | null>(null);
   const [reviews, setReviews] = useState<IReview[]>([]);
   const [employees] = useState<IEmployeeStats[]>([]);
+  const [dishes, setDishes] = useState<Dish[]>([]);
   const [loading, setLoading] = useState(true);
   const isOwner = role === USER_ROLES.OWNER;
   const [activeView, setActiveView] = useState(isOwner ? 'dashboard' : 'profile');
@@ -117,7 +121,7 @@ export function useEmployeeDashboard(): UseEmployeeDashboardResult {
       }
 
       try {
-        const data = await reviewService.fetchAllReviews();
+        const data = await reviewService.fetchRestaurantReviews(user.restaurant_id);
         setReviews(data);
       } catch (error) {
         console.error('Error fetching reviews:', error);
@@ -126,6 +130,25 @@ export function useEmployeeDashboard(): UseEmployeeDashboardResult {
     }
 
     fetchReviews();
+  }, [token, user?.restaurant_id]);
+
+  useEffect(() => {
+    async function fetchDishes() {
+      if (!token || !user?.restaurant_id) {
+        setDishes([]);
+        return;
+      }
+
+      try {
+        const data = await getDishesByRestaurant(user.restaurant_id);
+        setDishes(data);
+      } catch (error) {
+        console.error('Error fetching dishes:', error);
+        setDishes([]);
+      }
+    }
+
+    fetchDishes();
   }, [token, user?.restaurant_id]);
 
   const restName = restaurant?.profile?.name || t('dashboard.employee.yourRestaurant');
@@ -154,6 +177,7 @@ export function useEmployeeDashboard(): UseEmployeeDashboardResult {
     restaurantKpis,
     reviews,
     employees,
+    dishes,
     loading,
     restName,
     restRating,

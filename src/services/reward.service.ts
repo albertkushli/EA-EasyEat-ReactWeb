@@ -1,5 +1,6 @@
 import apiClient from "@/services/apiClient";
 import { Reward } from "@/types/Reward";
+import { API_ENDPOINTS } from '../constants';
 
 export const getRewardsByRestaurant = async (restaurantId: string) => {
   if (!restaurantId) {
@@ -49,4 +50,23 @@ export const deleteReward = async (rewardId: string, restaurantId: string) => {
     throw error;
   }
 };
+
+/**
+ * Obtiene los canjes (redemptions) de un restaurante
+ */
+export async function fetchRedemptionsByRestaurant(restaurantId: string): Promise<any[]> {
+  if (!restaurantId) return [];
+
+  try {
+    const res = await apiClient.get(
+      API_ENDPOINTS.REWARD_REDEMPTIONS_BY_RESTAURANT(restaurantId)
+    );
+    const json = res.data;
+    const data = json?.data || json;
+    return Array.isArray(data) ? data : [];
+  } catch (err) {
+    console.error('Error fetching restaurant redemptions:', err);
+    return [];
+  }
+}
 
