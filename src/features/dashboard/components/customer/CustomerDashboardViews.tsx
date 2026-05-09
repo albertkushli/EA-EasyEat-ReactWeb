@@ -1,7 +1,8 @@
 import { type FormEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { QRCodeCanvas } from 'qrcode.react';
-import { ArrowLeft, CheckCircle, Clock, Coins, Gift, Heart, Home, MapPin, QrCode, Save, Search, SlidersHorizontal, Star, Trophy, User, Wallet, X, Mail, Lock } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { ArrowLeft, CheckCircle, Clock, Coins, Gift, Heart, Home, Map, MapPin, QrCode, Save, Search, SlidersHorizontal, Star, Trophy, User, Wallet, X, Mail, Lock } from 'lucide-react';
 import type { ICustomer } from '@/types';
 import type { CustomerBadge, CustomerPointsWalletEntry, CustomerRestaurant, CustomerReward, CustomerTabId, CustomerVisit } from '../../hooks/useCustomerDashboard';
 
@@ -335,10 +336,6 @@ export function CustomerSidebar({ activeTab, onTabChange, user, onLogout }: Cust
           <MapPin size={18} />
           <span>Descobrir</span>
         </button>
-        <button type="button" className={activeTab === 'qr' ? 'hc-sidebar-nav__item active' : 'hc-sidebar-nav__item'} onClick={() => onTabChange('qr')}>
-          <QrCode size={18} />
-          <span>El meu QR</span>
-        </button>
         <button type="button" className={activeTab === 'rewards' ? 'hc-sidebar-nav__item active' : 'hc-sidebar-nav__item'} onClick={() => onTabChange('rewards')}>
           <Gift size={18} />
           <span>Recompenses</span>
@@ -669,6 +666,7 @@ export function CustomerDiscoverView({
   onOpenQrModal,
   onOpenRewardQrModal,
 }: CustomerDiscoverViewProps) {
+  const navigate = useNavigate();
   const categories = [
     { name: 'Tots', icon: '🍽️' },
     { name: 'Sushi', icon: '🍣' },
@@ -708,7 +706,19 @@ export function CustomerDiscoverView({
   return (
     <div className="hc-discover-view">
       <div className="hc-discover-header">
-        <h2 style={{ fontSize: '2rem', marginBottom: '1.5rem', marginTop: 0 }}>Descobreix</h2>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '1rem', marginBottom: '1.5rem' }}>
+          <h2 style={{ fontSize: '2rem', margin: 0 }}>Descobreix</h2>
+          <button
+            type="button"
+            className="hc-map-btn"
+            onClick={() => navigate('/map')}
+            title="Obrir el mapa"
+            aria-label="Obrir el mapa"
+          >
+            <Map size={18} />
+            <span>Mapa</span>
+          </button>
+        </div>
 
         <div className="hc-search-bar">
           <div className="hc-search-input">

@@ -4,6 +4,8 @@ import { AuthProvider, useAuth } from '@/context/AuthContext';
 import { Login, Register } from '@/features/auth';
 import { Dashboard, Home } from '@/features/dashboard';
 import { Clients } from '@/features/customers';
+import MapScreen from '@/screens/MapScreen';
+import DiscoverScreen from '@/screens/DiscoverScreen';
 
 function ProtectedRoute({ children }: { children: ReactNode }) {
   const { isAuthenticated, loading } = useAuth();
@@ -63,6 +65,9 @@ export default function App() {
           >
             <Route path="clients" element={<Clients />} />
           </Route>
+          <Route path="/discover" element={<DiscoverScreen />} />
+          <Route path="/map" element={<MapScreen />} />
+          <Route path="/restaurant/:id" element={<div className="p-4">Restaurant details placeholder</div>} />
         </Routes>
       </Router>
     </AuthProvider>

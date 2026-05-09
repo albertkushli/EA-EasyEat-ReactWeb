@@ -2479,6 +2479,32 @@
   justify-content: center;
 }
 
+.hc-map-btn {
+  padding: 0.75rem 1rem;
+  background: linear-gradient(135deg, #ff7a45 0%, #ff5a23 100%);
+  color: #ffffff;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-weight: 600;
+  box-shadow: 0 10px 24px rgba(255, 90, 35, 0.2);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
+}
+
+.hc-map-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 14px 30px rgba(255, 90, 35, 0.24);
+}
+
+.hc-map-btn:active {
+  transform: translateY(0);
+  opacity: 0.95;
+}
+
 .hc-category-pills {
   display: flex;
   gap: 0.75rem;
