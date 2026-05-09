@@ -46,6 +46,7 @@ export default function HomeEmployee() {
           <EmployeeOverviewPanel
             visits={dashboard.visits}
             reviews={dashboard.reviews}
+            dishes={dashboard.dishes}
             restaurantId={dashboard.user?.restaurant_id!}
             averagePointsPerVisit={dashboard.averagePointsPerVisit}
             loyalCustomers={dashboard.loyalCustomers}
