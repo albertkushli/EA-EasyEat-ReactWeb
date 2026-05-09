@@ -396,6 +396,17 @@
       "role": "Role",
       "password": "Password",
       "submit": "Save Employee"
+    },
+    "filters": {
+      "title": "Filters",
+      "search": "Search employees...",
+      "role": "Role",
+      "minRating": "Min Rating",
+      "minVisits": "Min Visits",
+      "minRewards": "Min Rewards",
+      "clear": "Clear filters",
+      "allRoles": "All roles",
+      "noResults": "No employees found matching these criteria."
     }
   },
   "dishes": {

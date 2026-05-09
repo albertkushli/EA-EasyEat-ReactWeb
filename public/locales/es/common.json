@@ -396,6 +396,17 @@
       "role": "Rol",
       "password": "Contraseña",
       "submit": "Guardar Empleado"
+    },
+    "filters": {
+      "title": "Filtros",
+      "search": "Buscar empleados...",
+      "role": "Rol",
+      "minRating": "Rating mínimo",
+      "minVisits": "Visitas mínimas",
+      "minRewards": "Recompensas mínimas",
+      "clear": "Limpiar filtros",
+      "allRoles": "Todos los roles",
+      "noResults": "No se encontraron empleados con estos criterios."
     }
   },
   "dishes": {
