@@ -430,7 +430,26 @@
       "descriptionPlaceholder": "Describe los ingredientes o preparación...",
       "price": "Precio",
       "section": "Sección",
+      "image": "Imagen (URL)",
+      "imagePlaceholder": "https://enlace-a-tu-imagen.jpg",
+      "portionSize": "Tamaño de la porción",
+      "ingredients": "Ingredientes",
+      "ingredientsPlaceholder": "Ej: patatas, sal, aceite (separados por comas)",
+      "allergens": "Alérgenos",
+      "allergensPlaceholder": "Ej: gluten, lácteos (separados por comas)",
+      "dietary": "Etiquetas dietéticas",
+      "dietaryPlaceholder": "Ej: vegano, vegetariano",
+      "flavor": "Perfil de sabor",
+      "flavorPlaceholder": "Ej: picante, salado",
+      "availability": "Disponibilidad",
+      "availabilityPlaceholder": "Ej: lunch, dinner",
       "submit": "Guardar Plato"
+    },
+    "portionSizes": {
+      "small": "Pequeño",
+      "medium": "Mediano",
+      "large": "Grande",
+      "sharing": "Para compartir"
     },
     "sections": {
       "starters": "Entrantes",

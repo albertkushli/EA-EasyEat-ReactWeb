@@ -430,7 +430,26 @@
       "descriptionPlaceholder": "Describe ingredients or preparation...",
       "price": "Price",
       "section": "Section",
+      "image": "Image (URL)",
+      "imagePlaceholder": "https://link-to-your-image.jpg",
+      "portionSize": "Portion Size",
+      "ingredients": "Ingredients",
+      "ingredientsPlaceholder": "E.g: potatoes, salt, oil (comma separated)",
+      "allergens": "Allergens",
+      "allergensPlaceholder": "E.g: gluten, dairy (comma separated)",
+      "dietary": "Dietary tags",
+      "dietaryPlaceholder": "E.g: vegan, vegetarian",
+      "flavor": "Flavor profile",
+      "flavorPlaceholder": "E.g: spicy, salty",
+      "availability": "Availability",
+      "availabilityPlaceholder": "E.g: lunch, dinner",
       "submit": "Save Dish"
+    },
+    "portionSizes": {
+      "small": "Small",
+      "medium": "Medium",
+      "large": "Large",
+      "sharing": "Sharing"
     },
     "sections": {
       "starters": "Starters",
