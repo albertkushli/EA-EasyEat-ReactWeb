@@ -365,7 +365,22 @@
     "noResultsEmpty": "Aún no hay clientes registrados en este restaurante.",
     "active": "Activo",
     "inactive": "Inactivo",
-    "memberSince": "Miembro desde"
+    "memberSince": "Miembro desde",
+    "details": {
+      "stats": "Estadísticas",
+      "totalVisits": "Total Visitas",
+      "avgRating": "Valoración Media",
+      "totalSpent": "Total Gastado",
+      "loyalty": "Fidelización",
+      "currentLevel": "Nivel actual",
+      "rewardsRedeemed": "Premios canjeados",
+      "preferences": "Preferencias",
+      "visitHistory": "Historial de Visitas",
+      "lastReviews": "Últimas Reseñas",
+      "close": "CERRAR",
+      "noReviews": "No ha realizado reseñas todavía.",
+      "noHistory": "No hay visitas registradas todavía."
+    }
   },
   "employees": {
     "title": "Empleados",

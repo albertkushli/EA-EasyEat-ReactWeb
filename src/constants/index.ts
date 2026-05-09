@@ -51,6 +51,7 @@ export const API_ENDPOINTS = {
   // Customers
   CUSTOMERS: '/customers',
   CUSTOMER_BY_ID: (id: string) => `/customers/${id}`,
+  CUSTOMER_FULL: (id: string) => `/customers/${id}/full`,
 
   // Employees
   EMPLOYEES: '/employees',

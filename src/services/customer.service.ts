@@ -7,6 +7,23 @@ import { API_ENDPOINTS } from '../constants';
 import { ICustomer } from '../types';
 
 /**
+ * Obtiene un cliente por ID con relaciones pobladas (visitas, reseñas, etc.)
+ */
+export async function fetchCustomerFull(customerId: string): Promise<any | null> {
+  if (!customerId) return null;
+
+  try {
+    const res = await apiClient.get<any>(
+      API_ENDPOINTS.CUSTOMER_FULL(customerId)
+    );
+    return res.data ?? null;
+  } catch (err) {
+    console.error('Error fetching customer full:', err);
+    return null;
+  }
+}
+
+/**
  * Obtiene un cliente por ID
  */
 export async function fetchCustomer(customerId: string): Promise<ICustomer | null> {
@@ -74,6 +91,7 @@ export const getCustomersByRestaurant = async (restaurantId: string) => {
 
 export const customerService = {
   fetchCustomer,
+  fetchCustomerFull,
   updateCustomer,
   deleteCustomer,
   getCustomersByRestaurant,

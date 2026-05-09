@@ -130,12 +130,14 @@ export interface IPaginatedResponse<T> {
 export interface IReview {
   _id?: string;
   id?: string;
-  restaurant_id: string;
-  customer_id: string;
-  rating: number;
+  restaurant_id: string | any;
+  customer_id: string | any;
+  globalRating: number;
   comment?: string;
-  createdAt?: Date;
-  updatedAt?: Date;
+  likes?: number;
+  date?: string | Date;
+  createdAt?: string | Date;
+  updatedAt?: string | Date;
 }
 
 // ─────────────────────────────────────────

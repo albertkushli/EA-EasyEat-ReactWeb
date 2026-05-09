@@ -4,6 +4,7 @@ import { getCustomersByRestaurant } from "@/services/customer.service";
 import { useAuth } from "@/context/AuthContext";
 import { Search, User, Mail, ChevronRight, AlertCircle, Loader2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import CustomerDetailModal from "../components/CustomerDetailModal";
 
 export default function Clients() {
   const { user, restaurant } = useAuth() as any;
@@ -12,6 +13,10 @@ export default function Clients() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
+  
+  // Modal state
+  const [selectedClient, setSelectedClient] = useState<Customer | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const restaurantId = user?.restaurant_id || restaurant?._id || restaurant?.id || "";
 
@@ -36,6 +41,11 @@ export default function Clients() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleClientClick = (client: Customer) => {
+    setSelectedClient(client);
+    setIsModalOpen(true);
   };
 
   const filteredClients = useMemo(() => {
@@ -106,6 +116,7 @@ export default function Clients() {
           {filteredClients.map((client) => (
             <div
               key={client._id}
+              onClick={() => handleClientClick(client)}
               className="group bg-white rounded-2xl p-5 shadow-sm border border-gray-100 hover:shadow-md hover:border-orange-100 transition-all duration-300 cursor-pointer relative overflow-hidden"
             >
               {/* Status Badge */}
@@ -152,7 +163,16 @@ export default function Clients() {
           ))}
         </div>
       )}
+
+      {/* Customer Detail Modal */}
+      <CustomerDetailModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        customer={selectedClient}
+        restaurantId={restaurantId}
+      />
     </div>
   );
 }
+
 
