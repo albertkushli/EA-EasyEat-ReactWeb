@@ -204,7 +204,10 @@ export function useCustomerDashboard(): UseCustomerDashboardResult {
   const [passwordError, setPasswordError] = useState('');
   const [updating, setUpdating] = useState(false);
   const [success, setSuccess] = useState(false);
-  const selectedRestaurantId = getRestaurantIdFromEntry(selectedRestaurant);
+  const selectedRestaurantId = useMemo(
+    () => getRestaurantIdFromEntry(selectedRestaurant),
+    [selectedRestaurant],
+  );
 
   const updateDashboardSearchParams = useCallback((tab: CustomerTabId, restaurantId?: string | null) => {
     setSearchParams((currentParams) => {
@@ -258,10 +261,12 @@ export function useCustomerDashboard(): UseCustomerDashboardResult {
       return;
     }
 
-    if (selectedRestaurantId !== restaurantId) {
-      setSelectedRestaurant(restaurantFromParams);
-    }
-  }, [activeTab, loadingCustomerData, restaurants, searchParams, selectedRestaurantId]);
+    setSelectedRestaurant((currentRestaurant) => (
+      getRestaurantIdFromEntry(currentRestaurant) === restaurantId
+        ? currentRestaurant
+        : restaurantFromParams
+    ));
+  }, [activeTab, loadingCustomerData, restaurants, searchParams]);
 
   useEffect(() => {
     async function fetchCustomerData() {
