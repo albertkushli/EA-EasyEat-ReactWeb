@@ -205,11 +205,64 @@ export function useCustomerDashboard(): UseCustomerDashboardResult {
   const [updating, setUpdating] = useState(false);
   const [success, setSuccess] = useState(false);
 
-  const handleTabChange = useCallback((tab: CustomerTabId) => {
-    setSearchParams({ tab });
-    setSelectedRestaurant(null);
-    setSelectedReward(null);
+  const updateDashboardSearchParams = useCallback((tab: CustomerTabId, restaurantId?: string | null) => {
+    setSearchParams((currentParams) => {
+      const nextParams = new URLSearchParams(currentParams);
+      nextParams.set('tab', tab);
+
+      if (restaurantId) {
+        nextParams.set('restaurantId', restaurantId);
+      } else {
+        nextParams.delete('restaurantId');
+      }
+
+      return nextParams;
+    });
   }, [setSearchParams]);
+
+  const handleTabChange = useCallback((tab: CustomerTabId) => {
+    const selectedRestaurantId = tab === 'discover'
+      ? getRestaurantIdFromEntry(selectedRestaurant)
+      : null;
+
+    updateDashboardSearchParams(tab, selectedRestaurantId);
+
+    if (tab !== 'discover') {
+      setSelectedRestaurant(null);
+    }
+
+    setSelectedReward(null);
+  }, [selectedRestaurant, updateDashboardSearchParams]);
+
+  const handleSelectedRestaurantChange = useCallback((restaurant: CustomerRestaurant | null) => {
+    setSelectedRestaurant(restaurant);
+    setSelectedReward(null);
+
+    const restaurantId = getRestaurantIdFromEntry(restaurant) ?? null;
+    updateDashboardSearchParams('discover', restaurantId);
+  }, [updateDashboardSearchParams]);
+
+  useEffect(() => {
+    if (activeTab !== 'discover') return;
+
+    const restaurantId = searchParams.get('restaurantId');
+    if (!restaurantId) return;
+
+    const restaurantFromParams = restaurants.find(
+      (restaurant) => getRestaurantIdFromEntry(restaurant) === restaurantId,
+    );
+
+    if (!restaurantFromParams) {
+      if (!loadingCustomerData) {
+        setSelectedRestaurant(null);
+      }
+      return;
+    }
+
+    if (getRestaurantIdFromEntry(selectedRestaurant) !== restaurantId) {
+      setSelectedRestaurant(restaurantFromParams);
+    }
+  }, [activeTab, loadingCustomerData, restaurants, searchParams, selectedRestaurant]);
 
   useEffect(() => {
     async function fetchCustomerData() {
@@ -373,7 +426,7 @@ export function useCustomerDashboard(): UseCustomerDashboardResult {
     selectedCategory,
     setSelectedCategory,
     selectedRestaurant,
-    setSelectedRestaurant,
+    setSelectedRestaurant: handleSelectedRestaurantChange,
     selectedReward,
     setSelectedReward,
     showQrModal,
