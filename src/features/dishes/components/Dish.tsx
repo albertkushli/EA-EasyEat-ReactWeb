@@ -166,7 +166,7 @@ export default function Dishes() {
                     />
                     <div className="absolute top-1 right-1">
                       <span className="bg-white/90 backdrop-blur-sm px-1.5 py-0.5 rounded-lg text-[9px] font-black text-gray-700 shadow-sm border border-gray-100 uppercase tracking-tighter">
-                        {dish.section}
+                        {t(`dishes.sections.${dish.section.toLowerCase()}`, dish.section)}
                       </span>
                     </div>
                   </div>

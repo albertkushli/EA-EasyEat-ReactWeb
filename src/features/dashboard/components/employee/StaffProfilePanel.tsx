@@ -1,5 +1,6 @@
 import { Store, User, Mail, Shield, MapPin, Phone } from 'lucide-react';
 import type { IRestaurant, IUser } from '@/types';
+import { useTranslation } from 'react-i18next';
 
 interface StaffProfilePanelProps {
   user: IUser | null;
@@ -7,10 +8,12 @@ interface StaffProfilePanelProps {
 }
 
 export default function StaffProfilePanel({ user, restaurant }: StaffProfilePanelProps) {
+  const { t } = useTranslation();
+
   return (
     <main className="flex-1 w-full h-full bg-slate-50/30">
       <div className="max-w-[1200px] w-full mx-auto px-8 py-10">
-        <h1 className="text-2xl font-bold text-slate-800 mb-8 tracking-tight">MI PERFIL</h1>
+        <h1 className="text-2xl font-bold text-slate-800 mb-8 tracking-tight uppercase">{t('dashboard.customer.staff.title', 'MI PERFIL')}</h1>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Tarjeta de Información Personal */}
@@ -22,10 +25,10 @@ export default function StaffProfilePanel({ user, restaurant }: StaffProfilePane
                 {user?.name?.[0]?.toUpperCase() || 'U'}
               </div>
               <div>
-                <h2 className="text-xl font-bold text-slate-800">{user?.name || 'Usuario'}</h2>
+                <h2 className="text-xl font-bold text-slate-800">{user?.name || t('auth.login.tabs.customer', 'Usuario')}</h2>
                 <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-orange-100 text-orange-700 text-xs font-semibold mt-1">
                   <Shield className="w-3 h-3" />
-                  {user?.role === 'owner' ? 'Propietario' : 'Staff'}
+                  {user?.role === 'owner' ? t('auth.roles.owner') : t('auth.roles.staff')}
                 </span>
               </div>
             </div>
@@ -34,16 +37,16 @@ export default function StaffProfilePanel({ user, restaurant }: StaffProfilePane
               <div className="flex items-center gap-3 p-3 rounded-lg bg-slate-50 border border-slate-100">
                 <Mail className="w-5 h-5 text-slate-400" />
                 <div>
-                  <div className="text-xs font-medium text-slate-500 uppercase tracking-wide">Email</div>
-                  <div className="text-sm font-semibold text-slate-700">{user?.email || 'No proporcionado'}</div>
+                  <div className="text-xs font-medium text-slate-500 uppercase tracking-wide">{t('dashboard.customer.staff.email', 'Email')}</div>
+                  <div className="text-sm font-semibold text-slate-700">{user?.email || t('dashboard.customer.staff.noProvide', 'No proporcionado')}</div>
                 </div>
               </div>
 
               <div className="flex items-center gap-3 p-3 rounded-lg bg-slate-50 border border-slate-100">
                 <User className="w-5 h-5 text-slate-400" />
                 <div>
-                  <div className="text-xs font-medium text-slate-500 uppercase tracking-wide">ID de Empleado</div>
-                  <div className="text-sm font-semibold text-slate-700">{user?.id || 'Desconocido'}</div>
+                  <div className="text-xs font-medium text-slate-500 uppercase tracking-wide">{t('dashboard.customer.staff.employeeId', 'ID de Empleado')}</div>
+                  <div className="text-sm font-semibold text-slate-700">{user?._id || user?.id || t('dashboard.customer.staff.unknown', 'Desconocido')}</div>
                 </div>
               </div>
             </div>
@@ -58,9 +61,9 @@ export default function StaffProfilePanel({ user, restaurant }: StaffProfilePane
                 <Store className="w-8 h-8" />
               </div>
               <div>
-                <h2 className="text-xl font-bold text-slate-800">{restaurant?.profile?.name || 'Restaurante'}</h2>
+                <h2 className="text-xl font-bold text-slate-800">{restaurant?.profile?.name || t('dashboard.customer.staff.restaurant', 'Restaurante')}</h2>
                 <div className="flex items-center gap-1 text-amber-500 text-sm font-bold mt-1">
-                  ⭐ {restaurant?.profile?.globalRating?.toFixed(1) || '0.0'}
+                  ⭐ {Number(restaurant?.profile?.globalRating ?? 0).toFixed(1)}
                 </div>
               </div>
             </div>
@@ -69,17 +72,17 @@ export default function StaffProfilePanel({ user, restaurant }: StaffProfilePane
               <div className="flex items-center gap-3 p-3 rounded-lg bg-slate-50 border border-slate-100">
                 <MapPin className="w-5 h-5 text-slate-400" />
                 <div>
-                  <div className="text-xs font-medium text-slate-500 uppercase tracking-wide">Dirección</div>
-                  <div className="text-sm font-semibold text-slate-700">{restaurant?.profile?.location?.address || 'No proporcionada'}</div>
+                  <div className="text-xs font-medium text-slate-500 uppercase tracking-wide">{t('dashboard.customer.staff.address', 'Dirección')}</div>
+                  <div className="text-sm font-semibold text-slate-700">{restaurant?.profile?.location?.address || t('dashboard.customer.staff.noProvide', 'No proporcionada')}</div>
                 </div>
               </div>
 
               <div className="flex items-center gap-3 p-3 rounded-lg bg-slate-50 border border-slate-100">
                 <Phone className="w-5 h-5 text-slate-400" />
                 <div>
-                  <div className="text-xs font-medium text-slate-500 uppercase tracking-wide">Contacto</div>
+                  <div className="text-xs font-medium text-slate-500 uppercase tracking-wide">{t('dashboard.customer.staff.contact', 'Contacto')}</div>
                   <div className="text-sm font-semibold text-slate-700">
-                    {restaurant?.profile?.contact?.phone || 'Sin teléfono'} / {restaurant?.profile?.contact?.email || 'Sin email'}
+                    {restaurant?.profile?.contact?.phone || t('dashboard.customer.staff.noPhone', 'Sin teléfono')} / {restaurant?.profile?.contact?.email || t('dashboard.customer.staff.noEmail', 'Sin email')}
                   </div>
                 </div>
               </div>

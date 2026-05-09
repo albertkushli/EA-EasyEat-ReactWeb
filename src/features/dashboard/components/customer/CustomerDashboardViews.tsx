@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { QRCodeCanvas } from 'qrcode.react';
 import { ArrowLeft, CheckCircle, Clock, Coins, Gift, Heart, Home, MapPin, QrCode, Save, Search, SlidersHorizontal, Star, Trophy, User, Wallet, X, Mail, Lock } from 'lucide-react';
+import LanguageDropdown from '@/shared/components/ui/LanguageDropdown';
 import type { ICustomer } from '@/types';
 import type { CustomerBadge, CustomerPointsWalletEntry, CustomerRestaurant, CustomerReward, CustomerTabId, CustomerVisit } from '../../hooks/useCustomerDashboard';
 
@@ -129,6 +130,7 @@ function getRestaurantVisitsCount(restaurant: CustomerRestaurant) {
 }
 
 function CustomerRestaurantCard({ restaurant, onClick }: { restaurant: CustomerRestaurant; onClick?: () => void }) {
+  const { t } = useTranslation();
   const img = getRestaurantImage(restaurant);
   const rating = getRestaurantRating(restaurant);
 
@@ -157,7 +159,7 @@ function CustomerRestaurantCard({ restaurant, onClick }: { restaurant: CustomerR
             <MapPin size={12} /> {getRestaurantDistance(restaurant)}
           </span>
           <span>
-            <Clock size={12} /> {getRestaurantVisitsCount(restaurant)} visites
+            <Clock size={12} /> {getRestaurantVisitsCount(restaurant)} {t('dashboard.customer.status.visits')}
           </span>
         </div>
       </div>
@@ -166,6 +168,7 @@ function CustomerRestaurantCard({ restaurant, onClick }: { restaurant: CustomerR
 }
 
 function CustomerLargeRestaurantCard({ restaurant, onClick }: { restaurant: CustomerRestaurant; onClick: () => void }) {
+  const { t } = useTranslation();
   const img = getRestaurantImage(restaurant);
   const rating = getRestaurantRating(restaurant);
   const distance = getRestaurantDistance(restaurant, '0.5 km');
@@ -175,7 +178,7 @@ function CustomerLargeRestaurantCard({ restaurant, onClick }: { restaurant: Cust
       <div className="hc-large-card__banner">
         {img ? <img src={img} alt={getRestaurantName(restaurant)} /> : <div className="hc-banner-placeholder" />}
         {restaurant.profile?.hasOffer && (
-          <div className="hc-large-card__badge">🔥 OFERTA</div>
+          <div className="hc-large-card__badge">🔥 {t('dashboard.customer.status.offer')}</div>
         )}
       </div>
       <div className="hc-large-card__body">
@@ -192,7 +195,7 @@ function CustomerLargeRestaurantCard({ restaurant, onClick }: { restaurant: Cust
           <span className="hc-large-card__dist"><MapPin size={14} /> {distance}</span>
           {restaurant.profile?.pointsMultiplier && (
             <div className="hc-large-card__points-badge">
-              <Gift size={14} /> {restaurant.profile.pointsMultiplier}x PUNTS
+              <Gift size={14} /> {restaurant.profile.pointsMultiplier}x {t('dashboard.customer.status.points').toUpperCase()}
             </div>
           )}
         </div>
@@ -222,6 +225,7 @@ function CustomerRestaurantDetail({
   onOpenQrModal: () => void;
   onOpenRewardQrModal: () => void;
 }) {
+  const { t } = useTranslation();
   const img = getRestaurantImage(restaurant);
   const rating = getRestaurantRating(restaurant);
   const userPointsForRestaurant = pointsWallet.find((wallet) => getRestaurantId(wallet) === restaurant._id)?.points || 0;
@@ -245,7 +249,7 @@ function CustomerRestaurantDetail({
           <button
             className={`hc-fav-btn ${isFavorite ? 'active' : ''}`}
             onClick={() => onToggleFavorite(restaurant)}
-            title={isFavorite ? 'Treure de favorits' : 'Afegir a favorits'}
+            title={isFavorite ? t('dashboard.customer.actions.removeFavorite') : t('dashboard.customer.actions.addFavorite')}
           >
             <Heart size={20} fill={isFavorite ? 'currentColor' : 'none'} />
           </button>
@@ -258,9 +262,9 @@ function CustomerRestaurantDetail({
       {restaurant.profile?.pointsMultiplier && (
         <div className="hc-points-multiplier-banner hc-animate-slide" style={{ animationDelay: '0.2s' }}>
           <div>
-            <p className="hc-pmb-title">Multiplica els teus punts!</p>
+            <p className="hc-pmb-title">{t('dashboard.customer.details.multiplierTitle')}</p>
             <h3 className="hc-pmb-value">{restaurant.profile.pointsMultiplier}x</h3>
-            <p className="hc-pmb-desc">Aconsegueix punts extra per cada visita a aquest restaurant!</p>
+            <p className="hc-pmb-desc">{t('dashboard.customer.details.multiplierDesc')}</p>
           </div>
           <Gift size={48} opacity={0.5} />
         </div>
@@ -270,83 +274,84 @@ function CustomerRestaurantDetail({
         <div className="hc-info-box">
           <Coins size={18} className="text-orange" />
           <div>
-            <p>{userPointsForRestaurant} punts</p>
-            <span>Els teus punts aquí</span>
+            <p>{userPointsForRestaurant} {t('dashboard.customer.status.points')}</p>
+            <span>{t('dashboard.customer.details.myPoints')}</span>
           </div>
         </div>
         <div className="hc-info-box">
           <Clock size={18} className="text-orange" />
           <div>
             <p>09:00 - 23:00</p>
-            <span>Horari</span>
+            <span>{t('settings.schedule.title', 'Horari').replace(' Semanal', '')}</span>
           </div>
         </div>
       </div>
 
       <div className="hc-restaurant-detail__section hc-animate-slide" style={{ animationDelay: '0.4s' }}>
-        <h3>Sobre el restaurant</h3>
+        <h3>{t('dashboard.customer.details.about')}</h3>
         <p>{getRestaurantDescription(restaurant) || 'El millor restaurant del barri amb ingredients frescos i de qualitat.'}</p>
       </div>
 
       <div className="hc-restaurant-detail__section">
-        <h3>Recompenses disponibles</h3>
+        <h3>{t('rewards.title', 'Recompenses disponibles')}</h3>
         <div className="hc-rewards-list">
           {restaurantRewards.length > 0 ? (
             restaurantRewards.map((reward) => (
               <div key={reward._id} className="hc-reward-item">
                 <div>
                   <h4>{reward.name}</h4>
-                  <span>{reward.pointsRequired} punts</span>
+                  <span>{reward.pointsRequired} {t('dashboard.customer.status.points')}</span>
                 </div>
                 <button className='hc-reward-btn' onClick={() => { onSelectedReward(reward); return onOpenRewardQrModal() }}>
-                  <Gift size={20} className="text-orange" /> Reclamar
+                  <Gift size={20} className="text-orange" /> {t('dashboard.customer.actions.redeem')}
                 </button>
               </div>
             ))
           ) : (
-            <p className="hc-empty">Aquest restaurant no té recompenses encarades registrades.</p>
+            <p className="hc-empty">{t('rewards.noRewards', 'Aquest restaurant no té recompenses registrades.')}</p>
           )}
         </div>
       </div>
 
       <button className="hc-checkin-btn" onClick={onOpenQrModal}>
-        <QrCode size={20} /> Fer Check-in ara
+        <QrCode size={20} /> {t('dashboard.customer.actions.checkIn')}
       </button>
     </div>
   );
 }
 
 export function CustomerSidebar({ activeTab, onTabChange, user, onLogout }: CustomerSidebarProps) {
+  const { t } = useTranslation();
   return (
     <aside className="hc-sidebar">
       <div className="hc-sidebar__brand">
         <div className="hc-sidebar__logo">🍽️</div>
         <div>
-          <p className="hc-sidebar__title">EasyEat</p>
-          <p className="hc-sidebar__subtitle">Tu experiencia gastronómica</p>
+          <p className="hc-sidebar__title">{t('navbar.logo', 'EasyEat')}</p>
+          <p className="hc-sidebar__subtitle">{t('auth.login.tagline', 'Tu experiencia gastronómica')}</p>
         </div>
       </div>
 
       <nav className="hc-sidebar-nav">
         <button type="button" className={activeTab === 'home' ? 'hc-sidebar-nav__item active' : 'hc-sidebar-nav__item'} onClick={() => onTabChange('home')}>
           <Home size={18} />
-          <span>Inici</span>
+          <span>{t('sidebar.home', 'Inici')}</span>
         </button>
         <button type="button" className={activeTab === 'discover' ? 'hc-sidebar-nav__item active' : 'hc-sidebar-nav__item'} onClick={() => onTabChange('discover')}>
           <MapPin size={18} />
-          <span>Descobrir</span>
+          <span>{t('sidebar.discover', 'Descobrir')}</span>
         </button>
         <button type="button" className={activeTab === 'qr' ? 'hc-sidebar-nav__item active' : 'hc-sidebar-nav__item'} onClick={() => onTabChange('qr')}>
           <QrCode size={18} />
-          <span>El meu QR</span>
+          <span>{t('sidebar.myQr', 'El meu QR')}</span>
         </button>
         <button type="button" className={activeTab === 'rewards' ? 'hc-sidebar-nav__item active' : 'hc-sidebar-nav__item'} onClick={() => onTabChange('rewards')}>
           <Gift size={18} />
-          <span>Recompenses</span>
+          <span>{t('sidebar.rewards', 'Recompenses')}</span>
         </button>
         <button type="button" className={activeTab === 'profile' ? 'hc-sidebar-nav__item active' : 'hc-sidebar-nav__item'} onClick={() => onTabChange('profile')}>
           <User size={18} />
-          <span>Perfil</span>
+          <span>{t('sidebar.profile', 'Perfil')}</span>
         </button>
       </nav>
 
@@ -355,13 +360,18 @@ export function CustomerSidebar({ activeTab, onTabChange, user, onLogout }: Cust
           <div className="hc-sidebar-user-avatar">{user?.name?.[0]?.toUpperCase()}</div>
           <div>
             <p>{user?.name}</p>
-            <span>{user?.role || 'Cliente'}</span>
+            <span>{
+              user?.role === 'owner' ? t('auth.roles.owner') :
+              user?.role === 'staff' ? t('auth.roles.staff') :
+              t('auth.roles.customer')
+            }</span>
           </div>
         </div>
-        <button onClick={onLogout} className="hc-sidebar-logout">Logout</button>
+        <button onClick={onLogout} className="hc-sidebar-logout">{t('sidebar.logout', 'Logout')}</button>
+        <LanguageDropdown />
         <Link
           to="/aviso-legal"
-          className="block text-center text-[10px] text-slate-400 hover:text-orange-600 transition-colors pt-4 uppercase tracking-widest font-bold"
+          className="text-[10px] text-slate-400 hover:text-orange-600 transition-colors uppercase tracking-widest font-bold whitespace-nowrap"
         >
           {t('footer.links.legalNotice')}
         </Link>
@@ -386,13 +396,14 @@ export function CustomerHomeTab({
   onOpenDiscover,
   onOpenQrModal,
 }: CustomerHomeTabProps) {
+  const { t } = useTranslation();
   return (
     <>
       <section className="hc-hero">
         <div className="hc-hero__text">
-          <p className="hc-hero__greeting">Hola,</p>
+          <p className="hc-hero__greeting">{t('dashboard.customer.welcome', 'Hola,')}</p>
           <h1 className="hc-hero__name">{user?.name?.split(' ')[0]}! 👋</h1>
-          <p className="hc-hero__sub">Això és el teu resum d'avui</p>
+          <p className="hc-hero__sub">{t('dashboard.customer.discover', 'Descubre sabores que te esperan hoy')}</p>
         </div>
         <div className="hc-hero__orbs">
           <div className="hc-orb hc-orb--1" />
@@ -405,41 +416,41 @@ export function CustomerHomeTab({
           <div className="hc-stat-card__icon"><Coins size={22} /></div>
           <div className="hc-stat-card__info">
             <span className="hc-stat-card__value">{totalPoints.toLocaleString()}</span>
-            <span className="hc-stat-card__label">Punts totals</span>
+            <span className="hc-stat-card__label">{t('dashboard.customer.stats.totalPoints', 'Punts totals')}</span>
           </div>
         </div>
         <div className="hc-stat-card hc-stat-card--visits">
           <div className="hc-stat-card__icon"><Clock size={22} /></div>
           <div className="hc-stat-card__info">
             <span className="hc-stat-card__value">{visits.length}</span>
-            <span className="hc-stat-card__label">Visites</span>
+            <span className="hc-stat-card__label">{t('dashboard.customer.stats.visits', 'Visites')}</span>
           </div>
         </div>
         <div className="hc-stat-card hc-stat-card--badges">
           <div className="hc-stat-card__icon"><Trophy size={22} /></div>
           <div className="hc-stat-card__info">
             <span className="hc-stat-card__value">{badges.length}</span>
-            <span className="hc-stat-card__label">Badges</span>
+            <span className="hc-stat-card__label">{t('dashboard.customer.stats.badges', 'Badges')}</span>
           </div>
         </div>
         <div className="hc-stat-card hc-stat-card--favs">
           <div className="hc-stat-card__icon"><Heart size={22} /></div>
           <div className="hc-stat-card__info">
             <span className="hc-stat-card__value">{displayFavorites.length}</span>
-            <span className="hc-stat-card__label">Favorits</span>
+            <span className="hc-stat-card__label">{t('dashboard.customer.stats.favorites', 'Favorits')}</span>
           </div>
         </div>
       </section>
 
       <section>
         <button className="hc-checkin-btn" onClick={onOpenQrModal}>
-          <QrCode size={20} /> Mostrar el codi QR
+          <QrCode size={20} /> {t('dashboard.customer.actions.showQr')}
         </button>
       </section>
 
       <section className="hc-section">
         <div className="hc-section__head">
-          <h2 className="hc-section__title"><Heart size={18} /> Els teus favorits</h2>
+          <h2 className="hc-section__title"><Heart size={18} /> {t('dashboard.customer.sections.favorites', 'Els teus favorits')}</h2>
         </div>
         {displayFavorites.length > 0 ? (
           <div className="hc-cards hc-cards--favs">
@@ -455,14 +466,14 @@ export function CustomerHomeTab({
             ))}
           </div>
         ) : (
-          <div className="hc-empty">No tens restaurants favorits encara.</div>
+          <div className="hc-empty">{t('dashboard.customer.empty.favorites', 'No tienes restaurantes favoritos todavía.')}</div>
         )}
       </section>
 
       {allRewards.length > 0 && (
         <section className="hc-section">
           <div className="hc-section__head">
-            <h2 className="hc-section__title"><Gift size={18} /> Recompenses destacades</h2>
+            <h2 className="hc-section__title"><Gift size={18} /> {t('dashboard.customer.sections.rewards', 'Recompensas destacadas')}</h2>
           </div>
           <div className="hc-rewards-carousel" style={{ display: 'flex', gap: '1.5rem', overflowX: 'auto', paddingBottom: '1.5rem', scrollSnapType: 'x mandatory' }}>
             {allRewards.slice(0, 6).map((reward, index) => {
@@ -495,7 +506,7 @@ export function CustomerHomeTab({
       {badges.length > 0 && (
         <section className="hc-section">
           <div className="hc-section__head">
-            <h2 className="hc-section__title"><Trophy size={18} /> Els teus logros</h2>
+            <h2 className="hc-section__title"><Trophy size={18} /> {t('dashboard.customer.sections.badges', 'Tus logros')}</h2>
           </div>
           <div className="hc-badges-row">
             {badges.map((badge, index) => (
@@ -503,7 +514,7 @@ export function CustomerHomeTab({
                 <div className="hc-badge-card__icon">{badge.icon || '🏆'}</div>
                 <div className="hc-badge-card__info">
                   <p>{badge.title || `Badge ${index + 1}`}</p>
-                  <span>{badge.subtitle || 'Objectiu completat'}</span>
+                  <span>{badge.subtitle || t('dashboard.customer.objectives.level', 'Objetivo completado')}</span>
                 </div>
               </div>
             ))}
@@ -513,38 +524,38 @@ export function CustomerHomeTab({
 
       <section className="hc-section">
         <div className="hc-section__head">
-          <h2 className="hc-section__title"><Clock size={18} /> Objectius per aconseguir</h2>
+          <h2 className="hc-section__title"><Clock size={18} /> {t('dashboard.customer.sections.objectives', 'Objetivos por alcanzar')}</h2>
         </div>
         <div className="hc-objectives">
           <div className="hc-objective-card">
             <div className="hc-objective-card__header">
-              <p>Visita 10 restaurants diferents</p>
+              <p>{t('dashboard.customer.objectives.visit', 'Visita 10 restaurantes diferentes')}</p>
               <span>{uniqueRestaurantsVisited} / 10</span>
             </div>
             <div className="hc-progress-bar">
               <div className="hc-progress-bar__fill" style={{ width: `${objective1Progress}%` }} />
             </div>
-            <small>Progreso: {objective1Progress}%</small>
+            <small>{t('dashboard.customer.objectives.progress', 'Progreso:')} {objective1Progress}%</small>
           </div>
           <div className="hc-objective-card">
             <div className="hc-objective-card__header">
-              <p>Acumula 2000 punts totals</p>
+              <p>{t('dashboard.customer.objectives.points', 'Acumula 2000 puntos totales')}</p>
               <span>{totalPoints} / 2000</span>
             </div>
             <div className="hc-progress-bar">
               <div className="hc-progress-bar__fill" style={{ width: `${objective2Progress}%` }} />
             </div>
-            <small>Progreso: {objective2Progress}%</small>
+            <small>{t('dashboard.customer.objectives.progress', 'Progreso:')} {objective2Progress}%</small>
           </div>
           <div className="hc-objective-card">
             <div className="hc-objective-card__header">
-              <p>Aconsegueix nivell 10 en un restaurant</p>
+              <p>{t('dashboard.customer.objectives.level', 'Alcanza nivel 10 en un restaurante')}</p>
               <span>{Math.min(visits.length, 10)} / 10</span>
             </div>
             <div className="hc-progress-bar">
               <div className="hc-progress-bar__fill" style={{ width: `${objective3Progress}%` }} />
             </div>
-            <small>Progreso: {objective3Progress}%</small>
+            <small>{t('dashboard.customer.objectives.progress', 'Progreso:')} {objective3Progress}%</small>
           </div>
         </div>
       </section>
@@ -573,12 +584,12 @@ export function CustomerProfileTab({
       <div className="hc-section__head" style={{ marginBottom: '1rem' }}>
         <h2 className="hc-section__title" style={{ fontSize: '1.5rem' }}>
           <User size={22} className="text-orange" />
-          La teva informació
+          {t('dashboard.customer.profile.title', 'Tu información')}
         </h2>
       </div>
       <div className="auth-card" style={{ maxWidth: '600px', width: '100%', boxSizing: 'border-box', border: '1px solid rgba(15,23,42,0.08)', borderRadius: '24px', padding: '2rem' }}>
         <p style={{ color: 'var(--clr-text-muted)', fontSize: '0.9rem', marginBottom: '2rem' }}>
-          Edita els detalls del teu compte
+          {t('dashboard.customer.profile.subtitle', 'Edita los detalles de tu cuenta')}
         </p>
         <form onSubmit={onSubmit} className="auth-form" style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
           <div className="form-group" style={{ textAlign: 'left' }}>
@@ -617,9 +628,9 @@ export function CustomerProfileTab({
 
           <div className="form-group" style={{ textAlign: 'left' }}>
             <label className="form-label">
-              {t('settings.form.password')}
+              {t('profile.form.password')}
               <span style={{ fontSize: '0.75rem', fontWeight: 400, opacity: 0.7, marginLeft: '0.5rem' }}>
-                {t('settings.form.passwordHint')}
+                {t('profile.form.passwordHint')}
               </span>
             </label>
             <div className="input-wrapper">
@@ -676,21 +687,22 @@ export function CustomerDiscoverView({
   onOpenQrModal,
   onOpenRewardQrModal,
 }: CustomerDiscoverViewProps) {
+  const { t } = useTranslation();
   const categories = [
-    { name: 'Tots', icon: '🍽️' },
-    { name: 'Sushi', icon: '🍣' },
-    { name: 'Pizzeria', icon: '🍕' },
-    { name: 'Burguer', icon: '🍔' },
-    { name: 'Mexicà', icon: '🌮' },
-    { name: 'Italià', icon: '🍝' },
-    { name: 'Marisc', icon: '🐟️' },
+    { name: 'all', icon: '🍽️', label: t('discover.categories.all', 'Tots') },
+    { name: 'Sushi', icon: '🍣', label: t('discover.categories.sushi', 'Sushi') },
+    { name: 'Pizzeria', icon: '🍕', label: t('discover.categories.pizzeria', 'Pizzeria') },
+    { name: 'Burger', icon: '🍔', label: t('discover.categories.burger', 'Burger') },
+    { name: 'Mexican', icon: '🌮', label: t('discover.categories.mexican', 'Mexicà') },
+    { name: 'Italian', icon: '🍝', label: t('discover.categories.italian', 'Italià') },
+    { name: 'Seafood', icon: '🐟️', label: t('discover.categories.seafood', 'Marisc') },
   ];
 
   const filteredRestaurants = restaurants.filter((restaurant) => {
     const matchesSearch = (restaurant.profile?.name || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
       (restaurant.profile?.description || '').toLowerCase().includes(searchTerm.toLowerCase());
 
-    const matchesCategory = selectedCategory === 'Tots' ||
+    const matchesCategory = selectedCategory === 'all' ||
       (restaurant.profile?.category || []).some((category) => category.toLowerCase().includes(selectedCategory.toLowerCase()));
 
     return matchesSearch && matchesCategory;
@@ -715,14 +727,14 @@ export function CustomerDiscoverView({
   return (
     <div className="hc-discover-view">
       <div className="hc-discover-header">
-        <h2 style={{ fontSize: '2rem', marginBottom: '1.5rem', marginTop: 0 }}>Descobreix</h2>
+        <h2 style={{ fontSize: '2rem', marginBottom: '1.5rem', marginTop: 0 }}>{t('discover.title', 'Descobrir')}</h2>
 
         <div className="hc-search-bar">
           <div className="hc-search-input">
             <Search size={18} />
             <input
               type="text"
-              placeholder="Busca per nom o cuina..."
+              placeholder={t('discover.searchPlaceholder', 'Busca per nom o cuina...')}
               value={searchTerm}
               onChange={(event) => onSearchTermChange(event.target.value)}
             />
@@ -740,14 +752,14 @@ export function CustomerDiscoverView({
               onClick={() => onCategoryChange(category.name)}
             >
               <span style={{ fontSize: '1.2rem', lineHeight: 1 }}>{category.icon}</span>
-              {category.name}
+              {category.label}
             </button>
           ))}
         </div>
       </div>
 
       <div className="hc-discover-results">
-        <p className="hc-results-count"><strong>{filteredRestaurants.length}</strong> restaurants trobats</p>
+        <p className="hc-results-count"><strong>{filteredRestaurants.length}</strong> {t('discover.resultsCount', 'restaurants trobats')}</p>
         <div className="hc-large-cards">
           {filteredRestaurants.map((restaurant) => (
             <CustomerLargeRestaurantCard
@@ -773,11 +785,12 @@ export function CustomerHistoryRewardsView({ visits, restaurants }: CustomerHist
     return restaurants.find((restaurant) => restaurant._id === restaurantData || restaurant.id === restaurantData);
   };
 
+  const { t, i18n } = useTranslation();
   return (
     <div className="hc-rewards-dashboard hc-animate-fade">
       <div className="hc-discover-header">
-        <h2 style={{ fontSize: '2rem', marginBottom: '0.5rem', marginTop: 0 }}>Les teves Estadístiques</h2>
-        <p style={{ color: 'var(--clr-text-muted)', marginBottom: '2rem' }}>Així és com has aprofitat EasyEat fins ara.</p>
+        <h2 style={{ fontSize: '2rem', marginBottom: '0.5rem', marginTop: 0 }}>{t('stats_dashboard.title', 'Les teves Estadístiques')}</h2>
+        <p style={{ color: 'var(--clr-text-muted)', marginBottom: '2rem' }}>{t('stats_dashboard.tagline', 'Així és com has aprofitat EasyEat fins ara.')}</p>
       </div>
 
       <div className="hc-rewards-stats">
@@ -785,27 +798,27 @@ export function CustomerHistoryRewardsView({ visits, restaurants }: CustomerHist
           <div className="hc-stat-card__icon"><Wallet size={24} /></div>
           <div>
             <h3>{totalMoneySpent.toFixed(2)}€</h3>
-            <p>Diners gastats</p>
+            <p>{t('stats_dashboard.spent', 'Diners gastats')}</p>
           </div>
         </div>
         <div className="hc-stat-card hc-stat-card--points hc-animate-slide" style={{ animationDelay: '0.2s' }}>
           <div className="hc-stat-card__icon"><Coins size={24} /></div>
           <div>
             <h3>{totalPointsEarned}</h3>
-            <p>Punts acumulats</p>
+            <p>{t('stats_dashboard.earned', 'Punts acumulats')}</p>
           </div>
         </div>
         <div className="hc-stat-card hc-stat-card--visits hc-animate-slide" style={{ animationDelay: '0.3s' }}>
           <div className="hc-stat-card__icon"><Clock size={24} /></div>
           <div>
             <h3>{totalVisits}</h3>
-            <p>Visites realitzades</p>
+            <p>{t('stats_dashboard.visits', 'Visites realitzades')}</p>
           </div>
         </div>
       </div>
 
       <div className="hc-rewards-history-section hc-animate-slide" style={{ animationDelay: '0.4s' }}>
-        <h3 className="hc-rewards-history-title">Historial d'activitat i recompenses escanejades</h3>
+        <h3 className="hc-rewards-history-title">{t('stats_dashboard.history.title', "Historial d'activitat i recompenses escanejades")}</h3>
         <div className="hc-rewards-history-list">
           {visits.length > 0 ? (
             visits.map((visit, index) => {
@@ -820,8 +833,8 @@ export function CustomerHistoryRewardsView({ visits, restaurants }: CustomerHist
                       {image ? <img src={image} alt={restaurant ? getRestaurantName(restaurant) : 'Restaurant'} /> : <div className="placeholder">🍽️</div>}
                     </div>
                     <div className="hc-history-item__info">
-                      <h4>{restaurant ? getRestaurantName(restaurant) : 'Restaurant desconegut'}</h4>
-                      <p>{date.toLocaleDateString('ca-ES', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</p>
+                      <h4>{restaurant ? getRestaurantName(restaurant) : t('stats_dashboard.history.unknownRestaurant', 'Restaurant desconegut')}</h4>
+                      <p>{date.toLocaleDateString(i18n.language === 'ca' ? 'ca-ES' : i18n.language === 'es' ? 'es-ES' : 'en-US', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</p>
                     </div>
                   </div>
                   <div className="hc-history-item__right">
@@ -840,7 +853,7 @@ export function CustomerHistoryRewardsView({ visits, restaurants }: CustomerHist
               );
             })
           ) : (
-            <div className="hc-empty">No tens cap visita ni recompensa registrada encara.</div>
+            <div className="hc-empty">{t('stats_dashboard.history.empty', 'No tens cap visita ni recompensa registrada encara.')}</div>
           )}
         </div>
       </div>
@@ -849,6 +862,7 @@ export function CustomerHistoryRewardsView({ visits, restaurants }: CustomerHist
 }
 
 export function CustomerQrModal({ open, onClose, userId }: CustomerQrModalProps) {
+  const { t } = useTranslation();
   if (!open) return null;
 
   return (
@@ -857,8 +871,8 @@ export function CustomerQrModal({ open, onClose, userId }: CustomerQrModalProps)
         <button className="hc-modal-close" onClick={onClose}>
           <X size={24} />
         </button>
-        <h3>El teu Codi QR</h3>
-        <p>Mostra aquest codi al cambrer per fer el check-in i guanyar punts.</p>
+        <h3>{t('qr.user.title', 'El teu Codi QR')}</h3>
+        <p>{t('qr.user.desc', 'Mostra aquest codi al cambrer per fer el check-in i guanyar punts.')}</p>
         <div className="hc-qr-container">
           <QRCodeCanvas
             value={userId}
@@ -875,6 +889,7 @@ export function CustomerQrModal({ open, onClose, userId }: CustomerQrModalProps)
 }
 
 export function RewardQrModal({ open, onClose, userId, restaurantId, rewardId }: RewardQrModalProps) {
+  const { t } = useTranslation();
   if (!open) return null;
 
   return (
@@ -883,8 +898,8 @@ export function RewardQrModal({ open, onClose, userId, restaurantId, rewardId }:
         <button className="hc-modal-close" onClick={onClose}>
           <X size={24} />
         </button>
-        <h3>El Codi QR de la recompensa</h3>
-        <p>Mostra aquest codi al cambrer per reclamar la recompensa.</p>
+        <h3>{t('qr.reward.title', 'El Codi QR de la recompensa')}</h3>
+        <p>{t('qr.reward.desc', 'Mostra aquest codi al cambrer per reclamar la recompensa.')}</p>
         <div className="hc-qr-container">
           <QRCodeCanvas
             value={JSON.stringify({

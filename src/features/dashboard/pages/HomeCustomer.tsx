@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next';
+import LanguageDropdown from '@/shared/components/ui/LanguageDropdown';
 import { useCustomerDashboard } from '../hooks/useCustomerDashboard';
 import {
   CustomerDiscoverView,
@@ -25,7 +26,7 @@ export default function HomeCustomer() {
 
   return (
     <div className="hc-page">
-      <div className="hc-layout">
+      <div className="hc-layout" style={{ position: 'relative' }}>
         <CustomerSidebar
           activeTab={dashboard.activeTab}
           onTabChange={dashboard.handleTabChange}
@@ -94,9 +95,9 @@ export default function HomeCustomer() {
             <section className="hc-section hc-tab-panel">
               <div className="hc-tab-panel__hero">
                 <div>
-                  <p className="hc-tab-panel__label">El meu QR</p>
-                  <h2>El teu QR està preparat</h2>
-                  <p className="hc-tab-panel__text">Aquí podràs accedir ràpidament a la funcionalitat corresponent.</p>
+                  <p className="hc-tab-panel__label">{t('qr_panel.label')}</p>
+                  <h2>{t('qr_panel.title')}</h2>
+                  <p className="hc-tab-panel__text">{t('qr_panel.text')}</p>
                 </div>
                 <div className="hc-tab-panel__icon">
                   <span className="text-4xl">QR</span>

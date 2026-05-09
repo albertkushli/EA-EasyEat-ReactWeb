@@ -181,7 +181,7 @@ export function useCustomerDashboard(): UseCustomerDashboardResult {
 
   const activeTab = (searchParams.get('tab') as CustomerTabId) || 'home';
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('Tots');
+  const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedRestaurant, setSelectedRestaurant] = useState<CustomerRestaurant | null>(null);
   const [selectedReward, setSelectedReward] = useState<CustomerReward | null>(null);
   const [showQrModal, setShowQrModal] = useState(false);
