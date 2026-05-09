@@ -1,38 +1,48 @@
-import create from 'zustand';
-import type { Coordinates, PermissionState } from '@/types/Location';
+import { create } from 'zustand';
 
-type State = {
-  coords?: Coordinates | null;
-  permission: PermissionState;
-  loading: boolean;
+interface LocationStore {
+  coords: { lat: number; lng: number } | null;
   requestLocation: () => Promise<void>;
-  setCoords: (c?: Coordinates | null) => void;
-};
+}
 
-export const useLocationStore = create<State>((set: any) => ({
+export const useLocationStore = create<LocationStore>((set) => ({
   coords: null,
-  permission: 'unknown',
-  loading: false,
+  
   requestLocation: async () => {
-    if (!('geolocation' in navigator)) {
-      set({ permission: 'denied' });
-      return;
-    }
-    set({ loading: true });
-    return new Promise<void>((resolve) => {
-      navigator.geolocation.getCurrentPosition(
-        (pos) => {
-          set({ coords: { lat: pos.coords.latitude, lng: pos.coords.longitude, accuracy: pos.coords.accuracy }, permission: 'granted', loading: false });
-          resolve();
-        },
-        () => {
-          set({ coords: null, permission: 'denied', loading: false });
-          resolve();
-        },
-        { enableHighAccuracy: true, timeout: 10000 }
-      );
+    return new Promise((resolve) => {
+      if ('geolocation' in navigator) {
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            set({
+              coords: {
+                lat: position.coords.latitude,
+                lng: position.coords.longitude,
+              },
+            });
+            resolve();
+          },
+          () => {
+            // Default to Barcelona if permission denied
+            set({
+              coords: {
+                lat: 41.3851,
+                lng: 2.1734,
+              },
+            });
+            resolve();
+          }
+        );
+      } else {
+        // Default to Barcelona if geolocation not available
+        set({
+          coords: {
+            lat: 41.3851,
+            lng: 2.1734,
+          },
+        });
+        resolve();
+      }
     });
   },
-  setCoords: (c?: any) => set({ coords: c ?? null }),
 }));
 

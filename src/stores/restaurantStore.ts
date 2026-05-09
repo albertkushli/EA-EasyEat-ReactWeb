@@ -1,45 +1,57 @@
-import create from 'zustand';
-import type { Restaurant, RestaurantId } from '@/types/Restaurant';
-import { fetchRestaurantsMock } from '@/services/mockApi';
+import { create } from 'zustand';
+import type { Restaurant } from '@/types/Restaurant';
+import { fetchRestaurants, fetchNearbyRestaurants } from '@/services/restaurant.service';
 
-type State = {
+
+interface RestaurantStore {
   restaurants: Restaurant[];
+  selectedId: string | null | undefined;
   loading: boolean;
-  selectedId?: RestaurantId | null;
-  nearbyMode: boolean;
   loadRestaurants: () => Promise<void>;
-  loadNearby: (lat: number, lng: number) => Promise<void>;
-  setSelected: (id?: RestaurantId | null) => void;
-  clear: () => void;
-};
+  loadNearby: (lat: number, lng: number, maxDistance?: number) => Promise<void>;
+  setSelected: (id?: string | null) => void;
+}
 
-export const useRestaurantStore = create<State>((set: any) => ({
+export const useRestaurantStore = create<RestaurantStore>((set) => ({
   restaurants: [],
-  loading: false,
   selectedId: null,
-  nearbyMode: false,
-
+  loading: false,
+  
   loadRestaurants: async () => {
     set({ loading: true });
-    const items = await fetchRestaurantsMock();
-    set({ restaurants: items, loading: false, nearbyMode: false });
+    try {
+      const res = await fetchRestaurants(1, 1000);
+      // fetchRestaurants returns a paginated response: { data, meta }
+      const data = (res as any).data ?? (res as any);
+      if (Array.isArray(data) && data.length > 0) {
+        set({ restaurants: data as Restaurant[], loading: false });
+      } else if (Array.isArray((res as any).data) && (res as any).data.length > 0) {
+        set({ restaurants: (res as any).data as Restaurant[], loading: false });
+      } else {
+        // No data from API — set empty list
+        set({ restaurants: [], loading: false });
+      }
+    } catch (err) {
+      console.error('Error loading restaurants:', err);
+      set({ restaurants: [], loading: false });
+    }
   },
-
-  loadNearby: async (lat: number, lng: number) => {
+  
+  loadNearby: async (lat: number, lng: number, maxDistance: number = 5000) => {
     set({ loading: true });
-    // For mock: mark a subset as nearby based on distance to provided coords
-    const items = await fetchRestaurantsMock();
-    const withNearby = items.map((r) => {
-      const dLat = (r.profile.location.coordinates.coordinates[1] - lat) * 111; // rough km
-      const dLng = (r.profile.location.coordinates.coordinates[0] - lng) * 85;
-      const dist = Math.sqrt(dLat * dLat + dLng * dLng);
-      return { ...r, isNearby: dist < 3, distanceKm: Math.round(dist * 10) / 10 };
-    });
-    set({ restaurants: withNearby, loading: false, nearbyMode: true });
+    try {
+      const nearby = await fetchNearbyRestaurants(lat, lng, maxDistance);
+      // Mark results as nearby when appropriate (some APIs include distanceKm)
+      const annotated = nearby.map((r: any) => ({ ...(r as any), isNearby: true }));
+      set({ restaurants: annotated as Restaurant[], loading: false });
+    } catch (err) {
+      console.error('Error loading nearby restaurants:', err);
+      set({ restaurants: [], loading: false });
+    }
   },
-
-  setSelected: (id?: RestaurantId | null) => set({ selectedId: id ?? null }),
-
-  clear: () => set({ restaurants: [], selectedId: null, nearbyMode: false }),
+  
+  setSelected: (id?: string | null) => {
+    set({ selectedId: id });
+  },
 }));
 
