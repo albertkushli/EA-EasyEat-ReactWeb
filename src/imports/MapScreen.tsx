@@ -501,7 +501,7 @@ export default function MapScreen() {
           <RestaurantCard
             key={selectedId} // Added key prop here
             restaurant={filteredRestaurants.find((r) => r._id === selectedId)!}
-            onClick={() => navigate(`/restaurant/${selectedId}?tab=discover`)}
+            onClick={() => navigate(`/dashboard?tab=discover&restaurantId=${selectedId}`)}
             onClose={() => setSelected(null)}
           />
         )}
