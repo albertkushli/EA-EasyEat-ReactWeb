@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import Footer from '@/shared/components/Footer';
+import LanguageDropdown from '@/shared/components/ui/LanguageDropdown';
 import {
   BarChart3,
   ArrowRight,
@@ -29,6 +30,7 @@ export default function Home() {
           <a href="#clientes" className="lp-link">{t('navbar.links.customers')}</a>
           <a href="#restaurantes" className="lp-link">{t('navbar.links.restaurants')}</a>
           <a href="#funciona" className="lp-link">{t('navbar.links.howItWorks')}</a>
+          <LanguageDropdown />
           <Link to="/login" className="lp-btn-acceder">{t('navbar.links.access')}</Link>
         </div>
       </nav>

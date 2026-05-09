@@ -81,16 +81,12 @@
       "legal": "Legal"
     },
     "links": {
-      "terms": "Termes i condicions",
-      "privacy": "Privadesa",
-      "cookies": "Cookies"
-    },
-    "copy": "© 2026 EasyEat · Projecte Acadèmic · UPC · Barcelona",
-    "links": {
       "legalNotice": "Avís Legal",
       "privacy": "Política de Privadesa",
-      "cookies": "Política de Cookies"
-    }
+      "cookies": "Política de Cookies",
+      "terms": "Termes i condicions"
+    },
+    "copy": "© 2026 EasyEat · Projecte Acadèmic · UPC · Barcelona"
   },
   "auth": {
     "login": {
@@ -115,6 +111,11 @@
         "noAccount": "Encara no tens compte?",
         "register": "Registra't gratis"
       }
+    },
+    "roles": {
+      "owner": "Propietari",
+      "staff": "Personal",
+      "customer": "Client"
     },
     "register": {
       "title": "Crear nou compte",
@@ -169,7 +170,16 @@
         "favorites": "Els teus preferits",
         "nearYou": "Prop teu",
         "recentVisits": "Visites recents",
-        "achievements": "Els teus assoliments"
+        "achievements": "Els teus assoliments",
+        "badges": "Els teus assoliments",
+        "objectives": "Objectius per aconseguir",
+        "rewards": "Recompenses destacades"
+      },
+      "objectives": {
+        "visit": "Visita 10 restaurants diferents",
+        "points": "Acumula 2000 punts totals",
+        "level": "Aconsegueix nivell 10 en un restaurant",
+        "progress": "Progrés:"
       },
       "results": {
         "onThisPage": "en aquesta pàgina",
@@ -181,13 +191,51 @@
         "next": "Següent",
         "page": "Pàgina",
         "of": "de"
+      },
+      "empty": {
+        "favorites": "No tens restaurants favorits encara."
+      },
+      "profile": {
+        "title": "La teva informació",
+        "subtitle": "Edita els detalls del teu compte"
+      },
+      "staff": {
+        "title": "EL MEU PERFIL",
+        "role": "Rol",
+        "email": "Email",
+        "employeeId": "ID d'Empleat",
+        "restaurant": "Restaurant",
+        "address": "Adreça",
+        "contact": "Contacte",
+        "noProvide": "No proporcionat",
+        "unknown": "Desconegut",
+        "noPhone": "Sense telèfon",
+        "noEmail": "Sense email"
+      },
+      "status": {
+        "visits": "visites",
+        "points": "punts",
+        "offer": "OFERTA"
+      },
+      "actions": {
+        "addFavorite": "Afegir a preferits",
+        "removeFavorite": "Treure de preferits",
+        "checkIn": "Fer Check-in ara",
+        "redeem": "Reclamar",
+        "showQr": "Mostrar el codi QR"
+      },
+      "details": {
+        "about": "Sobre el restaurant",
+        "myPoints": "Els teus punts aquí",
+        "multiplierTitle": "Multiplica els teus punts!",
+        "multiplierDesc": "Aconsegueix punts extra per cada visita a aquest restaurant!"
       }
     },
     "employee": {
       "loadingOwner": "Carregant panell de Propietari…",
       "loadingStaff": "Carregant panell de Personal…",
       "yourRestaurant": "El teu restaurant",
-      "statsTitle": "Estadístiques del restaurant",
+      "statsTitle": "Vista General del Restaurant",
       "metrics": {
         "avgPoints": "Mitjana punts/visita",
         "loyalCustomers": "Clients lleials",
@@ -285,12 +333,12 @@
       "defaultCity": "Barcelona"
     },
     "peakHours": {
-      "title": "Hores Pic",
+      "title": "Hores punta de visites",
       "noVisits": "Encara no hi ha visites registrades.",
       "chartTitle": "Hores pic"
     },
     "topDishes": {
-      "title": "Plats Top",
+      "title": "Top plats millor valorats",
       "loading": "Carregant...",
       "none": "Encara no hi ha plats valorats."
     },
@@ -313,12 +361,16 @@
   "sidebar": {
     "dashboard": "Dashboard",
     "clients": "Clients",
-    "dishes": "Plats",
+    "dishes": "Carta / Plats",
     "employees": "Empleats",
     "rewards": "Recompenses",
-    "analytics": "Anàlisi",
-    "settings": "Configuració",
-    "logout": "Logout"
+    "analytics": "Estadístiques",
+    "settings": "Ajustos",
+    "logout": "Tancar sessió",
+    "home": "Inici",
+    "discover": "Descobrir",
+    "myQr": "El meu QR",
+    "profile": "Perfil"
   },
   "analytics": {
     "title": "ANÀLISI",
@@ -370,7 +422,23 @@
     "noResultsEmpty": "Encara no hi ha clients registrats en aquest restaurant.",
     "active": "Actiu",
     "inactive": "Inactiu",
-    "memberSince": "Membre des de"
+    "memberSince": "Membre des de",
+    "details": {
+      "stats": "Estadístiques",
+      "totalVisits": "Total Visites",
+      "avgRating": "Valoració Mitjana",
+      "totalSpent": "Total Gastat",
+      "lastVisit": "Última Visita",
+      "loyalty": "Fidelització",
+      "currentLevel": "Nivell actual",
+      "rewardsRedeemed": "Premis canviats",
+      "preferences": "Preferències",
+      "visitHistory": "Historial de Visites",
+      "lastReviews": "Últimes Ressenyes",
+      "close": "TANCAR",
+      "noReviews": "No ha realitzat ressenyes encara.",
+      "noHistory": "No hi ha visites registrades encara."
+    }
   },
   "employees": {
     "title": "Empleats",
@@ -386,10 +454,25 @@
       "role": "Rol",
       "password": "Contrasenya",
       "submit": "Guardar Empleat"
-    }
+    },
+    "filters": {
+      "title": "Filtres",
+      "search": "Buscar empleats...",
+      "role": "Rol",
+      "minRating": "Rating mínim",
+      "minVisits": "Visites mínimes",
+      "minRewards": "Recompenses mínimes",
+      "clear": "Netejar filtres",
+      "allRoles": "Tots els rols",
+      "noResults": "No s'han trobat empleats amb aquests criteris."
+    },
+    "confirmDelete": "Estàs segur que vols eliminar aquest empleat?",
+    "errorDelete": "Error en eliminar l'empleat",
+    "errorLoading": "No s'han pogut carregar els empleats.",
+    "errorNoRestaurant": "No s'ha pogut identificar el restaurant de l'usuari."
   },
   "dishes": {
-    "title": "La teva Carta",
+    "title": "Carta de Plats",
     "subtitle": "Gestiona els plats i categories del teu menú",
     "addDish": "Afegir Plat",
     "editDish": "Editar Plat",
@@ -414,13 +497,30 @@
       "allDay": "Tot el dia"
     },
     "form": {
-      "name": "Nom del plat",
-      "namePlaceholder": "Ex: Patates Braves",
-      "description": "Descripció",
-      "descriptionPlaceholder": "Descriu els ingredients o preparació...",
+      "name": "Nom del Plat",
+      "namePlaceholder": "Ex. Pizza Margherita",
       "price": "Preu",
-      "section": "Secció",
-      "submit": "Guardar Plat"
+      "section": "Categoria",
+      "image": "URL de la Imatge",
+      "imagePlaceholder": "https://...",
+      "portionSize": "Mida de la Racció",
+      "ingredients": "Ingredients",
+      "ingredientsPlaceholder": "Separa els ingredients per comes...",
+      "description": "Descripció",
+      "descriptionPlaceholder": "Descriu el plat...",
+      "availability": "Disponibilitat",
+      "dietary": "Etiquetes Dietètiques",
+      "flavor": "Perfil de Sabor",
+      "allergens": "Al·lèrgens",
+      "submit": "Guardar Plat",
+      "basicInfo": "Informació Bàsica",
+      "attributes": "Atributs i Clasificació"
+    },
+    "portionSizes": {
+      "small": "Petit",
+      "medium": "Mitjà",
+      "large": "Gran",
+      "sharing": "Per Compartir"
     },
     "sections": {
       "starters": "Entrants",
@@ -430,29 +530,35 @@
     }
   },
   "rewards": {
-    "title": "Programa de Recompenses",
-    "subtitle": "Configura els premis que els teus clients poden canviar",
+    "title": "Gestió de Recompenses",
+    "subtitle": "Crea i gestiona les recompenses que els teus clients poden bescanviar amb els seus punts.",
     "addReward": "Afegir Recompensa",
+    "noRewards": "No hi ha recompenses creades",
+    "noRewardsSubtitle": "Comença creant la teva primera recompensa de fidelització.",
     "editReward": "Editar Recompensa",
     "deleteReward": "Eliminar Recompensa",
-    "loading": "Carregant recompenses...",
-    "errorLoading": "No s'han pogut carregar les recompenses.",
     "confirmDelete": "Estàs segur que vols eliminar aquesta recompensa?",
-    "errorDelete": "Error en eliminar la recompensa.",
-    "noRewards": "No hi ha recompenses configurades",
-    "noRewardsSubtitle": "Comença creant recompenses per incentivar les visites dels teus clients.",
+    "errorLoading": "No s'han pogut carregar les recompenses.",
+    "errorDelete": "Error en eliminar la recompensa",
+    "loading": "Carregant recompenses...",
     "details": {
-      "noDescription": "Sense descripció disponible.",
-      "pointsCost": "Cost en punts",
+      "pointsCost": "Cost en Punts",
+      "noDescription": "Sense descripció proporcionada.",
       "expires": "Expira",
       "description": "Descripció del benefici"
     },
+    "data": {
+      "free_dessert": "Postre Gratuït",
+      "free_dessert_desc": "Gaudeix d'un postre cortesia de la casa en la teva propera visita.",
+      "10%_off_your_bill": "10% de Descompte",
+      "10%_off_your_bill_desc": "Obtén un 10% de descompte en el total de la teva factura."
+    },
     "form": {
-      "name": "Nom de la recompensa",
-      "namePlaceholder": "Ex: Postre Gratis",
+      "name": "Nom de la Recompensa",
+      "namePlaceholder": "Ex. Postre Gratuït",
       "description": "Què s'obté?",
-      "descriptionPlaceholder": "Explica què obtindrà el client...",
-      "activeTagline": "Recompensa activa i disponible per a canvi",
+      "descriptionPlaceholder": "Descriu què obtindrà el client...",
+      "activeTagline": "Aquesta recompensa està activa i disponible",
       "submit": "Guardar Recompensa"
     }
   },
@@ -477,7 +583,7 @@
     },
     "schedule": {
       "title": "Horari Setmanal",
-      "edit": "Editar Horari",
+      "edit": "Editar Horario",
       "addSlot": "Afegir franja",
       "closed": "Tancat",
       "days": {
@@ -515,6 +621,49 @@
         "title": "Protecció contra Frau",
         "description": "Validació automàtica de tiquets mitjançant QR"
       }
+    }
+  },
+  "discover": {
+    "title": "Descobrir",
+    "searchPlaceholder": "Busca per nom o cuina...",
+    "resultsCount": "restaurants trobats",
+    "map": "Mapa",
+    "openMap": "Obrir el mapa",
+    "categories": {
+      "all": "Tots",
+      "sushi": "Sushi",
+      "pizzeria": "Pizzeria",
+      "burger": "Burguer",
+      "mexican": "Mexicà",
+      "italian": "Italià",
+      "seafood": "Marisc"
+    }
+  },
+  "qr_panel": {
+    "label": "El meu QR",
+    "title": "El teu QR està preparat",
+    "text": "Aquí podràs accedir ràpidament a la funcionalitat corresponent."
+  },
+  "stats_dashboard": {
+    "title": "Les teves Estadístiques",
+    "tagline": "Així és com has aprofitat EasyEat fins ara.",
+    "spent": "Diners gastats",
+    "earned": "Punts acumulats",
+    "visits": "Visites realitzades",
+    "history": {
+      "title": "Historial d'activitat i recompenses escanejades",
+      "empty": "No tens cap visita ni recompensa registrada encara.",
+      "unknownRestaurant": "Restaurant desconegut"
+    }
+  },
+  "qr": {
+    "user": {
+      "title": "El teu Codi QR",
+      "desc": "Mostra aquest codi al cambrer per fer el check-in i guanyar punts."
+    },
+    "reward": {
+      "title": "El Codi QR de la recompensa",
+      "desc": "Mostra aquest codi al cambrer per reclamar la recompensa."
     }
   }
 }

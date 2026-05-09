@@ -81,16 +81,12 @@
       "legal": "Legal"
     },
     "links": {
-      "terms": "Terms and conditions",
-      "privacy": "Privacy",
-      "cookies": "Cookies"
-    },
-    "copy": "© 2026 EasyEat · Academic Project · UPC · Barcelona",
-    "links": {
       "legalNotice": "Legal Notice",
       "privacy": "Privacy Policy",
-      "cookies": "Cookies Policy"
-    }
+      "cookies": "Cookies Policy",
+      "terms": "Terms and conditions"
+    },
+    "copy": "© 2026 EasyEat · Academic Project · UPC · Barcelona"
   },
   "auth": {
     "login": {
@@ -115,6 +111,11 @@
         "noAccount": "Don't have an account yet?",
         "register": "Register for free"
       }
+    },
+    "roles": {
+      "owner": "Owner",
+      "staff": "Staff",
+      "customer": "Customer"
     },
     "register": {
       "title": "Create new account",
@@ -169,7 +170,16 @@
         "favorites": "Your favorites",
         "nearYou": "Near you",
         "recentVisits": "Recent visits",
-        "achievements": "Your achievements"
+        "achievements": "Your achievements",
+        "badges": "Your achievements",
+        "objectives": "Objectives to achieve",
+        "rewards": "Featured rewards"
+      },
+      "objectives": {
+        "visit": "Visit 10 different restaurants",
+        "points": "Accumulate 2000 total points",
+        "level": "Reach level 10 in a restaurant",
+        "progress": "Progress:"
       },
       "results": {
         "onThisPage": "on this page",
@@ -181,13 +191,51 @@
         "next": "Next",
         "page": "Page",
         "of": "of"
+      },
+      "empty": {
+        "favorites": "You don't have favorite restaurants yet."
+      },
+      "profile": {
+        "title": "Your Information",
+        "subtitle": "Edit your account details"
+      },
+      "staff": {
+        "title": "MY PROFILE",
+        "role": "Role",
+        "email": "Email",
+        "employeeId": "Employee ID",
+        "restaurant": "Restaurant",
+        "address": "Address",
+        "contact": "Contact",
+        "noProvide": "Not provided",
+        "unknown": "Unknown",
+        "noPhone": "No phone",
+        "noEmail": "No email"
+      },
+      "status": {
+        "visits": "visits",
+        "points": "points",
+        "offer": "OFFER"
+      },
+      "actions": {
+        "addFavorite": "Add to favorites",
+        "removeFavorite": "Remove from favorites",
+        "checkIn": "Check-in now",
+        "redeem": "Redeem",
+        "showQr": "Show QR code"
+      },
+      "details": {
+        "about": "About the restaurant",
+        "myPoints": "Your points here",
+        "multiplierTitle": "Multiply your points!",
+        "multiplierDesc": "Get extra points for every visit to this restaurant!"
       }
     },
     "employee": {
       "loadingOwner": "Loading Owner dashboard…",
       "loadingStaff": "Loading Staff dashboard…",
       "yourRestaurant": "Your restaurant",
-      "statsTitle": "Restaurant statistics",
+      "statsTitle": "Restaurant Overview",
       "metrics": {
         "avgPoints": "Avg points/visit",
         "loyalCustomers": "Loyal customers",
@@ -290,7 +338,7 @@
       "chartTitle": "Peak hours"
     },
     "topDishes": {
-      "title": "Top Dishes",
+      "title": "Top Rated Dishes",
       "loading": "Loading...",
       "none": "No rated dishes yet."
     },
@@ -313,12 +361,16 @@
   "sidebar": {
     "dashboard": "Dashboard",
     "clients": "Customers",
-    "dishes": "Dishes",
+    "dishes": "Menu / Dishes",
     "employees": "Employees",
     "rewards": "Rewards",
     "analytics": "Analytics",
     "settings": "Settings",
-    "logout": "Logout"
+    "logout": "Logout",
+    "home": "Home",
+    "discover": "Discover",
+    "myQr": "My QR",
+    "profile": "Profile"
   },
   "analytics": {
     "title": "ANALYTICS",
@@ -413,11 +465,15 @@
       "clear": "Clear filters",
       "allRoles": "All roles",
       "noResults": "No employees found matching these criteria."
-    }
+    },
+    "confirmDelete": "Are you sure you want to delete this employee?",
+    "errorDelete": "Error deleting employee",
+    "errorLoading": "Could not load employees.",
+    "errorNoRestaurant": "Could not identify the user's restaurant."
   },
   "dishes": {
-    "title": "Your Menu",
-    "subtitle": "Manage dishes and categories in your menu",
+    "title": "Dish Menu",
+    "subtitle": "Manage your restaurant's menu.",
     "addDish": "Add Dish",
     "editDish": "Edit Dish",
     "deleteDish": "Delete Dish",
@@ -441,26 +497,24 @@
       "allDay": "All day"
     },
     "form": {
-      "name": "Dish name",
-      "namePlaceholder": "E.g: Bravas Potatoes",
-      "description": "Description",
-      "descriptionPlaceholder": "Describe ingredients or preparation...",
+      "name": "Dish Name",
+      "namePlaceholder": "e.g. Margherita Pizza",
       "price": "Price",
-      "section": "Section",
-      "image": "Image (URL)",
-      "imagePlaceholder": "https://link-to-your-image.jpg",
+      "section": "Category",
+      "image": "Image URL",
+      "imagePlaceholder": "https://...",
       "portionSize": "Portion Size",
       "ingredients": "Ingredients",
-      "ingredientsPlaceholder": "E.g: potatoes, salt, oil (comma separated)",
-      "allergens": "Allergens",
-      "allergensPlaceholder": "E.g: gluten, dairy (comma separated)",
-      "dietary": "Dietary tags",
-      "dietaryPlaceholder": "E.g: vegan, vegetarian",
-      "flavor": "Flavor profile",
-      "flavorPlaceholder": "E.g: spicy, salty",
+      "ingredientsPlaceholder": "Separate ingredients with commas...",
+      "description": "Description",
+      "descriptionPlaceholder": "Describe the dish...",
       "availability": "Availability",
-      "availabilityPlaceholder": "E.g: lunch, dinner",
-      "submit": "Save Dish"
+      "dietary": "Dietary Tags",
+      "flavor": "Flavor Profile",
+      "allergens": "Allergens",
+      "submit": "Save Dish",
+      "basicInfo": "Basic Information",
+      "attributes": "Attributes & Classification"
     },
     "portionSizes": {
       "small": "Small",
@@ -476,26 +530,32 @@
     }
   },
   "rewards": {
-    "title": "Rewards Program",
-    "subtitle": "Set up the prizes your customers can redeem",
+    "title": "Rewards Management",
+    "subtitle": "Create and manage the rewards your customers can redeem with their points.",
     "addReward": "Add Reward",
+    "noRewards": "No rewards created",
+    "noRewardsSubtitle": "Start by creating your first loyalty reward.",
     "editReward": "Edit Reward",
     "deleteReward": "Delete Reward",
-    "loading": "Loading rewards...",
-    "errorLoading": "Could not load rewards.",
     "confirmDelete": "Are you sure you want to delete this reward?",
-    "errorDelete": "Error deleting reward.",
-    "noRewards": "No rewards configured",
-    "noRewardsSubtitle": "Start creating rewards to incentivize your customers' visits.",
+    "errorLoading": "Could not load rewards.",
+    "errorDelete": "Error deleting reward",
+    "loading": "Loading rewards...",
     "details": {
-      "noDescription": "No description available.",
-      "pointsCost": "Cost in points",
+      "pointsCost": "Points Cost",
+      "noDescription": "No description provided.",
       "expires": "Expires",
       "description": "Benefit description"
     },
+    "data": {
+      "free_dessert": "Free Dessert",
+      "free_dessert_desc": "Enjoy a complimentary dessert of your choice on your next visit.",
+      "10%_off_your_bill": "10% Off Your Bill",
+      "10%_off_your_bill_desc": "Get a 10% discount on your entire bill."
+    },
     "form": {
-      "name": "Reward name",
-      "namePlaceholder": "E.g: Free Dessert",
+      "name": "Reward Name",
+      "namePlaceholder": "e.g. Free Dessert",
       "description": "What is earned?",
       "descriptionPlaceholder": "Explain what the customer will get...",
       "activeTagline": "Reward active and available for redemption",
@@ -572,6 +632,47 @@
         "title": "Fraud Protection",
         "description": "Automatic ticket validation via QR"
       }
+    }
+  },
+  "discover": {
+    "title": "Discover",
+    "searchPlaceholder": "Search by name or cuisine...",
+    "resultsCount": "restaurants found",
+    "categories": {
+      "all": "All",
+      "sushi": "Sushi",
+      "pizzeria": "Pizzeria",
+      "burger": "Burger",
+      "mexican": "Mexican",
+      "italian": "Italian",
+      "seafood": "Seafood"
+    }
+  },
+  "qr_panel": {
+    "label": "My QR",
+    "title": "Your QR is ready",
+    "text": "Here you can quickly access the corresponding functionality."
+  },
+  "stats_dashboard": {
+    "title": "Your Statistics",
+    "tagline": "This is how you've used EasyEat so far.",
+    "spent": "Money spent",
+    "earned": "Points earned",
+    "visits": "Total visits",
+    "history": {
+      "title": "Activity and reward history",
+      "empty": "No visits or rewards registered yet.",
+      "unknownRestaurant": "Unknown restaurant"
+    }
+  },
+  "qr": {
+    "user": {
+      "title": "Your QR Code",
+      "desc": "Show this code to the waiter to check-in and earn points."
+    },
+    "reward": {
+      "title": "Reward QR Code",
+      "desc": "Show this code to the waiter to claim the reward."
     }
   }
 }
