@@ -5,6 +5,8 @@ import { Map, Star, UtensilsCrossed } from 'lucide-react';
 import type { Restaurant } from '@/types/Restaurant';
 import { motion } from 'framer-motion';
 
+const MAX_DISPLAYED_CATEGORIES = 2;
+
 export default function DiscoverScreen() {
   const restaurants = useRestaurantStore((s: any) => s.restaurants);
   const load = useRestaurantStore((s: any) => s.loadRestaurants);
@@ -45,7 +47,8 @@ export default function DiscoverScreen() {
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
           {restaurants.map((r: Restaurant, index: number) => {
             const image = r.profile.image?.[0] || '';
-            const categories = r.profile.category?.slice(0, 2).join(' · ') || 'Restaurant';
+            const categories = r.profile.category?.slice(0, MAX_DISPLAYED_CATEGORIES).join(' · ') || 'Restaurant';
+            const detailLine = r.profile.category?.join(', ') || 'Loyalty rewards available';
             const rating = typeof r.profile.globalRating === 'number'
               ? r.profile.globalRating.toFixed(1)
               : 'N/A';
@@ -80,9 +83,7 @@ export default function DiscoverScreen() {
 
                 <div className="space-y-2 p-4">
                   <h3 className="truncate text-base font-semibold text-slate-900">{r.profile.name}</h3>
-                  <p className="min-h-10 text-sm text-slate-500">
-                    Discover rewards, badges and loyalty perks at this location.
-                  </p>
+                  <p className="min-h-10 text-sm text-slate-500">{detailLine}</p>
                 </div>
               </motion.button>
             );
