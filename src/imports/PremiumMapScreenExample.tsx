@@ -1,13 +1,31 @@
-/**
- * IMPROVED Premium Map Screen Example
- * Demonstrates all the enhanced features and best practices
- */
-
-import type { FC } from 'react';
-import MapScreen from './MapScreen';
+import { useEffect, type FC } from 'react';
+import MapScreenPremium from './MapScreenPremium';
+import { useRestaurantStore } from '@/stores/restaurantStore';
+import { useLocationStore } from '@/stores/locationStore';
+import type { Restaurant } from '@/types/Restaurant';
 
 export const PremiumMapScreenExample: FC = () => {
-  return <MapScreen />;
+  const restaurants = useRestaurantStore((s: any) => s.restaurants as Restaurant[]);
+  const loading = useRestaurantStore((s: any) => s.loading as boolean);
+  const loadRestaurants = useRestaurantStore((s: any) => s.loadRestaurants as () => Promise<void>);
+  const coords = useLocationStore((s: any) => s.coords as { lat: number; lng: number } | null);
+  const requestLocation = useLocationStore((s: any) => s.requestLocation as () => Promise<void>);
+
+  useEffect(() => {
+	void loadRestaurants();
+	void requestLocation();
+  }, [loadRestaurants, requestLocation]);
+
+  return (
+	<MapScreenPremium
+	  restaurants={restaurants}
+	  userLocation={coords}
+	  isLoading={loading}
+	  onRestaurantOpen={(id) => {
+		useRestaurantStore.getState().setSelected(id);
+	  }}
+	/>
+  );
 };
 
 /**

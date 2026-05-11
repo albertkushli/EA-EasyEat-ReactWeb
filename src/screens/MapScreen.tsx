@@ -1,2 +1,2 @@
-export { default } from '../imports/MapScreen';
+export { default } from '../imports/PremiumMapScreenExample';
 
