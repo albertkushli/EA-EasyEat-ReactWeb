@@ -90,6 +90,16 @@ export default defineConfig({
         changeOrigin: true,
         configure: addProxyAuth,
       },
+      '/chat': {
+        target: 'http://localhost:1337',
+        changeOrigin: true,
+        configure: addProxyAuth,
+      },
+      '/socket.io': {
+        target: 'http://localhost:1337',
+        changeOrigin: true,
+        ws: true,
+      },
     },
   },
 })

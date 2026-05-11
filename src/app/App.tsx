@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from '@/context/AuthContext';
+import { ChatProvider } from '@/context/ChatContext';
 import { Login, Register } from '@/features/auth';
 import { Dashboard, Home } from '@/features/dashboard';
 import { Clients } from '@/features/customers';
@@ -27,7 +28,8 @@ function PublicRoute({ children }: { children: ReactNode }) {
 export default function App() {
   return (
     <AuthProvider>
-      <Router>
+      <ChatProvider>
+        <Router>
         <Routes>
           <Route
             path="/"
@@ -73,6 +75,7 @@ export default function App() {
           <Route path="/aviso-legal" element={<LegalNotice />} />
         </Routes>
       </Router>
+      </ChatProvider>
     </AuthProvider>
   );
 }
