@@ -1,4 +1,4 @@
-import { LayoutDashboard, Users, Gift, BarChart3, Settings, LogOut, Store, UtensilsCrossed, Users2 } from "lucide-react";
+import { LayoutDashboard, Users, Gift, BarChart3, Settings, LogOut, Store, UtensilsCrossed, Users2, MessageSquare } from "lucide-react";
 import { motion } from "framer-motion";
 import { useAuth } from "@/context/AuthContext";
 import { useTranslation } from "react-i18next";
@@ -27,6 +27,7 @@ export function Sidebar({ activeView, onViewChange, restaurantName, restaurantAd
     { id: 'employees', icon: Users2, label: t('sidebar.employees', 'Empleados') },
     { id: 'rewards', icon: Gift, label: t('sidebar.rewards', 'Recompensas') },
     { id: 'analytics', icon: BarChart3, label: t('sidebar.analytics', 'Estadísticas') },
+    { id: 'chat', icon: MessageSquare, label: t('sidebar.chat', 'Chat') },
     { id: 'settings', icon: Settings, label: t('sidebar.settings', 'Ajustes') }
   ];
 

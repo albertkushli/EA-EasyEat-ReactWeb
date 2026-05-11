@@ -6,6 +6,7 @@ import { ArrowLeft, CheckCircle, Clock, Coins, Gift, Heart, Home, Map, MapPin, Q
 import LanguageDropdown from '@/shared/components/ui/LanguageDropdown';
 import type { ICustomer } from '@/types';
 import type { CustomerBadge, CustomerPointsWalletEntry, CustomerRestaurant, CustomerReward, CustomerTabId, CustomerVisit } from '../../hooks/useCustomerDashboard';
+import CustomerChatButton from '@/features/chat/components/CustomerChatButton';
 
 interface CustomerSidebarProps {
   activeTab: CustomerTabId;
@@ -316,6 +317,14 @@ function CustomerRestaurantDetail({
       <button className="hc-checkin-btn" onClick={onOpenQrModal}>
         <QrCode size={20} /> {t('dashboard.customer.actions.checkIn')}
       </button>
+
+      {/* Chat con el restaurante */}
+      <div style={{ marginTop: '1rem' }}>
+        <CustomerChatButton
+          restaurantId={restaurant._id ?? (restaurant as any).id ?? ''}
+          restaurantName={getRestaurantName(restaurant)}
+        />
+      </div>
     </div>
   );
 }
