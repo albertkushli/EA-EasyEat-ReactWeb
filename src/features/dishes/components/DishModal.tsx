@@ -163,7 +163,7 @@ export default function DishModal({ isOpen, onClose, onSave, dish }: DishModalPr
                 <div className="space-y-4">
                   <h3 className="text-[10px] font-black text-orange-500 uppercase tracking-[0.2em] flex items-center gap-2">
                     <div className="w-1.5 h-1.5 rounded-full bg-orange-500" />
-                    Información básica
+                    {t('dishes.form.basicInfo', 'Información básica')}
                   </h3>
                   
                   <div className="space-y-4">
@@ -283,7 +283,7 @@ export default function DishModal({ isOpen, onClose, onSave, dish }: DishModalPr
               <div className="space-y-8">
                 <h3 className="text-[10px] font-black text-orange-500 uppercase tracking-[0.2em] flex items-center gap-2">
                   <div className="w-1.5 h-1.5 rounded-full bg-orange-500" />
-                  Atributos y Clasificación
+                  {t('dishes.form.attributes', 'Atributos y Clasificación')}
                 </h3>
 
                 <div className="space-y-6">

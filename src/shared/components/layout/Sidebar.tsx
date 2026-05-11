@@ -1,4 +1,4 @@
-import { LayoutDashboard, Users, Gift, BarChart3, Settings, LogOut, Store, UtensilsCrossed, Users2 } from "lucide-react";
+import { LayoutDashboard, Users, Gift, BarChart3, Settings, LogOut, Store, UtensilsCrossed, Users2, MessageSquare } from "lucide-react";
 import { motion } from "framer-motion";
 import { useAuth } from "@/context/AuthContext";
 import { useTranslation } from "react-i18next";
@@ -17,17 +17,18 @@ export function Sidebar({ activeView, onViewChange, restaurantName, restaurantAd
   const isOwner = role === 'owner';
 
   const baseMenuItems = [
-    { id: 'profile', icon: Users, label: t('sidebar.profile') === 'sidebar.profile' ? 'Mi Perfil' : t('sidebar.profile') },
+    { id: 'profile', icon: Users, label: t('sidebar.profile', 'Perfil') },
   ];
-
+  
   const ownerMenuItems = [
-    { id: 'dashboard', icon: LayoutDashboard, label: t('sidebar.dashboard') },
-    { id: 'clients', icon: Users, label: t('sidebar.clients') },
-    { id: 'dishes', icon: UtensilsCrossed, label: t('sidebar.dishes') },
-    { id: 'employees', icon: Users2, label: t('sidebar.employees') },
-    { id: 'rewards', icon: Gift, label: t('sidebar.rewards') },
-    { id: 'analytics', icon: BarChart3, label: t('sidebar.analytics') },
-    { id: 'settings', icon: Settings, label: t('sidebar.settings') }
+    { id: 'dashboard', icon: LayoutDashboard, label: t('sidebar.dashboard', 'Panel de control') },
+    { id: 'clients', icon: Users, label: t('sidebar.clients', 'Clientes') },
+    { id: 'dishes', icon: UtensilsCrossed, label: t('sidebar.dishes', 'Platos') },
+    { id: 'employees', icon: Users2, label: t('sidebar.employees', 'Empleados') },
+    { id: 'rewards', icon: Gift, label: t('sidebar.rewards', 'Recompensas') },
+    { id: 'analytics', icon: BarChart3, label: t('sidebar.analytics', 'Estadísticas') },
+    { id: 'chat', icon: MessageSquare, label: t('sidebar.chat', 'Chat') },
+    { id: 'settings', icon: Settings, label: t('sidebar.settings', 'Ajustes') }
   ];
 
   // Si es owner, ve su perfil más todo lo demás. Si es staff, solo su perfil.
@@ -83,7 +84,11 @@ export function Sidebar({ activeView, onViewChange, restaurantName, restaurantAd
           </div>
           <div className="flex-1 min-w-0">
             <p className="text-sm font-bold truncate">{user?.name || t('auth.login.tabs.customer')}</p>
-            <p className="text-xs text-slate-300/70 truncate">{user?.role || 'Owner'}</p>
+            <p className="text-xs text-slate-300/70 truncate">{
+              user?.role === 'owner' ? t('auth.roles.owner') :
+              user?.role === 'staff' ? t('auth.roles.staff') :
+              t('auth.roles.customer')
+            }</p>
           </div>
         </div>
 

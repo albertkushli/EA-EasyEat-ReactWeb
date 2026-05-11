@@ -167,7 +167,7 @@ export default function Rewards() {
               <div className="flex-1">
                 <div className="flex items-center gap-2 mb-1">
                   <h3 className="font-black text-gray-800 text-lg leading-tight group-hover:text-orange-600 transition-colors">
-                    {reward?.name}
+                    {t(`rewards.data.${reward?.name?.toLowerCase().replace(/\s+/g, '_')}`, reward?.name)}
                   </h3>
                   <div className={`px-1.5 py-0.5 rounded text-[8px] font-black uppercase tracking-tighter ${reward?.active
                     ? "bg-green-100 text-green-600"
@@ -177,7 +177,7 @@ export default function Rewards() {
                   </div>
                 </div>
                 <p className="text-gray-500 text-sm font-medium line-clamp-2 leading-snug">
-                  {reward?.description || t('rewards.details.noDescription')}
+                  {t(`rewards.data.${reward?.name?.toLowerCase().replace(/\s+/g, '_')}_desc`, reward?.description || t('rewards.details.noDescription'))}
                 </p>
               </div>
 

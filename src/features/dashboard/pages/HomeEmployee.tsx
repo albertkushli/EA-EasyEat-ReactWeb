@@ -9,6 +9,8 @@ import { Rewards } from '@/features/rewards';
 import Analytics from '../components/Analytics';
 import RestaurantSettings from '@/shared/components/ui/Settings';
 import StaffProfilePanel from '../components/employee/StaffProfilePanel';
+import LanguageDropdown from '@/shared/components/ui/LanguageDropdown';
+import RestaurantChatDashboard from '@/features/chat/pages/RestaurantChatDashboard';
 
 export default function HomeEmployee() {
   const { t } = useTranslation();
@@ -36,13 +38,17 @@ export default function HomeEmployee() {
         restaurantAddress={dashboard.restAddress}
       />
 
-      <div style={{ marginLeft: '16rem', minHeight: '100vh' }}>
-        {dashboard.activeView === 'profile' ? (
-          <StaffProfilePanel
-            user={dashboard.user}
-            restaurant={dashboard.restaurant}
-          />
-        ) : dashboard.activeView === 'dashboard' ? (
+      <div style={{ marginLeft: '16rem', minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
+        <div style={{ display: 'flex', justifyContent: 'flex-end', padding: '1.5rem 2rem 0' }}>
+          <LanguageDropdown />
+        </div>
+        <div style={{ flex: 1 }}>
+          {dashboard.activeView === 'profile' ? (
+            <StaffProfilePanel
+              user={dashboard.user}
+              restaurant={dashboard.restaurant}
+            />
+          ) : dashboard.activeView === 'dashboard' ? (
           <EmployeeOverviewPanel
             visits={dashboard.visits}
             reviews={dashboard.reviews}
@@ -76,7 +82,12 @@ export default function HomeEmployee() {
           <div style={{ padding: '2rem' }}>
             <RestaurantSettings restaurant={dashboard.restaurant} />
           </div>
+        ) : dashboard.activeView === 'chat' ? (
+          <div style={{ padding: '2rem' }}>
+            <RestaurantChatDashboard />
+          </div>
         ) : null}
+        </div>
       </div>
     </div>
   );
