@@ -1,0 +1,678 @@
+{
+  "navbar": {
+    "logo": "EasyEat",
+    "links": {
+      "customers": "Customers",
+      "restaurants": "Restaurants",
+      "howItWorks": "How it works",
+      "access": "Access",
+      "logout": "Logout"
+    },
+    "back": "Back"
+  },
+  "hero": {
+    "title": {
+      "win": "Earn points.",
+      "eat": "Eat more.",
+      "live": "Live better."
+    },
+    "subtitle": "The loyalty platform that rewards every bite. Connect with your favorite restaurants and get exclusive rewards.",
+    "ctas": {
+      "customer": "I am a customer",
+      "restaurant": "I am a restaurant",
+      "admin": "Are you an admin? Access here"
+    },
+    "tagline": "Join the food-loyalty revolution"
+  },
+  "features": {
+    "foodie": {
+      "title": "For you, foodie",
+      "items": {
+        "discover": "Discover restaurants near you",
+        "accumulate": "Earn points with every visit",
+        "redeem": "Redeem exclusive rewards for free"
+      }
+    },
+    "business": {
+      "title": "For your business",
+      "items": {
+        "analyze": "Analyze visits and real statistics",
+        "loyalty": "Build customer loyalty with points",
+        "manage": "Manage menu and prizes easily"
+      }
+    }
+  },
+  "howItWorks": {
+    "title": "As easy as eating",
+    "steps": {
+      "find": {
+        "title": "Find",
+        "desc": "Search by category, location, or rating and discover your next favorite spot."
+      },
+      "visit": {
+        "title": "Visit",
+        "desc": "Check-in upon arrival and automatically earn points for every meal."
+      },
+      "enjoy": {
+        "title": "Enjoy",
+        "desc": "Redeem your earned points for free dishes, discounts, or unique experiences."
+      }
+    }
+  },
+  "stats": {
+    "restaurants": "Restaurants",
+    "users": "Users",
+    "visits": "Visits",
+    "tagline": "GROWING EVERY WEEK IN BARCELONA"
+  },
+  "cta": {
+    "ready": "Ready to start winning?",
+    "join": "Join the thousands of users already enjoying the best perks in the best restaurants.",
+    "access": "Access my account",
+    "benefits": {
+      "noCards": "No physical cards",
+      "free": "100% Free"
+    }
+  },
+  "footer": {
+    "tagline": "Revolutionizing loyalty in the restaurant industry.",
+    "sections": {
+      "platform": "Platform",
+      "legal": "Legal"
+    },
+    "links": {
+      "legalNotice": "Legal Notice",
+      "privacy": "Privacy Policy",
+      "cookies": "Cookies Policy",
+      "terms": "Terms and conditions"
+    },
+    "copy": "© 2026 EasyEat · Academic Project · UPC · Barcelona"
+  },
+  "auth": {
+    "login": {
+      "title": "Welcome back",
+      "tagline": "Your Premium gastronomic experience",
+      "subtitle": "Sign in to access your main dashboard",
+      "tabs": {
+        "customer": "Customer",
+        "restaurant": "Restaurant"
+      },
+      "form": {
+        "email": "Email address",
+        "emailPlaceholder": "Enter your email...",
+        "password": "Password",
+        "passwordPlaceholder": "••••••••",
+        "showPassword": "Show Password",
+        "hidePassword": "Hide Password",
+        "submit": "Access my account",
+        "loading": "Signing in…"
+      },
+      "footer": {
+        "noAccount": "Don't have an account yet?",
+        "register": "Register for free"
+      }
+    },
+    "roles": {
+      "owner": "Owner",
+      "staff": "Staff",
+      "customer": "Customer"
+    },
+    "register": {
+      "title": "Create new account",
+      "tagline": "Join our community today",
+      "subtitle": "Fill in your details and start enjoying",
+      "form": {
+        "fullName": "Full name",
+        "namePlaceholder": "E.g. John Doe",
+        "email": "Email address",
+        "emailPlaceholder": "you@email.com",
+        "password": "Password",
+        "passwordPlaceholder": "••••••••",
+        "confirmPassword": "Confirm password",
+        "rules": {
+          "length": "Minimum 8 characters long",
+          "uppercase": "Include at least one uppercase letter",
+          "match": "Passwords match perfectly"
+        },
+        "submit": "Finish Registration",
+        "loading": "Creating account…"
+      },
+      "footer": {
+        "hasAccount": "Already have an account?",
+        "login": "Sign in instead"
+      }
+    },
+    "errors": {
+      "completeFields": "Please fill in all fields.",
+      "serverError": "Could not connect to the server. Please try again.",
+      "invalidForm": "Please fill in all required fields correctly."
+    }
+  },
+  "dashboard": {
+    "noAuthorized": "Not authorized",
+    "noAuthorizedDesc": "You must log in to access the dashboard.",
+    "unknownRole": "Unrecognized role",
+    "unknownRoleDesc": "Your user role is not configured correctly.",
+    "customer": {
+      "loading": "Loading your experience…",
+      "welcome": "Welcome back,",
+      "discover": "Discover flavors waiting for you today",
+      "badge": "badge",
+      "stats": {
+        "totalPoints": "Total points",
+        "visits": "Visits",
+        "badges": "Badges",
+        "favorites": "Favorites"
+      },
+      "searchPlaceholder": "Search restaurants or cities…",
+      "noRestaurantName": "Restaurant",
+      "sections": {
+        "favorites": "Your favorites",
+        "nearYou": "Near you",
+        "recentVisits": "Recent visits",
+        "achievements": "Your achievements",
+        "badges": "Your achievements",
+        "objectives": "Objectives to achieve",
+        "rewards": "Featured rewards"
+      },
+      "objectives": {
+        "visit": "Visit 10 different restaurants",
+        "points": "Accumulate 2000 total points",
+        "level": "Reach level 10 in a restaurant",
+        "progress": "Progress:"
+      },
+      "results": {
+        "onThisPage": "on this page",
+        "total": "total",
+        "noResults": "No restaurants found for"
+      },
+      "pagination": {
+        "previous": "Previous",
+        "next": "Next",
+        "page": "Page",
+        "of": "of"
+      },
+      "empty": {
+        "favorites": "You don't have favorite restaurants yet."
+      },
+      "profile": {
+        "title": "Your Information",
+        "subtitle": "Edit your account details"
+      },
+      "staff": {
+        "title": "MY PROFILE",
+        "role": "Role",
+        "email": "Email",
+        "employeeId": "Employee ID",
+        "restaurant": "Restaurant",
+        "address": "Address",
+        "contact": "Contact",
+        "noProvide": "Not provided",
+        "unknown": "Unknown",
+        "noPhone": "No phone",
+        "noEmail": "No email"
+      },
+      "status": {
+        "visits": "visits",
+        "points": "points",
+        "offer": "OFFER"
+      },
+      "actions": {
+        "addFavorite": "Add to favorites",
+        "removeFavorite": "Remove from favorites",
+        "checkIn": "Check-in now",
+        "redeem": "Redeem",
+        "showQr": "Show QR code"
+      },
+      "details": {
+        "about": "About the restaurant",
+        "myPoints": "Your points here",
+        "multiplierTitle": "Multiply your points!",
+        "multiplierDesc": "Get extra points for every visit to this restaurant!"
+      }
+    },
+    "employee": {
+      "loadingOwner": "Loading Owner dashboard…",
+      "loadingStaff": "Loading Staff dashboard…",
+      "yourRestaurant": "Your restaurant",
+      "statsTitle": "Restaurant Overview",
+      "metrics": {
+        "avgPoints": "Avg points/visit",
+        "loyalCustomers": "Loyal customers",
+        "avgRating": "Average rating"
+      },
+      "topDish": "Top Dish",
+      "employees": {
+        "title": "Employees",
+        "count": "employees",
+        "none": "No employees registered"
+      },
+      "quickActions": {
+        "title": "Quick actions",
+        "generateQr": {
+          "title": "Generate QR",
+          "desc": "Visit scan"
+        },
+        "viewVisits": {
+          "title": "View visits",
+          "desc": "Full history"
+        },
+        "settings": {
+          "title": "Settings",
+          "desc": "Local adjustments"
+        }
+      },
+      "recentVisits": {
+        "title": "Recent visits",
+        "records": "of records",
+        "client": "Client",
+        "none": "No visits registered yet"
+      },
+      "pagination": {
+        "previous": "Previous",
+        "next": "Next",
+        "page": "Page",
+        "of": "of"
+      },
+      "status": {
+        "sevenPreviousDays": "7 previous days"
+      }
+    }
+  },
+  "profile": {
+    "settings": "Settings",
+    "title": "Profile settings",
+    "subtitle": "Change your profile information",
+    "form": {
+      "password": "Password",
+      "passwordHint": "(Leave blank to keep the same)",
+      "passwordError": "The password must have at least 8 characters, 1 capital letter and 1 number.",
+      "emailError": "Invalid email.",
+      "nameError": "The name must be between 2 and 100 characters.",
+      "save": "Save",
+      "updated": "Profile updated successfully!"
+    }
+  },
+  "components": {
+    "employeeCard": {
+      "noName": "No name",
+      "noEmail": "No email",
+      "noPhone": "No phone",
+      "active": "Active",
+      "inactive": "Inactive",
+      "visits": "visits"
+    },
+    "metrics": {
+      "avgPointsVisit": "Avg Points / Visit",
+      "avgRating": "Avg Rating",
+      "loyalCustomers": "Loyal Customers"
+    },
+    "trends": {
+      "title": "Temporal evolution",
+      "subtitle": "Real visits per day, simple prediction and 7-day comparative context.",
+      "badge": "+7 days",
+      "visits": "Visits",
+      "revenue": "Revenue",
+      "rating": "Rating",
+      "noData": "No data",
+      "lowRating": "⚠️ Low rating",
+      "correctLevel": "Correct level",
+      "realVisits": "Real visits",
+      "prediction7Days": "7-day prediction",
+      "prediction": "Prediction",
+      "empty": "Not enough visits to build the trend yet.",
+      "realData": "Real data",
+      "alerts": {
+        "visitsDrop": "⚠️ Significant drop in visits this week",
+        "revenueLow": "⚠️ Low revenue this period",
+        "goodPerformance": "✅ Good overall restaurant performance"
+      }
+    },
+    "restaurantCard": {
+      "defaultCategory": "General",
+      "defaultCity": "Barcelona"
+    },
+    "peakHours": {
+      "title": "Peak Visit Hours",
+      "noVisits": "No visits registered yet.",
+      "chartTitle": "Peak hours"
+    },
+    "topDishes": {
+      "title": "Top Rated Dishes",
+      "loading": "Loading...",
+      "none": "No rated dishes yet."
+    },
+    "restaurantRating": {
+      "title": "Restaurant Rating",
+      "loading": "Loading..."
+    },
+    "reviewScores": {
+      "title": "Review Scores",
+      "noReviews": "No reviews for this restaurant yet.",
+      "average": "Average",
+      "categories": {
+        "food": "Food",
+        "service": "Service",
+        "cleanliness": "Cleanliness",
+        "environment": "Environment"
+      }
+    }
+  },
+  "sidebar": {
+    "dashboard": "Dashboard",
+    "clients": "Customers",
+    "dishes": "Menu / Dishes",
+    "employees": "Employees",
+    "rewards": "Rewards",
+    "analytics": "Analytics",
+    "settings": "Settings",
+    "logout": "Logout",
+    "home": "Home",
+    "discover": "Discover",
+    "myQr": "My QR",
+    "profile": "Profile"
+  },
+  "analytics": {
+    "title": "ANALYTICS",
+    "subtitle": "Performance dashboard and strategic trends",
+    "loading": "Analyzing real restaurant data...",
+    "errorTitle": "Connection Error",
+    "errorLoading": "Could not load some analytics data.",
+    "retry": "Retry",
+    "exportData": "Export Data",
+    "export": {
+      "date": "Date",
+      "visits": "Visits",
+      "rewards": "Rewards"
+    },
+    "kpi": {
+      "retention": "Retention Rate",
+      "activeCustomers": "Active Customers",
+      "revenue": "Estimated Revenue",
+      "loyaltyRoi": "Loyalty (ROI)"
+    },
+    "chart": {
+      "title": "Trends from last month",
+      "subtitle": "Visits vs Rewards redeemed",
+      "visits": "Visits",
+      "rewards": "Rewards"
+    },
+    "prediction": {
+      "title": "Prediction",
+      "nextMonth": "Next Month",
+      "growthTagline": "EXPECTED GROWTH IN VISITS"
+    },
+    "alerts": {
+      "title": "Smart Alerts",
+      "visitsDrop": "Slight drop in visits during night hours",
+      "recurrenceIncrease": "The points program has increased recurrence by 8%",
+      "newSegment": "New active customer segment detected"
+    }
+  },
+  "clients": {
+    "title": "Customers",
+    "subtitle": "Manage and view your restaurant's customers",
+    "searchPlaceholder": "Search by name or email...",
+    "loading": "Loading customers...",
+    "errorNoRestaurant": "Could not identify the user's restaurant.",
+    "errorLoading": "Could not load customers.",
+    "retry": "Retry",
+    "noResults": "No customers found",
+    "noResultsSearch": "Try another search term.",
+    "noResultsEmpty": "No customers registered in this restaurant yet.",
+    "active": "Active",
+    "inactive": "Inactive",
+    "memberSince": "Member since",
+    "details": {
+      "stats": "Statistics",
+      "totalVisits": "Total Visits",
+      "avgRating": "Average Rating",
+      "totalSpent": "Total Spent",
+      "lastVisit": "Last Visit",
+      "loyalty": "Loyalty",
+      "currentLevel": "Current level",
+      "rewardsRedeemed": "Rewards redeemed",
+      "preferences": "Preferences",
+      "visitHistory": "Visit History",
+      "lastReviews": "Last Reviews",
+      "close": "CLOSE",
+      "noReviews": "No reviews yet.",
+      "noHistory": "No visits registered yet."
+    }
+  },
+  "employees": {
+    "title": "Employees",
+    "subtitle": "Manage your restaurant's team",
+    "addEmployee": "Add Employee",
+    "editEmployee": "Edit Employee",
+    "loading": "Loading employees...",
+    "noEmployees": "No employees found",
+    "form": {
+      "name": "Name",
+      "email": "Email",
+      "phone": "Phone",
+      "role": "Role",
+      "password": "Password",
+      "submit": "Save Employee"
+    },
+    "filters": {
+      "title": "Filters",
+      "search": "Search employees...",
+      "role": "Role",
+      "minRating": "Min Rating",
+      "minVisits": "Min Visits",
+      "minRewards": "Min Rewards",
+      "clear": "Clear filters",
+      "allRoles": "All roles",
+      "noResults": "No employees found matching these criteria."
+    },
+    "confirmDelete": "Are you sure you want to delete this employee?",
+    "errorDelete": "Error deleting employee",
+    "errorLoading": "Could not load employees.",
+    "errorNoRestaurant": "Could not identify the user's restaurant."
+  },
+  "dishes": {
+    "title": "Dish Menu",
+    "subtitle": "Manage your restaurant's menu.",
+    "addDish": "Add Dish",
+    "editDish": "Edit Dish",
+    "deleteDish": "Delete Dish",
+    "loading": "Loading menu...",
+    "errorLoading": "Could not load the menu.",
+    "confirmDelete": "Are you sure you want to delete this dish?",
+    "errorDelete": "Error deleting dish.",
+    "noDishes": "No dishes in the menu",
+    "noDishesSubtitle": "Start adding dishes to your menu from the management panel.",
+    "viewDetails": "View details",
+    "details": {
+      "description": "Description",
+      "noDescription": "This dish doesn't have a detailed description yet.",
+      "ingredients": "Ingredients",
+      "notSpecified": "Not specified",
+      "allergens": "Allergens",
+      "noCriticalAllergens": "No critical allergens",
+      "dietary": "Dietary",
+      "flavor": "Flavor",
+      "availability": "Availability",
+      "allDay": "All day"
+    },
+    "form": {
+      "name": "Dish Name",
+      "namePlaceholder": "e.g. Margherita Pizza",
+      "price": "Price",
+      "section": "Category",
+      "image": "Image URL",
+      "imagePlaceholder": "https://...",
+      "portionSize": "Portion Size",
+      "ingredients": "Ingredients",
+      "ingredientsPlaceholder": "Separate ingredients with commas...",
+      "description": "Description",
+      "descriptionPlaceholder": "Describe the dish...",
+      "availability": "Availability",
+      "dietary": "Dietary Tags",
+      "flavor": "Flavor Profile",
+      "allergens": "Allergens",
+      "submit": "Save Dish",
+      "basicInfo": "Basic Information",
+      "attributes": "Attributes & Classification"
+    },
+    "portionSizes": {
+      "small": "Small",
+      "medium": "Medium",
+      "large": "Large",
+      "sharing": "Sharing"
+    },
+    "sections": {
+      "starters": "Starters",
+      "mains": "Mains",
+      "desserts": "Desserts",
+      "drinks": "Drinks"
+    }
+  },
+  "rewards": {
+    "title": "Rewards Management",
+    "subtitle": "Create and manage the rewards your customers can redeem with their points.",
+    "addReward": "Add Reward",
+    "noRewards": "No rewards created",
+    "noRewardsSubtitle": "Start by creating your first loyalty reward.",
+    "editReward": "Edit Reward",
+    "deleteReward": "Delete Reward",
+    "confirmDelete": "Are you sure you want to delete this reward?",
+    "errorLoading": "Could not load rewards.",
+    "errorDelete": "Error deleting reward",
+    "loading": "Loading rewards...",
+    "details": {
+      "pointsCost": "Points Cost",
+      "noDescription": "No description provided.",
+      "expires": "Expires",
+      "description": "Benefit description"
+    },
+    "data": {
+      "free_dessert": "Free Dessert",
+      "free_dessert_desc": "Enjoy a complimentary dessert of your choice on your next visit.",
+      "10%_off_your_bill": "10% Off Your Bill",
+      "10%_off_your_bill_desc": "Get a 10% discount on your entire bill."
+    },
+    "form": {
+      "name": "Reward Name",
+      "namePlaceholder": "e.g. Free Dessert",
+      "description": "What is earned?",
+      "descriptionPlaceholder": "Explain what the customer will get...",
+      "activeTagline": "Reward active and available for redemption",
+      "submit": "Save Reward"
+    }
+  },
+  "settings": {
+    "title": "Configuration",
+    "subtitle": "Manage the details and preferences of your establishment",
+    "successSave": "Settings saved successfully",
+    "errorSave": "Error saving settings",
+    "tabs": {
+      "general": "Information",
+      "schedule": "Business Hours",
+      "notifications": "Notifications",
+      "points": "Points System"
+    },
+    "general": {
+      "title": "Restaurant Profile",
+      "name": "Establishment Name",
+      "category": "Category / Cuisine Type",
+      "address": "Full Address",
+      "website": "Website",
+      "submit": "Save Changes"
+    },
+    "schedule": {
+      "title": "Weekly Schedule",
+      "edit": "Edit Schedule",
+      "addSlot": "Add slot",
+      "closed": "Closed",
+      "days": {
+        "monday": "Monday",
+        "tuesday": "Tuesday",
+        "wednesday": "Wednesday",
+        "thursday": "Thursday",
+        "friday": "Friday",
+        "saturday": "Saturday",
+        "sunday": "Sunday"
+      }
+    },
+    "notifications": {
+      "title": "Notifications Center",
+      "realTime": {
+        "title": "Real-Time Alerts",
+        "description": "Receive notifications when a customer redeems a prize"
+      },
+      "weeklyReport": {
+        "title": "Weekly Summary",
+        "description": "Performance report sent to your email every Monday"
+      },
+      "feedback": {
+        "title": "Customer Feedback",
+        "description": "Notify when a customer leaves a new rating"
+      }
+    },
+    "points": {
+      "title": "Points System",
+      "method": "Accumulation Method",
+      "simple": {
+        "title": "Simple Method (Linear)",
+        "description": "Fixed accumulation for every euro spent. Easy for the customer to understand.",
+        "pointsPerEuro": "Points per Euro (1€ = X pts)"
+      },
+      "exponential": {
+        "title": "Intelligent Method (Dynamic)",
+        "description": "Advanced logic that automatically rewards loyalty and recurrence.",
+        "maxPoints": "Maximum points per visit"
+      },
+      "accumulationRatio": "Accumulation Ratio",
+      "configureMultipliers": "Configure multipliers",
+      "welcomeBonus": "Welcome Bonus",
+      "welcomeBonusTagline": "POINTS AWARDED ON THE FIRST VISIT",
+      "fraudProtection": {
+        "title": "Fraud Protection",
+        "description": "Automatic ticket validation via QR"
+      }
+    }
+  },
+  "discover": {
+    "title": "Discover",
+    "searchPlaceholder": "Search by name or cuisine...",
+    "resultsCount": "restaurants found",
+    "categories": {
+      "all": "All",
+      "sushi": "Sushi",
+      "pizzeria": "Pizzeria",
+      "burger": "Burger",
+      "mexican": "Mexican",
+      "italian": "Italian",
+      "seafood": "Seafood"
+    }
+  },
+  "qr_panel": {
+    "label": "My QR",
+    "title": "Your QR is ready",
+    "text": "Here you can quickly access the corresponding functionality."
+  },
+  "stats_dashboard": {
+    "title": "Your Statistics",
+    "tagline": "This is how you've used EasyEat so far.",
+    "spent": "Money spent",
+    "earned": "Points earned",
+    "visits": "Total visits",
+    "history": {
+      "title": "Activity and reward history",
+      "empty": "No visits or rewards registered yet.",
+      "unknownRestaurant": "Unknown restaurant"
+    }
+  },
+  "qr": {
+    "user": {
+      "title": "Your QR Code",
+      "desc": "Show this code to the waiter to check-in and earn points."
+    },
+    "reward": {
+      "title": "Reward QR Code",
+      "desc": "Show this code to the waiter to claim the reward."
+    }
+  }
+}

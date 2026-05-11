@@ -1,5 +1,6 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
+import path from 'path'
 
 function addProxyAuth(proxy) {
   proxy.on('proxyReq', (proxyReq, req) => {
@@ -17,6 +18,11 @@ function addProxyAuth(proxy) {
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react()],
+  resolve: {
+    alias: {
+      "@": path.resolve(__dirname, "./src"),
+    },
+  },
   server: {
     proxy: {
       '/auth': {
@@ -83,6 +89,16 @@ export default defineConfig({
         target: 'http://localhost:1337',
         changeOrigin: true,
         configure: addProxyAuth,
+      },
+      '/chat': {
+        target: 'http://localhost:1337',
+        changeOrigin: true,
+        configure: addProxyAuth,
+      },
+      '/socket.io': {
+        target: 'http://localhost:1337',
+        changeOrigin: true,
+        ws: true,
       },
     },
   },
