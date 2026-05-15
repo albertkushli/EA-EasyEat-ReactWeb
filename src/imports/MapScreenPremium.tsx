@@ -298,7 +298,7 @@ export const MapScreenPremium: FC<Props> = ({
 
   const handleViewDetails = useCallback(
     (restaurantId: string) => {
-      navigate(`/restaurant/${restaurantId}`);
+      navigate(`/dashboard?tab=discover&restaurantId=${restaurantId}`);
     },
     [navigate]
   );

@@ -106,7 +106,6 @@ export default function App() {
             <Route path="clients" element={<Clients />} />
           </Route>
            <Route path="/discover" element={<DiscoverScreen />} />
-           <Route path="/restaurant/:id" element={<div className="p-4">Restaurant details placeholder</div>} />
 
           <Route path="/map" element={<MapRouteWrapper />} />
           <Route path="/aviso-legal" element={<LegalNotice />} />
