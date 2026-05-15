@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useState, type FC, type ReactNode } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
   Building2,
@@ -16,6 +17,7 @@ import {
 } from 'lucide-react';
 import GoogleMapComponent from './GoogleMapComponent';
 import { MODERN_MAP_STYLE } from '@/utils/mapStyles';
+import RestaurantPreviewCard from '@/components/RestaurantPreviewCard';
 import type { Restaurant } from '@/types/Restaurant';
 
 type Filter = 'all' | 'nearby' | 'rating' | 'fast' | 'cheap';
@@ -236,6 +238,7 @@ export const MapScreenPremium: FC<Props> = ({
   initialSelectedRestaurantId,
   onRequestNearby,
 }) => {
+  const navigate = useNavigate();
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [activeFilter, setActiveFilter] = useState<Filter>('all');
@@ -276,6 +279,10 @@ export const MapScreenPremium: FC<Props> = ({
 
   const nearbyCount = useMemo(() => restaurants.filter(isNearby).length, [restaurants]);
 
+  const selectedRestaurant = useMemo(() => {
+    return restaurants.find((r) => r._id === selectedId) || null;
+  }, [restaurants, selectedId]);
+
   useEffect(() => {
     if (initialSelectedRestaurantId !== undefined) {
       setSelectedId(initialSelectedRestaurantId);
@@ -287,6 +294,13 @@ export const MapScreenPremium: FC<Props> = ({
       setSelectedId((prev) => (prev === id ? null : id));
     },
     []
+  );
+
+  const handleViewDetails = useCallback(
+    (restaurantId: string) => {
+      navigate(`/restaurant/${restaurantId}`);
+    },
+    [navigate]
   );
 
   const handleNearMe = useCallback(async () => {
@@ -497,7 +511,14 @@ export const MapScreenPremium: FC<Props> = ({
             </motion.button>
           </div>
 
-          <NearMeButton onClick={handleNearMe} loading={nearMeLoading} />
+           <NearMeButton onClick={handleNearMe} loading={nearMeLoading} />
+
+          {/* Restaurant Preview Card */}
+          <RestaurantPreviewCard
+            restaurant={selectedRestaurant}
+            onClose={() => setSelectedId(null)}
+            onViewDetails={handleViewDetails}
+          />
         </div>
       </div>
     </div>
