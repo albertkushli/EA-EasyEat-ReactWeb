@@ -26,6 +26,7 @@ interface Props {
   isLoading?: boolean;
   defaultCenter?: { lat: number; lng: number };
   initialSelectedRestaurantId?: string | null;
+  onRequestNearby?: () => Promise<void> | void;
 }
 
 const PRIMARY = '#FF5A5F';
@@ -233,6 +234,7 @@ export const MapScreenPremium: FC<Props> = ({
   isLoading = false,
   defaultCenter = DEFAULT_CENTER,
   initialSelectedRestaurantId,
+  onRequestNearby,
 }) => {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
@@ -287,13 +289,15 @@ export const MapScreenPremium: FC<Props> = ({
     []
   );
 
-  const handleNearMe = useCallback(() => {
+  const handleNearMe = useCallback(async () => {
     setNearMeLoading(true);
-    setTimeout(() => {
-      setNearMeLoading(false);
+    try {
+      await onRequestNearby?.();
       setActiveFilter('nearby');
-    }, 600);
-  }, []);
+    } finally {
+      setNearMeLoading(false);
+    }
+  }, [onRequestNearby]);
 
   return (
     <div
