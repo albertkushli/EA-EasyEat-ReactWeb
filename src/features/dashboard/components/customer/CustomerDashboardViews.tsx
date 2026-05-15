@@ -350,10 +350,6 @@ export function CustomerSidebar({ activeTab, onTabChange, user, onLogout }: Cust
           <MapPin size={18} />
           <span>{t('sidebar.discover', 'Descobrir')}</span>
         </button>
-        <button type="button" className={activeTab === 'qr' ? 'hc-sidebar-nav__item active' : 'hc-sidebar-nav__item'} onClick={() => onTabChange('qr')}>
-          <QrCode size={18} />
-          <span>{t('sidebar.myQr', 'El meu QR')}</span>
-        </button>
         <button type="button" className={activeTab === 'rewards' ? 'hc-sidebar-nav__item active' : 'hc-sidebar-nav__item'} onClick={() => onTabChange('rewards')}>
           <Gift size={18} />
           <span>{t('sidebar.rewards', 'Recompenses')}</span>
