@@ -17,17 +17,8 @@ export const useRestaurantStore = create<RestaurantStore>((set) => ({
   loadRestaurants: async () => {
     set({ loading: true });
     try {
-      const res = await fetchRestaurants(1, 1000);
-      // fetchRestaurants returns a paginated response: { data, meta }
-      const data = (res as any).data ?? (res as any);
-      if (Array.isArray(data) && data.length > 0) {
-        set({ restaurants: data as Restaurant[], loading: false });
-      } else if (Array.isArray((res as any).data) && (res as any).data.length > 0) {
-        set({ restaurants: (res as any).data as Restaurant[], loading: false });
-      } else {
-        // No data from API — set empty list
-        set({ restaurants: [], loading: false });
-      }
+      const restaurantList = (await fetchRestaurants()) as unknown as Restaurant[];
+      set({ restaurants: restaurantList, loading: false });
     } catch (err) {
       console.error('Error loading restaurants:', err);
       set({ restaurants: [], loading: false });
@@ -37,10 +28,10 @@ export const useRestaurantStore = create<RestaurantStore>((set) => ({
   loadNearby: async (lat: number, lng: number, maxDistance: number = 5000) => {
     set({ loading: true });
     try {
-      const nearby = await fetchNearbyRestaurants(lat, lng, maxDistance);
+      const nearby = (await fetchNearbyRestaurants(lat, lng, maxDistance)) as unknown as Restaurant[];
       // Mark results as nearby when appropriate (some APIs include distanceKm)
-      const annotated = nearby.map((r: any) => ({ ...(r as any), isNearby: true }));
-      set({ restaurants: annotated as Restaurant[], loading: false });
+      const annotated: Restaurant[] = nearby.map((r) => ({ ...r, isNearby: true } as Restaurant));
+      set({ restaurants: annotated, loading: false });
     } catch (err) {
       console.error('Error loading nearby restaurants:', err);
       set({ restaurants: [], loading: false });

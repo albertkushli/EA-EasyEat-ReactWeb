@@ -224,7 +224,7 @@ const NearMeButton: FC<{ onClick: () => void; loading: boolean }> = ({ onClick, 
     ) : (
       <LocateFixed className="w-4 h-4" />
     )}
-    {loading ? 'Loading...' : 'Show nearby'}
+    {loading ? 'Loading...' : 'Show Near Me'}
   </motion.button>
 );
 

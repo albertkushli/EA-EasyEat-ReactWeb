@@ -5,7 +5,56 @@
 import apiClient from '@/services/apiClient';
 import { API_ENDPOINTS } from '@/constants';
 import { IRestaurant, IRestaurantStats, IVisit, IPaginatedResponse } from '@/types';
-import { parsePaginatedResponse, sortByDateDesc } from '@/utils/response-parser';
+import type { Restaurant } from '@/types/Restaurant';
+import { extractArray, parsePaginatedResponse, sortByDateDesc } from '@/utils/response-parser';
+
+function normalizeRestaurantLocation(rawLocation: any, rawRestaurant: any): Restaurant['profile']['location'] {
+  const latitude = rawLocation?.latitude ?? rawLocation?.lat ?? rawRestaurant?.location?.latitude ?? rawRestaurant?.location?.lat;
+  const longitude = rawLocation?.longitude ?? rawLocation?.lng ?? rawLocation?.lon ?? rawRestaurant?.location?.longitude ?? rawRestaurant?.location?.lng ?? rawRestaurant?.location?.lon;
+
+  return {
+    city: rawLocation?.city ?? rawRestaurant?.profile?.location?.city ?? '',
+    address: rawLocation?.address ?? rawRestaurant?.profile?.location?.address,
+    googlePlaceId: rawLocation?.googlePlaceId ?? rawRestaurant?.profile?.location?.googlePlaceId,
+    coordinates: Array.isArray(rawLocation?.coordinates?.coordinates)
+      ? rawLocation.coordinates
+      : {
+          type: 'Point',
+          coordinates: [
+            Number.isFinite(Number(longitude)) ? Number(longitude) : 0,
+            Number.isFinite(Number(latitude)) ? Number(latitude) : 0,
+          ],
+        },
+  };
+}
+
+function normalizeRestaurant(rawRestaurant: IRestaurant | any): Restaurant {
+  const profile = rawRestaurant?.profile ?? {};
+
+  return {
+    _id: rawRestaurant?._id ?? rawRestaurant?.id,
+    profile: {
+      name: profile.name ?? 'Restaurant',
+      description: profile.description ?? '',
+      globalRating: profile.globalRating ?? 0,
+      category: profile.category ?? profile.categories ?? [],
+      timetable: profile.timetable,
+      image: profile.image ?? profile.images ?? [],
+      contact: profile.contact,
+      location: normalizeRestaurantLocation(profile.location, rawRestaurant),
+    },
+    employees: rawRestaurant?.employees,
+    dishes: rawRestaurant?.dishes,
+    rewards: rawRestaurant?.rewards,
+    statistics: rawRestaurant?.statistics,
+    badges: rawRestaurant?.badges,
+    visits: rawRestaurant?.visits,
+    reviews: rawRestaurant?.reviews,
+    deletedAt: rawRestaurant?.deletedAt,
+    createdAt: rawRestaurant?.createdAt,
+    updatedAt: rawRestaurant?.updatedAt,
+  };
+}
 
 /**
  * Obtiene restaurante completo por ID
@@ -137,29 +186,15 @@ export const getRestaurant = async (restaurantId: string) => {
 /**
  * Obtiene lista de restaurantes (con paginación opcional)
  */
-export async function fetchRestaurants(
-  page: number = 1,
-  limit: number = 50
-): Promise<IPaginatedResponse<IRestaurant>> {
+export async function fetchRestaurants(): Promise<Restaurant[]> {
   try {
-    const res = await apiClient.get(
-      API_ENDPOINTS.RESTAURANTS,
-      { params: { page, limit } }
-    );
+    const res = await apiClient.get(API_ENDPOINTS.RESTAURANTS);
 
-    // Parsea la respuesta paginada
-    return parsePaginatedResponse<IRestaurant>(res.data, limit);
+    // Soporta tanto respuestas tipo array como { data: [...] }
+    return extractArray<IRestaurant>(res.data).map(normalizeRestaurant);
   } catch (err) {
     console.error('Error fetching restaurants:', err);
-    return {
-      data: [],
-      meta: {
-        total: 0,
-        page: 1,
-        limit,
-        totalPages: 1,
-      },
-    };
+    return [];
   }
 }
 
@@ -170,14 +205,14 @@ export async function fetchNearbyRestaurants(
   lat: number,
   lng: number,
   maxDistance: number = 5000
-): Promise<IRestaurant[]> {
+): Promise<Restaurant[]> {
   try {
     const res = await apiClient.get(
       API_ENDPOINTS.RESTAURANTS_NEAR_BY(lng, lat, maxDistance)
     );
 
     const data = res.data?.data || res.data || [];
-    return Array.isArray(data) ? data : [];
+    return Array.isArray(data) ? data.map(normalizeRestaurant) : [];
   } catch (err) {
     console.error('Error fetching nearby restaurants:', err);
     return [];

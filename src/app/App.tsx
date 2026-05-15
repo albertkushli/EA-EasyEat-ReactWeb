@@ -39,10 +39,8 @@ export default function App() {
     const state: any = (location && (location.state as any)) || {};
 
     useEffect(() => {
-      if (restaurants.length === 0) {
-        void loadRestaurants();
-      }
-    }, [loadRestaurants, restaurants.length]);
+      void loadRestaurants();
+    }, [loadRestaurants]);
 
 
     const handleRequestNearby = useCallback(async () => {
