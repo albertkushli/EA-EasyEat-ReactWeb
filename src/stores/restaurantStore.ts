@@ -5,16 +5,13 @@ import { fetchRestaurants, fetchNearbyRestaurants } from '@/services/restaurant.
 
 interface RestaurantStore {
   restaurants: Restaurant[];
-  selectedId: string | null | undefined;
   loading: boolean;
   loadRestaurants: () => Promise<void>;
   loadNearby: (lat: number, lng: number, maxDistance?: number) => Promise<void>;
-  setSelected: (id?: string | null) => void;
 }
 
 export const useRestaurantStore = create<RestaurantStore>((set) => ({
   restaurants: [],
-  selectedId: null,
   loading: false,
   
   loadRestaurants: async () => {
@@ -48,10 +45,6 @@ export const useRestaurantStore = create<RestaurantStore>((set) => ({
       console.error('Error loading nearby restaurants:', err);
       set({ restaurants: [], loading: false });
     }
-  },
-  
-  setSelected: (id?: string | null) => {
-    set({ selectedId: id });
   },
 }));
 

@@ -1,12 +1,3 @@
-import { useMemo, memo, type ReactNode, type ReactElement, type FC, type ImgHTMLAttributes } from 'react';
-
-interface MapMarkerProps {
-  color: string;
-  size?: number;
-  isSelected?: boolean;
-  isNearby?: boolean;
-}
-
 /**
  * Creates an optimized SVG data URL for map markers
  * Supports premium styling with glow effects
@@ -41,46 +32,4 @@ export function createMarkerUrl(
   return `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg)}`;
 }
 
-/**
- * MarkerProvider - render-prop component that supplies a memoized marker URL to children
- * Usage:
- * <MarkerProvider color="#ff9800">{({url}) => <SomeComponent src={url} />}</MarkerProvider>
- */
-type MarkerProviderChildren = (value: { url: string }) => ReactNode;
-
-type MarkerProviderProps = MapMarkerProps & { children?: MarkerProviderChildren };
-
-export const MarkerProvider = memo(function MarkerProvider({ color, size = 36, isSelected = false, isNearby = false, children }: MarkerProviderProps) {
-  const markerUrl = useMemo(() => createMarkerUrl(color, size, isSelected, isNearby), [color, size, isSelected, isNearby]);
-
-  return (children ? children({ url: markerUrl }) : null) as ReactElement | null;
-});
-
-MarkerProvider.displayName = 'MarkerProvider';
-
-/**
- * Default MapMarker component - lightweight <img> that renders the generated SVG URL
- * Exported as default for convenience when a simple DOM marker is needed
- */
-const MapMarker: FC<ImgHTMLAttributes<HTMLImageElement> & MapMarkerProps> = ({
-  color,
-  size = 36,
-  isSelected = false,
-  isNearby = false,
-  alt = 'map-marker',
-  ...rest
-}) => {
-  const url = useMemo(() => createMarkerUrl(color, size, isSelected, isNearby), [
-    color,
-    size,
-    isSelected,
-    isNearby,
-  ]);
-
-  return <img src={url} width={size} height={size} alt={alt} {...(rest as any)} />;
-};
-
-MapMarker.displayName = 'MapMarker';
-
-export default MapMarker;
 

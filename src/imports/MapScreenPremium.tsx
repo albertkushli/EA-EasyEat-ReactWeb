@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState, type FC, type ReactNode } from 'react';
+import { useCallback, useEffect, useMemo, useState, type FC, type ReactNode } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
   Building2,
@@ -24,8 +24,8 @@ interface Props {
   restaurants: Restaurant[];
   userLocation?: { lat: number; lng: number } | null;
   isLoading?: boolean;
-  onRestaurantOpen?: (id: string) => void;
   defaultCenter?: { lat: number; lng: number };
+  initialSelectedRestaurantId?: string | null;
 }
 
 const PRIMARY = '#FF5A5F';
@@ -231,8 +231,8 @@ export const MapScreenPremium: FC<Props> = ({
   restaurants,
   userLocation,
   isLoading = false,
-  onRestaurantOpen,
   defaultCenter = DEFAULT_CENTER,
+  initialSelectedRestaurantId,
 }) => {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
@@ -273,6 +273,12 @@ export const MapScreenPremium: FC<Props> = ({
   }, [restaurants, searchQuery, activeFilter]);
 
   const nearbyCount = useMemo(() => restaurants.filter(isNearby).length, [restaurants]);
+
+  useEffect(() => {
+    if (initialSelectedRestaurantId !== undefined) {
+      setSelectedId(initialSelectedRestaurantId);
+    }
+  }, [initialSelectedRestaurantId]);
 
   const handleSelectRestaurant = useCallback(
     (id: string) => {
@@ -407,7 +413,6 @@ export const MapScreenPremium: FC<Props> = ({
                     onClick={() => {
                       if (!restaurantId) return;
                       handleSelectRestaurant(restaurantId);
-                      onRestaurantOpen?.(restaurantId);
                     }}
                   />
                 );
