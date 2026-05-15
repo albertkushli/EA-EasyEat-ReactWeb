@@ -2,7 +2,7 @@ import { type FormEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useNavigate } from 'react-router-dom';
 import { QRCodeCanvas } from 'qrcode.react';
-import { ArrowLeft, CheckCircle, Clock, Coins, Gift, Heart, Home, Map, MapPin, QrCode, Save, Search, SlidersHorizontal, Star, Trophy, User, Wallet, X, Mail, Lock } from 'lucide-react';
+import { ArrowLeft, CheckCircle, Clock, Coins, Gift, Heart, Home, Map, MapPin, QrCode, Save, Search, SlidersHorizontal, Star, Trophy, User, Wallet, X, Mail, Lock, LogOut, ShieldCheck } from 'lucide-react';
 import LanguageDropdown from '@/shared/components/ui/LanguageDropdown';
 import type { ICustomer } from '@/types';
 import type { CustomerBadge, CustomerPointsWalletEntry, CustomerRestaurant, CustomerReward, CustomerTabId, CustomerVisit } from '../../hooks/useCustomerDashboard';
@@ -45,6 +45,10 @@ interface CustomerProfileTabProps {
   onNameChange: (value: string) => void;
   onEmailChange: (value: string) => void;
   onPasswordChange: (value: string) => void;
+  user?: ICustomer | null;
+  totalPoints?: number;
+  visits?: CustomerVisit[];
+  onLogout?: () => Promise<void>;
 }
 
 interface CustomerDiscoverViewProps {
@@ -585,96 +589,169 @@ export function CustomerProfileTab({
   onNameChange,
   onEmailChange,
   onPasswordChange,
+  user,
+  totalPoints = 0,
+  visits = [],
+  onLogout,
 }: CustomerProfileTabProps) {
   const { t } = useTranslation();
 
   return (
-    <section className="hc-section">
-      <div className="hc-section__head" style={{ marginBottom: '1rem' }}>
-        <h2 className="hc-section__title" style={{ fontSize: '1.5rem' }}>
-          <User size={22} className="text-orange" />
-          {t('dashboard.customer.profile.title', 'Tu información')}
-        </h2>
+    <div className="w-full h-full bg-slate-50/50 overflow-y-auto pb-12">
+      {/* Cabecera con Gradiente SaaS */}
+      <div className="w-full h-48 bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 relative">
+        <div className="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-white to-transparent"></div>
       </div>
-      <div className="auth-card" style={{ maxWidth: '600px', width: '100%', boxSizing: 'border-box', border: '1px solid rgba(15,23,42,0.08)', borderRadius: '24px', padding: '2rem' }}>
-        <p style={{ color: 'var(--clr-text-muted)', fontSize: '0.9rem', marginBottom: '2rem' }}>
-          {t('dashboard.customer.profile.subtitle', 'Edita los detalles de tu cuenta')}
-        </p>
-        <form onSubmit={onSubmit} className="auth-form" style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-          <div className="form-group" style={{ textAlign: 'left' }}>
-            <label className="form-label">{t('auth.register.form.fullName')}</label>
-            <div className="input-wrapper">
-              <User className="input-icon" size={18} />
-              <input
-                type="text"
-                className="form-input"
-                placeholder={t('auth.register.form.namePlaceholder')}
-                value={customerName}
-                onChange={(event) => onNameChange(event.target.value)}
-                required
-                style={nameError ? { borderColor: '#ef4444' } : {}}
-              />
-            </div>
-            {nameError && <span style={{ color: '#ef4444', fontSize: '0.8rem', marginTop: '0.25rem', display: 'block' }}>{nameError}</span>}
-          </div>
 
-          <div className="form-group" style={{ textAlign: 'left' }}>
-            <label className="form-label">{t('auth.register.form.email')}</label>
-            <div className="input-wrapper">
-              <Mail className="input-icon" size={18} />
-              <input
-                type="email"
-                className="form-input"
-                placeholder={t('auth.register.form.emailPlaceholder')}
-                value={customerEmail}
-                onChange={(event) => onEmailChange(event.target.value)}
-                required
-                style={emailError ? { borderColor: '#ef4444' } : {}}
-              />
+      <div className="max-w-[1000px] mx-auto px-6 lg:px-8 -mt-20 relative z-10 flex flex-col md:flex-row gap-8">
+        
+        {/* Columna Izquierda: Resumen y Actividad */}
+        <div className="w-full md:w-1/3 flex flex-col gap-6">
+          <div className="bg-white rounded-3xl shadow-sm border border-slate-200/60 p-6 flex flex-col items-center text-center">
+            <div className="w-28 h-28 bg-gradient-to-br from-orange-400 to-orange-500 rounded-full border-4 border-white shadow-md flex items-center justify-center text-white text-4xl font-bold mb-4">
+              {customerName?.[0]?.toUpperCase() || user?.name?.[0]?.toUpperCase() || 'U'}
             </div>
-            {emailError && <span style={{ color: '#ef4444', fontSize: '0.8rem', marginTop: '0.25rem', display: 'block' }}>{emailError}</span>}
-          </div>
-
-          <div className="form-group" style={{ textAlign: 'left' }}>
-            <label className="form-label">
-              {t('profile.form.password')}
-              <span style={{ fontSize: '0.75rem', fontWeight: 400, opacity: 0.7, marginLeft: '0.5rem' }}>
-                {t('profile.form.passwordHint')}
-              </span>
-            </label>
-            <div className="input-wrapper">
-              <Lock className="input-icon" size={18} />
-              <input
-                type="password"
-                className="form-input"
-                placeholder="••••••••"
-                value={customerPassword}
-                onChange={(event) => onPasswordChange(event.target.value)}
-                style={passwordError ? { borderColor: '#ef4444' } : {}}
-              />
+            <h2 className="text-xl font-bold text-slate-800">{customerName || user?.name}</h2>
+            <p className="text-sm text-slate-500 mb-4">{customerEmail || user?.email}</p>
+            
+            <div className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-emerald-50 text-emerald-600 rounded-full text-xs font-bold uppercase tracking-wide">
+              <ShieldCheck size={14} />
+              {user?.role === 'owner' ? t('auth.roles.owner') : user?.role === 'staff' ? t('auth.roles.staff') : t('auth.roles.customer', 'Cuenta Verificada')}
             </div>
-            {passwordError && <span style={{ color: '#ef4444', fontSize: '0.8rem', marginTop: '0.25rem', display: 'block' }}>{passwordError}</span>}
-          </div>
 
-          {success && (
-            <div className="alert--success" style={{ background: 'hsla(142, 71%, 45%, 0.1)', color: 'hsl(142, 71%, 40%)', padding: '1rem', borderRadius: '12px', display: 'flex', alignItems: 'center', gap: '0.75rem', fontWeight: 600, fontSize: '0.9rem' }}>
-              <CheckCircle size={18} /> {t('settings.form.updated')}
+            <div className="w-full h-px bg-slate-100 my-6"></div>
+
+            <div className="w-full flex justify-between items-center text-sm mb-4">
+              <span className="text-slate-500 flex items-center gap-2"><Clock size={16} className="text-blue-500"/> {t('dashboard.customer.stats.visits', 'Visitas totales')}</span>
+              <span className="font-semibold text-slate-800 bg-slate-50 px-2.5 py-1 rounded-md">{visits.length}</span>
             </div>
-          )}
+            <div className="w-full flex justify-between items-center text-sm mb-6">
+              <span className="text-slate-500 flex items-center gap-2"><Coins size={16} className="text-orange-500"/> {t('dashboard.customer.stats.totalPoints', 'Puntos acumulados')}</span>
+              <span className="font-semibold text-orange-600 bg-orange-50 px-2.5 py-1 rounded-md">{totalPoints}</span>
+            </div>
 
-          <button type="submit" className="btn btn--primary" disabled={updating} style={{ marginTop: '1rem' }}>
-            {updating ? (
-              <div className="hc-loading__spinner" style={{ width: '20px', height: '20px', borderWidth: '2px' }} />
-            ) : (
-              <>
-                <Save size={18} />
-                <span>{t('settings.form.save')}</span>
-              </>
+            {onLogout && (
+              <button 
+                type="button" 
+                onClick={onLogout} 
+                className="w-full py-2.5 text-sm font-semibold text-red-600 bg-red-50 hover:bg-red-100 rounded-xl transition-colors flex items-center justify-center gap-2"
+              >
+                <LogOut size={16}/> {t('sidebar.logout', 'Cerrar sesión')}
+              </button>
             )}
-          </button>
-        </form>
+          </div>
+        </div>
+
+        {/* Columna Derecha: Formulario de Configuración */}
+        <div className="w-full md:w-2/3">
+          <form onSubmit={onSubmit} className="flex flex-col gap-6">
+            
+            {/* Tarjeta de Información Personal */}
+            <div className="bg-white rounded-3xl shadow-sm border border-slate-200/60 overflow-hidden">
+              <div className="px-6 py-5 border-b border-slate-100 bg-slate-50/50 flex items-center gap-3">
+                <div className="p-2 bg-orange-100 text-orange-600 rounded-lg">
+                  <User size={18} />
+                </div>
+                <div>
+                  <h3 className="text-base font-bold text-slate-800">{t('dashboard.customer.profile.title', 'Información Personal')}</h3>
+                  <p className="text-xs text-slate-500 mt-0.5">{t('dashboard.customer.profile.subtitle', 'Actualiza tus datos básicos de contacto.')}</p>
+                </div>
+              </div>
+              <div className="p-6 flex flex-col gap-5">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                  <div className="flex flex-col gap-1.5">
+                    <label className="text-sm font-semibold text-slate-700">{t('auth.register.form.fullName', 'Nombre completo')}</label>
+                    <div className="relative">
+                      <User size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+                      <input
+                        type="text"
+                        className={`w-full pl-10 pr-4 py-2.5 bg-slate-50 border rounded-xl text-sm focus:ring-2 focus:ring-orange-500 focus:bg-white transition-all outline-none ${nameError ? 'border-red-300 focus:border-red-500' : 'border-slate-200'}`}
+                        placeholder={t('auth.register.form.namePlaceholder')}
+                        value={customerName}
+                        onChange={(event) => onNameChange(event.target.value)}
+                        required
+                      />
+                    </div>
+                    {nameError && <span className="text-xs text-red-500 mt-1 font-medium">{nameError}</span>}
+                  </div>
+
+                  <div className="flex flex-col gap-1.5">
+                    <label className="text-sm font-semibold text-slate-700">{t('auth.register.form.email', 'Correo electrónico')}</label>
+                    <div className="relative">
+                      <Mail size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+                      <input
+                        type="email"
+                        className={`w-full pl-10 pr-4 py-2.5 bg-slate-50 border rounded-xl text-sm focus:ring-2 focus:ring-orange-500 focus:bg-white transition-all outline-none ${emailError ? 'border-red-300 focus:border-red-500' : 'border-slate-200'}`}
+                        placeholder={t('auth.register.form.emailPlaceholder')}
+                        value={customerEmail}
+                        onChange={(event) => onEmailChange(event.target.value)}
+                        required
+                      />
+                    </div>
+                    {emailError && <span className="text-xs text-red-500 mt-1 font-medium">{emailError}</span>}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Tarjeta de Seguridad */}
+            <div className="bg-white rounded-3xl shadow-sm border border-slate-200/60 overflow-hidden">
+              <div className="px-6 py-5 border-b border-slate-100 bg-slate-50/50 flex items-center gap-3">
+                <div className="p-2 bg-slate-200 text-slate-700 rounded-lg">
+                  <Lock size={18} />
+                </div>
+                <div>
+                  <h3 className="text-base font-bold text-slate-800">{t('settings.security.title', 'Seguridad de la Cuenta')}</h3>
+                  <p className="text-xs text-slate-500 mt-0.5">{t('profile.form.passwordHint', 'Deja este campo en blanco si no deseas cambiarla.')}</p>
+                </div>
+              </div>
+              <div className="p-6">
+                <div className="flex flex-col gap-1.5 max-w-md">
+                  <label className="text-sm font-semibold text-slate-700">{t('profile.form.password', 'Nueva contraseña')}</label>
+                  <div className="relative">
+                    <Lock size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+                    <input
+                      type="password"
+                      className={`w-full pl-10 pr-4 py-2.5 bg-slate-50 border rounded-xl text-sm focus:ring-2 focus:ring-slate-800 focus:bg-white transition-all outline-none ${passwordError ? 'border-red-300 focus:border-red-500' : 'border-slate-200'}`}
+                      placeholder="••••••••"
+                      value={customerPassword}
+                      onChange={(event) => onPasswordChange(event.target.value)}
+                    />
+                  </div>
+                  {passwordError && <span className="text-xs text-red-500 mt-1 font-medium">{passwordError}</span>}
+                </div>
+              </div>
+            </div>
+
+            {/* Acciones y Estados */}
+            <div className="flex flex-col-reverse sm:flex-row items-center justify-between gap-4 mt-2 mb-8">
+              <div className="w-full sm:w-auto">
+                {success && (
+                  <div className="inline-flex items-center gap-2 px-4 py-2.5 bg-emerald-50 text-emerald-700 rounded-xl text-sm font-bold border border-emerald-100">
+                    <CheckCircle size={18} /> {t('settings.form.updated', 'Perfil actualizado con éxito')}
+                  </div>
+                )}
+              </div>
+              <button 
+                type="submit" 
+                disabled={updating} 
+                className="w-full sm:w-auto px-8 py-3 bg-slate-900 hover:bg-slate-800 text-white rounded-xl font-bold transition-all shadow-md shadow-slate-900/10 flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
+              >
+                {updating ? (
+                  <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                ) : (
+                  <>
+                    <Save size={18} />
+                    <span>{t('settings.form.save', 'Guardar cambios')}</span>
+                  </>
+                )}
+              </button>
+            </div>
+
+          </form>
+        </div>
       </div>
-    </section>
+    </div>
   );
 }
 

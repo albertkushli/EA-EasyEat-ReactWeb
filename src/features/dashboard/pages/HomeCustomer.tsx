@@ -54,6 +54,10 @@ export default function HomeCustomer() {
             />
           ) : dashboard.activeTab === 'profile' ? (
             <CustomerProfileTab
+              user={dashboard.user}
+              totalPoints={dashboard.totalPoints}
+              visits={dashboard.visits}
+              onLogout={dashboard.logout}
               customerName={dashboard.customerName}
               customerEmail={dashboard.customerEmail}
               customerPassword={dashboard.customerPassword}
