@@ -65,6 +65,7 @@ export interface Restaurant {
   deletedAt?: string | null;
   createdAt?: string;
   updatedAt?: string;
+  distanceKm?: number;
 }
 
 export type RestaurantId = Restaurant['_id'] | string;

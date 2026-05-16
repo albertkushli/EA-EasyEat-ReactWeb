@@ -375,8 +375,8 @@ export function CustomerSidebar({ activeTab, onTabChange, user, onLogout }: Cust
             <p>{user?.name}</p>
             <span>{
               user?.role === 'owner' ? t('auth.roles.owner') :
-              user?.role === 'staff' ? t('auth.roles.staff') :
-              t('auth.roles.customer')
+                user?.role === 'staff' ? t('auth.roles.staff') :
+                  t('auth.roles.customer')
             }</span>
           </div>
         </div>
@@ -604,7 +604,7 @@ export function CustomerProfileTab({
       </div>
 
       <div className="max-w-[1000px] mx-auto px-6 lg:px-8 -mt-20 relative z-10 flex flex-col md:flex-row gap-8">
-        
+
         {/* Columna Izquierda: Resumen y Actividad */}
         <div className="w-full md:w-1/3 flex flex-col gap-6">
           <div className="bg-white rounded-3xl shadow-sm border border-slate-200/60 p-6 flex flex-col items-center text-center">
@@ -613,7 +613,7 @@ export function CustomerProfileTab({
             </div>
             <h2 className="text-xl font-bold text-slate-800">{customerName || user?.name}</h2>
             <p className="text-sm text-slate-500 mb-4">{customerEmail || user?.email}</p>
-            
+
             <div className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-emerald-50 text-emerald-600 rounded-full text-xs font-bold uppercase tracking-wide">
               <ShieldCheck size={14} />
               {user?.role === 'owner' ? t('auth.roles.owner') : user?.role === 'staff' ? t('auth.roles.staff') : t('auth.roles.customer', 'Cuenta Verificada')}
@@ -622,21 +622,21 @@ export function CustomerProfileTab({
             <div className="w-full h-px bg-slate-100 my-6"></div>
 
             <div className="w-full flex justify-between items-center text-sm mb-4">
-              <span className="text-slate-500 flex items-center gap-2"><Clock size={16} className="text-blue-500"/> {t('dashboard.customer.stats.visits', 'Visitas totales')}</span>
+              <span className="text-slate-500 flex items-center gap-2"><Clock size={16} className="text-blue-500" /> {t('dashboard.customer.stats.visits', 'Visitas totales')}</span>
               <span className="font-semibold text-slate-800 bg-slate-50 px-2.5 py-1 rounded-md">{visits.length}</span>
             </div>
             <div className="w-full flex justify-between items-center text-sm mb-6">
-              <span className="text-slate-500 flex items-center gap-2"><Coins size={16} className="text-orange-500"/> {t('dashboard.customer.stats.totalPoints', 'Puntos acumulados')}</span>
+              <span className="text-slate-500 flex items-center gap-2"><Coins size={16} className="text-orange-500" /> {t('dashboard.customer.stats.totalPoints', 'Puntos acumulados')}</span>
               <span className="font-semibold text-orange-600 bg-orange-50 px-2.5 py-1 rounded-md">{totalPoints}</span>
             </div>
 
             {onLogout && (
-              <button 
-                type="button" 
-                onClick={onLogout} 
+              <button
+                type="button"
+                onClick={onLogout}
                 className="w-full py-2.5 text-sm font-semibold text-red-600 bg-red-50 hover:bg-red-100 rounded-xl transition-colors flex items-center justify-center gap-2"
               >
-                <LogOut size={16}/> {t('sidebar.logout', 'Cerrar sesión')}
+                <LogOut size={16} /> {t('sidebar.logout', 'Cerrar sesión')}
               </button>
             )}
           </div>
@@ -645,7 +645,7 @@ export function CustomerProfileTab({
         {/* Columna Derecha: Formulario de Configuración */}
         <div className="w-full md:w-2/3">
           <form onSubmit={onSubmit} className="flex flex-col gap-6">
-            
+
             {/* Tarjeta de Información Personal */}
             <div className="bg-white rounded-3xl shadow-sm border border-slate-200/60 overflow-hidden">
               <div className="px-6 py-5 border-b border-slate-100 bg-slate-50/50 flex items-center gap-3">
@@ -732,9 +732,9 @@ export function CustomerProfileTab({
                   </div>
                 )}
               </div>
-              <button 
-                type="submit" 
-                disabled={updating} 
+              <button
+                type="submit"
+                disabled={updating}
                 className="w-full sm:w-auto px-8 py-3 bg-slate-900 hover:bg-slate-800 text-white rounded-xl font-bold transition-all shadow-md shadow-slate-900/10 flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
               >
                 {updating ? (

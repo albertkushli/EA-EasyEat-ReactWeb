@@ -8,6 +8,7 @@ import { Clients } from '@/features/customers';
 import MapScreen from '@/screens/MapScreen';
 import DiscoverScreen from '@/screens/DiscoverScreen';
 import LegalNotice from '@/features/legal/LegalNotice';
+import SupportChat from '@/features/support/components/SupportChat';
 
 function ProtectedRoute({ children }: { children: ReactNode }) {
   const { isAuthenticated, loading } = useAuth();
@@ -75,6 +76,7 @@ export default function App() {
           <Route path="/aviso-legal" element={<LegalNotice />} />
         </Routes>
       </Router>
+      <SupportChat />
       </ChatProvider>
     </AuthProvider>
   );
