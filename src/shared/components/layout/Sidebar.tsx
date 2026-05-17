@@ -1,8 +1,8 @@
-import { LayoutDashboard, Users, Gift, BarChart3, Settings, LogOut, Store, UtensilsCrossed, Users2, MessageSquare } from "lucide-react";
+import { LayoutDashboard, Users, Gift, BarChart3, Settings, LogOut, Store, UtensilsCrossed, Users2, MessageSquare, CreditCard } from "lucide-react";
 import { motion } from "framer-motion";
 import { useAuth } from "@/context/AuthContext";
 import { useTranslation } from "react-i18next";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 interface SidebarProps {
   activeView: string;
@@ -14,6 +14,7 @@ interface SidebarProps {
 export function Sidebar({ activeView, onViewChange, restaurantName, restaurantAddress }: SidebarProps) {
   const { user, logout, role } = useAuth();
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const isOwner = role === 'owner';
 
   const baseMenuItems = [
@@ -28,6 +29,7 @@ export function Sidebar({ activeView, onViewChange, restaurantName, restaurantAd
     { id: 'rewards', icon: Gift, label: t('sidebar.rewards', 'Recompensas') },
     { id: 'analytics', icon: BarChart3, label: t('sidebar.analytics', 'Estadísticas') },
     { id: 'chat', icon: MessageSquare, label: t('sidebar.chat', 'Chat') },
+    { id: 'billing', icon: CreditCard, label: t('sidebar.billing', 'Suscripción') },
     { id: 'settings', icon: Settings, label: t('sidebar.settings', 'Ajustes') }
   ];
 
@@ -62,7 +64,10 @@ export function Sidebar({ activeView, onViewChange, restaurantName, restaurantAd
               <motion.button
                 whileHover={{ x: 2 }}
                 whileTap={{ scale: 0.99 }}
-                onClick={() => onViewChange(item.id)}
+                onClick={() => {
+                  onViewChange(item.id);
+                  navigate(`/dashboard/${item.id}`);
+                }}
                 className={`flex w-full items-center gap-3 rounded-2xl px-4 py-3 text-left transition-all duration-200 ${activeView === item.id
                   ? 'bg-gradient-to-r from-orange-500 to-red-500 text-white shadow-lg shadow-orange-500/20'
                   : 'text-slate-200/85 hover:bg-white/5 hover:text-white'

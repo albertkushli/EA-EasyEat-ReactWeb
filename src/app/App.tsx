@@ -66,9 +66,15 @@ export default function App() {
                 <Dashboard />
               </ProtectedRoute>
             )}
-          >
-            <Route path="clients" element={<Clients />} />
-          </Route>
+          />
+          <Route
+            path="/dashboard/:view"
+            element={(
+              <ProtectedRoute>
+                <Dashboard />
+              </ProtectedRoute>
+            )}
+          />
           <Route path="/discover" element={<DiscoverScreen />} />
           <Route path="/map" element={<MapScreen />} />
           <Route path="/restaurant/:id" element={<div className="p-4">Restaurant details placeholder</div>} />

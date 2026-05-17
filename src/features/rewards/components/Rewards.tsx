@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Reward } from "@/types/Reward";
 import { getRewardsByRestaurant, createReward, updateReward, deleteReward } from "@/services/reward.service";
 import { useAuth } from "@/context/AuthContext";
@@ -15,10 +16,12 @@ import {
   BarChart3
 } from "lucide-react";
 import RewardModal from "@/features/rewards/components/RewardModal";
+import PaywallModal from "@/features/rewards/components/PaywallModal";
 import { useTranslation } from "react-i18next";
 
 export default function Rewards() {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const { user, restaurant } = useAuth() as any;
   const [rewards, setRewards] = useState<Reward[]>([]);
   const [loading, setLoading] = useState(true);
@@ -26,6 +29,7 @@ export default function Rewards() {
 
   // Modal State
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isPaywallOpen, setIsPaywallOpen] = useState(false);
   const [selectedReward, setSelectedReward] = useState<Reward | null>(null);
 
   const restaurantId = user?.restaurant_id || restaurant?._id || restaurant?.id || "";
@@ -54,6 +58,14 @@ export default function Rewards() {
   };
 
   const handleAddClick = () => {
+    const currentPlan = restaurant?.plan || 'free';
+    const activeRewardsCount = rewards.filter(r => r.active).length;
+
+    if (currentPlan === 'free' && activeRewardsCount >= 5) {
+      setIsPaywallOpen(true);
+      return;
+    }
+
     setSelectedReward(null);
     setIsModalOpen(true);
   };
@@ -76,6 +88,19 @@ export default function Rewards() {
 
   const handleSaveReward = async (rewardData: Partial<Reward>) => {
     try {
+      const currentPlan = restaurant?.plan || 'free';
+      const activeRewardsCount = rewards.filter(r => r.active).length;
+
+      // If free tier and activating a reward (creating active, or updating inactive to active)
+      if (currentPlan === 'free' && rewardData.active) {
+        const isNew = !selectedReward;
+        const isActivating = selectedReward && !selectedReward.active;
+        if ((isNew || isActivating) && activeRewardsCount >= 5) {
+          setIsPaywallOpen(true);
+          return;
+        }
+      }
+
       if (selectedReward) {
         const updated = await updateReward(selectedReward._id, { ...rewardData, restaurant_id: restaurantId });
         setRewards(rewards.map(r => r._id === selectedReward._id ? updated : r));
@@ -83,9 +108,13 @@ export default function Rewards() {
         const created = await createReward({ ...rewardData, restaurant_id: restaurantId });
         setRewards([...rewards, created]);
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error("Error saving reward:", err);
-      throw err;
+      if (err?.response?.data?.error === 'PLAN_LIMIT_REACHED' || err?.message?.includes('PLAN_LIMIT_REACHED')) {
+        setIsPaywallOpen(true);
+      } else {
+        throw err;
+      }
     }
   };
 
@@ -219,6 +248,16 @@ export default function Rewards() {
         onClose={() => setIsModalOpen(false)}
         onSave={handleSaveReward}
         reward={selectedReward}
+      />
+
+      {/* Paywall SaaS Modal */}
+      <PaywallModal
+        isOpen={isPaywallOpen}
+        onClose={() => setIsPaywallOpen(false)}
+        onUpgrade={() => {
+          setIsPaywallOpen(false);
+          navigate("/dashboard/billing");
+        }}
       />
     </div>
   );

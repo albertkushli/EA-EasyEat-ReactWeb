@@ -10,6 +10,7 @@ interface AuthContextType {
   token: string | null;
   login: (email: string, password: string, userType?: string) => Promise<{ success: boolean; error?: string }>;
   register: (userData: any) => Promise<{ success: boolean; error?: string }>;
+  loginGoogle: (credential: string, role: 'customer' | 'employee') => Promise<{ success: boolean; error?: string }>;
   logout: () => Promise<void>;
   refreshSession: () => Promise<string | null>;
   updateUser: (updatedUserFields: Partial<IUser>) => void;
@@ -17,6 +18,7 @@ interface AuthContextType {
   role: UserRole | null;
   loading: boolean;
   restaurant: IRestaurant | null;
+  reloadRestaurant: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
@@ -158,6 +160,30 @@ export const AuthProvider: FC<{ children: ReactNode }> = ({ children }) => {
     [login]
   );
 
+  const loginGoogle = useCallback(
+    async (credential: string, role: 'customer' | 'employee') => {
+      try {
+        const res = await apiClient.post('/auth/google', { credential, role });
+
+        if (res.status === 200) {
+          const { accessToken } = res.data;
+          const userPayload = res.data.customer || res.data.employee || res.data.admin;
+          setAuth({ accessToken, user: userPayload });
+          return { success: true };
+        } else {
+          return { success: false, error: "Unexpected response: " + res.status + " " + res.data };
+        }
+      } catch (error: any) {
+        console.error('Google login error:', error);
+        return {
+          success: false,
+          error: error.response?.data?.message || 'Google login failed',
+        };
+      }
+    },
+    []
+  );
+
   const logout = useCallback(async () => {
     try {
       // Optional: notify backend we're logging out
@@ -169,6 +195,20 @@ export const AuthProvider: FC<{ children: ReactNode }> = ({ children }) => {
       localStorage.removeItem(STORAGE_KEYS.RESTAURANT_DATA);
     }
   }, []);
+
+  const reloadRestaurant = useCallback(async () => {
+    if (user?.restaurant_id) {
+      try {
+        const restaurantData = await restaurantService.fetchRestaurantFull(user.restaurant_id);
+        if (restaurantData) {
+          setRestaurant(restaurantData);
+          localStorage.setItem(STORAGE_KEYS.RESTAURANT_DATA, JSON.stringify(restaurantData));
+        }
+      } catch (err) {
+        console.error('Failed to reload restaurant:', err);
+      }
+    }
+  }, [user?.restaurant_id]);
 
   const updateUser = useCallback((updatedUserFields: Partial<IUser>) => {
     setAuth((prev) => {
@@ -186,6 +226,7 @@ export const AuthProvider: FC<{ children: ReactNode }> = ({ children }) => {
     token,
     login,
     register,
+    loginGoogle,
     logout,
     refreshSession,
     updateUser,
@@ -193,6 +234,7 @@ export const AuthProvider: FC<{ children: ReactNode }> = ({ children }) => {
     role,
     loading,
     restaurant,
+    reloadRestaurant,
   };
 
   return (

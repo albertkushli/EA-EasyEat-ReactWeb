@@ -11,6 +11,7 @@ import RestaurantSettings from '@/shared/components/ui/Settings';
 import StaffProfilePanel from '../components/employee/StaffProfilePanel';
 import LanguageDropdown from '@/shared/components/ui/LanguageDropdown';
 import RestaurantChatDashboard from '@/features/chat/pages/RestaurantChatDashboard';
+import BillingPanel from '../components/employee/BillingPanel';
 
 export default function HomeEmployee() {
   const { t } = useTranslation();
@@ -85,6 +86,10 @@ export default function HomeEmployee() {
         ) : dashboard.activeView === 'chat' ? (
           <div style={{ padding: '2rem' }}>
             <RestaurantChatDashboard />
+          </div>
+        ) : dashboard.activeView === 'billing' ? (
+          <div style={{ padding: '2rem' }}>
+            <BillingPanel />
           </div>
         ) : null}
         </div>

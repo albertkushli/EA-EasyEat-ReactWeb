@@ -13,7 +13,7 @@ interface LoginFormState {
 
 export default function Login() {
   const { t } = useTranslation();
-  const { login } = useAuth();
+  const { login, loginGoogle } = useAuth();
   const navigate = useNavigate();
 
   const [loginType, setLoginType] = useState<LoginType>('customer');
@@ -25,6 +25,74 @@ export default function Login() {
   useEffect(() => {
     document.body.className = '';
   }, []);
+
+  useEffect(() => {
+    const scriptId = 'google-gsi-client';
+    const existingScript = document.getElementById(scriptId);
+
+    const loadScript = () => {
+      const script = document.createElement('script');
+      script.id = scriptId;
+      script.src = 'https://accounts.google.com/gsi/client';
+      script.async = true;
+      script.defer = true;
+      script.onload = () => initializeGoogleSignIn();
+      document.body.appendChild(script);
+    };
+
+    if (!existingScript) {
+      loadScript();
+    } else if ((window as any).google) {
+      initializeGoogleSignIn();
+    }
+
+    function initializeGoogleSignIn() {
+      try {
+        const google = (window as any).google;
+        if (!google) return;
+
+        const clientID = import.meta.env.VITE_GOOGLE_CLIENT_ID || '1047648392198-5c1r6eb94j2i56b6u76pcfk45s7lpe05.apps.googleusercontent.com';
+
+        google.accounts.id.initialize({
+          client_id: clientID,
+          callback: async (response: any) => {
+            setLoading(true);
+            setError('');
+            try {
+              const res = await loginGoogle(response.credential, loginType);
+              if (res.success) {
+                navigate('/dashboard');
+              } else {
+                setError(res.error ?? 'Google authentication failed');
+              }
+            } catch {
+              setError(t('auth.errors.serverError'));
+            } finally {
+              setLoading(false);
+            }
+          },
+        });
+
+        const btnElement = document.getElementById('google-signin-btn');
+        if (btnElement) {
+          google.accounts.id.renderButton(
+            btnElement,
+            {
+              theme: 'outline',
+              size: 'large',
+              width: btnElement.clientWidth || 364,
+              text: 'continue_with',
+              shape: 'rectangular',
+            }
+          );
+        }
+
+        google.accounts.id.prompt();
+      } catch (e) {
+        console.error('Failed to initialize Google Sign In:', e);
+      }
+    }
+  }, [loginType, loginGoogle, navigate, t]);
 
   function handleChange(event: ChangeEvent<HTMLInputElement>) {
     setForm((prev) => ({ ...prev, [event.target.name]: event.target.value }));
@@ -135,6 +203,14 @@ export default function Login() {
             {loading ? t('auth.login.form.loading') : t('auth.login.form.submit')}
           </button>
         </form>
+
+        <div className="auth-divider">
+          <span>{t('auth.login.divider') || 'O'}</span>
+        </div>
+
+        <div className="google-signin-container">
+          <div id="google-signin-btn" style={{ width: '100%' }}></div>
+        </div>
 
         {loginType === 'customer' && (
           <div className="auth-footer">

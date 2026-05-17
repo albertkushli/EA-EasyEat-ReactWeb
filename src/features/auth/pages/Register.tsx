@@ -1,4 +1,4 @@
-import { useState, useMemo, type ChangeEvent, type FormEvent, type FC } from 'react';
+import { useState, useMemo, useEffect, type ChangeEvent, type FormEvent, type FC } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Mail, Lock, Eye, EyeOff, AlertCircle, User, Check, X } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
@@ -27,7 +27,7 @@ const RuleChecker: FC<RuleCheckerProps> = ({ isValid, label }) => (
 
 export default function Register() {
   const { t } = useTranslation();
-  const { register } = useAuth();
+  const { register, loginGoogle } = useAuth();
   const navigate = useNavigate();
 
   const [form, setForm] = useState<RegisterFormState>({
@@ -40,6 +40,74 @@ export default function Register() {
   const [showPwd, setShowPwd] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+
+  useEffect(() => {
+    const scriptId = 'google-gsi-client';
+    const existingScript = document.getElementById(scriptId);
+
+    const loadScript = () => {
+      const script = document.createElement('script');
+      script.id = scriptId;
+      script.src = 'https://accounts.google.com/gsi/client';
+      script.async = true;
+      script.defer = true;
+      script.onload = () => initializeGoogleSignIn();
+      document.body.appendChild(script);
+    };
+
+    if (!existingScript) {
+      loadScript();
+    } else if ((window as any).google) {
+      initializeGoogleSignIn();
+    }
+
+    function initializeGoogleSignIn() {
+      try {
+        const google = (window as any).google;
+        if (!google) return;
+
+        const clientID = import.meta.env.VITE_GOOGLE_CLIENT_ID || '1047648392198-5c1r6eb94j2i56b6u76pcfk45s7lpe05.apps.googleusercontent.com';
+
+        google.accounts.id.initialize({
+          client_id: clientID,
+          callback: async (response: any) => {
+            setLoading(true);
+            setError('');
+            try {
+              const res = await loginGoogle(response.credential, 'customer');
+              if (res.success) {
+                navigate('/dashboard');
+              } else {
+                setError(res.error ?? 'Google authentication failed');
+              }
+            } catch {
+              setError(t('auth.errors.serverError'));
+            } finally {
+              setLoading(false);
+            }
+          },
+        });
+
+        const btnElement = document.getElementById('google-signin-btn');
+        if (btnElement) {
+          google.accounts.id.renderButton(
+            btnElement,
+            {
+              theme: 'outline',
+              size: 'large',
+              width: btnElement.clientWidth || 364,
+              text: 'signup_with',
+              shape: 'rectangular',
+            }
+          );
+        }
+
+        google.accounts.id.prompt();
+      } catch (e) {
+        console.error('Failed to initialize Google Sign In:', e);
+      }
+    }
+  }, [loginGoogle, navigate, t]);
 
   const rules = useMemo(() => ({
     length: form.password.length >= 8,
@@ -194,6 +262,14 @@ export default function Register() {
             {loading ? t('auth.register.form.loading') : t('auth.register.form.submit')}
           </button>
         </form>
+
+        <div className="auth-divider">
+          <span>{t('auth.login.divider') || 'O'}</span>
+        </div>
+
+        <div className="google-signin-container">
+          <div id="google-signin-btn" style={{ width: '100%' }}></div>
+        </div>
 
         <div className="auth-footer">
           {t('auth.register.footer.hasAccount')} <Link to="/login" className="auth-link">{t('auth.register.footer.login')}</Link>

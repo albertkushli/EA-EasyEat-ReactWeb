@@ -21,6 +21,9 @@ export interface IUser {
   profilePictures?: string[];
   createdAt?: Date;
   updatedAt?: Date;
+  googleId?: string;
+  authProvider?: 'local' | 'google';
+  avatar?: string;
 }
 
 export interface ICustomer extends IUser {
@@ -40,6 +43,9 @@ export interface IEmployee {
     email?: string;
     phone?: string;
     role?: string;
+    googleId?: string;
+    authProvider?: 'local' | 'google';
+    avatar?: string;
   };
   isActive: boolean;
 }
@@ -89,6 +95,7 @@ export interface IRestaurant {
   profile: IRestaurantProfile;
   owner_id: string;
   isActive?: boolean;
+  plan?: 'free' | 'premium' | 'business';
   createdAt?: Date;
   updatedAt?: Date;
 }
