@@ -49,6 +49,7 @@ interface CustomerProfileTabProps {
   totalPoints?: number;
   visits?: CustomerVisit[];
   onLogout?: () => Promise<void>;
+  onDeleteAccount?: () => Promise<void>;
 }
 
 interface CustomerDiscoverViewProps {
@@ -593,6 +594,7 @@ export function CustomerProfileTab({
   totalPoints = 0,
   visits = [],
   onLogout,
+  onDeleteAccount,
 }: CustomerProfileTabProps) {
   const { t } = useTranslation();
 
@@ -747,6 +749,28 @@ export function CustomerProfileTab({
                 )}
               </button>
             </div>
+
+            {/* Botón de Eliminar Cuenta */}
+            {onDeleteAccount && (
+              <div className="mt-8 pt-6 border-t border-slate-200/60 flex justify-center">
+                <button
+                  type="button"
+                  onClick={() => {
+                    const message = t(
+                      'dashboard.customer.profile.dangerZone.confirm',
+                      'Estás a punto de eliminar tu cuenta.\n\nEsta acción es IRREVERSIBLE y perderás todos tus puntos, recompensas y tu historial de visitas de forma permanente.\n\n¿Estás completamente seguro de que quieres proceder?'
+                    );
+                    if (window.confirm(message)) {
+                      onDeleteAccount();
+                    }
+                  }}
+                  className="px-6 py-2.5 text-red-500 hover:text-red-700 hover:bg-red-50 rounded-xl text-sm font-bold transition-all flex items-center gap-2"
+                >
+                  <X size={16} />
+                  <span>{t('dashboard.customer.profile.dangerZone.delete', 'Eliminar cuenta')}</span>
+                </button>
+              </div>
+            )}
 
           </form>
         </div>

@@ -1,6 +1,9 @@
-import { Store, User, Mail, Shield, MapPin, Phone } from 'lucide-react';
+import { Store, User, Mail, Shield, MapPin, Phone, Loader2, X } from 'lucide-react';
 import type { IRestaurant, IUser } from '@/types';
 import { useTranslation } from 'react-i18next';
+import { useState } from 'react';
+import { useAuth } from '@/context/AuthContext';
+import { softDeleteRestaurant } from '@/services/restaurant.service';
 
 interface StaffProfilePanelProps {
   user: IUser | null;
@@ -9,6 +12,8 @@ interface StaffProfilePanelProps {
 
 export default function StaffProfilePanel({ user, restaurant }: StaffProfilePanelProps) {
   const { t } = useTranslation();
+  const { logout } = useAuth() as any;
+  const [loading, setLoading] = useState(false);
 
   return (
     <main className="flex-1 w-full h-full bg-slate-50/30">
@@ -87,6 +92,39 @@ export default function StaffProfilePanel({ user, restaurant }: StaffProfilePane
                 </div>
               </div>
             </div>
+
+            {user?.role === 'owner' && (
+              <div className="mt-4 pt-4 border-t border-slate-100 flex justify-center">
+                <button
+                  type="button"
+                  onClick={async () => {
+                    const message = t(
+                      'settings.dangerZone.confirm',
+                      'Estás a punto de eliminar tu restaurante.\n\nEsta acción es IRREVERSIBLE. Tu perfil ya no será visible y perderás acceso a todos los datos asociados de forma permanente.\n\n¿Estás completamente seguro de que quieres proceder?'
+                    );
+                    if (window.confirm(message)) {
+                      setLoading(true);
+                      const restaurantId = user?.restaurant_id || restaurant?._id || (restaurant as any)?.id;
+                      if (restaurantId) {
+                        try {
+                          await softDeleteRestaurant(restaurantId);
+                          if (logout) await logout();
+                          else window.location.href = '/';
+                        } catch (error) {
+                          console.error('Error soft deleting restaurant', error);
+                        }
+                      }
+                      setLoading(false);
+                    }
+                  }}
+                  disabled={loading}
+                  className="px-6 py-2.5 text-red-500 hover:text-red-700 hover:bg-red-50 rounded-xl text-sm font-bold transition-all flex items-center justify-center gap-2 disabled:opacity-50 w-full"
+                >
+                  {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <X className="w-4 h-4" />}
+                  <span>{t('settings.dangerZone.delete', 'Eliminar restaurante')}</span>
+                </button>
+              </div>
+            )}
           </section>
         </div>
       </div>

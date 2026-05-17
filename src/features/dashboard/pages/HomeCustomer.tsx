@@ -70,6 +70,7 @@ export default function HomeCustomer() {
               onNameChange={dashboard.setCustomerName}
               onEmailChange={dashboard.setCustomerEmail}
               onPasswordChange={dashboard.setCustomerPassword}
+              onDeleteAccount={dashboard.handleDeleteAccount}
             />
           ) : dashboard.activeTab === 'discover' ? (
             <CustomerDiscoverView

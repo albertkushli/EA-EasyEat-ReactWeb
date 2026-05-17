@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { useSearchParams } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
 import apiClient from '@/services/apiClient';
-import { fetchCustomer, updateCustomer } from '@/services/customer.service';
+import { fetchCustomer, updateCustomer, softDeleteCustomer } from '@/services/customer.service';
 import type { ICustomer, IRestaurant } from '@/types';
 
 export interface CustomerRestaurantLocation {
@@ -122,6 +122,7 @@ interface UseCustomerDashboardResult {
   handleTabChange: (tab: CustomerTabId) => void;
   handleToggleFavorite: (restaurant: CustomerRestaurant) => void;
   handleSubmitProfile: (event: FormEvent<HTMLFormElement>) => Promise<void>;
+  handleDeleteAccount: () => Promise<void>;
   logout: () => Promise<void>;
   user: ICustomer | null;
   token: string | null;
@@ -396,6 +397,16 @@ export function useCustomerDashboard(): UseCustomerDashboardResult {
     }
   }, [customer, customerEmail, customerName, customerPassword, t, token, updateUser]);
 
+  const handleDeleteAccount = useCallback(async () => {
+    if (!customer?._id) return;
+    try {
+      await softDeleteCustomer(customer._id);
+      await logout();
+    } catch (error) {
+      console.error('Error deleting account:', error);
+    }
+  }, [customer, logout]);
+
   const totalPoints = useMemo(
     () => pointsWallet.reduce((sum, wallet) => sum + toNumber(wallet.points, 0), 0),
     [pointsWallet],
@@ -465,6 +476,7 @@ export function useCustomerDashboard(): UseCustomerDashboardResult {
     handleTabChange,
     handleToggleFavorite,
     handleSubmitProfile,
+    handleDeleteAccount,
     logout,
     user: user as ICustomer | null,
     token,

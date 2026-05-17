@@ -135,6 +135,19 @@ export const getRestaurant = async (restaurantId: string) => {
 };
 
 /**
+ * Soft-deletes a restaurant
+ */
+export async function softDeleteRestaurant(restaurantId: string): Promise<boolean> {
+  try {
+    await apiClient.delete(`/restaurants/${restaurantId}/soft`);
+    return true;
+  } catch (err) {
+    console.error('Error soft-deleting restaurant:', err);
+    return false;
+  }
+}
+
+/**
  * Obtiene lista de restaurantes (con paginación opcional)
  */
 export async function fetchRestaurants(
@@ -191,4 +204,5 @@ export const restaurantService = {
   fetchAllRestaurantVisits,
   updateRestaurant,
   getRestaurant,
+  softDeleteRestaurant,
 };

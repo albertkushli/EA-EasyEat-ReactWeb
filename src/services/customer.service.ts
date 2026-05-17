@@ -69,6 +69,19 @@ export async function deleteCustomer(customerId: string): Promise<boolean> {
   }
 }
 
+/**
+ * Soft-deletes a customer
+ */
+export async function softDeleteCustomer(customerId: string): Promise<boolean> {
+  try {
+    await apiClient.delete(`/customers/${customerId}/soft`);
+    return true;
+  } catch (err) {
+    console.error('Error soft-deleting customer:', err);
+    return false;
+  }
+}
+
 export const getCustomersByRestaurant = async (restaurantId: string) => {
   if (!restaurantId) {
     console.warn("getCustomersByRestaurant: No restaurantId provided");
@@ -105,6 +118,7 @@ export const customerService = {
   fetchCustomerFull,
   updateCustomer,
   deleteCustomer,
+  softDeleteCustomer,
   getCustomersByRestaurant,
   getAllCustomers,
 };
