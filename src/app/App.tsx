@@ -4,7 +4,6 @@ import { AuthProvider, useAuth } from '@/context/AuthContext';
 import { ChatProvider } from '@/context/ChatContext';
 import { Login, Register } from '@/features/auth';
 import { Dashboard, Home } from '@/features/dashboard';
-import { Clients } from '@/features/customers';
 import DiscoverScreen from '@/screens/DiscoverScreen';
 import LegalNotice from '@/features/legal/LegalNotice';
 import MapScreenPremium from '@/imports/MapScreenPremium';
@@ -103,11 +102,8 @@ export default function App() {
                 <Dashboard />
               </ProtectedRoute>
             )}
-          >
-            <Route path="clients" element={<Clients />} />
-          </Route>
-           <Route path="/discover" element={<DiscoverScreen />} />
           />
+
           <Route
             path="/dashboard/:view"
             element={(
@@ -116,11 +112,10 @@ export default function App() {
               </ProtectedRoute>
             )}
           />
-          <Route path="/discover" element={<DiscoverScreen />} />
-          <Route path="/map" element={<MapScreen />} />
-          <Route path="/restaurant/:id" element={<div className="p-4">Restaurant details placeholder</div>} />
 
+          <Route path="/discover" element={<DiscoverScreen />} />
           <Route path="/map" element={<MapRouteWrapper />} />
+          <Route path="/restaurant/:id" element={<div className="p-4">Restaurant details placeholder</div>} />
           <Route path="/aviso-legal" element={<LegalNotice />} />
         </Routes>
       </Router>
