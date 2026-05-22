@@ -1,6 +1,8 @@
 /**
  * Modern map styling for Google Maps
  */
+import { MAP_THEME } from '@/constants/mapTheme';
+
 export const MODERN_MAP_STYLE = [
   {
     featureType: 'all',
@@ -19,7 +21,7 @@ export const MODERN_MAP_STYLE = [
         saturation: 36,
       },
       {
-        color: '#333333',
+        color: MAP_THEME.primary,
       },
       {
         lightness: 40,
@@ -73,7 +75,7 @@ export const MODERN_MAP_STYLE = [
     elementType: 'geometry',
     stylers: [
       {
-        color: '#f3f2f2',
+        color: '#f3f5fb',
       },
       {
         lightness: 20,
@@ -85,7 +87,7 @@ export const MODERN_MAP_STYLE = [
     elementType: 'geometry',
     stylers: [
       {
-        color: '#eeeeee',
+        color: '#eef3ff',
       },
       {
         lightness: 21,
@@ -97,7 +99,7 @@ export const MODERN_MAP_STYLE = [
     elementType: 'geometry',
     stylers: [
       {
-        color: '#decf6f',
+        color: '#dbeafe',
       },
       {
         lightness: 21,
@@ -160,7 +162,7 @@ export const MODERN_MAP_STYLE = [
     elementType: 'geometry',
     stylers: [
       {
-        color: '#f2f2f2',
+        color: '#eef3ff',
       },
       {
         lightness: 19,
@@ -172,7 +174,7 @@ export const MODERN_MAP_STYLE = [
     elementType: 'geometry',
     stylers: [
       {
-        color: '#e9e9e9',
+        color: '#dbeafe',
       },
       {
         lightness: 17,
@@ -180,4 +182,3 @@ export const MODERN_MAP_STYLE = [
     ],
   },
 ];
-

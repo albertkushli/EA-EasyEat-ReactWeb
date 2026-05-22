@@ -2,13 +2,15 @@
  * Creates an optimized SVG data URL for map markers
  * Supports premium styling with glow effects
  */
+import { MAP_THEME } from '@/constants/mapTheme';
+
 export function createMarkerUrl(
   color: string,
   size: number = 36,
   isSelected: boolean = false,
   isNearby: boolean = false
 ): string {
-  const primaryColor = isNearby ? '#ff9800' : color;
+  const primaryColor = isNearby ? MAP_THEME.nearby : color;
   const glowSize = isSelected ? 8 : 0; // number (stdDeviation expects a number)
 
   const svg = `<?xml version="1.0"?><svg xmlns='http://www.w3.org/2000/svg' width='${size}' height='${size}' viewBox='0 0 24 24'>

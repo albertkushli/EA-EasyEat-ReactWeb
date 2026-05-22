@@ -19,6 +19,7 @@ import GoogleMapComponent from './GoogleMapComponent';
 import { MODERN_MAP_STYLE } from '@/utils/mapStyles';
 import RestaurantPreviewCard from '@/components/RestaurantPreviewCard';
 import type { Restaurant } from '@/types/Restaurant';
+import { MAP_THEME } from '@/constants/mapTheme';
 
 type Filter = 'all' | 'nearby' | 'rating' | 'fast' | 'cheap';
 
@@ -31,8 +32,8 @@ interface Props {
   onRequestNearby?: () => Promise<void> | void;
 }
 
-const PRIMARY = '#FF5A5F';
-const ACCENT = '#FF8C42';
+const PRIMARY = MAP_THEME.primary;
+const ACCENT = MAP_THEME.accent;
 const DEFAULT_CENTER = { lat: 41.3851, lng: 2.1734 };
 
 const PLACEHOLDER_IMAGES = [
@@ -106,8 +107,8 @@ const RestaurantListCard: FC<{
       className={[
         'flex gap-0 rounded-2xl border overflow-hidden cursor-pointer transition-all bg-white',
         isSelected
-          ? 'border-[#FF5A5F] shadow-[0_0_0_3px_rgba(255,90,95,0.12)]'
-          : 'border-black/[0.07] hover:border-[rgba(255,90,95,0.25)] hover:shadow-lg',
+          ? 'border-[#0e1a36] shadow-[0_0_0_3px_rgba(14,26,54,0.12)]'
+          : 'border-black/[0.07] hover:border-[rgba(14,26,54,0.22)] hover:shadow-lg',
       ].join(' ')}
     >
       <div className="relative w-[88px] flex-shrink-0 overflow-hidden">
@@ -164,7 +165,7 @@ const FilterChip: FC<{
       'flex-shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[12px] font-medium border transition-all whitespace-nowrap',
       active
         ? 'text-white border-transparent'
-        : 'bg-white text-gray-500 border-black/[0.08] hover:border-[#FF5A5F] hover:text-[#FF5A5F]',
+        : 'bg-white text-gray-500 border-black/[0.08] hover:border-[#0e1a36] hover:text-[#0e1a36]',
     ].join(' ')}
     style={active ? { background: PRIMARY, borderColor: PRIMARY } : undefined}
   >
@@ -180,8 +181,8 @@ const MapStatsOverlay: FC<{ total: number; nearby: number }> = ({ total, nearby 
     className="absolute top-4 left-4 z-20 bg-white/90 backdrop-blur-xl rounded-2xl p-3.5 border border-white/60 shadow-lg"
   >
     <div className="flex items-center gap-2.5 mb-2.5">
-      <div className="w-7 h-7 rounded-lg bg-blue-50 flex items-center justify-center">
-        <Building2 className="w-4 h-4 text-blue-600" />
+        <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ background: MAP_THEME.accentSoft }}>
+          <Building2 className="w-4 h-4" style={{ color: MAP_THEME.accent }} />
       </div>
       <div>
         <p className="text-[15px] font-semibold text-gray-900 leading-none">{total}</p>
@@ -193,8 +194,8 @@ const MapStatsOverlay: FC<{ total: number; nearby: number }> = ({ total, nearby 
       <>
         <div className="h-px bg-black/[0.06] mb-2.5" />
         <div className="flex items-center gap-2.5">
-          <div className="w-7 h-7 rounded-lg bg-orange-50 flex items-center justify-center">
-            <Flame className="w-4 h-4 text-orange-500" />
+          <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ background: MAP_THEME.primarySoft }}>
+            <Flame className="w-4 h-4" style={{ color: MAP_THEME.accent }} />
           </div>
           <div>
             <p className="text-[15px] font-semibold text-gray-900 leading-none">{nearby}</p>
@@ -208,14 +209,14 @@ const MapStatsOverlay: FC<{ total: number; nearby: number }> = ({ total, nearby 
 
 const NearMeButton: FC<{ onClick: () => void; loading: boolean }> = ({ onClick, loading }) => (
   <motion.button
-    whileHover={{ y: -2, boxShadow: '0 8px 28px rgba(255,90,95,0.35)' }}
+    whileHover={{ y: -2, boxShadow: `0 8px 28px ${MAP_THEME.glow}` }}
     whileTap={{ scale: 0.96 }}
     onClick={onClick}
     disabled={loading}
     className="absolute bottom-5 left-1/2 -translate-x-1/2 z-20 flex items-center gap-2 px-5 py-3
                bg-white rounded-full text-[13px] font-semibold text-gray-800
                border border-black/[0.08] shadow-xl transition-colors
-               hover:bg-[#FF5A5F] hover:text-white hover:border-[#FF5A5F]"
+                hover:bg-[#0e1a36] hover:text-white hover:border-[#0e1a36]"
   >
     {loading ? (
       <motion.div
@@ -330,7 +331,7 @@ export const MapScreenPremium: FC<Props> = ({
               </div>
               <span className="font-bold text-[17px] text-gray-900">Tastemap</span>
             </div>
-            <span className="text-xs font-medium px-3 py-1 rounded-full" style={{ background: '#FFF0F0', color: PRIMARY }}>
+            <span className="text-xs font-medium px-3 py-1 rounded-full" style={{ background: MAP_THEME.primaryLighter, color: PRIMARY }}>
               {filtered.length} places
             </span>
           </div>
@@ -344,7 +345,7 @@ export const MapScreenPremium: FC<Props> = ({
               placeholder="Search restaurants or cuisine"
               className="w-full pl-10 pr-10 py-2.5 rounded-xl border border-black/[0.08] bg-gray-50
                          text-sm text-gray-900 placeholder-gray-400 outline-none
-                         focus:border-[#FF5A5F] focus:bg-white transition-all"
+                         focus:border-[#0e1a36] focus:bg-white transition-all"
             />
             {searchQuery && (
               <button

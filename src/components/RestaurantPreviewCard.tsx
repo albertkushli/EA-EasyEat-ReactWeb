@@ -1,6 +1,7 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { MapPin, Star, Clock, DollarSign, X, ArrowRight } from 'lucide-react';
 import type { Restaurant } from '@/types/Restaurant';
+import { MAP_THEME } from '@/constants/mapTheme';
 
 interface RestaurantPreviewCardProps {
   restaurant: Restaurant | null;
@@ -63,7 +64,7 @@ export const RestaurantPreviewCard: React.FC<RestaurantPreviewCardProps> = ({
 
               {/* Nearby Badge */}
               {(restaurant as any).isNearby && (
-                <div className="absolute top-3 left-3 px-3 py-1 rounded-full text-xs font-semibold text-white bg-orange-500">
+                <div className="absolute top-3 left-3 px-3 py-1 rounded-full text-xs font-semibold text-white" style={{ background: MAP_THEME.accent }}>
                   Nearby
                 </div>
               )}
@@ -122,7 +123,8 @@ export const RestaurantPreviewCard: React.FC<RestaurantPreviewCardProps> = ({
               {/* View Details Button */}
               <button
                 onClick={() => restaurant._id && onViewDetails(restaurant._id)}
-                className="w-full bg-gradient-to-r from-[#FF5A5F] to-[#FF8C42] hover:from-[#FF4A4F] hover:to-[#FF7C32] text-white font-semibold py-2.5 rounded-xl transition-all duration-200 flex items-center justify-center gap-2 shadow-md hover:shadow-lg"
+                className="w-full text-white font-semibold py-2.5 rounded-xl transition-all duration-200 flex items-center justify-center gap-2 shadow-md hover:shadow-lg"
+                style={{ background: `linear-gradient(135deg, ${MAP_THEME.primary}, ${MAP_THEME.accent})` }}
               >
                 View Details
                 <ArrowRight className="w-4 h-4" />
