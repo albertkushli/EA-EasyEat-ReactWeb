@@ -2,6 +2,7 @@ import { useCallback, useMemo, useRef, memo, Fragment } from 'react';
 import { useLoadScript, GoogleMap, Marker, MarkerClusterer } from '@react-google-maps/api';
 import type { Restaurant } from '@/types/Restaurant';
 import { createMarkerUrl } from './MapMarker';
+import { MAP_THEME } from '@/constants/mapTheme';
 
 type Location = { lat: number; lng: number };
 
@@ -78,7 +79,7 @@ const RestaurantMarker = memo<RestaurantMarkerProps>(
     const coords = getRestaurantCoordinates(restaurant);
 
     const isNearby = (restaurant as any).isNearby;
-    const markerColor = isNearby ? '#ff9800' : '#e53935';
+    const markerColor = isNearby ? MAP_THEME.accent : MAP_THEME.primary;
 
     // Memoize marker URL to avoid regenerating on every render
     const markerUrl = useMemo(() => createMarkerUrl(markerColor, 36, isSelected, isNearby), [markerColor, isSelected, isNearby]);
@@ -135,7 +136,7 @@ const UserLocationMarker = memo<UserLocationMarkerProps>(({ coords }) => {
     <Marker
       position={{ lat: coords.lat, lng: coords.lng }}
       icon={{
-        url: createMarkerUrl('#3b82f6', 28, false, false),
+        url: createMarkerUrl(MAP_THEME.accent, 28, false, false),
         scaledSize: new (window as any).google.maps.Size(28, 28),
         anchor: new (window as any).google.maps.Point(14, 14),
       }}
@@ -257,7 +258,7 @@ const GoogleMapComponent: React.FC<GoogleMapComponentProps> = ({
                   height: 53,
                   width: 53,
                   textColor: '#ffffff',
-                  background: 'rgba(255, 107, 53, 0.8)',
+                  background: MAP_THEME.cluster,
                   borderRadius: '50%',
                   lineHeight: '53px',
                   fontSize: '12px',
@@ -266,7 +267,7 @@ const GoogleMapComponent: React.FC<GoogleMapComponentProps> = ({
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  boxShadow: '0 10px 30px rgba(255, 107, 53, 0.3)',
+                  boxShadow: `0 10px 30px ${MAP_THEME.clusterShadow}`,
                   border: '2px solid rgba(255, 255, 255, 0.8)',
                 },
               ] as any,
