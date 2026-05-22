@@ -54,6 +54,10 @@ export default function HomeCustomer() {
             />
           ) : dashboard.activeTab === 'profile' ? (
             <CustomerProfileTab
+              user={dashboard.user}
+              totalPoints={dashboard.totalPoints}
+              visits={dashboard.visits}
+              onLogout={dashboard.logout}
               customerName={dashboard.customerName}
               customerEmail={dashboard.customerEmail}
               customerPassword={dashboard.customerPassword}
@@ -66,6 +70,7 @@ export default function HomeCustomer() {
               onNameChange={dashboard.setCustomerName}
               onEmailChange={dashboard.setCustomerEmail}
               onPasswordChange={dashboard.setCustomerPassword}
+              onDeleteAccount={dashboard.handleDeleteAccount}
             />
           ) : dashboard.activeTab === 'discover' ? (
             <CustomerDiscoverView

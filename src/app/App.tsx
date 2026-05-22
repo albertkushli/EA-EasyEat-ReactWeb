@@ -10,6 +10,7 @@ import LegalNotice from '@/features/legal/LegalNotice';
 import MapScreenPremium from '@/imports/MapScreenPremium';
 import { useLocationStore } from '@/stores/locationStore';
 import { useRestaurantStore } from '@/stores/restaurantStore';
+import SupportChat from '@/features/support/components/SupportChat';
 
 function ProtectedRoute({ children }: { children: ReactNode }) {
   const { isAuthenticated, loading } = useAuth();
@@ -106,11 +107,24 @@ export default function App() {
             <Route path="clients" element={<Clients />} />
           </Route>
            <Route path="/discover" element={<DiscoverScreen />} />
+          />
+          <Route
+            path="/dashboard/:view"
+            element={(
+              <ProtectedRoute>
+                <Dashboard />
+              </ProtectedRoute>
+            )}
+          />
+          <Route path="/discover" element={<DiscoverScreen />} />
+          <Route path="/map" element={<MapScreen />} />
+          <Route path="/restaurant/:id" element={<div className="p-4">Restaurant details placeholder</div>} />
 
           <Route path="/map" element={<MapRouteWrapper />} />
           <Route path="/aviso-legal" element={<LegalNotice />} />
         </Routes>
       </Router>
+      <SupportChat />
       </ChatProvider>
     </AuthProvider>
   );

@@ -19,7 +19,7 @@ import {
   Loader2
 } from "lucide-react";
 import { motion } from "framer-motion";
-import { updateRestaurant } from "@/services/restaurant.service";
+import { updateRestaurant, softDeleteRestaurant } from "@/services/restaurant.service";
 import { useAuth } from "@/context/AuthContext";
 import { useTranslation } from "react-i18next";
 
@@ -29,7 +29,7 @@ interface SettingsProps {
 
 export default function Settings({ restaurant: initialRestaurant }: SettingsProps) {
   const { t } = useTranslation();
-  const { user } = useAuth() as any;
+  const { user, logout } = useAuth() as any;
   const [activeTab, setActiveTab] = useState("general");
   const [loading, setLoading] = useState(false);
   const [restaurant, setRestaurant] = useState(initialRestaurant);

@@ -379,3 +379,49 @@
   background: hsl(142, 71%, 45%);
   box-shadow: 0 0 8px hsla(142, 71%, 45%, 0.4);
 }
+
+/* Divisor para Login Social */
+.auth-divider {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  margin: 1.5rem 0;
+  color: var(--auth-text-muted);
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.auth-divider::before,
+.auth-divider::after {
+  content: '';
+  flex: 1;
+  border-bottom: 1.5px solid rgba(0, 0, 0, 0.08);
+}
+
+.auth-divider::before {
+  margin-right: .75rem;
+}
+
+.auth-divider::after {
+  margin-left: .75rem;
+}
+
+/* Contenedor de Botón de Google */
+.google-signin-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  margin-top: 0.5rem;
+  min-height: 44px;
+  background: transparent;
+  border-radius: 14px;
+  transition: all 0.3s ease;
+}
+
+.google-signin-container iframe {
+  width: 100% !important;
+  margin: 0 auto;
+}

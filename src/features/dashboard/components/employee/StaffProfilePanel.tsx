@@ -1,6 +1,9 @@
-import { Store, User, Mail, Shield, MapPin, Phone } from 'lucide-react';
+import { Store, User, Mail, Shield, MapPin, Phone, Loader2, X } from 'lucide-react';
 import type { IRestaurant, IUser } from '@/types';
 import { useTranslation } from 'react-i18next';
+import { useState } from 'react';
+import { useAuth } from '@/context/AuthContext';
+import { softDeleteRestaurant } from '@/services/restaurant.service';
 
 interface StaffProfilePanelProps {
   user: IUser | null;
@@ -9,6 +12,8 @@ interface StaffProfilePanelProps {
 
 export default function StaffProfilePanel({ user, restaurant }: StaffProfilePanelProps) {
   const { t } = useTranslation();
+  const { logout } = useAuth() as any;
+  const [loading, setLoading] = useState(false);
 
   return (
     <main className="flex-1 w-full h-full bg-slate-50/30">
@@ -19,7 +24,7 @@ export default function StaffProfilePanel({ user, restaurant }: StaffProfilePane
           {/* Tarjeta de Información Personal */}
           <section className="bg-white rounded-2xl p-8 shadow-sm border border-slate-100 flex flex-col gap-6 relative overflow-hidden">
             <div className="absolute top-0 right-0 w-32 h-32 bg-orange-50 rounded-bl-full -z-10" />
-            
+
             <div className="flex items-center gap-4">
               <div className="w-16 h-16 rounded-full bg-gradient-to-br from-orange-400 to-red-500 flex items-center justify-center text-white text-2xl font-bold shadow-md">
                 {user?.name?.[0]?.toUpperCase() || 'U'}
@@ -55,7 +60,7 @@ export default function StaffProfilePanel({ user, restaurant }: StaffProfilePane
           {/* Tarjeta del Restaurante */}
           <section className="bg-white rounded-2xl p-8 shadow-sm border border-slate-100 flex flex-col gap-6 relative overflow-hidden">
             <div className="absolute top-0 right-0 w-32 h-32 bg-blue-50 rounded-bl-full -z-10" />
-            
+
             <div className="flex items-center gap-4">
               <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-400 to-indigo-500 flex items-center justify-center text-white shadow-md">
                 <Store className="w-8 h-8" />
@@ -87,6 +92,39 @@ export default function StaffProfilePanel({ user, restaurant }: StaffProfilePane
                 </div>
               </div>
             </div>
+
+            {user?.role === 'owner' && (
+              <div className="mt-4 pt-4 border-t border-slate-100 flex justify-center">
+                <button
+                  type="button"
+                  onClick={async () => {
+                    const message = t(
+                      'settings.dangerZone.confirm',
+                      'Estás a punto de eliminar tu restaurante.\n\nEsta acción es IRREVERSIBLE. Tu perfil ya no será visible y perderás acceso a todos los datos asociados de forma permanente.\n\n¿Estás completamente seguro de que quieres proceder?'
+                    );
+                    if (window.confirm(message)) {
+                      setLoading(true);
+                      const restaurantId = user?.restaurant_id || restaurant?._id || (restaurant as any)?.id;
+                      if (restaurantId) {
+                        try {
+                          await softDeleteRestaurant(restaurantId);
+                          if (logout) await logout();
+                          else window.location.href = '/';
+                        } catch (error) {
+                          console.error('Error soft deleting restaurant', error);
+                        }
+                      }
+                      setLoading(false);
+                    }
+                  }}
+                  disabled={loading}
+                  className="px-6 py-2.5 text-red-500 hover:text-red-700 hover:bg-red-50 rounded-xl text-sm font-bold transition-all flex items-center justify-center gap-2 disabled:opacity-50 w-full"
+                >
+                  {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <X className="w-4 h-4" />}
+                  <span>{t('settings.dangerZone.delete', 'Eliminar restaurante')}</span>
+                </button>
+              </div>
+            )}
           </section>
         </div>
       </div>

@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '@/context/AuthContext';
 import { restaurantService, reviewService } from '@/services';
@@ -47,9 +48,21 @@ export function useEmployeeDashboard(): UseEmployeeDashboardResult {
   const [reviews, setReviews] = useState<IReview[]>([]);
   const [employees] = useState<IEmployeeStats[]>([]);
   const [dishes, setDishes] = useState<Dish[]>([]);
+  const { view } = useParams();
   const [loading, setLoading] = useState(true);
   const isOwner = role === USER_ROLES.OWNER;
-  const [activeView, setActiveView] = useState(isOwner ? 'dashboard' : 'profile');
+  const [activeView, setActiveView] = useState(() => {
+    if (view && ['profile', 'dashboard', 'clients', 'dishes', 'employees', 'rewards', 'analytics', 'settings', 'chat', 'billing'].includes(view)) {
+      return view;
+    }
+    return isOwner ? 'dashboard' : 'profile';
+  });
+
+  useEffect(() => {
+    if (view && ['profile', 'dashboard', 'clients', 'dishes', 'employees', 'rewards', 'analytics', 'settings', 'chat', 'billing'].includes(view)) {
+      setActiveView(view);
+    }
+  }, [view]);
 
   useEffect(() => {
     async function fetchVisits() {
