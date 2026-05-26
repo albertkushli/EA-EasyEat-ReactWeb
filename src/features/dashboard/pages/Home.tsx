@@ -18,11 +18,12 @@ import {
   Zap,
 } from 'lucide-react';
 
+const LANDING_MAP_BRAND_LABEL = 'EasyEat Map';
+const LANDING_MAP_BRAND_INITIAL = 'E';
+
 export default function Home() {
   const { t } = useTranslation();
   const { restaurants, loading, coords, handleRequestNearby } = useMapExperienceData();
-  const landingMapBrandLabel = 'EasyEat Map';
-  const landingMapBrandInitial = 'E';
 
   return (
     <div className="landing-page">
@@ -102,8 +103,8 @@ export default function Home() {
             isLoading={loading}
             onRequestNearby={handleRequestNearby}
             embedded
-            brandLabel={landingMapBrandLabel}
-            brandInitial={landingMapBrandInitial}
+            brandLabel={LANDING_MAP_BRAND_LABEL}
+            brandInitial={LANDING_MAP_BRAND_INITIAL}
           />
         </div>
       </section>
