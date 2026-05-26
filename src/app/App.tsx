@@ -107,7 +107,6 @@ export default function App() {
             <Route path="clients" element={<Clients />} />
           </Route>
            <Route path="/discover" element={<DiscoverScreen />} />
-          />
           <Route
             path="/dashboard/:view"
             element={(
@@ -117,7 +116,7 @@ export default function App() {
             )}
           />
           <Route path="/discover" element={<DiscoverScreen />} />
-          <Route path="/map" element={<MapScreen />} />
+          {/*<Route path="/map" element={<MapScreen />} />*/}
           <Route path="/restaurant/:id" element={<div className="p-4">Restaurant details placeholder</div>} />
 
           <Route path="/map" element={<MapRouteWrapper />} />
