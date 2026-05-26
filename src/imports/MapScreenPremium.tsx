@@ -418,7 +418,7 @@ export const MapScreenPremium: FC<Props> = ({
       ].join(' ')}
       style={{ background: '#F6F7FB', fontFamily: "'DM Sans', system-ui, sans-serif" }}
     >
-      <div className="flex-shrink-0 flex flex-col bg-white border-r border-black/[0.06] z-10 w-full lg:w-[400px] lg:max-w-[400px]">
+      <div className="flex-shrink-0 flex flex-col bg-white border-r border-black/[0.06] z-10 w-full lg:w-[400px]">
         <div className="px-5 pt-5 pb-0">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2">
