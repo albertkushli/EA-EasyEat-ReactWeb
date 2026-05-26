@@ -35,6 +35,10 @@ interface Props {
 const PRIMARY = MAP_THEME.primary;
 const ACCENT = MAP_THEME.accent;
 const DEFAULT_CENTER = { lat: 41.3851, lng: 2.1734 };
+const DEFAULT_MAP_ZOOM = 14;
+const MIN_MAP_ZOOM = 3;
+const MAX_MAP_ZOOM = 20;
+const USER_LOCATION_MIN_ZOOM = 15;
 
 const PLACEHOLDER_IMAGES = [
   'https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=300&h=200&fit=crop&q=60',
@@ -348,20 +352,20 @@ export const MapScreenPremium: FC<Props> = ({
 
   const handleZoomIn = useCallback(() => {
     if (!mapInstance) return;
-    const currentZoom = mapInstance.getZoom() ?? 14;
-    mapInstance.setZoom(Math.min(currentZoom + 1, 20));
+    const currentZoom = mapInstance.getZoom() ?? DEFAULT_MAP_ZOOM;
+    mapInstance.setZoom(Math.min(currentZoom + 1, MAX_MAP_ZOOM));
   }, [mapInstance]);
 
   const handleZoomOut = useCallback(() => {
     if (!mapInstance) return;
-    const currentZoom = mapInstance.getZoom() ?? 14;
-    mapInstance.setZoom(Math.max(currentZoom - 1, 3));
+    const currentZoom = mapInstance.getZoom() ?? DEFAULT_MAP_ZOOM;
+    mapInstance.setZoom(Math.max(currentZoom - 1, MIN_MAP_ZOOM));
   }, [mapInstance]);
 
   const handleCenterOnUser = useCallback(async () => {
     if (userLocation && mapInstance) {
       mapInstance.panTo(userLocation);
-      mapInstance.setZoom(Math.max(mapInstance.getZoom() ?? 14, 15));
+      mapInstance.setZoom(Math.max(mapInstance.getZoom() ?? DEFAULT_MAP_ZOOM, USER_LOCATION_MIN_ZOOM));
       return;
     }
 
@@ -538,7 +542,7 @@ export const MapScreenPremium: FC<Props> = ({
             selectedRestaurantId={selectedId}
             onRestaurantSelect={handleSelectRestaurant}
             center={userLocation || defaultCenter}
-            zoom={14}
+            zoom={DEFAULT_MAP_ZOOM}
             showClusters={showClusters}
             userLocation={userLocation}
             mapStyle={MODERN_MAP_STYLE}
