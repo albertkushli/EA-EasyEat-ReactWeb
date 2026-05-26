@@ -570,15 +570,16 @@ export const MapScreenPremium: FC<Props> = ({
 
           <div className="absolute right-4 bottom-20 z-20 flex flex-col gap-2">
             {[
-              { icon: <Plus className="w-4 h-4" />, label: 'Zoom in' },
-              { icon: <Minus className="w-4 h-4" />, label: 'Zoom out' },
-            ].map(({ icon, label }) => (
+              { icon: <Plus className="w-4 h-4" />, label: 'Zoom in', onClick: handleZoomIn },
+              { icon: <Minus className="w-4 h-4" />, label: 'Zoom out', onClick: handleZoomOut },
+            ].map(({ icon, label, onClick }) => (
               <motion.button
                 key={label}
                 whileHover={{ scale: 1.08 }}
                 whileTap={{ scale: 0.95 }}
                 title={label}
-                onClick={label === 'Zoom in' ? handleZoomIn : handleZoomOut}
+                aria-label={label}
+                onClick={onClick}
                 className="w-9 h-9 bg-white rounded-xl border border-black/[0.08] flex items-center justify-center
                            text-gray-700 shadow-md hover:shadow-lg transition-all"
               >
@@ -589,6 +590,7 @@ export const MapScreenPremium: FC<Props> = ({
               whileHover={{ scale: 1.08 }}
               whileTap={{ scale: 0.95 }}
               title="My location"
+              aria-label="Center map on my location"
               onClick={handleCenterOnUser}
               disabled={nearMeLoading}
               className="w-9 h-9 rounded-xl flex items-center justify-center text-white shadow-md"
