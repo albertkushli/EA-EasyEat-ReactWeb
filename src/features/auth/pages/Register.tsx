@@ -66,7 +66,7 @@ export default function Register() {
         const google = (window as any).google;
         if (!google) return;
 
-        const clientID = import.meta.env.VITE_GOOGLE_CLIENT_ID || '1047648392198-5c1r6eb94j2i56b6u76pcfk45s7lpe05.apps.googleusercontent.com';
+        const clientID = import.meta.env.VITE_GOOGLE_CLIENT_ID ;
 
         google.accounts.id.initialize({
           client_id: clientID,

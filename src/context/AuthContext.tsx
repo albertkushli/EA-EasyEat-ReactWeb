@@ -163,7 +163,7 @@ export const AuthProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const loginGoogle = useCallback(
     async (credential: string, role: 'customer' | 'employee') => {
       try {
-        const res = await apiClient.post('/auth/google', { credential, role });
+        const res = await apiClient.post('/auth/login/google', { idToken: credential, role });
 
         if (res.status === 200) {
           const { accessToken } = res.data;
