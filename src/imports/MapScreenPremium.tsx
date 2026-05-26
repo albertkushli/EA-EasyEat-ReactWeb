@@ -35,6 +35,10 @@ interface Props {
 const PRIMARY = MAP_THEME.primary;
 const ACCENT = MAP_THEME.accent;
 const DEFAULT_CENTER = { lat: 41.3851, lng: 2.1734 };
+const DEFAULT_MAP_ZOOM = 14;
+const MIN_MAP_ZOOM = 3;
+const MAX_MAP_ZOOM = 20;
+const USER_LOCATION_MIN_ZOOM = 15;
 
 const PLACEHOLDER_IMAGES = [
   'https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=300&h=200&fit=crop&q=60',
@@ -82,6 +86,61 @@ function estimatedTime(restaurantId?: string): string {
     .reduce((acc, ch) => acc + ch.charCodeAt(0), 0) % times.length;
 
   return times[idx];
+}
+
+function toFiniteNumber(value: unknown): number | null {
+  if (typeof value === 'number') return Number.isFinite(value) ? value : null;
+  if (typeof value !== 'string') return null;
+  const parsed = Number(value);
+  return typeof parsed === 'number' && Number.isFinite(parsed) ? parsed : null;
+}
+
+interface CoordinateCandidate {
+  lat?: unknown;
+  latitude?: unknown;
+  lng?: unknown;
+  lon?: unknown;
+  longitude?: unknown;
+}
+
+function asCoordinateCandidate(value: unknown): CoordinateCandidate | null {
+  if (!value || typeof value !== 'object') return null;
+  return value as CoordinateCandidate;
+}
+
+function asRecord(value: unknown): Record<string, unknown> | null {
+  if (!value || typeof value !== 'object') return null;
+  return value as Record<string, unknown>;
+}
+
+function getRestaurantCoordinates(restaurant: Restaurant): { lat: number; lng: number } | null {
+  // Backend may send GeoJSON-style coordinates as [lng, lat] nested at location.coordinates.coordinates.
+  const rawCoordinates = restaurant?.profile?.location?.coordinates?.coordinates;
+  const restaurantRecord = asRecord(restaurant);
+  const profileRecord = asRecord(restaurant.profile);
+
+  if (Array.isArray(rawCoordinates) && rawCoordinates.length >= 2) {
+    const lng = toFiniteNumber(rawCoordinates[0]);
+    const lat = toFiniteNumber(rawCoordinates[1]);
+    if (lat !== null && lng !== null) return { lat, lng };
+  }
+
+  const candidates = [
+    rawCoordinates,
+    profileRecord?.location,
+    restaurantRecord.location,
+    restaurantRecord,
+  ];
+
+  for (const rawCandidate of candidates) {
+    const candidate = asCoordinateCandidate(rawCandidate);
+    if (!candidate) continue;
+    const lat = toFiniteNumber(candidate.lat ?? candidate.latitude);
+    const lng = toFiniteNumber(candidate.lng ?? candidate.lon ?? candidate.longitude);
+    if (lat !== null && lng !== null) return { lat, lng };
+  }
+
+  return null;
 }
 
 const RestaurantListCard: FC<{
@@ -245,6 +304,7 @@ export const MapScreenPremium: FC<Props> = ({
   const [activeFilter, setActiveFilter] = useState<Filter>('all');
   const [nearMeLoading, setNearMeLoading] = useState(false);
   const [showClusters, setShowClusters] = useState(true);
+  const [mapInstance, setMapInstance] = useState<google.maps.Map | null>(null);
 
   const filtered = useMemo(() => {
     let list = restaurants;
@@ -313,6 +373,36 @@ export const MapScreenPremium: FC<Props> = ({
       setNearMeLoading(false);
     }
   }, [onRequestNearby]);
+
+  const handleZoomIn = useCallback(() => {
+    if (!mapInstance) return;
+    const currentZoom = mapInstance.getZoom() ?? DEFAULT_MAP_ZOOM;
+    mapInstance.setZoom(Math.min(currentZoom + 1, MAX_MAP_ZOOM));
+  }, [mapInstance]);
+
+  const handleZoomOut = useCallback(() => {
+    if (!mapInstance) return;
+    const currentZoom = mapInstance.getZoom() ?? DEFAULT_MAP_ZOOM;
+    mapInstance.setZoom(Math.max(currentZoom - 1, MIN_MAP_ZOOM));
+  }, [mapInstance]);
+
+  const handleCenterOnUser = useCallback(async () => {
+    if (userLocation && mapInstance) {
+      const currentZoom = mapInstance.getZoom() ?? DEFAULT_MAP_ZOOM;
+      mapInstance.panTo(userLocation);
+      mapInstance.setZoom(Math.max(currentZoom, USER_LOCATION_MIN_ZOOM));
+      return;
+    }
+
+    await handleNearMe();
+  }, [handleNearMe, mapInstance, userLocation]);
+
+  useEffect(() => {
+    if (!mapInstance || !selectedRestaurant) return;
+    const coords = getRestaurantCoordinates(selectedRestaurant);
+    if (!coords) return;
+    mapInstance.panTo(coords);
+  }, [mapInstance, selectedRestaurant]);
 
   return (
     <div
@@ -477,24 +567,27 @@ export const MapScreenPremium: FC<Props> = ({
             selectedRestaurantId={selectedId}
             onRestaurantSelect={handleSelectRestaurant}
             center={userLocation || defaultCenter}
-            zoom={14}
+            zoom={DEFAULT_MAP_ZOOM}
             showClusters={showClusters}
             userLocation={userLocation}
             mapStyle={MODERN_MAP_STYLE}
+            onMapLoad={setMapInstance}
           />
 
           <MapStatsOverlay total={restaurants.length} nearby={nearbyCount} />
 
           <div className="absolute right-4 bottom-20 z-20 flex flex-col gap-2">
             {[
-              { icon: <Plus className="w-4 h-4" />, label: 'Zoom in' },
-              { icon: <Minus className="w-4 h-4" />, label: 'Zoom out' },
-            ].map(({ icon, label }) => (
+              { icon: <Plus className="w-4 h-4" />, label: 'Zoom in', onClick: handleZoomIn },
+              { icon: <Minus className="w-4 h-4" />, label: 'Zoom out', onClick: handleZoomOut },
+            ].map(({ icon, label, onClick }) => (
               <motion.button
                 key={label}
                 whileHover={{ scale: 1.08 }}
                 whileTap={{ scale: 0.95 }}
                 title={label}
+                aria-label={label}
+                onClick={onClick}
                 className="w-9 h-9 bg-white rounded-xl border border-black/[0.08] flex items-center justify-center
                            text-gray-700 shadow-md hover:shadow-lg transition-all"
               >
@@ -505,6 +598,11 @@ export const MapScreenPremium: FC<Props> = ({
               whileHover={{ scale: 1.08 }}
               whileTap={{ scale: 0.95 }}
               title="My location"
+              aria-label="Center map on my location"
+              aria-disabled={nearMeLoading}
+              aria-busy={nearMeLoading}
+              onClick={handleCenterOnUser}
+              disabled={nearMeLoading}
               className="w-9 h-9 rounded-xl flex items-center justify-center text-white shadow-md"
               style={{ background: PRIMARY }}
             >
@@ -527,4 +625,3 @@ export const MapScreenPremium: FC<Props> = ({
 };
 
 export default MapScreenPremium;
-
