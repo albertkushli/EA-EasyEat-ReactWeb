@@ -93,8 +93,23 @@ function toFiniteNumber(value: unknown): number | null {
   return typeof parsed === 'number' && Number.isFinite(parsed) ? parsed : null;
 }
 
+interface CoordinateCandidate {
+  lat?: unknown;
+  latitude?: unknown;
+  lng?: unknown;
+  lon?: unknown;
+  longitude?: unknown;
+}
+
+function asCoordinateCandidate(value: unknown): CoordinateCandidate | null {
+  if (!value || typeof value !== 'object') return null;
+  return value as CoordinateCandidate;
+}
+
 function getRestaurantCoordinates(restaurant: Restaurant): { lat: number; lng: number } | null {
   const rawCoordinates = restaurant?.profile?.location?.coordinates?.coordinates;
+  const restaurantRecord = restaurant as unknown as Record<string, unknown>;
+  const profileRecord = restaurant.profile as unknown as Record<string, unknown> | undefined;
 
   if (Array.isArray(rawCoordinates) && rawCoordinates.length >= 2) {
     const lng = toFiniteNumber(rawCoordinates[0]);
@@ -104,13 +119,14 @@ function getRestaurantCoordinates(restaurant: Restaurant): { lat: number; lng: n
 
   const candidates = [
     rawCoordinates,
-    (restaurant as any)?.profile?.location,
-    (restaurant as any)?.location,
-    restaurant as any,
+    profileRecord?.location,
+    restaurantRecord.location,
+    restaurantRecord,
   ];
 
-  for (const candidate of candidates) {
-    if (!candidate || typeof candidate !== 'object') continue;
+  for (const rawCandidate of candidates) {
+    const candidate = asCoordinateCandidate(rawCandidate);
+    if (!candidate) continue;
     const lat = toFiniteNumber(candidate.lat ?? candidate.latitude);
     const lng = toFiniteNumber(candidate.lng ?? candidate.lon ?? candidate.longitude);
     if (lat !== null && lng !== null) return { lat, lng };
@@ -364,8 +380,9 @@ export const MapScreenPremium: FC<Props> = ({
 
   const handleCenterOnUser = useCallback(async () => {
     if (userLocation && mapInstance) {
+      const currentZoom = mapInstance.getZoom() ?? DEFAULT_MAP_ZOOM;
       mapInstance.panTo(userLocation);
-      mapInstance.setZoom(Math.max(mapInstance.getZoom() ?? DEFAULT_MAP_ZOOM, USER_LOCATION_MIN_ZOOM));
+      mapInstance.setZoom(Math.max(currentZoom, USER_LOCATION_MIN_ZOOM));
       return;
     }
 
