@@ -21,6 +21,8 @@ import {
 export default function Home() {
   const { t } = useTranslation();
   const { restaurants, loading, coords, handleRequestNearby } = useMapExperienceData();
+  const landingMapBrandLabel = 'EasyEat Map';
+  const landingMapBrandInitial = 'E';
 
   return (
     <div className="landing-page">
@@ -100,8 +102,8 @@ export default function Home() {
             isLoading={loading}
             onRequestNearby={handleRequestNearby}
             embedded
-            brandLabel="EasyEat Map"
-            brandInitial="E"
+            brandLabel={landingMapBrandLabel}
+            brandInitial={landingMapBrandInitial}
           />
         </div>
       </section>

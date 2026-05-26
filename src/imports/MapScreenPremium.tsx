@@ -42,6 +42,7 @@ const DEFAULT_MAP_ZOOM = 14;
 const MIN_MAP_ZOOM = 3;
 const MAX_MAP_ZOOM = 20;
 const USER_LOCATION_MIN_ZOOM = 15;
+const EMBEDDED_HEIGHT_CLASS = 'h-[76vh]';
 
 const PLACEHOLDER_IMAGES = [
   'https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=300&h=200&fit=crop&q=60',
@@ -414,7 +415,7 @@ export const MapScreenPremium: FC<Props> = ({
     <div
       className={[
         'flex w-full bg-[#F6F7FB] lg:flex-row',
-        embedded ? 'h-[76vh] min-h-[620px] max-h-[900px] flex-col' : 'h-screen flex-col',
+        embedded ? `${EMBEDDED_HEIGHT_CLASS} min-h-[620px] max-h-[900px] flex-col` : 'h-screen flex-col',
       ].join(' ')}
       style={{ background: '#F6F7FB', fontFamily: "'DM Sans', system-ui, sans-serif" }}
     >
