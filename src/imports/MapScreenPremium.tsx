@@ -89,6 +89,7 @@ function estimatedTime(restaurantId?: string): string {
 }
 
 function toFiniteNumber(value: unknown): number | null {
+  if (typeof value !== 'string' && typeof value !== 'number') return null;
   const parsed = typeof value === 'string' ? Number(value) : value;
   return typeof parsed === 'number' && Number.isFinite(parsed) ? parsed : null;
 }
@@ -107,9 +108,10 @@ function asCoordinateCandidate(value: unknown): CoordinateCandidate | null {
 }
 
 function getRestaurantCoordinates(restaurant: Restaurant): { lat: number; lng: number } | null {
+  // Backend may send GeoJSON-style coordinates as [lng, lat] nested at location.coordinates.coordinates.
   const rawCoordinates = restaurant?.profile?.location?.coordinates?.coordinates;
-  const restaurantRecord = restaurant as unknown as Record<string, unknown>;
-  const profileRecord = restaurant.profile as unknown as Record<string, unknown> | undefined;
+  const restaurantRecord = restaurant as Record<string, unknown>;
+  const profileRecord = restaurant.profile as Record<string, unknown> | undefined;
 
   if (Array.isArray(rawCoordinates) && rawCoordinates.length >= 2) {
     const lng = toFiniteNumber(rawCoordinates[0]);
