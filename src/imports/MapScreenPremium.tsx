@@ -89,8 +89,9 @@ function estimatedTime(restaurantId?: string): string {
 }
 
 function toFiniteNumber(value: unknown): number | null {
-  if (typeof value !== 'string' && typeof value !== 'number') return null;
-  const parsed = typeof value === 'string' ? Number(value) : value;
+  if (typeof value === 'number') return Number.isFinite(value) ? value : null;
+  if (typeof value !== 'string') return null;
+  const parsed = Number(value);
   return typeof parsed === 'number' && Number.isFinite(parsed) ? parsed : null;
 }
 
@@ -107,11 +108,16 @@ function asCoordinateCandidate(value: unknown): CoordinateCandidate | null {
   return value as CoordinateCandidate;
 }
 
+function asRecord(value: unknown): Record<string, unknown> | null {
+  if (!value || typeof value !== 'object') return null;
+  return value as Record<string, unknown>;
+}
+
 function getRestaurantCoordinates(restaurant: Restaurant): { lat: number; lng: number } | null {
   // Backend may send GeoJSON-style coordinates as [lng, lat] nested at location.coordinates.coordinates.
   const rawCoordinates = restaurant?.profile?.location?.coordinates?.coordinates;
-  const restaurantRecord = restaurant as Record<string, unknown>;
-  const profileRecord = restaurant.profile as Record<string, unknown> | undefined;
+  const restaurantRecord = asRecord(restaurant);
+  const profileRecord = asRecord(restaurant.profile);
 
   if (Array.isArray(rawCoordinates) && rawCoordinates.length >= 2) {
     const lng = toFiniteNumber(rawCoordinates[0]);
@@ -593,6 +599,8 @@ export const MapScreenPremium: FC<Props> = ({
               whileTap={{ scale: 0.95 }}
               title="My location"
               aria-label="Center map on my location"
+              aria-disabled={nearMeLoading}
+              aria-busy={nearMeLoading}
               onClick={handleCenterOnUser}
               disabled={nearMeLoading}
               className="w-9 h-9 rounded-xl flex items-center justify-center text-white shadow-md"
