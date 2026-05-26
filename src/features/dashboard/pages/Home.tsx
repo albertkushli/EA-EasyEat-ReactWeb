@@ -2,6 +2,8 @@ import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import Footer from '@/shared/components/Footer';
 import LanguageDropdown from '@/shared/components/ui/LanguageDropdown';
+import MapScreenPremium from '@/imports/MapScreenPremium';
+import { useMapExperienceData } from '@/features/restaurants/hooks/useMapExperienceData';
 import {
   BarChart3,
   ArrowRight,
@@ -16,8 +18,12 @@ import {
   Zap,
 } from 'lucide-react';
 
+const LANDING_MAP_BRAND_LABEL = 'EasyEat Map';
+const LANDING_MAP_BRAND_INITIAL = 'E';
+
 export default function Home() {
   const { t } = useTranslation();
+  const { restaurants, loading, coords, handleRequestNearby } = useMapExperienceData();
 
   return (
     <div className="landing-page">
@@ -27,7 +33,7 @@ export default function Home() {
           <span>{t('navbar.logo')}</span>
         </Link>
         <div className="lp-nav-links">
-          <a href="#clientes" className="lp-link">{t('navbar.links.customers')}</a>
+          <a href="#demo" className="lp-link">{t('navbar.links.demo')}</a>
           <a href="#restaurantes" className="lp-link">{t('navbar.links.restaurants')}</a>
           <a href="#funciona" className="lp-link">{t('navbar.links.howItWorks')}</a>
           <LanguageDropdown />
@@ -40,6 +46,7 @@ export default function Home() {
         <div className="hero-gradient-orb hero-gradient-orb--2" />
 
         <div className="lp-hero-content">
+          <p className="lp-hero-badge">{t('hero.badge')}</p>
           <h1 className="lp-hero-title">
             <span className="text-orange">{t('hero.title.win')}</span><br />
             <span className="text-green">{t('hero.title.eat')}</span><br />
@@ -48,17 +55,57 @@ export default function Home() {
           <p className="lp-hero-subtitle">{t('hero.subtitle')}</p>
 
           <div className="lp-hero-ctas">
-            <a href="#clientes" className="lp-cta-btn lp-cta-btn--orange">
+            <a href="#demo" className="lp-cta-btn lp-cta-btn--orange">
               {t('hero.ctas.customer')} <ChevronRight size={20} />
             </a>
-            <a href="#restaurantes" className="lp-cta-btn lp-cta-btn--green">
+            <Link to="/register" className="lp-cta-btn lp-cta-btn--green">
               {t('hero.ctas.restaurant')} <ChevronRight size={20} />
-            </a>
+            </Link>
           </div>
 
           <Link to="/login" className="lp-hero-admin-link">
             {t('hero.ctas.admin')} <ArrowRight size={14} />
           </Link>
+        </div>
+      </section>
+
+      <section className="lp-proof-strip">
+        <div className="lp-proof-item">
+          <Zap size={16} /> {t('demo.benefits.fast')}
+        </div>
+        <div className="lp-proof-item">
+          <MapPin size={16} /> {t('demo.benefits.visual')}
+        </div>
+        <div className="lp-proof-item">
+          <CheckCircle size={16} /> {t('demo.benefits.decide')}
+        </div>
+      </section>
+
+      <section className="lp-demo-section" id="demo">
+        <div className="lp-demo-header">
+          <p className="lp-demo-kicker">{t('demo.kicker')}</p>
+          <h2 className="lp-demo-title">{t('demo.title')}</h2>
+          <p className="lp-demo-subtitle">{t('demo.subtitle')}</p>
+          <div className="lp-demo-ctas">
+            <a href="#demo-map" className="lp-cta-btn lp-cta-btn--orange">
+              {t('demo.ctas.interact')} <ChevronRight size={18} />
+            </a>
+            <Link to="/register" className="lp-cta-btn lp-cta-btn--green">
+              {t('demo.ctas.start')} <ArrowRight size={18} />
+            </Link>
+          </div>
+        </div>
+
+        <div className="lp-demo-map-frame" id="demo-map">
+          <MapScreenPremium
+            restaurants={restaurants}
+            userLocation={coords}
+            isLoading={loading}
+            onRequestNearby={handleRequestNearby}
+            embedded
+            brandLabel={LANDING_MAP_BRAND_LABEL}
+            brandInitial={LANDING_MAP_BRAND_INITIAL}
+          />
         </div>
       </section>
 

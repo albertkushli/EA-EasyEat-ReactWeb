@@ -30,6 +30,9 @@ interface Props {
   defaultCenter?: { lat: number; lng: number };
   initialSelectedRestaurantId?: string | null;
   onRequestNearby?: () => Promise<void> | void;
+  embedded?: boolean;
+  brandLabel?: string;
+  brandInitial?: string;
 }
 
 const PRIMARY = MAP_THEME.primary;
@@ -39,6 +42,7 @@ const DEFAULT_MAP_ZOOM = 14;
 const MIN_MAP_ZOOM = 3;
 const MAX_MAP_ZOOM = 20;
 const USER_LOCATION_MIN_ZOOM = 15;
+const EMBEDDED_CONTAINER_HEIGHT_CLASS = 'h-[76vh]';
 
 const PLACEHOLDER_IMAGES = [
   'https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=300&h=200&fit=crop&q=60',
@@ -297,6 +301,9 @@ export const MapScreenPremium: FC<Props> = ({
   defaultCenter = DEFAULT_CENTER,
   initialSelectedRestaurantId,
   onRequestNearby,
+  embedded = false,
+  brandLabel = 'Tastemap',
+  brandInitial = 'T',
 }) => {
   const navigate = useNavigate();
   const [selectedId, setSelectedId] = useState<string | null>(null);
@@ -406,10 +413,13 @@ export const MapScreenPremium: FC<Props> = ({
 
   return (
     <div
-      className="flex w-full h-screen"
+      className={[
+        'flex w-full bg-[#F6F7FB] lg:flex-row',
+        embedded ? `${EMBEDDED_CONTAINER_HEIGHT_CLASS} min-h-[620px] max-h-[900px] flex-col` : 'h-screen flex-col',
+      ].join(' ')}
       style={{ background: '#F6F7FB', fontFamily: "'DM Sans', system-ui, sans-serif" }}
     >
-      <div className="flex-shrink-0 flex flex-col bg-white border-r border-black/[0.06] z-10" style={{ width: 400 }}>
+      <div className="flex-shrink-0 flex flex-col bg-white border-r border-black/[0.06] z-10 w-full lg:w-[400px]">
         <div className="px-5 pt-5 pb-0">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2">
@@ -417,9 +427,9 @@ export const MapScreenPremium: FC<Props> = ({
                 className="w-7 h-7 rounded-full flex items-center justify-center text-white text-xs font-bold"
                 style={{ background: `linear-gradient(135deg, ${PRIMARY}, ${ACCENT})` }}
               >
-                T
+                {brandInitial}
               </div>
-              <span className="font-bold text-[17px] text-gray-900">Tastemap</span>
+              <span className="font-bold text-[17px] text-gray-900">{brandLabel}</span>
             </div>
             <span className="text-xs font-medium px-3 py-1 rounded-full" style={{ background: MAP_THEME.primaryLighter, color: PRIMARY }}>
               {filtered.length} places
@@ -531,7 +541,7 @@ export const MapScreenPremium: FC<Props> = ({
         </div>
       </div>
 
-      <div className="flex-1 flex flex-col p-4 gap-3 min-w-0">
+      <div className="flex-1 flex flex-col p-4 gap-3 min-w-0 min-h-[420px]">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2 text-[13px] text-gray-500 font-medium">
             <span className="w-2 h-2 rounded-full" style={{ background: '#22C55E' }} />
