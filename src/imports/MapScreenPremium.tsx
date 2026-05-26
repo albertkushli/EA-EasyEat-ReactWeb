@@ -84,6 +84,37 @@ function estimatedTime(restaurantId?: string): string {
   return times[idx];
 }
 
+function toFiniteNumber(value: unknown): number | null {
+  const parsed = typeof value === 'string' ? Number(value) : value;
+  return typeof parsed === 'number' && Number.isFinite(parsed) ? parsed : null;
+}
+
+function getRestaurantCoordinates(restaurant: Restaurant): { lat: number; lng: number } | null {
+  const rawCoordinates = restaurant?.profile?.location?.coordinates?.coordinates;
+
+  if (Array.isArray(rawCoordinates) && rawCoordinates.length >= 2) {
+    const lng = toFiniteNumber(rawCoordinates[0]);
+    const lat = toFiniteNumber(rawCoordinates[1]);
+    if (lat !== null && lng !== null) return { lat, lng };
+  }
+
+  const candidates = [
+    rawCoordinates,
+    (restaurant as any)?.profile?.location,
+    (restaurant as any)?.location,
+    restaurant as any,
+  ];
+
+  for (const candidate of candidates) {
+    if (!candidate || typeof candidate !== 'object') continue;
+    const lat = toFiniteNumber(candidate.lat ?? candidate.latitude);
+    const lng = toFiniteNumber(candidate.lng ?? candidate.lon ?? candidate.longitude);
+    if (lat !== null && lng !== null) return { lat, lng };
+  }
+
+  return null;
+}
+
 const RestaurantListCard: FC<{
   restaurant: Restaurant;
   isSelected: boolean;
@@ -245,6 +276,7 @@ export const MapScreenPremium: FC<Props> = ({
   const [activeFilter, setActiveFilter] = useState<Filter>('all');
   const [nearMeLoading, setNearMeLoading] = useState(false);
   const [showClusters, setShowClusters] = useState(true);
+  const [mapInstance, setMapInstance] = useState<google.maps.Map | null>(null);
 
   const filtered = useMemo(() => {
     let list = restaurants;
@@ -313,6 +345,35 @@ export const MapScreenPremium: FC<Props> = ({
       setNearMeLoading(false);
     }
   }, [onRequestNearby]);
+
+  const handleZoomIn = useCallback(() => {
+    if (!mapInstance) return;
+    const currentZoom = mapInstance.getZoom() ?? 14;
+    mapInstance.setZoom(Math.min(currentZoom + 1, 20));
+  }, [mapInstance]);
+
+  const handleZoomOut = useCallback(() => {
+    if (!mapInstance) return;
+    const currentZoom = mapInstance.getZoom() ?? 14;
+    mapInstance.setZoom(Math.max(currentZoom - 1, 3));
+  }, [mapInstance]);
+
+  const handleCenterOnUser = useCallback(async () => {
+    if (userLocation && mapInstance) {
+      mapInstance.panTo(userLocation);
+      mapInstance.setZoom(Math.max(mapInstance.getZoom() ?? 14, 15));
+      return;
+    }
+
+    await handleNearMe();
+  }, [handleNearMe, mapInstance, userLocation]);
+
+  useEffect(() => {
+    if (!mapInstance || !selectedRestaurant) return;
+    const coords = getRestaurantCoordinates(selectedRestaurant);
+    if (!coords) return;
+    mapInstance.panTo(coords);
+  }, [mapInstance, selectedRestaurant]);
 
   return (
     <div
@@ -481,6 +542,7 @@ export const MapScreenPremium: FC<Props> = ({
             showClusters={showClusters}
             userLocation={userLocation}
             mapStyle={MODERN_MAP_STYLE}
+            onMapLoad={setMapInstance}
           />
 
           <MapStatsOverlay total={restaurants.length} nearby={nearbyCount} />
@@ -495,6 +557,7 @@ export const MapScreenPremium: FC<Props> = ({
                 whileHover={{ scale: 1.08 }}
                 whileTap={{ scale: 0.95 }}
                 title={label}
+                onClick={label === 'Zoom in' ? handleZoomIn : handleZoomOut}
                 className="w-9 h-9 bg-white rounded-xl border border-black/[0.08] flex items-center justify-center
                            text-gray-700 shadow-md hover:shadow-lg transition-all"
               >
@@ -505,6 +568,8 @@ export const MapScreenPremium: FC<Props> = ({
               whileHover={{ scale: 1.08 }}
               whileTap={{ scale: 0.95 }}
               title="My location"
+              onClick={handleCenterOnUser}
+              disabled={nearMeLoading}
               className="w-9 h-9 rounded-xl flex items-center justify-center text-white shadow-md"
               style={{ background: PRIMARY }}
             >
@@ -527,4 +592,3 @@ export const MapScreenPremium: FC<Props> = ({
 };
 
 export default MapScreenPremium;
-
