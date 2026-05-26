@@ -31,6 +31,8 @@ interface Props {
   initialSelectedRestaurantId?: string | null;
   onRequestNearby?: () => Promise<void> | void;
   embedded?: boolean;
+  brandLabel?: string;
+  brandInitial?: string;
 }
 
 const PRIMARY = MAP_THEME.primary;
@@ -299,6 +301,8 @@ export const MapScreenPremium: FC<Props> = ({
   initialSelectedRestaurantId,
   onRequestNearby,
   embedded = false,
+  brandLabel = 'Tastemap',
+  brandInitial = 'T',
 }) => {
   const navigate = useNavigate();
   const [selectedId, setSelectedId] = useState<string | null>(null);
@@ -422,9 +426,9 @@ export const MapScreenPremium: FC<Props> = ({
                 className="w-7 h-7 rounded-full flex items-center justify-center text-white text-xs font-bold"
                 style={{ background: `linear-gradient(135deg, ${PRIMARY}, ${ACCENT})` }}
               >
-                E
+                {brandInitial}
               </div>
-              <span className="font-bold text-[17px] text-gray-900">EasyEat Map</span>
+              <span className="font-bold text-[17px] text-gray-900">{brandLabel}</span>
             </div>
             <span className="text-xs font-medium px-3 py-1 rounded-full" style={{ background: MAP_THEME.primaryLighter, color: PRIMARY }}>
               {filtered.length} places

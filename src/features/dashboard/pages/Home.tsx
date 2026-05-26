@@ -100,6 +100,8 @@ export default function Home() {
             isLoading={loading}
             onRequestNearby={handleRequestNearby}
             embedded
+            brandLabel="EasyEat Map"
+            brandInitial="E"
           />
         </div>
       </section>

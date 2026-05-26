@@ -30,5 +30,3 @@ export function useMapExperienceData() {
     handleRequestNearby,
   };
 }
-
-export default useMapExperienceData;
