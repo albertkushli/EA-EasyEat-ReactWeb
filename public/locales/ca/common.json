@@ -6,23 +6,25 @@
       "restaurants": "Restaurants",
       "howItWorks": "Com funciona",
       "access": "Accedir",
-      "logout": "Tancar sessió"
+      "logout": "Tancar sessió",
+      "demo": "Demo en viu"
     },
     "back": "Tornar"
   },
   "hero": {
     "title": {
-      "win": "Guanya punts.",
-      "eat": "Menja més.",
-      "live": "Viu millor."
+      "win": "Descobreix",
+      "eat": "grans restaurants",
+      "live": "en un mapa en viu."
     },
-    "subtitle": "La plataforma de fidelització que recompensa cada mossegada. Connecta amb els teus restaurants preferits i aconsegueix premis exclusius.",
+    "subtitle": "EasyEat t’ajuda a explorar opcions reals de manera visual, detectar els millors llocs a prop teu i decidir més ràpid sense cerques eternes.",
     "ctas": {
-      "customer": "Sóc client",
-      "restaurant": "Sóc restaurant",
+      "customer": "Explorar mapa en viu",
+      "restaurant": "Crear compte gratuït",
       "admin": "Ets administrador? Accedeix aquí"
     },
-    "tagline": "Uneix-te a la revolució del food-loyalty"
+    "tagline": "Uneix-te a la revolució del food-loyalty",
+    "badge": "Descobreix, compara i decideix en segons"
   },
   "features": {
     "foodie": {
@@ -664,6 +666,20 @@
     "reward": {
       "title": "El Codi QR de la recompensa",
       "desc": "Mostra aquest codi al cambrer per reclamar la recompensa."
+    }
+  },
+  "demo": {
+    "kicker": "Demo interactiva del producte",
+    "title": "Mira EasyEat en funcionament abans de registrar-te",
+    "subtitle": "Aquesta és l’experiència real del mapa d’EasyEat: filtra restaurants, fes zoom, obre previsualitzacions i troba el teu proper lloc en pocs tocs.",
+    "benefits": {
+      "fast": "Troba opcions més ràpid",
+      "visual": "Explora visualment al mapa",
+      "decide": "Decideix amb confiança"
+    },
+    "ctas": {
+      "interact": "Interactuar amb la demo",
+      "start": "Començar amb EasyEat"
     }
   }
 }

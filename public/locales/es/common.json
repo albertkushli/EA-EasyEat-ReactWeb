@@ -6,23 +6,25 @@
       "restaurants": "Restaurantes",
       "howItWorks": "Cómo funciona",
       "access": "Acceder",
-      "logout": "Cerrar sesión"
+      "logout": "Cerrar sesión",
+      "demo": "Demo en vivo"
     },
     "back": "Volver"
   },
   "hero": {
     "title": {
-      "win": "Gana puntos.",
-      "eat": "Come más.",
-      "live": "Vive mejor."
+      "win": "Descubre",
+      "eat": "grandes restaurantes",
+      "live": "en un mapa en vivo."
     },
-    "subtitle": "La plataforma de fidelización que recompensa cada bocado. Conecta con tus restaurantes favoritos y consigue premios exclusivos.",
+    "subtitle": "EasyEat te ayuda a explorar opciones reales de forma visual, detectar los mejores lugares cerca de ti y decidir más rápido sin búsquedas eternas.",
     "ctas": {
-      "customer": "Soy cliente",
-      "restaurant": "Soy restaurante",
+      "customer": "Explorar mapa en vivo",
+      "restaurant": "Crear cuenta gratis",
       "admin": "¿Eres administrador? Accede aquí"
     },
-    "tagline": "Únete a la revolución del food-loyalty"
+    "tagline": "Únete a la revolución del food-loyalty",
+    "badge": "Descubre, compara y decide en segundos"
   },
   "features": {
     "foodie": {
@@ -675,6 +677,20 @@
     "reward": {
       "title": "Código QR de la recompensa",
       "desc": "Muestra este código al camarero para reclamar la recompensa."
+    }
+  },
+  "demo": {
+    "kicker": "Demo interactiva del producto",
+    "title": "Ve EasyEat en funcionamiento antes de registrarte",
+    "subtitle": "Esta es la experiencia real del mapa de EasyEat: filtra restaurantes, haz zoom, abre previsualizaciones y encuentra tu próximo sitio en pocos toques.",
+    "benefits": {
+      "fast": "Encuentra opciones más rápido",
+      "visual": "Explora visualmente en el mapa",
+      "decide": "Decide con confianza"
+    },
+    "ctas": {
+      "interact": "Interactuar con la demo",
+      "start": "Empezar con EasyEat"
     }
   }
 }

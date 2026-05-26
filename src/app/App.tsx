@@ -1,4 +1,4 @@
-import { useCallback, useEffect, type ReactNode } from 'react';
+import { type ReactNode } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { AuthProvider, useAuth } from '@/context/AuthContext';
 import { ChatProvider } from '@/context/ChatContext';
@@ -8,9 +8,8 @@ import { Clients } from '@/features/customers';
 import DiscoverScreen from '@/screens/DiscoverScreen';
 import LegalNotice from '@/features/legal/LegalNotice';
 import MapScreenPremium from '@/imports/MapScreenPremium';
-import { useLocationStore } from '@/stores/locationStore';
-import { useRestaurantStore } from '@/stores/restaurantStore';
 import SupportChat from '@/features/support/components/SupportChat';
+import { useMapExperienceData } from '@/features/restaurants/hooks/useMapExperienceData';
 
 function ProtectedRoute({ children }: { children: ReactNode }) {
   const { isAuthenticated, loading } = useAuth();
@@ -31,27 +30,8 @@ function PublicRoute({ children }: { children: ReactNode }) {
 export default function App() {
   function MapRouteWrapper() {
     const location = useLocation();
-    const loadRestaurants = useRestaurantStore((s: any) => s.loadRestaurants);
-    const loadNearby = useRestaurantStore((s: any) => s.loadNearby);
-    const restaurants = useRestaurantStore((s: any) => s.restaurants);
-    const loading = useRestaurantStore((s: any) => s.loading);
-    const coords = useLocationStore((s) => s.coords);
-    const requestLocation = useLocationStore((s) => s.requestLocation);
     const state: any = (location && (location.state as any)) || {};
-
-    useEffect(() => {
-      void loadRestaurants();
-    }, [loadRestaurants]);
-
-
-    const handleRequestNearby = useCallback(async () => {
-      await requestLocation();
-      const currentCoords = useLocationStore.getState().coords;
-
-      if (currentCoords) {
-        await loadNearby(currentCoords.lat, currentCoords.lng);
-      }
-    }, [loadNearby, requestLocation]);
+    const { restaurants, loading, coords, handleRequestNearby } = useMapExperienceData();
 
     return (
       <MapScreenPremium

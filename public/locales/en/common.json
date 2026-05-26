@@ -6,23 +6,25 @@
       "restaurants": "Restaurants",
       "howItWorks": "How it works",
       "access": "Access",
-      "logout": "Logout"
+      "logout": "Logout",
+      "demo": "Live demo"
     },
     "back": "Back"
   },
   "hero": {
     "title": {
-      "win": "Earn points.",
-      "eat": "Eat more.",
-      "live": "Live better."
+      "win": "Discover",
+      "eat": "great restaurants",
+      "live": "on a live map."
     },
-    "subtitle": "The loyalty platform that rewards every bite. Connect with your favorite restaurants and get exclusive rewards.",
+    "subtitle": "EasyEat helps you explore real options visually, spot top-rated places nearby, and choose faster without endless searching.",
     "ctas": {
-      "customer": "I am a customer",
-      "restaurant": "I am a restaurant",
+      "customer": "Explore the live map",
+      "restaurant": "Create free account",
       "admin": "Are you an admin? Access here"
     },
-    "tagline": "Join the food-loyalty revolution"
+    "tagline": "Join the food-loyalty revolution",
+    "badge": "Discover, compare and decide in seconds"
   },
   "features": {
     "foodie": {
@@ -673,6 +675,20 @@
     "reward": {
       "title": "Reward QR Code",
       "desc": "Show this code to the waiter to claim the reward."
+    }
+  },
+  "demo": {
+    "kicker": "Interactive product demo",
+    "title": "See EasyEat in action before you sign up",
+    "subtitle": "This is the real EasyEat map experience: filter restaurants, zoom, open previews and find your next place in a few taps.",
+    "benefits": {
+      "fast": "Find options faster",
+      "visual": "Explore visually on the map",
+      "decide": "Decide with confidence"
+    },
+    "ctas": {
+      "interact": "Interact with the demo",
+      "start": "Start with EasyEat"
     }
   }
 }
