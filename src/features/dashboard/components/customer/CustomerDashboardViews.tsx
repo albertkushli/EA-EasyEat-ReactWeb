@@ -1,4 +1,4 @@
-import { type FormEvent } from 'react';
+import { type FormEvent, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useNavigate } from 'react-router-dom';
 import { QRCodeCanvas } from 'qrcode.react';
@@ -7,6 +7,7 @@ import LanguageDropdown from '@/shared/components/ui/LanguageDropdown';
 import type { ICustomer } from '@/types';
 import type { CustomerBadge, CustomerPointsWalletEntry, CustomerRestaurant, CustomerReward, CustomerTabId, CustomerVisit } from '../../hooks/useCustomerDashboard';
 import CustomerChatButton from '@/features/chat/components/CustomerChatButton';
+import apiClient from '@/services/apiClient';
 
 interface CustomerSidebarProps {
   activeTab: CustomerTabId;
@@ -982,7 +983,28 @@ export function CustomerHistoryRewardsView({ visits, restaurants }: CustomerHist
 
 export function CustomerQrModal({ open, onClose, userId }: CustomerQrModalProps) {
   const { t } = useTranslation();
+  const [addingToWallet, setAddingToWallet] = useState(false);
+  const [walletError, setWalletError] = useState('');
+
   if (!open) return null;
+
+  const handleAddToGoogleWallet = async () => {
+    try {
+      setAddingToWallet(true);
+      setWalletError('');
+      const response = await apiClient.get(`/wallet/google/save-link/${userId}`);
+      if (response.data?.url) {
+        window.location.href = response.data.url;
+      } else {
+        setWalletError(t('qr.user.walletError', 'No se pudo obtener el enlace de Google Wallet.'));
+      }
+    } catch (error) {
+      console.error('Error getting Google Wallet link:', error);
+      setWalletError(t('qr.user.walletError', 'Ocurrió un error al conectar con Google Wallet.'));
+    } finally {
+      setAddingToWallet(false);
+    }
+  };
 
   return (
     <div className="hc-modal-overlay" onClick={onClose}>
@@ -1002,6 +1024,35 @@ export function CustomerQrModal({ open, onClose, userId }: CustomerQrModalProps)
           />
         </div>
         <p className="hc-qr-user-id">ID: {userId}</p>
+
+        <div style={{ marginTop: '1.5rem', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem' }}>
+          <button
+            onClick={handleAddToGoogleWallet}
+            disabled={addingToWallet}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '10px',
+              backgroundColor: '#000',
+              color: '#fff',
+              border: 'none',
+              borderRadius: '24px',
+              padding: '12px 24px',
+              fontSize: '16px',
+              fontWeight: 'bold',
+              cursor: addingToWallet ? 'not-allowed' : 'pointer',
+              width: '100%',
+              maxWidth: '300px',
+              transition: 'background-color 0.2s',
+              opacity: addingToWallet ? 0.7 : 1
+            }}
+          >
+            <Wallet size={20} />
+            {addingToWallet ? t('qr.user.walletAdding', 'Generando enlace...') : t('qr.user.walletAdd', 'Añadir a Google Wallet')}
+          </button>
+          {walletError && <p style={{ color: 'red', fontSize: '14px', margin: 0, textAlign: 'center' }}>{walletError}</p>}
+        </div>
       </div>
     </div>
   );

@@ -105,6 +105,11 @@ export default defineConfig({
         changeOrigin: true,
         configure: addProxyAuth,
       },
+      '/wallet': {
+        target: 'http://127.0.0.1:1337',
+        changeOrigin: true,
+        configure: addProxyAuth,
+      },
     },
   },
 })
