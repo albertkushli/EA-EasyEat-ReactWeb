@@ -1,12 +1,17 @@
-import { type FormEvent } from 'react';
+import { type FormEvent, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useNavigate } from 'react-router-dom';
 import { QRCodeCanvas } from 'qrcode.react';
+<<<<<<< HEAD
 import { ArrowLeft, CheckCircle, Clock, Coins, Gift, Heart, Home, Map, MapPin, QrCode, Save, Search, SlidersHorizontal, Star, Trophy, User, Wallet, X, Mail, Lock, LogOut, ShieldCheck } from 'lucide-react';
+=======
+import { ArrowLeft, CheckCircle, Clock, Coins, Flag, Gift, Heart, Home, Map, MapPin, QrCode, Save, Search, SlidersHorizontal, Star, Trophy, User, Wallet, X, Mail, Lock } from 'lucide-react';
+>>>>>>> Minim2/Eloi/Feature
 import LanguageDropdown from '@/shared/components/ui/LanguageDropdown';
 import type { ICustomer } from '@/types';
 import type { CustomerBadge, CustomerPointsWalletEntry, CustomerRestaurant, CustomerReward, CustomerTabId, CustomerVisit } from '../../hooks/useCustomerDashboard';
 import CustomerChatButton from '@/features/chat/components/CustomerChatButton';
+import { reportService } from '@/services/report.service';
 
 interface CustomerSidebarProps {
   activeTab: CustomerTabId;
@@ -131,6 +136,133 @@ function getRestaurantDistance(restaurant: CustomerRestaurant, fallback = '—')
   return restaurant.profile?.distance || restaurant.profile?.location?.distance || fallback;
 }
 
+function CustomerReportModal({
+  open,
+  restaurant,
+  onClose,
+}: {
+  open: boolean;
+  restaurant: CustomerRestaurant;
+  onClose: () => void;
+}) {
+  const { t } = useTranslation();
+  const [reason, setReason] = useState('');
+  const [error, setError] = useState('');
+  const [submitting, setSubmitting] = useState(false);
+  const restaurantId = getRestaurantId(restaurant) || '';
+
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    const trimmedReason = reason.trim();
+
+    if (trimmedReason.length < 3) {
+      setError(t('report.validation.min', 'El motivo debe tener al menos 3 caracteres.'));
+      return;
+    }
+
+    if (trimmedReason.length > 500) {
+      setError(t('report.validation.max', 'El motivo no puede superar los 500 caracteres.'));
+      return;
+    }
+
+    if (!restaurantId) {
+      alert(t('report.error', 'No se ha podido enviar la denuncia'));
+      return;
+    }
+
+    setSubmitting(true);
+    setError('');
+
+    const createdReport = await reportService.createRestaurantReport(restaurantId, trimmedReason);
+    setSubmitting(false);
+
+    if (createdReport) {
+      alert(t('report.success', 'Denuncia enviada correctamente'));
+      onClose();
+      return;
+    }
+
+    alert(t('report.error', 'No se ha podido enviar la denuncia'));
+  };
+
+  return (
+    <div
+      role="presentation"
+      onClick={onClose}
+      style={{ position: 'fixed', inset: 0, zIndex: 999, background: 'rgba(15, 23, 42, 0.58)', backdropFilter: 'blur(8px)', padding: '1rem', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+    >
+      <div
+        className="auth-card hc-modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="restaurant-report-title"
+        onClick={(event) => event.stopPropagation()}
+        style={{ width: '100%', maxWidth: '560px', padding: '2rem', background: '#fff' }}
+      >
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginBottom: '1.5rem' }}>
+          <h3 id="restaurant-report-title" style={{ margin: 0, fontSize: '1.6rem', color: '#1e293b' }}>
+            {t('report.title', 'Denunciar restaurante')}
+          </h3>
+          <p style={{ margin: 0, color: '#64748b', fontSize: '0.95rem', lineHeight: 1.5 }}>
+            {t('report.description', 'Cuéntanos por qué este restaurante debería revisarse.')}
+          </p>
+        </div>
+
+        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+          <div className="flex flex-col gap-2">
+            <label htmlFor="restaurant-report-reason" className="text-sm font-semibold text-slate-700">
+              {t('report.fieldLabel', 'Motivo de la denuncia')}
+            </label>
+            <textarea
+              id="restaurant-report-reason"
+              className="form-input"
+              style={{ minHeight: '140px', resize: 'none', padding: '1rem' }}
+              value={reason}
+              maxLength={500}
+              onChange={(event) => {
+                setReason(event.target.value);
+                if (error) setError('');
+              }}
+              placeholder={t('report.placeholder', 'Describe qué información es incorrecta, inexistente, cerrada o fraudulenta...')}
+            />
+            <div className="flex items-center justify-between gap-3 text-xs text-slate-500">
+              <span>{t('report.helper', 'Escribe un motivo claro y breve.')}</span>
+              <span>{t('report.remaining', '{{count}} / 500 caracteres', { count: reason.length })}</span>
+            </div>
+            {error && <p className="text-sm font-medium text-red-500">{error}</p>}
+          </div>
+
+          <div style={{ display: 'flex', flexWrap: 'wrap-reverse', gap: '0.75rem', justifyContent: 'flex-end' }}>
+            <button
+              type="button"
+              className="btn"
+              onClick={onClose}
+              style={{ width: 'auto', minWidth: '140px', background: '#fff', color: '#ea580c', border: '1px solid rgba(249, 115, 22, 0.22)' }}
+            >
+              {t('report.actions.cancel', 'Cancelar')}
+            </button>
+            <button
+              type="submit"
+              className="btn"
+              disabled={submitting}
+              style={{
+                width: 'auto',
+                minWidth: '170px',
+                background: 'linear-gradient(135deg, #f97316, #ea580c)',
+                color: '#ffffff',
+                boxShadow: '0 12px 25px -8px rgba(249, 115, 22, 0.75)',
+              }}
+            >
+              {submitting ? t('report.actions.sending', 'Enviando…') : t('report.actions.send', 'Enviar denuncia')}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+}
+
 function getRestaurantVisitsCount(restaurant: CustomerRestaurant) {
   return restaurant.profile?.visits ?? (restaurant as CustomerRestaurant & { visits?: number }).visits ?? 0;
 }
@@ -232,6 +364,7 @@ function CustomerRestaurantDetail({
   onOpenRewardQrModal: () => void;
 }) {
   const { t } = useTranslation();
+  const [reportOpen, setReportOpen] = useState(false);
   const img = getRestaurantImage(restaurant);
   const rating = getRestaurantRating(restaurant);
   const userPointsForRestaurant = pointsWallet.find((wallet) => getRestaurantId(wallet) === restaurant._id)?.points || 0;
@@ -322,6 +455,18 @@ function CustomerRestaurantDetail({
       <button className="hc-checkin-btn" onClick={onOpenQrModal}>
         <QrCode size={20} /> {t('dashboard.customer.actions.checkIn')}
       </button>
+
+      <button className="hc-report-btn" type="button" onClick={() => setReportOpen(true)}>
+        <Flag size={18} /> {t('dashboard.customer.actions.reportRestaurant', 'Denunciar restaurante')}
+      </button>
+
+      {reportOpen && (
+        <CustomerReportModal
+          open={reportOpen}
+          restaurant={restaurant}
+          onClose={() => setReportOpen(false)}
+        />
+      )}
 
       {/* Chat con el restaurante */}
       <div style={{ marginTop: '1rem' }}>

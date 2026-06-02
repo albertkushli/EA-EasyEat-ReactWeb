@@ -224,7 +224,8 @@
         "removeFavorite": "Treure de preferits",
         "checkIn": "Fer Check-in ara",
         "redeem": "Reclamar",
-        "showQr": "Mostrar el codi QR"
+        "showQr": "Mostrar el codi QR",
+        "reportRestaurant": "Denunciar restaurant"
       },
       "details": {
         "about": "Sobre el restaurant",
@@ -232,6 +233,24 @@
         "multiplierTitle": "Multiplica els teus punts!",
         "multiplierDesc": "Aconsegueix punts extra per cada visita a aquest restaurant!"
       }
+    },
+    "report": {
+      "title": "Denunciar restaurant",
+      "description": "Explica'ns per què cal revisar aquest restaurant.",
+      "fieldLabel": "Motiu de la denúncia",
+      "helper": "Escriu un motiu clar i breu.",
+      "remaining": "{{count}} / 500 caràcters",
+      "validation": {
+        "min": "El motiu ha de tenir almenys 3 caràcters.",
+        "max": "El motiu no pot superar els 500 caràcters."
+      },
+      "actions": {
+        "send": "Enviar denúncia",
+        "sending": "Enviant…",
+        "cancel": "Cancel·lar"
+      },
+      "success": "Denúncia enviada correctament",
+      "error": "No s'ha pogut enviar la denúncia"
     },
     "employee": {
       "loadingOwner": "Carregant panell de Propietari…",

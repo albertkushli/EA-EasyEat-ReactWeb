@@ -224,7 +224,8 @@
         "removeFavorite": "Remove from favorites",
         "checkIn": "Check-in now",
         "redeem": "Redeem",
-        "showQr": "Show QR code"
+        "showQr": "Show QR code",
+        "reportRestaurant": "Report restaurant"
       },
       "details": {
         "about": "About the restaurant",
@@ -232,6 +233,24 @@
         "multiplierTitle": "Multiply your points!",
         "multiplierDesc": "Get extra points for every visit to this restaurant!"
       }
+    },
+    "report": {
+      "title": "Report restaurant",
+      "description": "Tell us why this restaurant should be reviewed.",
+      "fieldLabel": "Report reason",
+      "helper": "Write a clear and concise reason.",
+      "remaining": "{{count}} / 500 characters",
+      "validation": {
+        "min": "The reason must be at least 3 characters long.",
+        "max": "The reason cannot exceed 500 characters."
+      },
+      "actions": {
+        "send": "Send report",
+        "sending": "Sending…",
+        "cancel": "Cancel"
+      },
+      "success": "Report sent successfully",
+      "error": "Could not send the report"
     },
     "employee": {
       "loadingOwner": "Loading Owner dashboard…",

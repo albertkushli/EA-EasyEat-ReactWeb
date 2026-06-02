@@ -39,15 +39,20 @@
     "@react-google-maps/api": "^2.20.0",
     "axios": "^1.14.0",
     "class-variance-authority": "^0.7.1",
+<<<<<<< HEAD
     "clsx": "^2.1.1",
     "cmdk": "^1.1.1",
     "date-fns": "^3.6.0",
+=======
+    "cmdk": "^1.1.1",
+>>>>>>> Minim2/Eloi/Feature
     "embla-carousel-react": "^8.6.0",
     "framer-motion": "^12.38.0",
     "i18next": "^26.0.8",
     "i18next-browser-languagedetector": "^8.2.1",
     "i18next-http-backend": "^3.0.6",
     "input-otp": "^1.4.2",
+<<<<<<< HEAD
     "lucide-react": "^1.16.0",
     "next-themes": "^0.4.6",
     "qrcode.react": "^4.2.0",
@@ -58,6 +63,17 @@
     "react-i18next": "^17.0.6",
     "react-is": "^19.2.6",
     "react-resizable-panels": "^2.0.19",
+=======
+    "lucide-react": "^1.7.0",
+    "next-themes": "^0.4.6",
+    "qrcode.react": "^4.2.0",
+    "react": "^19.2.4",
+    "react-day-picker": "^10.0.1",
+    "react-dom": "^19.2.4",
+    "react-hook-form": "^7.77.0",
+    "react-i18next": "^17.0.6",
+    "react-resizable-panels": "^4.11.2",
+>>>>>>> Minim2/Eloi/Feature
     "react-router-dom": "^7.14.0",
     "recharts": "^3.8.1",
     "socket.io-client": "^4.8.3",
