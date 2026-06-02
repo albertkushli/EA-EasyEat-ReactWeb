@@ -37,8 +37,7 @@ La part frontend està implementada.
 - Missatge d’èxit o error després d’enviar la denúncia.
 - CSS adaptat a l’estil visual del projecte.
 
-## Parts NO operatives
-Fins última hora no m'he adonat que estava treallant al main y no he fet la branca desde devlop pujada a producció pero per la presentació final faré el merge per a que sigui correcte
+
 
 ## Endpoint utilitzat
 
