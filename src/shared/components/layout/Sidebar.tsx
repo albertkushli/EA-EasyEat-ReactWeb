@@ -19,7 +19,7 @@ export function Sidebar({ activeView, onViewChange, restaurantName, restaurantAd
   const baseMenuItems = [
     { id: 'profile', icon: Users, label: t('sidebar.profile', 'Perfil') },
   ];
-  
+
   const ownerMenuItems = [
     { id: 'dashboard', icon: LayoutDashboard, label: t('sidebar.dashboard', 'Panel de control') },
     { id: 'clients', icon: Users, label: t('sidebar.clients', 'Clientes') },
@@ -86,8 +86,8 @@ export function Sidebar({ activeView, onViewChange, restaurantName, restaurantAd
             <p className="text-sm font-bold truncate">{user?.name || t('auth.login.tabs.customer')}</p>
             <p className="text-xs text-slate-300/70 truncate">{
               user?.role === 'owner' ? t('auth.roles.owner') :
-              user?.role === 'staff' ? t('auth.roles.staff') :
-              t('auth.roles.customer')
+                user?.role === 'staff' ? t('auth.roles.staff') :
+                  t('auth.roles.customer')
             }</p>
           </div>
         </div>

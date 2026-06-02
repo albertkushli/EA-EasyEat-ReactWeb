@@ -83,6 +83,11 @@ export const API_ENDPOINTS = {
   REVIEWS_BY_RESTAURANT: (restaurantId: string) =>
     `/restaurants/${restaurantId}/reviews`,
 
+  // Reports
+  REPORTS: '/reports',
+  REPORT_BY_ID: (reportId: string) => `/reports/${reportId}`,
+  RESTAURANT_REPORT: (restaurantId: string) => `/restaurants/${restaurantId}/report`,
+
   // Reward Redemptions
   REWARD_REDEMPTIONS: '/rewardRedemptions',
   REWARD_REDEMPTIONS_BY_RESTAURANT: (restaurantId: string) =>
