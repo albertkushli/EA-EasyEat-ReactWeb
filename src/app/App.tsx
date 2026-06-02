@@ -8,6 +8,7 @@ import { Clients } from '@/features/customers';
 import MapScreen from '@/screens/MapScreen';
 import DiscoverScreen from '@/screens/DiscoverScreen';
 import LegalNotice from '@/features/legal/LegalNotice';
+import MatomoTracker from '@/components/MatomoTracker';
 
 function ProtectedRoute({ children }: { children: ReactNode }) {
   const { isAuthenticated, loading } = useAuth();
@@ -30,6 +31,7 @@ export default function App() {
     <AuthProvider>
       <ChatProvider>
         <Router>
+          <MatomoTracker />
         <Routes>
           <Route
             path="/"

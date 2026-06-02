@@ -1,38 +1,52 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState, memo } from 'react';
-import { useLoadScript, GoogleMap, Marker, MarkerClusterer } from '@react-google-maps/api';
-import { useRestaurantStore } from '@/stores/restaurantStore';
-import { useLocationStore } from '@/stores/locationStore';
-import RestaurantCard from './RestaurantCard';
-import LoadingOverlay from './LoadingOverlay';
-import MapOverlay from './MapOverlay';
-import PremiumSearchBar from './PremiumSearchBar';
-import FloatingControlBar from './FloatingControlBar';
-import SeeNearMeButton from './SeeNearMeButton';
-import { AnimatePresence, motion } from 'framer-motion';
-import type { Restaurant } from '@/types/Restaurant';
-import { useNavigate, useLocation } from 'react-router-dom';
-import { MODERN_MAP_STYLE } from '@/utils/mapStyles';
-import { createMarkerUrl } from './MapMarker';
-import { Layers, RotateCcw } from 'lucide-react';
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  memo,
+} from "react";
+import {
+  useLoadScript,
+  GoogleMap,
+  Marker,
+  MarkerClusterer,
+} from "@react-google-maps/api";
+import { useRestaurantStore } from "@/stores/restaurantStore";
+import { useLocationStore } from "@/stores/locationStore";
+import RestaurantCard from "./RestaurantCard";
+import LoadingOverlay from "./LoadingOverlay";
+import MapOverlay from "./MapOverlay";
+import PremiumSearchBar from "./PremiumSearchBar";
+import FloatingControlBar from "./FloatingControlBar";
+import SeeNearMeButton from "./SeeNearMeButton";
+import { AnimatePresence, motion } from "framer-motion";
+import type { Restaurant } from "@/types/Restaurant";
+import { useNavigate, useLocation } from "react-router-dom";
+import { MODERN_MAP_STYLE } from "@/utils/mapStyles";
+import { createMarkerUrl } from "./MapMarker";
+import { Layers, RotateCcw } from "lucide-react";
+import { trackEvent } from "@/services/matomo";
 
 const containerStyle = {
-  width: '100%',
-  height: '100%'
+  width: "100%",
+  height: "100%",
 } as const;
 
 const DEFAULT_CENTER = { lat: 41.3851, lng: 2.1734 };
 const DEFAULT_ZOOM = 13;
 const NEARBY_ZOOM = 15;
 
-const LIBRARIES: ('places')[] = ['places'];
+const LIBRARIES: "places"[] = ["places"];
 
 function toFiniteNumber(value: unknown): number | null {
-  const parsed = typeof value === 'string' ? Number(value) : value;
-  return typeof parsed === 'number' && Number.isFinite(parsed) ? parsed : null;
+  const parsed = typeof value === "string" ? Number(value) : value;
+  return typeof parsed === "number" && Number.isFinite(parsed) ? parsed : null;
 }
 
 function getRestaurantCoordinates(restaurant: Restaurant) {
-  const rawCoordinates = restaurant?.profile?.location?.coordinates?.coordinates;
+  const rawCoordinates =
+    restaurant?.profile?.location?.coordinates?.coordinates;
 
   if (Array.isArray(rawCoordinates) && rawCoordinates.length >= 2) {
     const lng = toFiniteNumber(rawCoordinates[0]);
@@ -48,9 +62,11 @@ function getRestaurantCoordinates(restaurant: Restaurant) {
   ];
 
   for (const candidate of candidates) {
-    if (!candidate || typeof candidate !== 'object') continue;
+    if (!candidate || typeof candidate !== "object") continue;
     const lat = toFiniteNumber(candidate.lat ?? candidate.latitude);
-    const lng = toFiniteNumber(candidate.lng ?? candidate.lon ?? candidate.longitude);
+    const lng = toFiniteNumber(
+      candidate.lng ?? candidate.lon ?? candidate.longitude,
+    );
     if (lat !== null && lng !== null) return { lat, lng };
   }
 
@@ -59,13 +75,25 @@ function getRestaurantCoordinates(restaurant: Restaurant) {
 
 function getRestaurantCoordinateKey(restaurant: Restaurant): string {
   const coords = getRestaurantCoordinates(restaurant);
-  return coords ? `${coords.lat},${coords.lng}` : 'no-coords';
+  return coords ? `${coords.lat},${coords.lng}` : "no-coords";
 }
 
 interface Filters {
   distance: string;
   time: string;
   price: string;
+}
+
+function getRestaurantTrackingName(restaurant?: Restaurant | null): string {
+  return restaurant?.profile?.name || restaurant?._id || "unknown-restaurant";
+}
+
+function getActiveFilterSummary(filters: Filters): string {
+  const activeFilters = Object.entries(filters)
+    .filter(([, value]) => value !== "all")
+    .map(([key, value]) => `${key}:${value}`);
+
+  return activeFilters.length > 0 ? activeFilters.join(", ") : "all";
 }
 
 /**
@@ -86,12 +114,12 @@ const OptimizedMarker = memo(
   }) => {
     const coords = getRestaurantCoordinates(restaurant);
     const isNearby = (restaurant as any).isNearby;
-    const markerColor = isNearby ? '#ff9800' : '#e53935';
+    const markerColor = isNearby ? "#ff9800" : "#e53935";
 
     // Memoize marker URL to avoid regenerating on every render
     const markerUrl = useMemo(
       () => createMarkerUrl(markerColor, 36, isSelected, isNearby),
-      [markerColor, isSelected, isNearby]
+      [markerColor, isSelected, isNearby],
     );
 
     // Memoize icon config to avoid recreating object
@@ -101,7 +129,7 @@ const OptimizedMarker = memo(
         scaledSize: new (window as any).google.maps.Size(36, 36),
         anchor: new (window as any).google.maps.Point(18, 36),
       }),
-      [markerUrl]
+      [markerUrl],
     );
 
     if (!coords) return null;
@@ -111,7 +139,9 @@ const OptimizedMarker = memo(
         position={coords}
         onClick={onClick}
         icon={iconConfig}
-        animation={isSelected ? (window as any).google.maps.Animation.BOUNCE : undefined}
+        animation={
+          isSelected ? (window as any).google.maps.Animation.BOUNCE : undefined
+        }
         clusterer={clusterer}
       />
     );
@@ -124,37 +154,35 @@ const OptimizedMarker = memo(
     return (
       prevProps.isSelected === nextProps.isSelected &&
       prevProps.restaurant._id === nextProps.restaurant._id &&
-      (prevProps.restaurant as any).isNearby === (nextProps.restaurant as any).isNearby &&
+      (prevProps.restaurant as any).isNearby ===
+        (nextProps.restaurant as any).isNearby &&
       prevCoordsKey === nextCoordsKey
     );
-  }
+  },
 );
 
-OptimizedMarker.displayName = 'OptimizedMarker';
+OptimizedMarker.displayName = "OptimizedMarker";
 
 /**
  * User location marker component
  */
-const UserLocationMarker = memo(
-  ({ coords }: { coords?: any }) => {
-    if (!coords) return null;
+const UserLocationMarker = memo(({ coords }: { coords?: any }) => {
+  if (!coords) return null;
 
-    return (
-      <Marker
-        position={{ lat: coords.lat, lng: coords.lng }}
-        icon={{
-          url: createMarkerUrl('#3b82f6', 28, false, false),
-          scaledSize: new (window as any).google.maps.Size(28, 28),
-          anchor: new (window as any).google.maps.Point(14, 14),
-        }}
-        clickable={false}
-      />
-    );
-  }
-);
+  return (
+    <Marker
+      position={{ lat: coords.lat, lng: coords.lng }}
+      icon={{
+        url: createMarkerUrl("#3b82f6", 28, false, false),
+        scaledSize: new (window as any).google.maps.Size(28, 28),
+        anchor: new (window as any).google.maps.Point(14, 14),
+      }}
+      clickable={false}
+    />
+  );
+});
 
-UserLocationMarker.displayName = 'UserLocationMarker';
-
+UserLocationMarker.displayName = "UserLocationMarker";
 
 /**
  * Filter restaurants based on search query and filters
@@ -163,35 +191,41 @@ function filterRestaurants(
   restaurants: Restaurant[],
   searchQuery: string,
   filters: Filters,
-  userCoords?: { lat: number; lng: number } | null
+  userCoords?: { lat: number; lng: number } | null,
 ): Restaurant[] {
   return restaurants.filter((restaurant) => {
     // Search filter
     if (searchQuery) {
       const query = searchQuery.toLowerCase();
-      const name = restaurant.profile?.name?.toLowerCase() || '';
-      const category = restaurant.profile?.category?.join(' ').toLowerCase() || '';
-      const city = restaurant.profile?.location?.city?.toLowerCase() || '';
+      const name = restaurant.profile?.name?.toLowerCase() || "";
+      const category =
+        restaurant.profile?.category?.join(" ").toLowerCase() || "";
+      const city = restaurant.profile?.location?.city?.toLowerCase() || "";
 
-      if (!name.includes(query) && !category.includes(query) && !city.includes(query)) {
+      if (
+        !name.includes(query) &&
+        !category.includes(query) &&
+        !city.includes(query)
+      ) {
         return false;
       }
     }
 
     // Distance filter
-    if (filters.distance !== 'all' && userCoords) {
+    if (filters.distance !== "all" && userCoords) {
       const distanceKm = (restaurant as any).distanceKm;
-      const maxDistance = parseFloat(filters.distance.replace('km', ''));
+      const maxDistance = parseFloat(filters.distance.replace("km", ""));
       if (distanceKm && distanceKm > maxDistance) {
         return false;
       }
     }
 
     // Price filter - basic implementation
-    if (filters.price !== 'all') {
+    if (filters.price !== "all") {
       // This is a simplified price filter - adjust based on your data structure
       const descLength = restaurant.profile?.description?.length || 0;
-      const priceLevel = descLength > 100 ? '$$$' : descLength > 50 ? '$$' : '$';
+      const priceLevel =
+        descLength > 100 ? "$$$" : descLength > 50 ? "$$" : "$";
       if (priceLevel !== filters.price) {
         return false;
       }
@@ -203,37 +237,84 @@ function filterRestaurants(
 
 export default function MapScreen() {
   const { isLoaded, loadError } = useLoadScript({
-    googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY as string || '',
+    googleMapsApiKey:
+      (import.meta.env.VITE_GOOGLE_MAPS_API_KEY as string) || "",
     libraries: LIBRARIES,
   });
 
   const mapRef = useRef<google.maps.Map | null>(null);
-  const onMapLoad = useCallback((map: google.maps.Map) => {
-    mapRef.current = map;
-  }, []);
+  const hasTrackedMapViewRef = useRef(false);
+  const searchTrackTimeoutRef = useRef<number | null>(null);
+  const lastTrackedSearchRef = useRef("");
 
-  const restaurants = useRestaurantStore((s: any) => s.restaurants as Restaurant[]);
-  const loading = useRestaurantStore((s: any) => s.loading as boolean);
-  const loadRestaurants = useRestaurantStore((s: any) => s.loadRestaurants as () => Promise<void>);
-  const loadNearby = useRestaurantStore(
-    (s: any) => s.loadNearby as (lat: number, lng: number, maxDistance?: number) => Promise<void>
+  const trackMapEvent = useCallback(
+    (action: string, name?: string, value?: number) => {
+      console.log(`MAP TRACK: ${action}`, name ?? "");
+      trackEvent("Map", action, name, value);
+    },
+    [],
   );
-  const selectedId = useRestaurantStore((s: any) => s.selectedId as string | undefined | null);
-  const setSelected = useRestaurantStore((s: any) => s.setSelected as (id?: string | null) => void);
+
+  const onMapLoad = useCallback(
+    (map: google.maps.Map) => {
+      mapRef.current = map;
+      setMapReadyForClick(true);
+      trackMapEvent("Map loaded");
+    },
+    [trackMapEvent],
+  );
+
+  const restaurants = useRestaurantStore(
+    (s: any) => s.restaurants as Restaurant[],
+  );
+  const loading = useRestaurantStore((s: any) => s.loading as boolean);
+  const loadRestaurants = useRestaurantStore(
+    (s: any) => s.loadRestaurants as () => Promise<void>,
+  );
+  const loadNearby = useRestaurantStore(
+    (s: any) =>
+      s.loadNearby as (
+        lat: number,
+        lng: number,
+        maxDistance?: number,
+      ) => Promise<void>,
+  );
+  const selectedId = useRestaurantStore(
+    (s: any) => s.selectedId as string | undefined | null,
+  );
+  const setSelected = useRestaurantStore(
+    (s: any) => s.setSelected as (id?: string | null) => void,
+  );
 
   const { coords, requestLocation } = useLocationStore();
   const [internalLoading, setInternalLoading] = useState(false);
   const [mapReadyForClick, setMapReadyForClick] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
   const [filters, setFilters] = useState<Filters>({
-    distance: 'all',
-    time: 'all',
-    price: 'all',
+    distance: "all",
+    time: "all",
+    price: "all",
   });
   const [showClusters, setShowClusters] = useState(true);
 
   const navigate = useNavigate();
   const location = useLocation();
+
+  // Track the map screen only once per component mount. The ref avoids duplicate
+  // events in React Strict Mode during local development.
+  useEffect(() => {
+    if (hasTrackedMapViewRef.current) return;
+    hasTrackedMapViewRef.current = true;
+    trackMapEvent("View map");
+  }, [trackMapEvent]);
+
+  useEffect(() => {
+    return () => {
+      if (searchTrackTimeoutRef.current !== null) {
+        window.clearTimeout(searchTrackTimeoutRef.current);
+      }
+    };
+  }, []);
 
   // Initial load
   useEffect(() => {
@@ -249,6 +330,10 @@ export default function MapScreen() {
       setTimeout(() => {
         setSelected(state.openRestaurantId);
         const r = restaurants.find((x) => x._id === state.openRestaurantId);
+        trackMapEvent(
+          "Open restaurant from navigation",
+          getRestaurantTrackingName(r),
+        );
         const restaurantCoords = r ? getRestaurantCoordinates(r) : null;
         if (restaurantCoords && mapRef.current) {
           mapRef.current.panTo(restaurantCoords);
@@ -263,71 +348,160 @@ export default function MapScreen() {
     if (coords && mapRef.current) {
       mapRef.current.panTo({ lat: coords.lat, lng: coords.lng });
       mapRef.current.setZoom(NEARBY_ZOOM);
+      trackMapEvent("Pan to user location");
     }
-  }, [coords]);
+  }, [coords, trackMapEvent]);
 
   const handleSeeNearMe = useCallback(async () => {
+    trackMapEvent("Show near me");
     setInternalLoading(true);
-    await requestLocation();
-    const currentCoords = useLocationStore.getState().coords;
-    if (currentCoords) {
-      await loadNearby(currentCoords.lat, currentCoords.lng, 5000);
-      if (mapRef.current) {
-        mapRef.current.panTo({ lat: currentCoords.lat, lng: currentCoords.lng });
-        mapRef.current.setZoom(NEARBY_ZOOM);
+
+    try {
+      await requestLocation();
+      const currentCoords = useLocationStore.getState().coords;
+
+      if (currentCoords) {
+        await loadNearby(currentCoords.lat, currentCoords.lng, 5000);
+        trackMapEvent("Nearby restaurants loaded");
+
+        if (mapRef.current) {
+          mapRef.current.panTo({
+            lat: currentCoords.lat,
+            lng: currentCoords.lng,
+          });
+          mapRef.current.setZoom(NEARBY_ZOOM);
+        }
+      } else {
+        trackMapEvent("Location unavailable");
       }
+    } catch (error) {
+      console.error("Error loading nearby restaurants:", error);
+      trackMapEvent("Location error");
+    } finally {
+      setInternalLoading(false);
     }
-    setInternalLoading(false);
-  }, [requestLocation, loadNearby]);
+  }, [requestLocation, loadNearby, trackMapEvent]);
 
   // Filter and search restaurants
   const filteredRestaurants = useMemo(
     () => filterRestaurants(restaurants, searchQuery, filters, coords),
-    [restaurants, searchQuery, filters, coords]
+    [restaurants, searchQuery, filters, coords],
   );
 
   const center = useMemo(
     () => (coords ? { lat: coords.lat, lng: coords.lng } : DEFAULT_CENTER),
-    [coords]
+    [coords],
   );
 
   const nearbyCount = useMemo(
     () => filteredRestaurants.filter((r) => (r as any).isNearby).length,
-    [filteredRestaurants]
+    [filteredRestaurants],
   );
 
   // Handle search
-  const handleSearch = useCallback((query: string) => {
-    setSearchQuery(query);
-    // Clear selection when searching
-    if (query && selectedId) {
-      setSelected(null);
-    }
-  }, [selectedId, setSelected]);
+  const handleSearch = useCallback(
+    (query: string) => {
+      setSearchQuery(query);
+
+      const normalizedQuery = query.trim();
+      if (searchTrackTimeoutRef.current !== null) {
+        window.clearTimeout(searchTrackTimeoutRef.current);
+      }
+
+      // Debounce search tracking so Matomo does not receive one event per render/keystroke.
+      if (normalizedQuery.length >= 3) {
+        searchTrackTimeoutRef.current = window.setTimeout(() => {
+          if (lastTrackedSearchRef.current === normalizedQuery) return;
+          lastTrackedSearchRef.current = normalizedQuery;
+          trackMapEvent("Search", `length:${normalizedQuery.length}`);
+        }, 800);
+      }
+
+      // Clear selection when searching
+      if (query && selectedId) {
+        trackMapEvent("Clear selected restaurant after search");
+        setSelected(null);
+      }
+    },
+    [selectedId, setSelected, trackMapEvent],
+  );
 
   // Handle filter changes
-  const handleFilterChange = useCallback((newFilters: Filters) => {
-    setFilters(newFilters);
-    // Clear selection when filtering
-    if (selectedId) {
-      setSelected(null);
-    }
-  }, [selectedId, setSelected]);
+  const handleFilterChange = useCallback(
+    (newFilters: Filters) => {
+      setFilters(newFilters);
+      trackMapEvent("Filter change", getActiveFilterSummary(newFilters));
+
+      // Clear selection when filtering
+      if (selectedId) {
+        trackMapEvent("Clear selected restaurant after filter");
+        setSelected(null);
+      }
+    },
+    [selectedId, setSelected, trackMapEvent],
+  );
 
   // Reset filters and search
   const handleReset = useCallback(() => {
-    setSearchQuery('');
+    trackMapEvent("Reset map");
+    setSearchQuery("");
     setFilters({
-      distance: 'all',
-      time: 'all',
-      price: 'all',
+      distance: "all",
+      time: "all",
+      price: "all",
     });
     setSelected(null);
+    lastTrackedSearchRef.current = "";
+
+    if (searchTrackTimeoutRef.current !== null) {
+      window.clearTimeout(searchTrackTimeoutRef.current);
+      searchTrackTimeoutRef.current = null;
+    }
+
     if (mapRef.current) {
       mapRef.current.panTo(DEFAULT_CENTER);
       mapRef.current.setZoom(DEFAULT_ZOOM);
     }
-  }, [setSelected]);
+  }, [setSelected, trackMapEvent]);
+
+  const handleMarkerClick = useCallback(
+    (restaurant: Restaurant) => {
+      trackMapEvent(
+        "Select restaurant marker",
+        getRestaurantTrackingName(restaurant),
+      );
+      setSelected(restaurant._id);
+    },
+    [setSelected, trackMapEvent],
+  );
+
+  const handleRestaurantCardClick = useCallback(() => {
+    const selectedRestaurant = filteredRestaurants.find(
+      (r) => r._id === selectedId,
+    );
+    trackMapEvent(
+      "Open restaurant detail",
+      getRestaurantTrackingName(selectedRestaurant),
+    );
+    navigate(`/dashboard?tab=discover&restaurantId=${selectedId}`);
+  }, [filteredRestaurants, navigate, selectedId, trackMapEvent]);
+
+  const handleRestaurantCardClose = useCallback(() => {
+    const selectedRestaurant = filteredRestaurants.find(
+      (r) => r._id === selectedId,
+    );
+    trackMapEvent(
+      "Close restaurant card",
+      getRestaurantTrackingName(selectedRestaurant),
+    );
+    setSelected(null);
+  }, [filteredRestaurants, selectedId, setSelected, trackMapEvent]);
+
+  const handleToggleClusters = useCallback(() => {
+    const nextShowClusters = !showClusters;
+    trackMapEvent("Toggle clusters", nextShowClusters ? "enabled" : "disabled");
+    setShowClusters(nextShowClusters);
+  }, [showClusters, trackMapEvent]);
 
   if (loadError) {
     return (
@@ -338,7 +512,9 @@ export default function MapScreen() {
       >
         <div className="text-center space-y-4">
           <div className="text-4xl">⚠️</div>
-          <h1 className="text-xl font-semibold text-gray-900">Unable to Load Maps</h1>
+          <h1 className="text-xl font-semibold text-gray-900">
+            Unable to Load Maps
+          </h1>
           <p className="text-gray-600">Please check your internet connection</p>
         </div>
       </motion.div>
@@ -365,10 +541,11 @@ export default function MapScreen() {
           streetViewControl: false,
           zoomControl: true,
           zoomControlOptions: {
-            position: (window as any).google?.maps?.ControlPosition?.RIGHT_BOTTOM,
+            position: (window as any).google?.maps?.ControlPosition
+              ?.RIGHT_BOTTOM,
           },
           styles: MODERN_MAP_STYLE,
-          gestureHandling: 'greedy',
+          gestureHandling: "greedy",
           restriction: {
             latLngBounds: {
               north: 85,
@@ -379,12 +556,10 @@ export default function MapScreen() {
             strictBounds: false,
           },
         }}
-        onLoad={(map) => {
-          onMapLoad(map);
-          setMapReadyForClick(true);
-        }}
+        onLoad={onMapLoad}
         onDrag={() => {
           if (selectedId) {
+            trackMapEvent("Clear selected restaurant after map drag");
             setSelected(null);
           }
         }}
@@ -397,18 +572,18 @@ export default function MapScreen() {
                 {
                   height: 53,
                   width: 53,
-                  textColor: '#ffffff',
-                  background: 'rgba(255, 107, 53, 0.8)',
-                  borderRadius: '50%',
-                  lineHeight: '53px',
-                  fontSize: '12px',
-                  fontWeight: 'bold',
-                  textAlign: 'center',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  boxShadow: '0 10px 30px rgba(255, 107, 53, 0.3)',
-                  border: '2px solid rgba(255, 255, 255, 0.8)',
+                  textColor: "#ffffff",
+                  background: "rgba(255, 107, 53, 0.8)",
+                  borderRadius: "50%",
+                  lineHeight: "53px",
+                  fontSize: "12px",
+                  fontWeight: "bold",
+                  textAlign: "center",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  boxShadow: "0 10px 30px rgba(255, 107, 53, 0.3)",
+                  border: "2px solid rgba(255, 255, 255, 0.8)",
                 },
               ] as any,
             }}
@@ -416,13 +591,16 @@ export default function MapScreen() {
             {(clusterer: any) => (
               <>
                 {filteredRestaurants.map((r: Restaurant) => {
-                  const key = r._id && r._id !== '' ? r._id : `${r.profile?.name || 'unknown'}-${getRestaurantCoordinateKey(r)}`;
+                  const key =
+                    r._id && r._id !== ""
+                      ? r._id
+                      : `${r.profile?.name || "unknown"}-${getRestaurantCoordinateKey(r)}`;
                   return (
                     <OptimizedMarker
                       key={key}
                       restaurant={r}
                       isSelected={selectedId === r._id}
-                      onClick={() => setSelected(r._id)}
+                      onClick={() => handleMarkerClick(r)}
                       clusterer={clusterer}
                     />
                   );
@@ -435,13 +613,16 @@ export default function MapScreen() {
         ) : (
           <>
             {filteredRestaurants.map((r: Restaurant) => {
-              const key = r._id && r._id !== '' ? r._id : `${r.profile?.name || 'unknown'}-${getRestaurantCoordinateKey(r)}`;
+              const key =
+                r._id && r._id !== ""
+                  ? r._id
+                  : `${r.profile?.name || "unknown"}-${getRestaurantCoordinateKey(r)}`;
               return (
                 <OptimizedMarker
                   key={key}
                   restaurant={r}
                   isSelected={selectedId === r._id}
-                  onClick={() => setSelected(r._id)}
+                  onClick={() => handleMarkerClick(r)}
                 />
               );
             })}
@@ -477,18 +658,20 @@ export default function MapScreen() {
         controls={[
           {
             icon: <Layers className="w-5 h-5" />,
-            label: 'Clusters',
-            onClick: () => setShowClusters(!showClusters),
-            tooltip: showClusters ? 'Disable marker clustering' : 'Enable marker clustering',
-            variant: 'secondary',
+            label: "Clusters",
+            onClick: handleToggleClusters,
+            tooltip: showClusters
+              ? "Disable marker clustering"
+              : "Enable marker clustering",
+            variant: "secondary",
             isActive: showClusters,
           },
           {
             icon: <RotateCcw className="w-5 h-5" />,
-            label: 'Reset',
+            label: "Reset",
             onClick: handleReset,
-            tooltip: 'Reset filters and view',
-            variant: 'secondary',
+            tooltip: "Reset filters and view",
+            variant: "secondary",
           },
         ]}
         position="bottom-right"
@@ -497,14 +680,19 @@ export default function MapScreen() {
 
       {/* Restaurant card overlay */}
       <AnimatePresence>
-        {selectedId && filteredRestaurants.some((restaurant) => restaurant._id === selectedId) && (
-          <RestaurantCard
-            key={selectedId} // Added key prop here
-            restaurant={filteredRestaurants.find((r) => r._id === selectedId)!}
-            onClick={() => navigate(`/dashboard?tab=discover&restaurantId=${selectedId}`)}
-            onClose={() => setSelected(null)}
-          />
-        )}
+        {selectedId &&
+          filteredRestaurants.some(
+            (restaurant) => restaurant._id === selectedId,
+          ) && (
+            <RestaurantCard
+              key={selectedId} // Added key prop here
+              restaurant={
+                filteredRestaurants.find((r) => r._id === selectedId)!
+              }
+              onClick={handleRestaurantCardClick}
+              onClose={handleRestaurantCardClose}
+            />
+          )}
       </AnimatePresence>
 
       {/* Empty state */}
@@ -518,13 +706,19 @@ export default function MapScreen() {
           >
             <div className="bg-white/90 backdrop-blur-xl rounded-2xl p-8 shadow-xl border border-white/20 text-center max-w-sm">
               <div className="text-6xl mb-4">🔍</div>
-              <h3 className="text-xl font-bold text-gray-900 mb-2">No Restaurants Found</h3>
+              <h3 className="text-xl font-bold text-gray-900 mb-2">
+                No Restaurants Found
+              </h3>
               <p className="text-sm text-gray-600 mb-4">
-                {searchQuery || filters.distance !== 'all' || filters.price !== 'all'
-                  ? 'Try adjusting your search or filters'
-                  : 'No restaurants available in this area'}
+                {searchQuery ||
+                filters.distance !== "all" ||
+                filters.price !== "all"
+                  ? "Try adjusting your search or filters"
+                  : "No restaurants available in this area"}
               </p>
-              {(searchQuery || filters.distance !== 'all' || filters.price !== 'all') && (
+              {(searchQuery ||
+                filters.distance !== "all" ||
+                filters.price !== "all") && (
                 <button
                   onClick={handleReset}
                   className="px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors pointer-events-auto"

@@ -7,6 +7,7 @@ import LanguageDropdown from '@/shared/components/ui/LanguageDropdown';
 import type { ICustomer } from '@/types';
 import type { CustomerBadge, CustomerPointsWalletEntry, CustomerRestaurant, CustomerReward, CustomerTabId, CustomerVisit } from '../../hooks/useCustomerDashboard';
 import CustomerChatButton from '@/features/chat/components/CustomerChatButton';
+import { trackEvent } from '@/services/matomo';
 
 interface CustomerSidebarProps {
   activeTab: CustomerTabId;
@@ -714,7 +715,6 @@ export function CustomerDiscoverView({
 
     const matchesCategory = selectedCategory === 'all' ||
       (restaurant.profile?.category || []).some((category) => category.toLowerCase().includes(selectedCategory.toLowerCase()));
-
     return matchesSearch && matchesCategory;
   });
 
@@ -771,7 +771,10 @@ export function CustomerDiscoverView({
             <button
               key={category.name}
               className={`hc-category-pill ${selectedCategory === category.name ? 'active' : ''}`}
-              onClick={() => onCategoryChange(category.name)}
+              onClick={() => {
+  trackEvent('Discover', 'Filter category', category.name);
+  onCategoryChange(category.name);
+}}
             >
               <span style={{ fontSize: '1.2rem', lineHeight: 1 }}>{category.icon}</span>
               {category.label}
@@ -787,7 +790,10 @@ export function CustomerDiscoverView({
             <CustomerLargeRestaurantCard
               key={restaurant._id || restaurant.id}
               restaurant={restaurant}
-              onClick={() => onSelectRestaurant(restaurant)}
+              onClick={() => {
+  trackEvent('Restaurant', 'Open detail', restaurant.profile?.name);
+  onSelectRestaurant(restaurant);
+}}
             />
           ))}
         </div>

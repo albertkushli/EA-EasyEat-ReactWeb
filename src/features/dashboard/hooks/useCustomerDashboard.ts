@@ -5,6 +5,7 @@ import { useAuth } from '@/context/AuthContext';
 import apiClient from '@/services/apiClient';
 import { fetchCustomer, updateCustomer } from '@/services/customer.service';
 import type { ICustomer, IRestaurant } from '@/types';
+import { trackEvent } from '@/services/matomo';
 
 export interface CustomerRestaurantLocation {
   city?: string;
@@ -225,6 +226,7 @@ export function useCustomerDashboard(): UseCustomerDashboardResult {
   }, [setSearchParams]);
 
   const handleTabChange = useCallback((tab: CustomerTabId) => {
+    trackEvent('Dashboard', 'Change tab', tab);
     const nextSelectedRestaurantId = tab === 'discover' ? selectedRestaurantId : null;
 
     updateDashboardSearchParams(tab, nextSelectedRestaurantId);

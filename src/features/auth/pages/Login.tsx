@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Mail, Lock, Eye, EyeOff, AlertCircle, User as UserIcon, Briefcase } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { useTranslation } from 'react-i18next';
+import { trackEvent } from '@/services/matomo';
 
 type LoginType = 'customer' | 'employee';
 
@@ -45,8 +46,10 @@ export default function Login() {
       const result = await login(form.email, form.password, loginType);
 
       if (result.success) {
+        trackEvent('Auth', 'Login success', loginType);
         navigate('/dashboard');
       } else {
+        trackEvent('Auth', 'Login error', loginType);
         setError(result.error ?? t('auth.errors.serverError'));
       }
     } catch {

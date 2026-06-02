@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Mail, Lock, Eye, EyeOff, AlertCircle, User, Check, X } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { useTranslation } from 'react-i18next';
+import { trackEvent } from '@/services/matomo';
 
 interface RegisterFormState {
   name: string;
@@ -73,6 +74,7 @@ export default function Register() {
       });
 
       if (result.success) {
+        trackEvent('Auth', 'Register success', 'customer');
         navigate('/dashboard');
       } else {
         setError(result.error ?? t('auth.errors.serverError'));
