@@ -2,11 +2,12 @@ import { type FormEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useNavigate } from 'react-router-dom';
 import { QRCodeCanvas } from 'qrcode.react';
-import { ArrowLeft, CheckCircle, Clock, Coins, Gift, Heart, Home, Map, MapPin, QrCode, Save, Search, SlidersHorizontal, Star, Trophy, User, Wallet, X, Mail, Lock, LogOut, ShieldCheck } from 'lucide-react';
+import { ArrowLeft, CheckCircle, Clock, Coins, Gift, Heart, Home, Map, MapPin, QrCode, Save, Search, SlidersHorizontal, Star, Trophy, User, Wallet, X, Mail, Lock, LogOut, ShieldCheck, Moon, Sun } from 'lucide-react';
 import LanguageDropdown from '@/shared/components/ui/LanguageDropdown';
 import type { ICustomer } from '@/types';
 import type { CustomerBadge, CustomerPointsWalletEntry, CustomerRestaurant, CustomerReward, CustomerTabId, CustomerVisit } from '../../hooks/useCustomerDashboard';
 import CustomerChatButton from '@/features/chat/components/CustomerChatButton';
+import { useTheme } from '@/context/ThemeContext';
 
 interface CustomerSidebarProps {
   activeTab: CustomerTabId;
@@ -336,6 +337,7 @@ function CustomerRestaurantDetail({
 
 export function CustomerSidebar({ activeTab, onTabChange, user, onLogout }: CustomerSidebarProps) {
   const { t } = useTranslation();
+  const { isDark, toggleTheme } = useTheme();
   return (
     <aside className="hc-sidebar">
       <div className="hc-sidebar__brand">
@@ -377,6 +379,13 @@ export function CustomerSidebar({ activeTab, onTabChange, user, onLogout }: Cust
             }</span>
           </div>
         </div>
+        <button type="button" onClick={toggleTheme} className="hc-theme-toggle" aria-label={isDark ? 'Activar modo claro' : 'Activar modo oscuro'}>
+          <span className="hc-theme-toggle__label">
+            {isDark ? <Moon size={16} /> : <Sun size={16} />}
+            {isDark ? 'Modo Oscuro' : 'Modo Claro'}
+          </span>
+          <span className={`hc-theme-toggle__switch ${isDark ? 'active' : ''}`}><span /></span>
+        </button>
         <button onClick={onLogout} className="hc-sidebar-logout">{t('sidebar.logout', 'Logout')}</button>
         <LanguageDropdown />
         <Link

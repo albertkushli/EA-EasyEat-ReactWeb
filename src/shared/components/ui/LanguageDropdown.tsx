@@ -1,7 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Globe, ChevronDown } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
 
 export default function LanguageDropdown() {
   const { i18n } = useTranslation();
@@ -32,15 +31,14 @@ export default function LanguageDropdown() {
   };
 
   return (
-    <div className="relative inline-block text-left" ref={dropdownRef}>
+    <div className="ee-language-dropdown relative inline-block text-left" ref={dropdownRef}>
       <button
         type="button"
-        className="flex items-center gap-1.5 px-2 py-1.5 text-xs font-bold transition-all hover:bg-white/10 rounded-lg focus:outline-none"
+        className="ee-language-dropdown__trigger"
         onClick={(e) => {
           e.stopPropagation();
           setIsOpen(!isOpen);
         }}
-        style={{ color: 'var(--clr-text, currentColor)', backgroundColor: 'transparent', border: 'none', cursor: 'pointer' }}
       >
         <Globe size={14} />
         <span>{currentLanguage.code.toUpperCase()}</span>
@@ -48,31 +46,23 @@ export default function LanguageDropdown() {
       </button>
 
       {isOpen && (
-        <div
-          className="absolute right-0 z-[10000] w-40 mt-2 origin-top-right bg-white rounded-lg shadow-xl ring-1 ring-black ring-opacity-5 focus:outline-none overflow-hidden"
-          style={{ backgroundColor: '#ffffff', borderColor: '#ddd', borderWidth: '1px' }}
-        >
+        <div className="ee-language-dropdown__menu">
           <div className="py-1">
-            {languages.map((lang) => (
-              <button
-                key={lang.code}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleSelect(lang.code);
-                }}
-                className={`block w-full px-4 py-2 text-sm text-left transition-colors ${
-                  i18n.language === lang.code
-                    ? 'bg-orange-50 text-orange-600 font-semibold'
-                    : 'text-gray-700 hover:bg-gray-100'
-                }`}
-                style={{
-                  color: i18n.language === lang.code ? 'var(--clr-primary, #f97316)' : '#1a1a1a',
-                  backgroundColor: i18n.language === lang.code ? 'rgba(249, 115, 22, 0.1)' : 'transparent',
-                }}
-              >
-                {lang.label}
-              </button>
-            ))}
+            {languages.map((lang) => {
+              const selected = i18n.language === lang.code;
+              return (
+                <button
+                  key={lang.code}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleSelect(lang.code);
+                  }}
+                  className={`ee-language-dropdown__option ${selected ? 'active' : ''}`}
+                >
+                  {lang.label}
+                </button>
+              );
+            })}
           </div>
         </div>
       )}
