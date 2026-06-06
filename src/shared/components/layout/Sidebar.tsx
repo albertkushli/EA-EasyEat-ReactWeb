@@ -1,8 +1,9 @@
-import { LayoutDashboard, Users, Gift, BarChart3, Settings, LogOut, Store, UtensilsCrossed, Users2, MessageSquare, CreditCard } from "lucide-react";
+import { LayoutDashboard, Users, Gift, BarChart3, Settings, LogOut, Store, UtensilsCrossed, Users2, MessageSquare, CreditCard, Moon, Sun } from "lucide-react";
 import { motion } from "framer-motion";
 import { useAuth } from "@/context/AuthContext";
 import { useTranslation } from "react-i18next";
 import { Link, useNavigate } from "react-router-dom";
+import { useTheme } from "@/context/ThemeContext";
 
 interface SidebarProps {
   activeView: string;
@@ -15,6 +16,7 @@ export function Sidebar({ activeView, onViewChange, restaurantName, restaurantAd
   const { user, logout, role } = useAuth();
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const { isDark, toggleTheme } = useTheme();
   const isOwner = role === 'owner';
 
   const baseMenuItems = [
@@ -96,6 +98,22 @@ export function Sidebar({ activeView, onViewChange, restaurantName, restaurantAd
             }</p>
           </div>
         </div>
+
+        {/* Selector de tema */}
+        <button
+          type="button"
+          onClick={toggleTheme}
+          className="flex w-full items-center justify-between rounded-lg px-4 py-2.5 text-slate-200/85 transition-all duration-200 hover:bg-white/5 hover:text-white"
+          aria-label={isDark ? 'Activar modo claro' : 'Activar modo oscuro'}
+        >
+          <span className="flex items-center gap-3">
+            {isDark ? <Moon className="h-5 w-5" /> : <Sun className="h-5 w-5" />}
+            <span className="text-sm font-semibold">{isDark ? 'Modo Oscuro' : 'Modo Claro'}</span>
+          </span>
+          <span className={`relative h-6 w-10 rounded-full transition-colors ${isDark ? 'bg-orange-500' : 'bg-slate-600'}`}>
+            <span className={`absolute top-1 h-4 w-4 rounded-full bg-white transition-transform ${isDark ? 'translate-x-5' : 'translate-x-1'}`} />
+          </span>
+        </button>
 
         {/* Botón de logout */}
         <motion.button

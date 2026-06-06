@@ -137,3 +137,308 @@ input {
   font-weight: var(--font-weight-normal);
   line-height: 1.5;
 }
+
+/* =========================================================
+   EasyEat dark mode integration
+   Scoped to .dark so light mode remains unchanged.
+   ========================================================= */
+:root {
+  --ee-navy-bg: #0a0e1f;
+  --ee-navy-surface: #151e2e;
+  --ee-navy-surface-2: #1b2638;
+  --ee-navy-border: #334155;
+  --ee-navy-text: #f8fafc;
+  --ee-navy-muted: #9fb3c8;
+}
+
+.dark {
+  --background: var(--ee-navy-bg);
+  --foreground: var(--ee-navy-text);
+  --card: var(--ee-navy-surface);
+  --card-foreground: var(--ee-navy-text);
+  --popover: var(--ee-navy-surface);
+  --popover-foreground: var(--ee-navy-text);
+  --border: rgba(148, 163, 184, 0.28);
+  --input: var(--ee-navy-surface-2);
+  --input-background: var(--ee-navy-surface-2);
+  --switch-background: #334155;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+  background-color: var(--background);
+  color: var(--foreground);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.bg-card { background-color: var(--card); }
+.bg-background { background-color: var(--background); }
+.border-card { border-color: var(--border); }
+
+/* Only compatibility overrides in dark mode. Do not alter Tailwind light mode. */
+.dark .bg-white,
+.dark .bg-gray-50 {
+  background-color: var(--card) !important;
+}
+
+.dark .bg-gray-100,
+.dark .bg-gray-200 {
+  background-color: var(--background) !important;
+}
+
+.dark .border-gray-100,
+.dark .border-gray-200 {
+  border-color: var(--border) !important;
+}
+
+/* Shared language dropdown */
+.ee-language-dropdown__trigger {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.375rem 0.5rem;
+  border: 0;
+  border-radius: 0.5rem;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  font-size: 0.75rem;
+  font-weight: 800;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.ee-language-dropdown__trigger:hover {
+  background: rgba(148, 163, 184, 0.14);
+}
+
+.ee-language-dropdown__menu {
+  position: absolute;
+  right: 0;
+  z-index: 10000;
+  width: 10rem;
+  margin-top: 0.5rem;
+  overflow: hidden;
+  transform-origin: top right;
+  border: 1px solid var(--border);
+  border-radius: 0.75rem;
+  background: var(--popover);
+  color: var(--popover-foreground);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.18);
+}
+
+.ee-language-dropdown__option {
+  display: block;
+  width: 100%;
+  padding: 0.5rem 1rem;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  text-align: left;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.ee-language-dropdown__option:hover {
+  background: rgba(249, 115, 22, 0.10);
+}
+
+.ee-language-dropdown__option.active {
+  color: #f97316;
+  background: rgba(249, 115, 22, 0.12);
+  font-weight: 700;
+}
+
+/* Restaurant / backoffice layout */
+.he-shell {
+  margin-left: 16rem;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: #ffffff;
+  color: #0f172a;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.he-topbar {
+  display: flex;
+  justify-content: flex-end;
+  padding: 1.5rem 2rem 0;
+  background: transparent;
+  color: inherit;
+}
+
+.he-content {
+  flex: 1;
+  background: transparent;
+}
+
+.dark .he-page,
+.dark .he-page--employee,
+.dark .he-shell,
+.dark .he-topbar,
+.dark .he-content {
+  background: var(--ee-navy-bg) !important;
+  color: var(--ee-navy-text) !important;
+}
+
+.dark .he-page,
+.dark .he-page--employee {
+  --clr-bg: var(--ee-navy-bg);
+  --clr-surface: var(--ee-navy-surface);
+  --clr-card: var(--ee-navy-surface);
+  --clr-border: rgba(148, 163, 184, 0.28);
+  --glass-bg: rgba(21, 30, 46, 0.92);
+  --glass-border: rgba(148, 163, 184, 0.24);
+  --clr-text: var(--ee-navy-text);
+  --clr-text-muted: var(--ee-navy-muted);
+}
+
+.dark .he-card,
+.dark .he-stat,
+.dark .he-trends-card,
+.dark .he-employee-card,
+.dark .he-info-card,
+.dark .he-table-card,
+.dark .he-panel,
+.dark .he-section,
+.dark .he-timetable-card,
+.dark .he-review-card,
+.dark .he-restaurant-card,
+.dark .he-billing-card,
+.dark .he-settings-card {
+  background: var(--ee-navy-surface) !important;
+  border-color: rgba(148, 163, 184, 0.24) !important;
+  color: var(--ee-navy-text) !important;
+}
+
+/* Customer area */
+.dark .hc-page {
+  background: var(--ee-navy-bg) !important;
+  color: var(--ee-navy-text) !important;
+  --clr-bg: var(--ee-navy-bg);
+  --clr-surface: var(--ee-navy-surface);
+  --clr-card: var(--ee-navy-surface);
+  --clr-border: rgba(148, 163, 184, 0.28);
+  --glass-bg: rgba(21, 30, 46, 0.92);
+  --glass-border: rgba(148, 163, 184, 0.24);
+  --clr-text: var(--ee-navy-text);
+  --clr-text-muted: var(--ee-navy-muted);
+}
+
+.dark .hc-layout,
+.dark .hc-main,
+.dark .hc-discover-view,
+.dark .hc-rewards-dashboard,
+.dark .hc-tab-panel {
+  background: var(--ee-navy-bg) !important;
+  color: var(--ee-navy-text) !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+}
+
+.dark .hc-sidebar {
+  background: linear-gradient(180deg, #08182f 0%, #0e2743 100%) !important;
+  color: #ffffff !important;
+}
+
+.dark .hc-stat-card,
+.dark .hc-res-card,
+.dark .hc-large-card,
+.dark .hc-objective-card,
+.dark .hc-badge-card,
+.dark .hc-info-box,
+.dark .hc-reward-item,
+.dark .hc-history-item,
+.dark .hc-modal,
+.dark .hc-section,
+.dark .hc-rewards-history-section,
+.dark .hc-search-input,
+.dark .hc-filter-btn,
+.dark .hc-category-pill {
+  background: var(--ee-navy-surface) !important;
+  border-color: rgba(148, 163, 184, 0.24) !important;
+  color: var(--ee-navy-text) !important;
+}
+
+.dark .hc-section__title,
+.dark .hc-large-card__header h3,
+.dark .hc-res-card__name,
+.dark .hc-stat-card__value,
+.dark .hc-objective-card h3,
+.dark .hc-history-item__info h4,
+.dark .hc-modal h3 {
+  color: var(--ee-navy-text) !important;
+}
+
+.dark .hc-hero {
+  background: linear-gradient(135deg, rgba(249, 115, 22, 0.92) 0%, rgba(251, 146, 60, 0.78) 100%) !important;
+  color: #ffffff !important;
+}
+
+.dark .hc-hero__greeting,
+.dark .hc-hero__name,
+.dark .hc-hero__sub {
+  color: #ffffff !important;
+}
+
+.dark .hc-modal-overlay {
+  background: rgba(2, 6, 23, 0.74) !important;
+}
+
+.hc-theme-toggle {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  border: 0;
+  border-radius: 14px;
+  padding: 0.85rem 1rem;
+  background: rgba(255, 255, 255, 0.08);
+  color: #ffffff;
+  cursor: pointer;
+  font-weight: 700;
+  transition: background-color 0.2s ease;
+}
+
+.hc-theme-toggle:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.hc-theme-toggle__label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.hc-theme-toggle__switch {
+  position: relative;
+  width: 40px;
+  height: 24px;
+  border-radius: 999px;
+  background: #475569;
+  flex-shrink: 0;
+  transition: background-color 0.2s ease;
+}
+
+.hc-theme-toggle__switch span {
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  width: 16px;
+  height: 16px;
+  border-radius: 999px;
+  background: #ffffff;
+  transition: transform 0.2s ease;
+}
+
+.hc-theme-toggle__switch.active {
+  background: #f97316;
+}
+
+.hc-theme-toggle__switch.active span {
+  transform: translateX(16px);
+}
