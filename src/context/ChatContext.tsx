@@ -121,8 +121,9 @@ export const ChatProvider: FC<{ children: ReactNode }> = ({ children }) => {
       return;
     }
 
-    // Connect to backend socket (proxied by Vite → localhost:1337)
-    const newSocket = io('/', {
+    // Connect to backend socket (proxied by Vite if VITE_API_URL is empty)
+    const socketUrl = import.meta.env.VITE_API_URL || '/';
+    const newSocket = io(socketUrl, {
       auth: { token },
       transports: ['websocket', 'polling'],
       reconnection: true,
@@ -265,7 +266,14 @@ export const ChatProvider: FC<{ children: ReactNode }> = ({ children }) => {
     }
     const u = userRef.current as any;
     const senderId = u?._id ?? u?.id;
-    const senderRole: SenderRole = (roleRef.current as SenderRole) ?? 'customer';
+    
+    let senderRole: SenderRole = 'customer';
+    const currentRole = roleRef.current;
+    if (currentRole === 'owner') {
+      senderRole = 'owner';
+    } else if (currentRole === 'staff' || currentRole === 'admin') {
+      senderRole = 'employee';
+    }
 
     socket.emit('chat:sendMessage', {
       conversationId: activeConversationId,
