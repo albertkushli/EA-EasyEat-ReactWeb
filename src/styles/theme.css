@@ -82,61 +82,10 @@
   outline-color: var(--ring);
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-}
-
-html {
-  font-size: var(--font-size);
-}
-
-h1 {
-  font-size: 1.5rem;
-  font-weight: var(--font-weight-medium);
-  line-height: 1.5;
-}
-
-h2 {
-  font-size: 1.25rem;
-  font-weight: var(--font-weight-medium);
-  line-height: 1.5;
-}
-
-h3 {
-  font-size: 1.125rem;
-  font-weight: var(--font-weight-medium);
-  line-height: 1.5;
-}
-
-h4 {
-  font-size: 1rem;
-  font-weight: var(--font-weight-medium);
-  line-height: 1.5;
-}
-
-label {
-  font-size: 1rem;
-  font-weight: var(--font-weight-medium);
-  line-height: 1.5;
-}
-
-button {
-  font-size: 1rem;
-  font-weight: var(--font-weight-medium);
-  line-height: 1.5;
-}
-
-input {
-  font-size: 1rem;
-  font-weight: var(--font-weight-normal);
-  line-height: 1.5;
-}
-
 /* =========================================================
    EasyEat dark mode integration
    ========================================================= */
-
+/* EasyEat dark mode tokens */
 :root {
   --ee-navy-bg: #0a0e1f;
   --ee-navy-surface: #151e2e;
@@ -670,7 +619,9 @@ body,
   color: var(--ee-navy-muted) !important;
 }
 
-/* Customer navbar theme toggle - final stable */
+/* Customer navbar theme toggle - final stable.
+   This block intentionally overrides the generic .hc-theme-toggle above
+   to keep the footer layout aligned. */
 .hc-sidebar-footer {
   display: flex !important;
   align-items: center !important;
