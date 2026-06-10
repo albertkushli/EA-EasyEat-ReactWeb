@@ -31,7 +31,7 @@ export default function HomeEmployee() {
   }
 
   return (
-    <div className="he-page">
+    <div className="he-page he-page--employee">
       <Sidebar
         activeView={dashboard.activeView}
         onViewChange={dashboard.setActiveView}
@@ -39,11 +39,11 @@ export default function HomeEmployee() {
         restaurantAddress={dashboard.restAddress}
       />
 
-      <div style={{ marginLeft: '16rem', minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
-        <div style={{ display: 'flex', justifyContent: 'flex-end', padding: '1.5rem 2rem 0' }}>
+      <div className="he-shell">
+        <div className="he-topbar">
           <LanguageDropdown />
         </div>
-        <div style={{ flex: 1 }}>
+        <div className="he-content">
           {dashboard.activeView === 'profile' ? (
             <StaffProfilePanel
               user={dashboard.user}

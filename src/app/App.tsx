@@ -2,6 +2,7 @@ import { type ReactNode } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { AuthProvider, useAuth } from '@/context/AuthContext';
 import { ChatProvider } from '@/context/ChatContext';
+import { ThemeProvider } from '@/context/ThemeContext';
 import { Login, Register } from '@/features/auth';
 import { Dashboard, Home } from '@/features/dashboard';
 import { Clients } from '@/features/customers';
@@ -45,8 +46,9 @@ export default function App() {
   }
 
   return (
-    <AuthProvider>
-      <ChatProvider>
+    <ThemeProvider>
+      <AuthProvider>
+        <ChatProvider>
         <Router>
         <Routes>
           <Route
@@ -104,7 +106,8 @@ export default function App() {
         </Routes>
       </Router>
       <SupportChat />
-      </ChatProvider>
-    </AuthProvider>
+        </ChatProvider>
+      </AuthProvider>
+    </ThemeProvider>
   );
 }

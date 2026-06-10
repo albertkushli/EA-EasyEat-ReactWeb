@@ -82,14 +82,14 @@ export default function Clients() {
   }, [clients, searchTerm]);
 
   return (
-    <div className="p-6 bg-gray-50 min-h-screen">
+    <div className="he-clients-page p-6 min-h-screen">
       {/* Header section... */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
         <div>
-          <h1 className="text-3xl font-black text-gray-900 tracking-tight">
+          <h1 className="text-3xl font-black text-gray-900 dark:text-white tracking-tight">
             {t('clients.title').toUpperCase()}
           </h1>
-          <p className="text-gray-500 font-medium mt-1">
+          <p className="text-gray-500 dark:text-slate-300 font-medium mt-1">
             {t('clients.subtitle')}
           </p>
         </div>
@@ -105,7 +105,7 @@ export default function Clients() {
           placeholder={t('clients.searchPlaceholder')}
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="w-full pl-12 pr-4 py-4 bg-white border-2 border-gray-100 rounded-2xl shadow-sm focus:ring-4 focus:ring-orange-500/10 focus:border-orange-500 transition-all outline-none text-gray-700 font-medium"
+          className="w-full pl-12 pr-4 py-4 bg-white dark:bg-card border-2 border-gray-100 dark:border-card rounded-2xl shadow-sm focus:ring-4 focus:ring-orange-500/10 focus:border-orange-500 transition-all outline-none text-gray-700 dark:text-white font-medium"
         />
       </div>
 
@@ -138,9 +138,9 @@ export default function Clients() {
             <div
               key={client._id}
               onClick={() => handleClientClick(client)}
-              className="group bg-white rounded-3xl border-2 border-gray-50 p-6 shadow-sm hover:shadow-xl hover:border-orange-100 transition-all cursor-pointer relative overflow-hidden"
+              className="group bg-white dark:bg-card rounded-3xl border-2 border-gray-50 dark:border-card p-6 shadow-sm hover:shadow-xl hover:border-orange-100 dark:hover:border-orange-500/40 transition-all cursor-pointer relative overflow-hidden"
             >
-              <div className="absolute top-0 right-0 w-24 h-24 bg-orange-50 rounded-full -mr-12 -mt-12 group-hover:scale-110 transition-transform duration-500" />
+              <div className="absolute top-0 right-0 w-24 h-24 bg-orange-50 dark:bg-orange-500/10 rounded-full -mr-12 -mt-12 group-hover:scale-110 transition-transform duration-500" />
               
               <div className="flex items-start gap-4 relative z-10">
                 {/* Avatar */}
@@ -156,10 +156,10 @@ export default function Clients() {
                 </div>
 
                 <div className="flex-1 min-w-0">
-                  <h3 className="font-bold text-gray-800 truncate group-hover:text-orange-600 transition-colors">
+                  <h3 className="font-bold text-gray-800 dark:text-white truncate group-hover:text-orange-600 transition-colors">
                     {client.name || t('components.employeeCard.noName')}
                   </h3>
-                  <div className="flex items-center gap-1.5 mt-1 text-gray-500">
+                  <div className="flex items-center gap-1.5 mt-1 text-gray-500 dark:text-slate-300">
                     <Mail className="w-3.5 h-3.5" />
                     <span className="text-xs truncate">{client.email || t('components.employeeCard.noEmail')}</span>
                   </div>
