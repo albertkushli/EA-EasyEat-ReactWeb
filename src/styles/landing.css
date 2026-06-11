@@ -2,6 +2,9 @@
    LANDING PAGE DESIGN SYSTEM (DARK THEME)
    ========================================================= */
 
+/* Landing uses a scoped design system with --lp-* variables.
+   Shared .ee-* utilities are not used here to preserve the marketing layout. */
+
 .landing-page {
   --lp-bg: #0c0c0c;
   --lp-bg-alt: #161616;
@@ -16,16 +19,9 @@
 
   background-color: var(--lp-bg);
   color: var(--lp-text);
-  font-family: 'Plus Jakarta Sans', var(--sans);
+  font-family: "Plus Jakarta Sans", var(--sans);
   overflow-x: hidden;
   text-align: left;
-}
-
-.landing-page #root {
-  width: 100%;
-  max-width: none;
-  border: none;
-  margin: 0;
 }
 
 /* Navbar */
@@ -81,7 +77,10 @@
   color: #fff;
   font-weight: 700;
   text-decoration: none;
-  transition: all 0.3s;
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease,
+    background-color 0.3s ease;
 }
 
 .lp-btn-acceder:hover {
@@ -91,14 +90,15 @@
 
 /* Hero Section */
 .lp-hero {
-  height: 100vh;
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   text-align: center;
   position: relative;
-  padding: 0 5%;
+  padding: 120px 5% 48px;
+  box-sizing: border-box;
   background: radial-gradient(circle at 50% 50%, #1a1a1a 0%, #0c0c0c 100%);
   overflow: hidden;
 }
@@ -107,7 +107,11 @@
   position: absolute;
   width: 60vw;
   height: 60vw;
-  background: radial-gradient(circle, rgba(249, 115, 22, 0.08) 0%, transparent 70%);
+  background: radial-gradient(
+    circle,
+    rgba(249, 115, 22, 0.08) 0%,
+    transparent 70%
+  );
   filter: blur(60px);
   top: -10%;
   left: -10%;
@@ -115,9 +119,15 @@
 }
 
 .hero-gradient-orb--2 {
-  background: radial-gradient(circle, rgba(22, 163, 74, 0.08) 0%, transparent 70%);
+  top: auto;
+  left: auto;
   bottom: -10%;
   right: -10%;
+  background: radial-gradient(
+    circle,
+    rgba(22, 163, 74, 0.08) 0%,
+    transparent 70%
+  );
 }
 
 .lp-hero-content {
@@ -154,10 +164,6 @@
   color: var(--lp-orange);
 }
 
-.text-orange {
-  color: #f97316 !important;
-}
-
 .text-green {
   color: var(--lp-green);
 }
@@ -182,7 +188,10 @@
   font-size: 18px;
   font-weight: 700;
   text-decoration: none;
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  transition:
+    transform 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    background-color 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   display: flex;
   align-items: center;
   gap: 10px;
@@ -248,7 +257,13 @@
 /* Demo section */
 .lp-demo-section {
   padding: 90px 5%;
-  background: radial-gradient(circle at 20% 20%, rgba(249, 115, 22, 0.12), transparent 35%), var(--lp-bg);
+  background:
+    radial-gradient(
+      circle at 20% 20%,
+      rgba(249, 115, 22, 0.12),
+      transparent 35%
+    ),
+    var(--lp-bg);
 }
 
 .lp-demo-header {
@@ -384,7 +399,10 @@
   padding: 40px;
   background: #f8fafc;
   border-radius: 32px;
-  transition: all 0.3s;
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease,
+    background-color 0.3s ease;
 }
 
 .step-number {
@@ -536,7 +554,6 @@
 
 /* Responsive */
 @media (max-width: 1024px) {
-
   .lp-split-section,
   .lp-steps-grid,
   .lp-stats-grid,

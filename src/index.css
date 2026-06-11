@@ -2,13 +2,14 @@
    ENTRY POINT — importa tots els fitxers de styles/
    ========================================================= */
 
-@import './styles/variables.css';
-@import './styles/base.css';
-@import './styles/auth.css';
-@import './styles/landing.css';
-@import './styles/animations.css';
-@import './styles/employee.css';
-@import './styles/customer.css';
-@import './styles/topbarAndAnimations.css';
-@import './styles/tailwind.css';
-@import './styles/theme.css';
+@import "./styles/variables.css";
+@import "./styles/base.css";
+@import "./styles/auth.css";
+@import "./styles/landing.css";
+@import "./styles/animations.css";
+@import "./styles/employee.css";
+@import "./styles/customer.css";
+@import "./styles/topbarAndAnimations.css";
+@import "./styles/tailwind.css";
+@import "./styles/theme.css";
+@import "./styles/components.css";
