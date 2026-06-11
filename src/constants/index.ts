@@ -88,3 +88,5 @@ export const API_ENDPOINTS = {
   REWARD_REDEMPTIONS_BY_RESTAURANT: (restaurantId: string) =>
     `/rewardRedemptions/restaurant/${restaurantId}`,
 } as const;
+
+export const DEFAULT_MODEL = "qwen2.5:14b";
