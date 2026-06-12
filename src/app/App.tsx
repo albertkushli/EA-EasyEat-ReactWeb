@@ -8,6 +8,7 @@ import { Dashboard, Home } from '@/features/dashboard';
 import { Clients } from '@/features/customers';
 import DiscoverScreen from '@/screens/DiscoverScreen';
 import LegalNotice from '@/features/legal/LegalNotice';
+import MatomoTracker from '@/components/MatomoTracker';
 import MapScreenPremium from '@/imports/MapScreenPremium';
 import SupportChat from '@/features/support/components/SupportChat';
 import { useMapExperienceData } from '@/features/restaurants/hooks/useMapExperienceData';
@@ -50,6 +51,7 @@ export default function App() {
       <AuthProvider>
         <ChatProvider>
         <Router>
+          <MatomoTracker />
         <Routes>
           <Route
             path="/"
