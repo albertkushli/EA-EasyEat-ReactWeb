@@ -19,7 +19,7 @@
 
   background-color: var(--lp-bg);
   color: var(--lp-text);
-  font-family: "Plus Jakarta Sans", var(--sans);
+  font-family: 'Plus Jakarta Sans', var(--sans);
   overflow-x: hidden;
   text-align: left;
 }
@@ -107,11 +107,7 @@
   position: absolute;
   width: 60vw;
   height: 60vw;
-  background: radial-gradient(
-    circle,
-    rgba(249, 115, 22, 0.08) 0%,
-    transparent 70%
-  );
+  background: radial-gradient(circle, rgba(249, 115, 22, 0.08) 0%, transparent 70%);
   filter: blur(60px);
   top: -10%;
   left: -10%;
@@ -123,11 +119,7 @@
   left: auto;
   bottom: -10%;
   right: -10%;
-  background: radial-gradient(
-    circle,
-    rgba(22, 163, 74, 0.08) 0%,
-    transparent 70%
-  );
+  background: radial-gradient(circle, rgba(22, 163, 74, 0.08) 0%, transparent 70%);
 }
 
 .lp-hero-content {
@@ -258,12 +250,7 @@
 .lp-demo-section {
   padding: 90px 5%;
   background:
-    radial-gradient(
-      circle at 20% 20%,
-      rgba(249, 115, 22, 0.12),
-      transparent 35%
-    ),
-    var(--lp-bg);
+    radial-gradient(circle at 20% 20%, rgba(249, 115, 22, 0.12), transparent 35%), var(--lp-bg);
 }
 
 .lp-demo-header {

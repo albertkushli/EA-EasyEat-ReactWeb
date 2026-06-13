@@ -65,7 +65,9 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ onClose, isDashboard }) => {
     (activeConversation?.restaurant as any)?.profile?.name ?? 'Chat con Restaurante';
 
   return (
-    <div className={`flex flex-col h-full bg-white ${!isDashboard ? 'rounded-2xl shadow-2xl border border-gray-100 overflow-hidden' : ''}`}>
+    <div
+      className={`flex flex-col h-full bg-white ${!isDashboard ? 'rounded-2xl shadow-2xl border border-gray-100 overflow-hidden' : ''}`}
+    >
       {/* ── Header (only in floating mode) ── */}
       {!isDashboard && (
         <div className="p-4 bg-gradient-to-r from-orange-500 to-orange-600 text-white flex items-center justify-between shadow-md">
@@ -76,7 +78,9 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ onClose, isDashboard }) => {
             <div>
               <h3 className="font-bold text-lg">{restaurantName}</h3>
               <div className="flex items-center text-xs opacity-90">
-                <div className={`w-2 h-2 rounded-full mr-2 ${isConnected ? 'bg-green-400' : 'bg-red-400'}`} />
+                <div
+                  className={`w-2 h-2 rounded-full mr-2 ${isConnected ? 'bg-green-400' : 'bg-red-400'}`}
+                />
                 {isConnected ? 'En línea' : 'Desconectado'}
               </div>
             </div>
@@ -121,9 +125,11 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ onClose, isDashboard }) => {
                       <div
                         className={`
                           p-3 rounded-2xl shadow-sm text-sm whitespace-pre-wrap break-words
-                          ${mine
-                            ? 'bg-gradient-to-br from-orange-500 to-orange-600 text-white rounded-tr-none'
-                            : 'bg-white text-gray-800 border border-gray-100 rounded-tl-none'}
+                          ${
+                            mine
+                              ? 'bg-gradient-to-br from-orange-500 to-orange-600 text-white rounded-tr-none'
+                              : 'bg-white text-gray-800 border border-gray-100 rounded-tl-none'
+                          }
                         `}
                       >
                         {msg.contenido}
@@ -153,7 +159,11 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ onClose, isDashboard }) => {
             value={inputText}
             onChange={(e) => setInputText(e.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder={isConnected ? 'Escribe... (Enter para enviar, Shift+Enter para nueva línea)' : 'Conectando...'}
+            placeholder={
+              isConnected
+                ? 'Escribe... (Enter para enviar, Shift+Enter para nueva línea)'
+                : 'Conectando...'
+            }
             disabled={!isConnected}
             className="flex-1 bg-transparent border-none outline-none text-sm py-1 resize-none leading-5 disabled:cursor-not-allowed max-h-[120px] overflow-y-auto"
             style={{ minHeight: '20px' }}

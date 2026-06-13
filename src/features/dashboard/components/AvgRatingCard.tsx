@@ -8,7 +8,7 @@ export default function AvgRatingCard({ value }: { value: number }) {
     <MetricCard
       icon={<Star size={20} />}
       value={value}
-      label={t("components.metrics.avgRating")}
+      label={t('components.metrics.avgRating')}
       variant="rating"
     />
   );

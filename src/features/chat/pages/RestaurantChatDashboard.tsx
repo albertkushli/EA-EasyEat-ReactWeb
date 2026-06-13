@@ -31,13 +31,13 @@ const RestaurantChatDashboard: React.FC = () => {
 
   // Track new messages for unread badge
   useEffect(() => {
-    conversations.forEach(conv => {
+    conversations.forEach((conv) => {
       const lastMsgId = conv.lastMessage?._id;
       if (!lastMsgId) return;
       const isActive = activeConversation?._id === conv._id;
       // Only mark as unread if it's a new message and the conversation is not active
       if (!prevMessages.current.has(lastMsgId) && !isActive) {
-        setUnreadIds(prev => new Set(prev).add(conv._id));
+        setUnreadIds((prev) => new Set(prev).add(conv._id));
       }
       prevMessages.current.add(lastMsgId);
     });
@@ -46,7 +46,7 @@ const RestaurantChatDashboard: React.FC = () => {
   // Clear unread when conversation becomes active
   useEffect(() => {
     if (!activeConversation) return;
-    setUnreadIds(prev => {
+    setUnreadIds((prev) => {
       const next = new Set(prev);
       next.delete(activeConversation._id);
       return next;
@@ -81,17 +81,15 @@ const RestaurantChatDashboard: React.FC = () => {
     }
   };
 
-  const getCustomerName = (conv: Conversation) =>
-    conv.customer?.name ?? 'Cliente';
+  const getCustomerName = (conv: Conversation) => conv.customer?.name ?? 'Cliente';
 
-  const getCustomerAvatar = (conv: Conversation) =>
-    conv.customer?.profilePictures?.[0] ?? null;
+  const getCustomerAvatar = (conv: Conversation) => conv.customer?.profilePictures?.[0] ?? null;
 
   const getLastMessageText = (conv: Conversation) =>
     conv.lastMessage?.contenido ?? 'Empieza a chatear...';
 
   const filtered = conversations.filter((c) =>
-    getCustomerName(c).toLowerCase().includes(search.toLowerCase())
+    getCustomerName(c).toLowerCase().includes(search.toLowerCase()),
   );
 
   return (
@@ -123,9 +121,7 @@ const RestaurantChatDashboard: React.FC = () => {
               {/* Connection badge */}
               <span
                 className={`flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-full ${
-                  isConnected
-                    ? 'bg-green-100 text-green-700'
-                    : 'bg-red-100 text-red-600'
+                  isConnected ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-600'
                 }`}
               >
                 {isConnected ? <Wifi size={12} /> : <WifiOff size={12} />}
@@ -134,10 +130,7 @@ const RestaurantChatDashboard: React.FC = () => {
             </div>
           </div>
           <div className="relative">
-            <Search
-              className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
-              size={15}
-            />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={15} />
             <input
               type="text"
               placeholder="Buscar cliente..."
@@ -156,9 +149,7 @@ const RestaurantChatDashboard: React.FC = () => {
                 <MessageSquare size={28} />
               </div>
               <p className="text-sm">
-                {search
-                  ? 'No se encontraron resultados'
-                  : 'No hay conversaciones activas aún'}
+                {search ? 'No se encontraron resultados' : 'No hay conversaciones activas aún'}
               </p>
             </div>
           ) : (
@@ -206,14 +197,18 @@ const RestaurantChatDashboard: React.FC = () => {
                     {/* Info */}
                     <div className="flex-1 min-w-0 text-left">
                       <div className="flex justify-between items-baseline mb-0.5">
-                        <h4 className={`truncate text-sm ${hasUnread ? 'font-bold text-gray-900' : 'font-semibold text-gray-800'}`}>
+                        <h4
+                          className={`truncate text-sm ${hasUnread ? 'font-bold text-gray-900' : 'font-semibold text-gray-800'}`}
+                        >
                           {getCustomerName(conv)}
                         </h4>
                         <span className="text-[10px] text-gray-400 font-medium whitespace-nowrap ml-2">
                           {formatDate(conv.lastMessageAt)}
                         </span>
                       </div>
-                      <p className={`text-xs truncate ${hasUnread ? 'text-gray-700 font-medium' : 'text-gray-500'}`}>
+                      <p
+                        className={`text-xs truncate ${hasUnread ? 'text-gray-700 font-medium' : 'text-gray-500'}`}
+                      >
                         {getLastMessageText(conv)}
                       </p>
                     </div>

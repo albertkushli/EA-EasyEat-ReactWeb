@@ -25,10 +25,7 @@ function buildPeakVisitStats(visits: any, restaurantId: any) {
   const currentRestaurantId = normalizeRestaurantId(restaurantId);
 
   const filteredVisits = Array.isArray(visits)
-    ? visits.filter(
-      (visit) =>
-        normalizeRestaurantId(visit?.restaurant_id) === currentRestaurantId,
-    )
+    ? visits.filter((visit) => normalizeRestaurantId(visit?.restaurant_id) === currentRestaurantId)
     : [];
 
   if (!filteredVisits.length) {
@@ -46,10 +43,30 @@ function buildPeakVisitStats(visits: any, restaurantId: any) {
   });
 
   return [
-    '00:00', '01:00', '02:00', '03:00', '04:00', '05:00',
-    '06:00', '07:00', '08:00', '09:00', '10:00', '11:00',
-    '12:00', '13:00', '14:00', '15:00', '16:00', '17:00',
-    '18:00', '19:00', '20:00', '21:00', '22:00', '23:00',
+    '00:00',
+    '01:00',
+    '02:00',
+    '03:00',
+    '04:00',
+    '05:00',
+    '06:00',
+    '07:00',
+    '08:00',
+    '09:00',
+    '10:00',
+    '11:00',
+    '12:00',
+    '13:00',
+    '14:00',
+    '15:00',
+    '16:00',
+    '17:00',
+    '18:00',
+    '19:00',
+    '20:00',
+    '21:00',
+    '22:00',
+    '23:00',
   ]
     .map((hour) => ({
       hour,
@@ -58,7 +75,13 @@ function buildPeakVisitStats(visits: any, restaurantId: any) {
     .filter((item) => item.visits > 0);
 }
 
-export default function PeakVisitHoursChart({ visits, restaurantId }: { visits: IVisit[], restaurantId: string }) {
+export default function PeakVisitHoursChart({
+  visits,
+  restaurantId,
+}: {
+  visits: IVisit[];
+  restaurantId: string;
+}) {
   const { t } = useTranslation();
   const data = buildPeakVisitStats(visits, restaurantId);
   const hasVisits = data.length > 0;
@@ -66,14 +89,14 @@ export default function PeakVisitHoursChart({ visits, restaurantId }: { visits: 
   if (!hasVisits) {
     return (
       <p style={{ color: 'var(--clr-text-muted)', fontSize: 'var(--text-sm)' }}>
-        {t("components.peakHours.noVisits")}
+        {t('components.peakHours.noVisits')}
       </p>
     );
   }
 
   return (
     <div style={{ width: '100%', height: 220 }}>
-      <h3>{t("components.peakHours.chartTitle")}</h3>
+      <h3>{t('components.peakHours.chartTitle')}</h3>
 
       <ResponsiveContainer width="100%" height="100%">
         <LineChart data={data}>
@@ -81,12 +104,7 @@ export default function PeakVisitHoursChart({ visits, restaurantId }: { visits: 
           <XAxis dataKey="hour" />
           <YAxis />
           <Tooltip />
-          <Line
-            type="monotone"
-            dataKey="visits"
-            stroke="hsl(48,96%,60%)"
-            strokeWidth={2.5}
-          />
+          <Line type="monotone" dataKey="visits" stroke="hsl(48,96%,60%)" strokeWidth={2.5} />
         </LineChart>
       </ResponsiveContainer>
     </div>

@@ -28,12 +28,16 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     window.localStorage.setItem(STORAGE_KEY, theme);
   }, [theme]);
 
-  const value = useMemo<ThemeContextValue>(() => ({
-    theme,
-    isDark: theme === 'dark',
-    toggleTheme: () => setThemeState((currentTheme) => (currentTheme === 'dark' ? 'light' : 'dark')),
-    setTheme: setThemeState,
-  }), [theme]);
+  const value = useMemo<ThemeContextValue>(
+    () => ({
+      theme,
+      isDark: theme === 'dark',
+      toggleTheme: () =>
+        setThemeState((currentTheme) => (currentTheme === 'dark' ? 'light' : 'dark')),
+      setTheme: setThemeState,
+    }),
+    [theme],
+  );
 
   return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;
 }

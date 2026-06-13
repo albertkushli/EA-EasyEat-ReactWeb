@@ -8,9 +8,16 @@ interface AuthContextType {
   auth: IAuthState | null;
   user: IUser | null;
   token: string | null;
-  login: (email: string, password: string, userType?: string) => Promise<{ success: boolean; error?: string }>;
+  login: (
+    email: string,
+    password: string,
+    userType?: string,
+  ) => Promise<{ success: boolean; error?: string }>;
   register: (userData: any) => Promise<{ success: boolean; error?: string }>;
-  loginGoogle: (credential: string, role: 'customer' | 'employee') => Promise<{ success: boolean; error?: string }>;
+  loginGoogle: (
+    credential: string,
+    role: 'customer' | 'employee',
+  ) => Promise<{ success: boolean; error?: string }>;
   logout: () => Promise<void>;
   refreshSession: () => Promise<string | null>;
   updateUser: (updatedUserFields: Partial<IUser>) => void;
@@ -124,7 +131,7 @@ export const AuthProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
           return { success: true };
         } else {
-          return { success: false, error: "Unexpected response: " + res.status + " " + res.data };
+          return { success: false, error: 'Unexpected response: ' + res.status + ' ' + res.data };
         }
       } catch (error: any) {
         console.error('Login error:', error);
@@ -134,7 +141,7 @@ export const AuthProvider: FC<{ children: ReactNode }> = ({ children }) => {
         };
       }
     },
-    []
+    [],
   );
 
   const register = useCallback(
@@ -147,7 +154,7 @@ export const AuthProvider: FC<{ children: ReactNode }> = ({ children }) => {
           // 2. Perform auto-login using the credentials provided during registration
           return await login(userData.email, userData.password, 'customer');
         } else {
-          return { success: false, error: "Unexpected response: " + res.status + " " + res.data };
+          return { success: false, error: 'Unexpected response: ' + res.status + ' ' + res.data };
         }
       } catch (error: any) {
         console.error('Register error:', error);
@@ -157,37 +164,34 @@ export const AuthProvider: FC<{ children: ReactNode }> = ({ children }) => {
         };
       }
     },
-    [login]
+    [login],
   );
 
-  const loginGoogle = useCallback(
-    async (credential: string, role: 'customer' | 'employee') => {
-      try {
-        const res = await apiClient.post('/auth/login/google', { idToken: credential, role });
+  const loginGoogle = useCallback(async (credential: string, role: 'customer' | 'employee') => {
+    try {
+      const res = await apiClient.post('/auth/login/google', { idToken: credential, role });
 
-        if (res.status === 200) {
-          const { accessToken } = res.data;
-          const userPayload = res.data.customer || res.data.employee || res.data.admin;
-          setAuth({ accessToken, user: userPayload });
-          return { success: true };
-        } else {
-          return { success: false, error: "Unexpected response: " + res.status + " " + res.data };
-        }
-      } catch (error: any) {
-        console.error('Google login error:', error);
-        return {
-          success: false,
-          error: error.response?.data?.message || 'Google login failed',
-        };
+      if (res.status === 200) {
+        const { accessToken } = res.data;
+        const userPayload = res.data.customer || res.data.employee || res.data.admin;
+        setAuth({ accessToken, user: userPayload });
+        return { success: true };
+      } else {
+        return { success: false, error: 'Unexpected response: ' + res.status + ' ' + res.data };
       }
-    },
-    []
-  );
+    } catch (error: any) {
+      console.error('Google login error:', error);
+      return {
+        success: false,
+        error: error.response?.data?.message || 'Google login failed',
+      };
+    }
+  }, []);
 
   const logout = useCallback(async () => {
     try {
       // Optional: notify backend we're logging out
-      await apiClient.post('/auth/logout', {}).catch(() => { });
+      await apiClient.post('/auth/logout', {}).catch(() => {});
     } finally {
       setAuth(null);
       setRestaurant(null);
@@ -237,11 +241,7 @@ export const AuthProvider: FC<{ children: ReactNode }> = ({ children }) => {
     reloadRestaurant,
   };
 
-  return (
-    <AuthContext.Provider value={value}>
-      {!loading && children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={value}>{!loading && children}</AuthContext.Provider>;
 };
 
 // eslint-disable-next-line react-refresh/only-export-components

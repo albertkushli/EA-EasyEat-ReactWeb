@@ -1,7 +1,7 @@
-import { motion, AnimatePresence } from "framer-motion";
-import { MapPin, Star, Clock, DollarSign, X, ArrowRight } from "lucide-react";
-import type { Restaurant } from "@/types/Restaurant";
-import { MAP_THEME } from "@/constants/mapTheme";
+import { motion, AnimatePresence } from 'framer-motion';
+import { MapPin, Star, Clock, DollarSign, X, ArrowRight } from 'lucide-react';
+import type { Restaurant } from '@/types/Restaurant';
+import { MAP_THEME } from '@/constants/mapTheme';
 
 interface RestaurantPreviewCardProps {
   restaurant: Restaurant | null;
@@ -12,27 +12,25 @@ interface RestaurantPreviewCardProps {
 function getImage(r: Restaurant): string {
   return (
     r.profile?.image?.[0] ||
-    "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=300&h=200&fit=crop&q=70"
+    'https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=300&h=200&fit=crop&q=70'
   );
 }
 
 function getCuisine(r: Restaurant): string {
-  return r.profile?.category?.slice(0, 2).join(" · ") || "Restaurant";
+  return r.profile?.category?.slice(0, 2).join(' · ') || 'Restaurant';
 }
 
 function getPrice(r: Restaurant): string {
   const len = r.profile?.description?.length ?? 0;
-  return len > 100 ? "€€€" : len > 40 ? "€€" : "€";
+  return len > 100 ? '€€€' : len > 40 ? '€€' : '€';
 }
 
 function estimatedTime(restaurantId?: string): string {
-  const times = ["12-18", "15-25", "20-30", "25-35"];
+  const times = ['12-18', '15-25', '20-30', '25-35'];
   if (!restaurantId) return times[0];
 
   // Keep value deterministic per restaurant to avoid visual jitter on rerenders.
-  const idx =
-    restaurantId.split("").reduce((acc, ch) => acc + ch.charCodeAt(0), 0) %
-    times.length;
+  const idx = restaurantId.split('').reduce((acc, ch) => acc + ch.charCodeAt(0), 0) % times.length;
 
   return times[idx];
 }
@@ -57,7 +55,7 @@ export const RestaurantPreviewCard: React.FC<RestaurantPreviewCardProps> = ({
             <div className="relative w-full h-40 overflow-hidden bg-gray-200">
               <img
                 src={getImage(restaurant)}
-                alt={restaurant.profile?.name || "Restaurant"}
+                alt={restaurant.profile?.name || 'Restaurant'}
                 className="w-full h-full object-cover"
                 loading="lazy"
               />
@@ -94,11 +92,9 @@ export const RestaurantPreviewCard: React.FC<RestaurantPreviewCardProps> = ({
             <div className="p-4">
               {/* Name & Cuisine */}
               <h3 className="font-semibold text-gray-900 text-base mb-1 line-clamp-1">
-                {restaurant.profile?.name || "Restaurant"}
+                {restaurant.profile?.name || 'Restaurant'}
               </h3>
-              <p className="text-xs text-gray-500 mb-3">
-                {getCuisine(restaurant)}
-              </p>
+              <p className="text-xs text-gray-500 mb-3">{getCuisine(restaurant)}</p>
 
               {/* Info Row */}
               <div className="flex flex-wrap gap-2 mb-4">

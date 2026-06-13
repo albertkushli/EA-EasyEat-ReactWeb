@@ -51,8 +51,8 @@ export interface CustomerBadge {
 }
 
 export interface CustomerPointsWalletEntry {
-  _id?: string,
-  id?: string,
+  _id?: string;
+  id?: string;
   restaurant_id?: string | CustomerRestaurant | { _id?: string; id?: string };
   points?: number;
 }
@@ -159,12 +159,23 @@ function parsePaginatedListResponse<T>(payload: unknown, fallbackLimit = 10): Pa
   const total = toNumber(rawMeta.total, data.length);
   const page = toNumber(rawMeta.page, 1);
   const limit = toNumber(rawMeta.limit, fallbackLimit);
-  const totalPages = toNumber(rawMeta.totalPages, Math.max(1, Math.ceil(total / Math.max(1, limit))));
+  const totalPages = toNumber(
+    rawMeta.totalPages,
+    Math.max(1, Math.ceil(total / Math.max(1, limit))),
+  );
 
   return { data, meta: { total, page, limit, totalPages } };
 }
 
-function getRestaurantIdFromEntry(entry: CustomerRestaurant | CustomerPointsWalletEntry | CustomerVisit | CustomerReward | null | undefined): string | undefined {
+function getRestaurantIdFromEntry(
+  entry:
+    | CustomerRestaurant
+    | CustomerPointsWalletEntry
+    | CustomerVisit
+    | CustomerReward
+    | null
+    | undefined,
+): string | undefined {
   if (!entry || !isRecord(entry)) return undefined;
 
   const directRestaurantId = entry.restaurant_id;
@@ -211,41 +222,50 @@ export function useCustomerDashboard(): UseCustomerDashboardResult {
     [selectedRestaurant],
   );
 
-  const updateDashboardSearchParams = useCallback((tab: CustomerTabId, restaurantId?: string | null) => {
-    setSearchParams((currentParams) => {
-      const nextParams = new URLSearchParams(currentParams);
-      nextParams.set('tab', tab);
+  const updateDashboardSearchParams = useCallback(
+    (tab: CustomerTabId, restaurantId?: string | null) => {
+      setSearchParams((currentParams) => {
+        const nextParams = new URLSearchParams(currentParams);
+        nextParams.set('tab', tab);
 
-      if (restaurantId) {
-        nextParams.set('restaurantId', restaurantId);
-      } else {
-        nextParams.delete('restaurantId');
+        if (restaurantId) {
+          nextParams.set('restaurantId', restaurantId);
+        } else {
+          nextParams.delete('restaurantId');
+        }
+
+        return nextParams;
+      });
+    },
+    [setSearchParams],
+  );
+
+  const handleTabChange = useCallback(
+    (tab: CustomerTabId) => {
+      trackEvent('Dashboard', 'Change tab', tab);
+      const nextSelectedRestaurantId = tab === 'discover' ? selectedRestaurantId : null;
+
+      updateDashboardSearchParams(tab, nextSelectedRestaurantId);
+
+      if (tab !== 'discover') {
+        setSelectedRestaurant(null);
       }
 
-      return nextParams;
-    });
-  }, [setSearchParams]);
+      setSelectedReward(null);
+    },
+    [selectedRestaurantId, updateDashboardSearchParams],
+  );
 
-  const handleTabChange = useCallback((tab: CustomerTabId) => {
-    trackEvent('Dashboard', 'Change tab', tab);
-    const nextSelectedRestaurantId = tab === 'discover' ? selectedRestaurantId : null;
+  const handleSelectedRestaurantChange = useCallback(
+    (restaurant: CustomerRestaurant | null) => {
+      setSelectedRestaurant(restaurant);
+      setSelectedReward(null);
 
-    updateDashboardSearchParams(tab, nextSelectedRestaurantId);
-
-    if (tab !== 'discover') {
-      setSelectedRestaurant(null);
-    }
-
-    setSelectedReward(null);
-  }, [selectedRestaurantId, updateDashboardSearchParams]);
-
-  const handleSelectedRestaurantChange = useCallback((restaurant: CustomerRestaurant | null) => {
-    setSelectedRestaurant(restaurant);
-    setSelectedReward(null);
-
-    const restaurantId = getRestaurantIdFromEntry(restaurant) ?? null;
-    updateDashboardSearchParams('discover', restaurantId);
-  }, [updateDashboardSearchParams]);
+      const restaurantId = getRestaurantIdFromEntry(restaurant) ?? null;
+      updateDashboardSearchParams('discover', restaurantId);
+    },
+    [updateDashboardSearchParams],
+  );
 
   useEffect(() => {
     if (activeTab !== 'discover') return;
@@ -264,11 +284,11 @@ export function useCustomerDashboard(): UseCustomerDashboardResult {
       return;
     }
 
-    setSelectedRestaurant((currentRestaurant) => (
+    setSelectedRestaurant((currentRestaurant) =>
       getRestaurantIdFromEntry(currentRestaurant) === restaurantId
         ? currentRestaurant
-        : restaurantFromParams
-    ));
+        : restaurantFromParams,
+    );
   }, [activeTab, loadingCustomerData, restaurants, searchParams]);
 
   useEffect(() => {
@@ -280,23 +300,34 @@ export function useCustomerDashboard(): UseCustomerDashboardResult {
       }
 
       try {
-        const [favRes, ptsRes, badgesRes, visitsRes, profileRes, restRes, rewardsRes] = await Promise.allSettled([
-          apiClient.get(`/customers/${customerId}/favouriteRestaurants`, { params: { page: 1, limit: 10 } }),
-          apiClient.get(`/customers/${customerId}/pointsWallet`, { params: { page: 1, limit: 20 } }),
-          apiClient.get(`/customers/${customerId}/badges`, { params: { page: 1, limit: 10 } }),
-          apiClient.get(`/customers/${customerId}/visits`, { params: { page: 1, limit: 20 } }),
-          fetchCustomer(customerId),
-          apiClient.get('/restaurants', { params: { page: 1, limit: 100 } }),
-          apiClient.get('/rewards', { params: { page: 1, limit: 500 } }),
-        ]);
+        const [favRes, ptsRes, badgesRes, visitsRes, profileRes, restRes, rewardsRes] =
+          await Promise.allSettled([
+            apiClient.get(`/customers/${customerId}/favouriteRestaurants`, {
+              params: { page: 1, limit: 10 },
+            }),
+            apiClient.get(`/customers/${customerId}/pointsWallet`, {
+              params: { page: 1, limit: 20 },
+            }),
+            apiClient.get(`/customers/${customerId}/badges`, { params: { page: 1, limit: 10 } }),
+            apiClient.get(`/customers/${customerId}/visits`, { params: { page: 1, limit: 20 } }),
+            fetchCustomer(customerId),
+            apiClient.get('/restaurants', { params: { page: 1, limit: 100 } }),
+            apiClient.get('/rewards', { params: { page: 1, limit: 500 } }),
+          ]);
 
         if (favRes.status === 'fulfilled') {
-          const parsedFavorites = parsePaginatedListResponse<CustomerRestaurant>(favRes.value.data, 10);
+          const parsedFavorites = parsePaginatedListResponse<CustomerRestaurant>(
+            favRes.value.data,
+            10,
+          );
           setFavoriteRestaurants(parsedFavorites.data);
         }
 
         if (ptsRes.status === 'fulfilled') {
-          const parsedPoints = parsePaginatedListResponse<CustomerPointsWalletEntry>(ptsRes.value.data, 20);
+          const parsedPoints = parsePaginatedListResponse<CustomerPointsWalletEntry>(
+            ptsRes.value.data,
+            20,
+          );
           setPointsWallet(parsedPoints.data);
         }
 
@@ -317,12 +348,18 @@ export function useCustomerDashboard(): UseCustomerDashboardResult {
         }
 
         if (restRes.status === 'fulfilled') {
-          const parsedRest = parsePaginatedListResponse<CustomerRestaurant>(restRes.value.data, 100);
+          const parsedRest = parsePaginatedListResponse<CustomerRestaurant>(
+            restRes.value.data,
+            100,
+          );
           setRestaurants(parsedRest.data);
         }
 
         if (rewardsRes.status === 'fulfilled') {
-          const parsedRewards = parsePaginatedListResponse<CustomerReward>(rewardsRes.value.data, 500);
+          const parsedRewards = parsePaginatedListResponse<CustomerReward>(
+            rewardsRes.value.data,
+            500,
+          );
           setAllRewards(parsedRewards.data);
         }
       } catch (error) {
@@ -337,67 +374,75 @@ export function useCustomerDashboard(): UseCustomerDashboardResult {
     }
   }, [user, token]);
 
-  const handleToggleFavorite = useCallback((restaurant: CustomerRestaurant) => {
-    const isFavorite = favoriteRestaurants.some((favorite) => favorite._id === restaurant._id);
+  const handleToggleFavorite = useCallback(
+    (restaurant: CustomerRestaurant) => {
+      const isFavorite = favoriteRestaurants.some((favorite) => favorite._id === restaurant._id);
 
-    if (isFavorite) {
-      setFavoriteRestaurants(favoriteRestaurants.filter((favorite) => favorite._id !== restaurant._id));
-    } else {
-      setFavoriteRestaurants([...favoriteRestaurants, restaurant]);
-    }
-  }, [favoriteRestaurants]);
+      if (isFavorite) {
+        setFavoriteRestaurants(
+          favoriteRestaurants.filter((favorite) => favorite._id !== restaurant._id),
+        );
+      } else {
+        setFavoriteRestaurants([...favoriteRestaurants, restaurant]);
+      }
+    },
+    [favoriteRestaurants],
+  );
 
-  const handleSubmitProfile = useCallback(async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    if (!token || !customer?._id) return;
+  const handleSubmitProfile = useCallback(
+    async (event: FormEvent<HTMLFormElement>) => {
+      event.preventDefault();
+      if (!token || !customer?._id) return;
 
-    setNameError('');
-    setEmailError('');
-    setPasswordError('');
+      setNameError('');
+      setEmailError('');
+      setPasswordError('');
 
-    let hasError = false;
+      let hasError = false;
 
-    if (customerName.length < 2 || customerName.length > 100) {
-      setNameError(t('settings.form.nameError'));
-      hasError = true;
-    }
+      if (customerName.length < 2 || customerName.length > 100) {
+        setNameError(t('settings.form.nameError'));
+        hasError = true;
+      }
 
-    if (!EMAIL_REGEX.test(customerEmail)) {
-      setEmailError(t('settings.form.emailError'));
-      hasError = true;
-    }
+      if (!EMAIL_REGEX.test(customerEmail)) {
+        setEmailError(t('settings.form.emailError'));
+        hasError = true;
+      }
 
-    if (customerPassword.length > 0 && !PASSWORD_REGEX.test(customerPassword)) {
-      setPasswordError(t('settings.form.passwordError'));
-      hasError = true;
-    }
+      if (customerPassword.length > 0 && !PASSWORD_REGEX.test(customerPassword)) {
+        setPasswordError(t('settings.form.passwordError'));
+        hasError = true;
+      }
 
-    if (hasError) return;
+      if (hasError) return;
 
-    setUpdating(true);
-    setSuccess(false);
+      setUpdating(true);
+      setSuccess(false);
 
-    try {
-      const updatedCustomer = await updateCustomer(customer._id, {
-        ...customer,
-        name: customerName,
-        email: customerEmail,
-        password: customerPassword.length > 0 ? customerPassword : undefined,
-      });
+      try {
+        const updatedCustomer = await updateCustomer(customer._id, {
+          ...customer,
+          name: customerName,
+          email: customerEmail,
+          password: customerPassword.length > 0 ? customerPassword : undefined,
+        });
 
-      if (!updatedCustomer) return;
+        if (!updatedCustomer) return;
 
-      setCustomer(updatedCustomer);
-      updateUser({ name: updatedCustomer.name, email: updatedCustomer.email });
-      setSuccess(true);
-      setCustomerPassword('');
-      setTimeout(() => setSuccess(false), 3000);
-    } catch (error) {
-      console.error('Error updating customer:', error);
-    } finally {
-      setUpdating(false);
-    }
-  }, [customer, customerEmail, customerName, customerPassword, t, token, updateUser]);
+        setCustomer(updatedCustomer);
+        updateUser({ name: updatedCustomer.name, email: updatedCustomer.email });
+        setSuccess(true);
+        setCustomerPassword('');
+        setTimeout(() => setSuccess(false), 3000);
+      } catch (error) {
+        console.error('Error updating customer:', error);
+      } finally {
+        setUpdating(false);
+      }
+    },
+    [customer, customerEmail, customerName, customerPassword, t, token, updateUser],
+  );
 
   const handleDeleteAccount = useCallback(async () => {
     if (!customer?._id) return;
@@ -415,14 +460,19 @@ export function useCustomerDashboard(): UseCustomerDashboardResult {
   );
 
   const uniqueRestaurantsVisited = useMemo(
-    () => new Set(visits.map((visit) => {
-      if (isRecord(visit.restaurant_id)) {
-        const restaurantProfile = isRecord((visit.restaurant_id as any).profile) ? (visit.restaurant_id as any).profile : null;
-        return String(restaurantProfile?.name ?? visit.restaurant_name ?? '');
-      }
+    () =>
+      new Set(
+        visits.map((visit) => {
+          if (isRecord(visit.restaurant_id)) {
+            const restaurantProfile = isRecord((visit.restaurant_id as any).profile)
+              ? (visit.restaurant_id as any).profile
+              : null;
+            return String(restaurantProfile?.name ?? visit.restaurant_name ?? '');
+          }
 
-      return visit.restaurant_name || '';
-    })).size,
+          return visit.restaurant_name || '';
+        }),
+      ).size,
     [visits],
   );
 

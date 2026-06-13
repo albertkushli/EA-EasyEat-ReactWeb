@@ -1,7 +1,12 @@
-import { useEffect, useState, type MouseEvent } from "react";
-import { getDishesByRestaurant, createDish, updateDish, deleteDish } from "../../../services/dish.service";
-import type { Dish } from "../../../types/Dish";
-import { useAuth } from "../../../context/AuthContext";
+import { useEffect, useState, type MouseEvent } from 'react';
+import {
+  getDishesByRestaurant,
+  createDish,
+  updateDish,
+  deleteDish,
+} from '../../../services/dish.service';
+import type { Dish } from '../../../types/Dish';
+import { useAuth } from '../../../context/AuthContext';
 import {
   ChevronDown,
   Info,
@@ -14,10 +19,10 @@ import {
   Edit2,
   Trash2,
   Flame,
-  Leaf
-} from "lucide-react";
-import DishModal from "./DishModal";
-import { useTranslation } from "react-i18next";
+  Leaf,
+} from 'lucide-react';
+import DishModal from './DishModal';
+import { useTranslation } from 'react-i18next';
 
 export default function Dishes() {
   const { t } = useTranslation();
@@ -31,14 +36,16 @@ export default function Dishes() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedDish, setSelectedDish] = useState<Dish | null>(null);
 
-  const restaurantId = user?.restaurant_id || restaurant?._id || restaurant?.id || "";
+  const restaurantId = user?.restaurant_id || restaurant?._id || restaurant?.id || '';
 
   useEffect(() => {
     if (restaurantId) {
       loadDishes();
     } else {
       setLoading(false);
-      setError(t('employees.errorNoRestaurant') || "No se pudo identificar el restaurante del usuario.");
+      setError(
+        t('employees.errorNoRestaurant') || 'No se pudo identificar el restaurante del usuario.',
+      );
     }
   }, [restaurantId, t]);
 
@@ -49,8 +56,8 @@ export default function Dishes() {
       const data = await getDishesByRestaurant(restaurantId);
       setDishes(data);
     } catch (err: any) {
-      console.error("Error loading dishes:", err);
-      setError(err.message || t('dishes.errorLoading') || "No se pudieron cargar los platos.");
+      console.error('Error loading dishes:', err);
+      setError(err.message || t('dishes.errorLoading') || 'No se pudieron cargar los platos.');
     } finally {
       setLoading(false);
     }
@@ -69,12 +76,16 @@ export default function Dishes() {
 
   const handleDeleteClick = async (e: MouseEvent<HTMLButtonElement>, dishId: string) => {
     e.stopPropagation();
-    if (window.confirm(t('dishes.confirmDelete') || "¿Estás seguro de que quieres eliminar este plato?")) {
+    if (
+      window.confirm(
+        t('dishes.confirmDelete') || '¿Estás seguro de que quieres eliminar este plato?',
+      )
+    ) {
       try {
         await deleteDish(dishId, restaurantId);
-        setDishes(dishes.filter(d => d._id !== dishId));
+        setDishes(dishes.filter((d) => d._id !== dishId));
       } catch (err) {
-        alert(t('dishes.errorDelete') || "Error al eliminar el plato");
+        alert(t('dishes.errorDelete') || 'Error al eliminar el plato');
       }
     }
   };
@@ -82,14 +93,17 @@ export default function Dishes() {
   const handleSaveDish = async (dishData: Partial<Dish>) => {
     try {
       if (selectedDish) {
-        const updated = await updateDish(selectedDish._id, { ...dishData, restaurant_id: restaurantId });
-        setDishes(dishes.map(d => d._id === selectedDish._id ? updated : d));
+        const updated = await updateDish(selectedDish._id, {
+          ...dishData,
+          restaurant_id: restaurantId,
+        });
+        setDishes(dishes.map((d) => (d._id === selectedDish._id ? updated : d)));
       } else {
         const created = await createDish({ ...dishData, restaurant_id: restaurantId });
         setDishes([...dishes, created]);
       }
     } catch (err) {
-      console.error("Error saving dish:", err);
+      console.error('Error saving dish:', err);
       throw err;
     }
   };
@@ -143,7 +157,9 @@ export default function Dishes() {
             <Utensils className="w-10 h-10 text-gray-200" />
           </div>
           <h3 className="text-xl font-black text-gray-800">{t('dishes.noDishes')}</h3>
-          <p className="text-gray-500 mt-2 max-w-xs mx-auto text-sm leading-relaxed">{t('dishes.noDishesSubtitle')}</p>
+          <p className="text-gray-500 mt-2 max-w-xs mx-auto text-sm leading-relaxed">
+            {t('dishes.noDishesSubtitle')}
+          </p>
         </div>
       ) : (
         <div className="space-y-4">
@@ -153,14 +169,18 @@ export default function Dishes() {
             return (
               <div
                 key={dish._id}
-                className={`bg-white rounded-2xl shadow-sm border transition-all duration-300 overflow-hidden hover:scale-[1.01] hover:shadow-md ${isExpanded ? "border-orange-200 ring-4 ring-orange-50" : "border-gray-100"
-                  }`}
+                className={`bg-white rounded-2xl shadow-sm border transition-all duration-300 overflow-hidden hover:scale-[1.01] hover:shadow-md ${
+                  isExpanded ? 'border-orange-200 ring-4 ring-orange-50' : 'border-gray-100'
+                }`}
               >
                 {/* Basic Info (Header) */}
                 <div className="p-4 flex items-center gap-4">
-                  <div className="relative flex-shrink-0 cursor-pointer" onClick={() => toggleExpand(dish._id)}>
+                  <div
+                    className="relative flex-shrink-0 cursor-pointer"
+                    onClick={() => toggleExpand(dish._id)}
+                  >
                     <img
-                      src={dish.images?.[0] || "https://via.placeholder.com/150?text=No+Image"}
+                      src={dish.images?.[0] || 'https://via.placeholder.com/150?text=No+Image'}
                       alt={dish.name}
                       className="w-20 h-20 rounded-xl object-cover shadow-sm border border-gray-100"
                     />
@@ -173,7 +193,10 @@ export default function Dishes() {
 
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between">
-                      <h3 className="font-black text-gray-800 text-lg truncate leading-tight group-hover:text-orange-600 transition-colors" onClick={() => toggleExpand(dish._id)}>
+                      <h3
+                        className="font-black text-gray-800 text-lg truncate leading-tight group-hover:text-orange-600 transition-colors"
+                        onClick={() => toggleExpand(dish._id)}
+                      >
                         {dish.name}
                       </h3>
 
@@ -186,12 +209,16 @@ export default function Dishes() {
                         <div className="flex items-center gap-1 border-l border-gray-100 pl-4 ml-2">
                           <button
                             onClick={(e) => handleEditClick(e, dish)}
-                            className="p-2 rounded-lg text-gray-400 hover:text-blue-500 hover:bg-blue-50 transition-all duration-200" title={t('dishes.editDish')}>
+                            className="p-2 rounded-lg text-gray-400 hover:text-blue-500 hover:bg-blue-50 transition-all duration-200"
+                            title={t('dishes.editDish')}
+                          >
                             <Edit2 className="w-4 h-4" />
                           </button>
                           <button
                             onClick={(e) => handleDeleteClick(e, dish._id)}
-                            className="p-2 rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 transition-all duration-200" title={t('dishes.deleteDish')}>
+                            className="p-2 rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 transition-all duration-200"
+                            title={t('dishes.deleteDish')}
+                          >
                             <Trash2 className="w-4 h-4" />
                           </button>
                         </div>
@@ -202,7 +229,9 @@ export default function Dishes() {
                       {dish.portionSize && (
                         <div className="flex items-center gap-1.5 bg-gray-50 px-2 py-1 rounded-lg">
                           <Utensils className="w-3 h-3 text-gray-400" />
-                          <span className="text-[10px] font-black text-gray-500 uppercase tracking-widest">{dish.portionSize}</span>
+                          <span className="text-[10px] font-black text-gray-500 uppercase tracking-widest">
+                            {dish.portionSize}
+                          </span>
                         </div>
                       )}
                       <button
@@ -210,14 +239,16 @@ export default function Dishes() {
                         className="flex items-center gap-1.5 bg-orange-50 px-2 py-1 rounded-lg group transition-all"
                       >
                         <Info className="w-3 h-3 text-orange-400" />
-                        <span className="text-orange-500 font-black text-[9px] tracking-widest group-hover:underline">{t('dishes.viewDetails').toUpperCase()}</span>
+                        <span className="text-orange-500 font-black text-[9px] tracking-widest group-hover:underline">
+                          {t('dishes.viewDetails').toUpperCase()}
+                        </span>
                       </button>
                     </div>
                   </div>
 
                   <button
                     onClick={() => toggleExpand(dish._id)}
-                    className={`p-2 rounded-xl transition-all duration-300 ${isExpanded ? "bg-orange-500 text-white rotate-180 shadow-md shadow-orange-200" : "bg-gray-50 text-gray-400 hover:bg-gray-100"}`}
+                    className={`p-2 rounded-xl transition-all duration-300 ${isExpanded ? 'bg-orange-500 text-white rotate-180 shadow-md shadow-orange-200' : 'bg-gray-50 text-gray-400 hover:bg-gray-100'}`}
                   >
                     <ChevronDown className="w-5 h-5" />
                   </button>
@@ -225,8 +256,9 @@ export default function Dishes() {
 
                 {/* Expanded Info (Accordion Body) */}
                 <div
-                  className={`transition-all duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] overflow-hidden ${isExpanded ? "max-h-[1000px] opacity-100" : "max-h-0 opacity-0"
-                    }`}
+                  className={`transition-all duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] overflow-hidden ${
+                    isExpanded ? 'max-h-[1000px] opacity-100' : 'max-h-0 opacity-0'
+                  }`}
                 >
                   <div className="p-8 bg-gray-50/50 border-t border-gray-50 space-y-8">
                     {/* Description */}
@@ -242,13 +274,24 @@ export default function Dishes() {
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
                       <div className="bg-white p-6 rounded-[2rem] shadow-sm border border-gray-100 space-y-4">
-                        <h4 className="text-[10px] font-black text-gray-400 uppercase tracking-widest">{t('dishes.details.ingredients')}</h4>
+                        <h4 className="text-[10px] font-black text-gray-400 uppercase tracking-widest">
+                          {t('dishes.details.ingredients')}
+                        </h4>
                         <div className="flex flex-wrap gap-2">
-                          {dish.ingredients?.length ? dish.ingredients.map((ing: string, i: number) => (
-                            <span key={i} className="bg-gray-50 border border-gray-100 px-3 py-1.5 rounded-xl text-xs font-bold text-gray-600">
-                              {ing}
+                          {dish.ingredients?.length ? (
+                            dish.ingredients.map((ing: string, i: number) => (
+                              <span
+                                key={i}
+                                className="bg-gray-50 border border-gray-100 px-3 py-1.5 rounded-xl text-xs font-bold text-gray-600"
+                              >
+                                {ing}
+                              </span>
+                            ))
+                          ) : (
+                            <span className="text-xs italic text-gray-300">
+                              {t('dishes.details.notSpecified')}
                             </span>
-                          )) : <span className="text-xs italic text-gray-300">{t('dishes.details.notSpecified')}</span>}
+                          )}
                         </div>
                       </div>
 
@@ -257,11 +300,20 @@ export default function Dishes() {
                           <AlertCircle className="w-3.5 h-3.5" /> {t('dishes.details.allergens')}
                         </h4>
                         <div className="flex flex-wrap gap-2">
-                          {dish.allergens?.length ? dish.allergens.map((alg: string, i: number) => (
-                            <span key={i} className="bg-red-50 border border-red-100 px-3 py-1.5 rounded-xl text-[10px] font-black text-red-500 uppercase tracking-tighter">
-                              {alg}
+                          {dish.allergens?.length ? (
+                            dish.allergens.map((alg: string, i: number) => (
+                              <span
+                                key={i}
+                                className="bg-red-50 border border-red-100 px-3 py-1.5 rounded-xl text-[10px] font-black text-red-500 uppercase tracking-tighter"
+                              >
+                                {alg}
+                              </span>
+                            ))
+                          ) : (
+                            <span className="text-xs italic text-gray-300">
+                              {t('dishes.details.noCriticalAllergens')}
                             </span>
-                          )) : <span className="text-xs italic text-gray-300">{t('dishes.details.noCriticalAllergens')}</span>}
+                          )}
                         </div>
                       </div>
                     </div>
@@ -274,11 +326,20 @@ export default function Dishes() {
                           <span>{t('dishes.details.dietary')}</span>
                         </div>
                         <div className="flex flex-wrap gap-1.5">
-                          {dish.dietaryFlags?.length ? dish.dietaryFlags.map((flag: string, i: number) => (
-                            <span key={i} className="text-[10px] font-black bg-green-50 text-green-600 px-2 py-0.5 rounded-lg uppercase tracking-tighter">
-                              {flag}
+                          {dish.dietaryFlags?.length ? (
+                            dish.dietaryFlags.map((flag: string, i: number) => (
+                              <span
+                                key={i}
+                                className="text-[10px] font-black bg-green-50 text-green-600 px-2 py-0.5 rounded-lg uppercase tracking-tighter"
+                              >
+                                {flag}
+                              </span>
+                            ))
+                          ) : (
+                            <span className="text-[10px] text-gray-400 italic">
+                              {t('dishes.details.notSpecified')}
                             </span>
-                          )) : <span className="text-[10px] text-gray-400 italic">{t('dishes.details.notSpecified')}</span>}
+                          )}
                         </div>
                       </div>
 
@@ -288,11 +349,20 @@ export default function Dishes() {
                           <span>{t('dishes.details.flavor')}</span>
                         </div>
                         <div className="flex flex-wrap gap-1.5">
-                          {dish.flavorProfile?.length ? dish.flavorProfile.map((flavor: string, i: number) => (
-                            <span key={i} className="text-[10px] font-black bg-orange-50 text-orange-600 px-2 py-0.5 rounded-lg uppercase tracking-tighter">
-                              {flavor}
+                          {dish.flavorProfile?.length ? (
+                            dish.flavorProfile.map((flavor: string, i: number) => (
+                              <span
+                                key={i}
+                                className="text-[10px] font-black bg-orange-50 text-orange-600 px-2 py-0.5 rounded-lg uppercase tracking-tighter"
+                              >
+                                {flavor}
+                              </span>
+                            ))
+                          ) : (
+                            <span className="text-[10px] text-gray-400 italic">
+                              {t('dishes.details.notSpecified')}
                             </span>
-                          )) : <span className="text-[10px] text-gray-400 italic">{t('dishes.details.notSpecified')}</span>}
+                          )}
                         </div>
                       </div>
 
@@ -302,11 +372,20 @@ export default function Dishes() {
                           <span>{t('dishes.details.availability')}</span>
                         </div>
                         <div className="flex flex-wrap gap-1.5">
-                          {dish.availableAt?.length ? dish.availableAt.map((time: string, i: number) => (
-                            <span key={i} className="text-[10px] font-black bg-blue-50 text-blue-600 px-2 py-0.5 rounded-lg uppercase tracking-tighter">
-                              {time}
+                          {dish.availableAt?.length ? (
+                            dish.availableAt.map((time: string, i: number) => (
+                              <span
+                                key={i}
+                                className="text-[10px] font-black bg-blue-50 text-blue-600 px-2 py-0.5 rounded-lg uppercase tracking-tighter"
+                              >
+                                {time}
+                              </span>
+                            ))
+                          ) : (
+                            <span className="text-[10px] text-gray-400 italic">
+                              {t('dishes.details.allDay')}
                             </span>
-                          )) : <span className="text-[10px] text-gray-400 italic">{t('dishes.details.allDay')}</span>}
+                          )}
                         </div>
                       </div>
                     </div>
@@ -328,4 +407,3 @@ export default function Dishes() {
     </div>
   );
 }
-

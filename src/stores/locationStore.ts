@@ -7,7 +7,7 @@ interface LocationStore {
 
 export const useLocationStore = create<LocationStore>((set) => ({
   coords: null,
-  
+
   requestLocation: async () => {
     return new Promise((resolve) => {
       if ('geolocation' in navigator) {
@@ -30,7 +30,7 @@ export const useLocationStore = create<LocationStore>((set) => ({
               },
             });
             resolve();
-          }
+          },
         );
       } else {
         // Default to Barcelona if geolocation not available
@@ -45,4 +45,3 @@ export const useLocationStore = create<LocationStore>((set) => ({
     });
   },
 }));
-

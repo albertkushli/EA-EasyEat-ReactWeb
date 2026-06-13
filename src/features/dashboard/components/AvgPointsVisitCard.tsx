@@ -8,7 +8,7 @@ export default function AvgPointsVisitCard({ value }: { value: number }) {
     <MetricCard
       icon={<TrendingUp size={20} />}
       value={value}
-      label={t("components.metrics.avgPointsVisit")}
+      label={t('components.metrics.avgPointsVisit')}
       variant="visits"
     />
   );

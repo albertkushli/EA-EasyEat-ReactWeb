@@ -1,4 +1,4 @@
-import { useMemo, useState, useEffect } from "react";
+import { useMemo, useState, useEffect } from 'react';
 import {
   LineChart,
   Line,
@@ -12,7 +12,7 @@ import {
   BarChart,
   Bar,
   Legend,
-} from "recharts";
+} from 'recharts';
 import {
   TrendingUp,
   TrendingDown,
@@ -26,10 +26,10 @@ import {
   ArrowUpRight,
   ArrowDownRight,
   Loader2,
-} from "lucide-react";
-import { motion } from "framer-motion";
-import { getRewardsByRestaurant, fetchRedemptionsByRestaurant } from "@/services/reward.service";
-import { useTranslation } from "react-i18next";
+} from 'lucide-react';
+import { motion } from 'framer-motion';
+import { getRewardsByRestaurant, fetchRedemptionsByRestaurant } from '@/services/reward.service';
+import { useTranslation } from 'react-i18next';
 
 interface AnalyticsProps {
   visits: any[];
@@ -51,12 +51,12 @@ export default function Analytics({ visits, restaurantId }: AnalyticsProps) {
 
   // DEBUG: Log data received from backend
   useEffect(() => {
-    console.log("📊 [Analytics] Data received:", {
+    console.log('📊 [Analytics] Data received:', {
       visitsCount: visits.length,
       restaurantId,
       firstVisit: visits[0],
       rewardsCount: rewards.length,
-      redemptionsCount: redemptions.length
+      redemptionsCount: redemptions.length,
     });
   }, [visits, rewards, redemptions, restaurantId]);
 
@@ -66,13 +66,13 @@ export default function Analytics({ visits, restaurantId }: AnalyticsProps) {
       setError(null);
       const [rewardData, redemptionData] = await Promise.all([
         getRewardsByRestaurant(restaurantId),
-        fetchRedemptionsByRestaurant(restaurantId)
+        fetchRedemptionsByRestaurant(restaurantId),
       ]);
       setRewards(rewardData);
       setRedemptions(redemptionData);
     } catch (err: any) {
-      console.error("Error loading analytics data:", err);
-      setError(t('analytics.errorLoading') || "No se pudieron cargar algunos datos de análisis.");
+      console.error('Error loading analytics data:', err);
+      setError(t('analytics.errorLoading') || 'No se pudieron cargar algunos datos de análisis.');
     } finally {
       setLoading(false);
     }
@@ -80,39 +80,41 @@ export default function Analytics({ visits, restaurantId }: AnalyticsProps) {
 
   // Calculations
   const stats = useMemo(() => {
-    if (!visits || visits.length === 0) return {
-      totalVisits: 0,
-      visitsVar: 0,
-      uniqueCustomers: 0,
-      customersVar: 0,
-      revenue: 0,
-      revenueVar: 0,
-      retentionRate: 0,
-      totalRewards: 0,
-      totalPointsEarned: 0,
-      loyaltyRoi: "Sin datos",
-      prediction: 0
-    };
+    if (!visits || visits.length === 0)
+      return {
+        totalVisits: 0,
+        visitsVar: 0,
+        uniqueCustomers: 0,
+        customersVar: 0,
+        revenue: 0,
+        revenueVar: 0,
+        retentionRate: 0,
+        totalRewards: 0,
+        totalPointsEarned: 0,
+        loyaltyRoi: 'Sin datos',
+        prediction: 0,
+      };
 
-    const restaurantVisits = visits.filter(
-      (visit) => {
-        const vRestId = String(visit.restaurant_id?._id || visit.restaurant_id || "").toLowerCase();
-        const rId = String(restaurantId || "").toLowerCase();
-        return vRestId === rId && visit.deletedAt === null;
-      }
-    );
+    const restaurantVisits = visits.filter((visit) => {
+      const vRestId = String(visit.restaurant_id?._id || visit.restaurant_id || '').toLowerCase();
+      const rId = String(restaurantId || '').toLowerCase();
+      return vRestId === rId && visit.deletedAt === null;
+    });
 
     const now = new Date();
     const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
     const sixtyDaysAgo = new Date(now.getTime() - 60 * 24 * 60 * 60 * 1000);
 
-    const lastMonthVisits = restaurantVisits.filter(v => new Date(v.date || v.createdAt) >= thirtyDaysAgo);
-    const prevMonthVisits = restaurantVisits.filter(v => {
+    const lastMonthVisits = restaurantVisits.filter(
+      (v) => new Date(v.date || v.createdAt) >= thirtyDaysAgo,
+    );
+    const prevMonthVisits = restaurantVisits.filter((v) => {
       const d = new Date(v.date || v.createdAt);
       return d >= sixtyDaysAgo && d < thirtyDaysAgo;
     });
 
-    const getUniqueCustomers = (vList: any[]) => new Set(vList.map(v => String(v.customer_id?._id || v.customer_id))).size;
+    const getUniqueCustomers = (vList: any[]) =>
+      new Set(vList.map((v) => String(v.customer_id?._id || v.customer_id))).size;
 
     const uniqueCustomers = getUniqueCustomers(restaurantVisits);
     const lastMonthUniqueCustomers = getUniqueCustomers(lastMonthVisits);
@@ -124,15 +126,22 @@ export default function Analytics({ visits, restaurantId }: AnalyticsProps) {
       acc[id] = (acc[id] || 0) + 1;
       return acc;
     }, {});
-    const recurrentCustomers = Object.values(customerVisitCounts).filter((count: any) => count > 1).length;
+    const recurrentCustomers = Object.values(customerVisitCounts).filter(
+      (count: any) => count > 1,
+    ).length;
 
     const revenue = restaurantVisits.reduce((sum, v) => sum + Number(v.billAmount || 0), 0);
     const lastMonthRevenue = lastMonthVisits.reduce((sum, v) => sum + Number(v.billAmount || 0), 0);
     const prevRevenue = prevMonthVisits.reduce((sum, v) => sum + Number(v.billAmount || 0), 0);
 
-    const totalPointsEarned = restaurantVisits.reduce((sum, v) => sum + Number(v.pointsEarned || 0), 0);
+    const totalPointsEarned = restaurantVisits.reduce(
+      (sum, v) => sum + Number(v.pointsEarned || 0),
+      0,
+    );
 
-    const totalRedemptions = redemptions.filter(r => r.status === 'redeemed' || r.status === 'approved').length;
+    const totalRedemptions = redemptions.filter(
+      (r) => r.status === 'redeemed' || r.status === 'approved',
+    ).length;
 
     const calcVar = (curr: number, prev: number) => {
       if (prev === 0) return curr > 0 ? 100 : 0;
@@ -140,13 +149,14 @@ export default function Analytics({ visits, restaurantId }: AnalyticsProps) {
     };
 
     // Simple ROI: Revenue / (Redemptions * estimated cost 5€)
-    const estimatedCostPerRedemption = 5; 
-    const roi = totalRedemptions > 0 
-      ? (revenue / (totalRedemptions * estimatedCostPerRedemption)).toFixed(1) + "x"
-      : "Sin datos";
+    const estimatedCostPerRedemption = 5;
+    const roi =
+      totalRedemptions > 0
+        ? (revenue / (totalRedemptions * estimatedCostPerRedemption)).toFixed(1) + 'x'
+        : 'Sin datos';
 
     // Simple Prediction: (Last Month Visits + Total Visits / 2) * 1.1 (growth)
-    const prediction = Math.round(((lastMonthVisits.length || restaurantVisits.length) * 1.1));
+    const prediction = Math.round((lastMonthVisits.length || restaurantVisits.length) * 1.1);
 
     return {
       totalVisits: restaurantVisits.length,
@@ -159,25 +169,25 @@ export default function Analytics({ visits, restaurantId }: AnalyticsProps) {
       totalRewards: totalRedemptions,
       totalPointsEarned,
       loyaltyRoi: roi,
-      prediction
+      prediction,
     };
   }, [visits, rewards, redemptions, restaurantId]);
 
   // Chart Data (Real data grouping by day)
   const chartData = useMemo(() => {
     const data: any[] = [];
-    
+
     // 1. Filtrar visitas válidas para este restaurante
-    const restaurantVisits = visits.filter(v => {
-      const vRestId = String(v.restaurant_id?._id || v.restaurant_id || "").toLowerCase();
-      const rId = String(restaurantId || "").toLowerCase();
+    const restaurantVisits = visits.filter((v) => {
+      const vRestId = String(v.restaurant_id?._id || v.restaurant_id || '').toLowerCase();
+      const rId = String(restaurantId || '').toLowerCase();
       return vRestId === rId && v.deletedAt === null;
     });
 
     // 2. Filtrar canjes válidos
-    const restaurantRedemptions = redemptions.filter(r => {
-      const rRestId = String(r.restaurant_id?._id || r.restaurant_id || "").toLowerCase();
-      const rId = String(restaurantId || "").toLowerCase();
+    const restaurantRedemptions = redemptions.filter((r) => {
+      const rRestId = String(r.restaurant_id?._id || r.restaurant_id || '').toLowerCase();
+      const rId = String(restaurantId || '').toLowerCase();
       return rRestId === rId;
     });
 
@@ -185,21 +195,21 @@ export default function Analytics({ visits, restaurantId }: AnalyticsProps) {
 
     // 3. Función segura para obtener la clave del día (YYYY-MM-DD)
     const getDayKey = (dateStr: string) => {
-      if (!dateStr) return "";
+      if (!dateStr) return '';
       return dateStr.split('T')[0];
     };
 
     // 4. Mapear datos por día
     const statsByDay = new Map<string, { visitas: number; recompensas: number }>();
 
-    restaurantVisits.forEach(v => {
+    restaurantVisits.forEach((v) => {
       const key = getDayKey(v.date || v.createdAt);
       if (!key) return;
       const current = statsByDay.get(key) || { visitas: 0, recompensas: 0 };
       statsByDay.set(key, { ...current, visitas: current.visitas + 1 });
     });
 
-    restaurantRedemptions.forEach(r => {
+    restaurantRedemptions.forEach((r) => {
       const key = getDayKey(r.redeemedAt || r.createdAt);
       if (!key) return;
       const current = statsByDay.get(key) || { visitas: 0, recompensas: 0 };
@@ -207,7 +217,7 @@ export default function Analytics({ visits, restaurantId }: AnalyticsProps) {
     });
 
     // 5. Calcular el rango: 30 días desde la última visita
-    const visitDates = restaurantVisits.map(v => new Date(v.date || v.createdAt).getTime());
+    const visitDates = restaurantVisits.map((v) => new Date(v.date || v.createdAt).getTime());
     const maxVisitTime = Math.max(...visitDates);
     const endDate = new Date(maxVisitTime);
 
@@ -216,7 +226,7 @@ export default function Analytics({ visits, restaurantId }: AnalyticsProps) {
       const date = new Date(endDate.getTime() - i * 24 * 60 * 60 * 1000);
       const key = date.toISOString().split('T')[0];
       const dayStats = statsByDay.get(key) || { visitas: 0, recompensas: 0 };
-      
+
       const dateStr = date.toLocaleDateString('es-ES', { day: 'numeric', month: 'short' });
       data.push({
         name: dateStr,
@@ -231,8 +241,10 @@ export default function Analytics({ visits, restaurantId }: AnalyticsProps) {
   const exportData = () => {
     const csv = [
       [t('analytics.export.date'), t('analytics.export.visits'), t('analytics.export.rewards')],
-      ...chartData.map(d => [d.name, d.visitas, d.recompensas])
-    ].map(e => e.join(",")).join("\n");
+      ...chartData.map((d) => [d.name, d.visitas, d.recompensas]),
+    ]
+      .map((e) => e.join(','))
+      .join('\n');
 
     const blob = new Blob([csv], { type: 'text/csv' });
     const url = window.URL.createObjectURL(blob);
@@ -258,7 +270,9 @@ export default function Analytics({ visits, restaurantId }: AnalyticsProps) {
     return (
       <div className="flex flex-col items-center justify-center h-96 space-y-4 p-6 bg-red-50 rounded-[2rem] border border-red-100">
         <AlertTriangle className="w-12 h-12 text-red-400" />
-        <h3 className="text-lg font-black text-red-800 uppercase tracking-tight">{t('analytics.errorTitle')}</h3>
+        <h3 className="text-lg font-black text-red-800 uppercase tracking-tight">
+          {t('analytics.errorTitle')}
+        </h3>
         <p className="text-red-600 text-center text-sm font-medium">{error}</p>
         <button
           onClick={loadData}
@@ -275,7 +289,9 @@ export default function Analytics({ visits, restaurantId }: AnalyticsProps) {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-black text-gray-800 tracking-tight">{t('analytics.title')}</h1>
+          <h1 className="text-3xl font-black text-gray-800 tracking-tight">
+            {t('analytics.title')}
+          </h1>
           <p className="text-gray-500 font-medium">{t('analytics.subtitle')}</p>
         </div>
         <button
@@ -325,16 +341,22 @@ export default function Analytics({ visits, restaurantId }: AnalyticsProps) {
           <div className="flex items-center justify-between mb-8">
             <div>
               <h3 className="text-xl font-black text-gray-800">{t('analytics.chart.title')}</h3>
-              <p className="text-sm text-gray-400 font-medium italic">{t('analytics.chart.subtitle')}</p>
+              <p className="text-sm text-gray-400 font-medium italic">
+                {t('analytics.chart.subtitle')}
+              </p>
             </div>
             <div className="flex gap-4">
               <div className="flex items-center gap-2">
                 <div className="w-3 h-3 rounded-full bg-blue-500" />
-                <span className="text-xs font-bold text-gray-500 uppercase tracking-tighter">{t('analytics.chart.visits')}</span>
+                <span className="text-xs font-bold text-gray-500 uppercase tracking-tighter">
+                  {t('analytics.chart.visits')}
+                </span>
               </div>
               <div className="flex items-center gap-2">
                 <div className="w-3 h-3 rounded-full bg-emerald-500" />
-                <span className="text-xs font-bold text-gray-500 uppercase tracking-tighter">{t('analytics.chart.rewards')}</span>
+                <span className="text-xs font-bold text-gray-500 uppercase tracking-tighter">
+                  {t('analytics.chart.rewards')}
+                </span>
               </div>
             </div>
           </div>
@@ -366,11 +388,30 @@ export default function Analytics({ visits, restaurantId }: AnalyticsProps) {
                   tick={{ fill: '#94a3b8', fontSize: 10, fontWeight: 700 }}
                 />
                 <Tooltip
-                  contentStyle={{ borderRadius: '16px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)', fontWeight: 800 }}
+                  contentStyle={{
+                    borderRadius: '16px',
+                    border: 'none',
+                    boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)',
+                    fontWeight: 800,
+                  }}
                   itemStyle={{ fontWeight: 800 }}
                 />
-                <Area type="monotone" dataKey="visitas" stroke="#3b82f6" strokeWidth={4} fillOpacity={1} fill="url(#colorVisits)" />
-                <Area type="monotone" dataKey="recompensas" stroke="#10b981" strokeWidth={4} fillOpacity={1} fill="url(#colorRewards)" />
+                <Area
+                  type="monotone"
+                  dataKey="visitas"
+                  stroke="#3b82f6"
+                  strokeWidth={4}
+                  fillOpacity={1}
+                  fill="url(#colorVisits)"
+                />
+                <Area
+                  type="monotone"
+                  dataKey="recompensas"
+                  stroke="#10b981"
+                  strokeWidth={4}
+                  fillOpacity={1}
+                  fill="url(#colorRewards)"
+                />
               </AreaChart>
             </ResponsiveContainer>
           </div>
@@ -385,26 +426,32 @@ export default function Analytics({ visits, restaurantId }: AnalyticsProps) {
                 <div className="p-2 bg-orange-500 rounded-xl shadow-lg shadow-orange-500/20">
                   <Flame className="w-5 h-5 text-white" />
                 </div>
-                <h3 className="text-lg font-black uppercase tracking-tight">{t('analytics.prediction.title')}</h3>
+                <h3 className="text-lg font-black uppercase tracking-tight">
+                  {t('analytics.prediction.title')}
+                </h3>
               </div>
 
               <div className="space-y-6">
                 <div>
-                  <p className="text-slate-400 text-xs font-bold uppercase tracking-[0.2em] mb-1">{t('analytics.prediction.nextMonth')}</p>
+                  <p className="text-slate-400 text-xs font-bold uppercase tracking-[0.2em] mb-1">
+                    {t('analytics.prediction.nextMonth')}
+                  </p>
                   <div className="flex items-end gap-2">
                     <span className="text-4xl font-black">{stats.prediction}</span>
                     <span className="text-emerald-400 font-bold mb-1 flex items-center">
                       <ArrowUpRight className="w-4 h-4" /> 10%
                     </span>
                   </div>
-                  <p className="text-slate-500 text-[10px] mt-1 font-bold">{t('analytics.prediction.growthTagline')}</p>
+                  <p className="text-slate-500 text-[10px] mt-1 font-bold">
+                    {t('analytics.prediction.growthTagline')}
+                  </p>
                 </div>
 
                 <div className="h-2 w-full bg-slate-700 rounded-full overflow-hidden">
                   <motion.div
                     initial={{ width: 0 }}
                     animate={{ width: '85%' }}
-                    transition={{ duration: 1.5, ease: "easeOut" }}
+                    transition={{ duration: 1.5, ease: 'easeOut' }}
                     className="h-full bg-gradient-to-r from-orange-500 to-red-500"
                   />
                 </div>
@@ -416,7 +463,9 @@ export default function Analytics({ visits, restaurantId }: AnalyticsProps) {
 
           {/* Alert Alerts */}
           <div className="space-y-3">
-            <h4 className="text-[10px] font-black text-gray-400 uppercase tracking-[0.3em] ml-4">{t('analytics.alerts.title')}</h4>
+            <h4 className="text-[10px] font-black text-gray-400 uppercase tracking-[0.3em] ml-4">
+              {t('analytics.alerts.title')}
+            </h4>
             {stats.visitsVar < 0 ? (
               <SmartAlert
                 type="warning"
@@ -431,18 +480,10 @@ export default function Analytics({ visits, restaurantId }: AnalyticsProps) {
               />
             )}
             {stats.totalRewards > 0 && (
-              <SmartAlert
-                type="info"
-                message={t('analytics.alerts.newSegment')}
-                icon={Users}
-              />
+              <SmartAlert type="info" message={t('analytics.alerts.newSegment')} icon={Users} />
             )}
             {stats.totalVisits === 0 && (
-              <SmartAlert
-                type="info"
-                message="Sin alertas por ahora"
-                icon={AlertTriangle}
-              />
+              <SmartAlert type="info" message="Sin alertas por ahora" icon={AlertTriangle} />
             )}
           </div>
         </div>
@@ -464,8 +505,14 @@ function KPICard({ title, value, variation, icon: Icon, gradient }: any) {
           <div className="p-2.5 bg-white/20 backdrop-blur-md rounded-2xl">
             <Icon className="w-5 h-5" />
           </div>
-          <div className={`flex items-center gap-1 px-2 py-1 rounded-full text-[10px] font-black tracking-tighter ${isPositive ? 'bg-emerald-500/30' : 'bg-red-500/30'}`}>
-            {isPositive ? <ArrowUpRight className="w-3 h-3" /> : <ArrowDownRight className="w-3 h-3" />}
+          <div
+            className={`flex items-center gap-1 px-2 py-1 rounded-full text-[10px] font-black tracking-tighter ${isPositive ? 'bg-emerald-500/30' : 'bg-red-500/30'}`}
+          >
+            {isPositive ? (
+              <ArrowUpRight className="w-3 h-3" />
+            ) : (
+              <ArrowDownRight className="w-3 h-3" />
+            )}
             {Math.abs(variation).toFixed(1)}%
           </div>
         </div>
@@ -480,16 +527,17 @@ function KPICard({ title, value, variation, icon: Icon, gradient }: any) {
 
 function SmartAlert({ type, message, icon: Icon }: any) {
   const colors = {
-    warning: "bg-orange-50 border-orange-200 text-orange-700",
-    success: "bg-emerald-50 border-emerald-200 text-emerald-700",
-    info: "bg-blue-50 border-blue-200 text-blue-700",
+    warning: 'bg-orange-50 border-orange-200 text-orange-700',
+    success: 'bg-emerald-50 border-emerald-200 text-emerald-700',
+    info: 'bg-blue-50 border-blue-200 text-blue-700',
   };
 
   return (
-    <div className={`flex items-center gap-3 p-4 rounded-2xl border-l-4 ${colors[type as keyof typeof colors]} shadow-sm`}>
+    <div
+      className={`flex items-center gap-3 p-4 rounded-2xl border-l-4 ${colors[type as keyof typeof colors]} shadow-sm`}
+    >
       <Icon className="w-5 h-5 flex-shrink-0" />
       <span className="text-sm font-bold tracking-tight">{message}</span>
     </div>
   );
 }
-

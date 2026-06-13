@@ -32,12 +32,7 @@ export function trackPageView(path: string, title?: string) {
   window._paq.push(['trackPageView']);
 }
 
-export function trackEvent(
-  category: string,
-  action: string,
-  name?: string,
-  value?: number
-) {
+export function trackEvent(category: string, action: string, name?: string, value?: number) {
   if (!window._paq) return;
 
   window._paq.push(['trackEvent', category, action, name, value]);

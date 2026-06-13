@@ -110,7 +110,7 @@ export const useIsDesktop = (): boolean => {
  */
 export const useOrientation = (): 'portrait' | 'landscape' => {
   const [orientation, setOrientation] = useState<'portrait' | 'landscape'>(
-    window.innerHeight > window.innerWidth ? 'portrait' : 'landscape'
+    window.innerHeight > window.innerWidth ? 'portrait' : 'landscape',
   );
 
   useEffect(() => {
@@ -130,7 +130,7 @@ export const useOrientation = (): 'portrait' | 'landscape' => {
  */
 export const useHasTouchScreen = (): boolean => {
   const [hasTouch, setHasTouch] = useState(
-    typeof window !== 'undefined' ? 'ontouchstart' in window : false
+    typeof window !== 'undefined' ? 'ontouchstart' in window : false,
   );
 
   useEffect(() => {
@@ -175,10 +175,7 @@ export const useSafeAreaInsets = () => {
 /**
  * Helper to get CSS variable pixel value
  */
-function getCSSVariablePixels(
-  styles: CSSStyleDeclaration,
-  variableName: string
-): number {
+function getCSSVariablePixels(styles: CSSStyleDeclaration, variableName: string): number {
   const value = styles.getPropertyValue(variableName).trim();
   return parseInt(value, 10) || 0;
 }
@@ -188,7 +185,7 @@ function getCSSVariablePixels(
  */
 export const useMediaQuery = (query: string): boolean => {
   const [matches, setMatches] = useState(
-    typeof window !== 'undefined' ? window.matchMedia(query).matches : false
+    typeof window !== 'undefined' ? window.matchMedia(query).matches : false,
   );
 
   useEffect(() => {
@@ -230,9 +227,9 @@ export const useSupportsHover = (): boolean => {
  * Responsive value mapper
  * Returns appropriate value based on current breakpoint
  */
-export const useResponsiveValue = <T,>(
+export const useResponsiveValue = <T>(
   values: Partial<Record<Breakpoint, T>>,
-  defaultValue: T
+  defaultValue: T,
 ): T => {
   const breakpoint = useBreakpoint();
 
@@ -253,14 +250,14 @@ export const useResponsiveValue = <T,>(
 export const conditionalClass = (
   condition: boolean,
   trueClass: string,
-  falseClass?: string
+  falseClass?: string,
 ): string => {
   return condition ? trueClass : falseClass || '';
 };
 
 export const responsiveClass = (
   breakpoint: Breakpoint,
-  classMap: Partial<Record<Breakpoint, string>>
+  classMap: Partial<Record<Breakpoint, string>>,
 ): string => {
   return classMap[breakpoint] || '';
 };
@@ -268,9 +265,7 @@ export const responsiveClass = (
 /**
  * Safe area padding utilities
  */
-export const safeAreaStyle = (
-  type: 'padding' | 'margin' = 'padding'
-): React.CSSProperties => {
+export const safeAreaStyle = (type: 'padding' | 'margin' = 'padding'): React.CSSProperties => {
   const insets = useSafeAreaInsets();
 
   return {
@@ -309,4 +304,3 @@ export default {
   safeAreaStyle,
   breakpointQuery,
 };
-

@@ -1,7 +1,7 @@
-import { useState, useEffect } from "react";
-import { X, Save, Loader2, User, Phone, Mail, Shield } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
-import { useTranslation } from "react-i18next";
+import { useState, useEffect } from 'react';
+import { X, Save, Loader2, User, Phone, Mail, Shield } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 
 interface EmployeeModalProps {
   isOpen: boolean;
@@ -13,30 +13,30 @@ interface EmployeeModalProps {
 export default function EmployeeModal({ isOpen, onClose, onSave, employee }: EmployeeModalProps) {
   const { t } = useTranslation();
   const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    phone: "",
-    role: "staff",
-    password: "",
+    name: '',
+    email: '',
+    phone: '',
+    role: 'staff',
+    password: '',
   });
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (employee) {
       setFormData({
-        name: employee.profile?.name || "",
-        email: employee.profile?.email || "",
-        phone: employee.profile?.phone || "",
-        role: employee.profile?.role || "staff",
-        password: "", // Don't show password
+        name: employee.profile?.name || '',
+        email: employee.profile?.email || '',
+        phone: employee.profile?.phone || '',
+        role: employee.profile?.role || 'staff',
+        password: '', // Don't show password
       });
     } else {
       setFormData({
-        name: "",
-        email: "",
-        phone: "",
-        role: "staff",
-        password: "",
+        name: '',
+        email: '',
+        phone: '',
+        role: 'staff',
+        password: '',
       });
     }
   }, [employee, isOpen]);
@@ -52,13 +52,13 @@ export default function EmployeeModal({ isOpen, onClose, onSave, employee }: Emp
           email: formData.email,
           phone: formData.phone,
           role: formData.role,
-          ...(formData.password ? { password: formData.password } : {})
-        }
+          ...(formData.password ? { password: formData.password } : {}),
+        },
       };
       await onSave(payload);
       onClose();
     } catch (error) {
-      console.error("Error saving employee:", error);
+      console.error('Error saving employee:', error);
     } finally {
       setLoading(false);
     }
@@ -83,10 +83,15 @@ export default function EmployeeModal({ isOpen, onClose, onSave, employee }: Emp
                   <User className="w-6 h-6" />
                 </div>
                 <h2 className="text-2xl font-black tracking-tight">
-                  {employee ? t('employees.editEmployee').toUpperCase() : t('employees.addEmployee').toUpperCase()}
+                  {employee
+                    ? t('employees.editEmployee').toUpperCase()
+                    : t('employees.addEmployee').toUpperCase()}
                 </h2>
               </div>
-              <button onClick={onClose} className="p-2 hover:bg-white/20 rounded-full transition-colors">
+              <button
+                onClick={onClose}
+                className="p-2 hover:bg-white/20 rounded-full transition-colors"
+              >
                 <X className="w-6 h-6" />
               </button>
             </div>
@@ -95,7 +100,9 @@ export default function EmployeeModal({ isOpen, onClose, onSave, employee }: Emp
           <form onSubmit={handleSubmit} className="p-8 space-y-6">
             <div className="space-y-4">
               <div className="space-y-1.5">
-                <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">{t('employees.form.name')}</label>
+                <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">
+                  {t('employees.form.name')}
+                </label>
                 <input
                   required
                   type="text"
@@ -107,7 +114,9 @@ export default function EmployeeModal({ isOpen, onClose, onSave, employee }: Emp
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">{t('employees.form.email')}</label>
+                  <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">
+                    {t('employees.form.email')}
+                  </label>
                   <div className="relative">
                     <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-300" />
                     <input
@@ -121,7 +130,9 @@ export default function EmployeeModal({ isOpen, onClose, onSave, employee }: Emp
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">{t('employees.form.phone')}</label>
+                  <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">
+                    {t('employees.form.phone')}
+                  </label>
                   <div className="relative">
                     <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-300" />
                     <input
@@ -135,7 +146,9 @@ export default function EmployeeModal({ isOpen, onClose, onSave, employee }: Emp
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">{t('employees.form.role')}</label>
+                <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">
+                  {t('employees.form.role')}
+                </label>
                 <div className="relative">
                   <Shield className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-300" />
                   <select
@@ -144,14 +157,18 @@ export default function EmployeeModal({ isOpen, onClose, onSave, employee }: Emp
                     className="w-full p-3 pl-10 bg-gray-50 border border-gray-100 rounded-xl text-sm font-bold text-gray-700 focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 outline-none transition-all appearance-none"
                   >
                     <option value="staff">{t('components.employeeCard.active')}</option>
-                    <option value="owner">{t('dashboard.employee.loadingOwner').replace('...', '')}</option>
+                    <option value="owner">
+                      {t('dashboard.employee.loadingOwner').replace('...', '')}
+                    </option>
                   </select>
                 </div>
               </div>
 
               {!employee && (
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">{t('employees.form.password')}</label>
+                  <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">
+                    {t('employees.form.password')}
+                  </label>
                   <input
                     required
                     type="password"
