@@ -7,13 +7,31 @@ import '../styles/SupportChat.css';
 // ─────────────────────────────────────────────────────────────────────────────
 
 const SupportIcon = () => (
-  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+  <svg
+    width="24"
+    height="24"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
     <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
   </svg>
 );
 
 const SendIcon = () => (
-  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+  <svg
+    width="18"
+    height="18"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
     <line x1="22" y1="2" x2="11" y2="13"></line>
     <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
   </svg>
@@ -108,14 +126,21 @@ const SupportChat: React.FC = () => {
         <div className="support-panel">
           <div className="support-header">
             <h3>Asistente EasyEat</h3>
-            <button className="support-close-btn" onClick={() => setIsOpen(false)} aria-label="Cerrar">
+            <button
+              className="support-close-btn"
+              onClick={() => setIsOpen(false)}
+              aria-label="Cerrar"
+            >
               ✕
             </button>
           </div>
 
           <div className="support-messages">
             {messages.map((msg) => (
-              <div key={msg.id} className={`message-bubble ${msg.role === 'user' ? 'user' : 'bot'}`}>
+              <div
+                key={msg.id}
+                className={`message-bubble ${msg.role === 'user' ? 'user' : 'bot'}`}
+              >
                 {msg.text}
               </div>
             ))}
@@ -140,9 +165,9 @@ const SupportChat: React.FC = () => {
               disabled={isLoading}
               autoFocus
             />
-            <button 
-              type="submit" 
-              className="support-send-btn" 
+            <button
+              type="submit"
+              className="support-send-btn"
               disabled={!inputValue.trim() || isLoading}
               title="Enviar"
             >
@@ -152,7 +177,7 @@ const SupportChat: React.FC = () => {
         </div>
       )}
 
-      <button 
+      <button
         className={`support-toggle-btn ${isOpen ? 'active' : ''}`}
         onClick={() => setIsOpen(!isOpen)}
         title={isOpen ? 'Cerrar chat' : 'Abrir soporte'}

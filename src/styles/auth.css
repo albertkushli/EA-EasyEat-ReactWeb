@@ -9,11 +9,7 @@
   width: 100vw;
   height: 100vh;
   z-index: 1000;
-  background: radial-gradient(
-    circle at top left,
-    var(--auth-bg-start),
-    var(--auth-bg-end)
-  );
+  background: radial-gradient(circle at top left, var(--auth-bg-start), var(--auth-bg-end));
   display: flex;
   align-items: center;
   justify-content: center;
@@ -420,7 +416,7 @@
 
 .auth-divider::before,
 .auth-divider::after {
-  content: "";
+  content: '';
   flex: 1;
   border-bottom: 1.5px solid rgba(0, 0, 0, 0.08);
 }

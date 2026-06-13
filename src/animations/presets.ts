@@ -334,4 +334,3 @@ export default {
   TOOLTIP_VARIANTS,
   DROPDOWN_VARIANTS,
 };
-

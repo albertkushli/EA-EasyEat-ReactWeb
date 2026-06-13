@@ -49,63 +49,66 @@ export default function App() {
     <ThemeProvider>
       <AuthProvider>
         <ChatProvider>
-        <Router>
-        <Routes>
-          <Route
-            path="/"
-            element={(
-              <PublicRoute>
-                <Home />
-              </PublicRoute>
-            )}
-          />
+          <Router>
+            <Routes>
+              <Route
+                path="/"
+                element={
+                  <PublicRoute>
+                    <Home />
+                  </PublicRoute>
+                }
+              />
 
-          <Route
-            path="/login"
-            element={(
-              <PublicRoute>
-                <Login />
-              </PublicRoute>
-            )}
-          />
+              <Route
+                path="/login"
+                element={
+                  <PublicRoute>
+                    <Login />
+                  </PublicRoute>
+                }
+              />
 
-          <Route
-            path="/register"
-            element={(
-              <PublicRoute>
-                <Register />
-              </PublicRoute>
-            )}
-          />
+              <Route
+                path="/register"
+                element={
+                  <PublicRoute>
+                    <Register />
+                  </PublicRoute>
+                }
+              />
 
-          <Route
-            path="/dashboard"
-            element={(
-              <ProtectedRoute>
-                <Dashboard />
-              </ProtectedRoute>
-            )}
-          >
-            <Route path="clients" element={<Clients />} />
-          </Route>
-           <Route path="/discover" element={<DiscoverScreen />} />
-          <Route
-            path="/dashboard/:view"
-            element={(
-              <ProtectedRoute>
-                <Dashboard />
-              </ProtectedRoute>
-            )}
-          />
-          <Route path="/discover" element={<DiscoverScreen />} />
-          {/*<Route path="/map" element={<MapScreen />} />*/}
-          <Route path="/restaurant/:id" element={<div className="p-4">Restaurant details placeholder</div>} />
+              <Route
+                path="/dashboard"
+                element={
+                  <ProtectedRoute>
+                    <Dashboard />
+                  </ProtectedRoute>
+                }
+              >
+                <Route path="clients" element={<Clients />} />
+              </Route>
+              <Route path="/discover" element={<DiscoverScreen />} />
+              <Route
+                path="/dashboard/:view"
+                element={
+                  <ProtectedRoute>
+                    <Dashboard />
+                  </ProtectedRoute>
+                }
+              />
+              <Route path="/discover" element={<DiscoverScreen />} />
+              {/*<Route path="/map" element={<MapScreen />} />*/}
+              <Route
+                path="/restaurant/:id"
+                element={<div className="p-4">Restaurant details placeholder</div>}
+              />
 
-          <Route path="/map" element={<MapRouteWrapper />} />
-          <Route path="/aviso-legal" element={<LegalNotice />} />
-        </Routes>
-      </Router>
-      <SupportChat />
+              <Route path="/map" element={<MapRouteWrapper />} />
+              <Route path="/aviso-legal" element={<LegalNotice />} />
+            </Routes>
+          </Router>
+          <SupportChat />
         </ChatProvider>
       </AuthProvider>
     </ThemeProvider>

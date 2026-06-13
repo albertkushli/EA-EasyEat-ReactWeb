@@ -45,53 +45,53 @@ export default function HomeEmployee() {
         </div>
         <div className="he-content">
           {dashboard.activeView === 'profile' ? (
-            <StaffProfilePanel
-              user={dashboard.user}
-              restaurant={dashboard.restaurant}
-            />
+            <StaffProfilePanel user={dashboard.user} restaurant={dashboard.restaurant} />
           ) : dashboard.activeView === 'dashboard' ? (
-          <EmployeeOverviewPanel
-            visits={dashboard.visits}
-            reviews={dashboard.reviews}
-            dishes={dashboard.dishes}
-            restaurantId={dashboard.user?.restaurant_id!}
-            averagePointsPerVisit={dashboard.averagePointsPerVisit}
-            loyalCustomers={dashboard.loyalCustomers}
-            restRating={dashboard.restRating}
-          />
-        ) : dashboard.activeView === 'clients' ? (
-          <div style={{ padding: '2rem' }}>
-            <Clients />
-          </div>
-        ) : dashboard.activeView === 'dishes' ? (
-          <div style={{ padding: '2rem' }}>
-            <Dishes />
-          </div>
-        ) : dashboard.activeView === 'employees' ? (
-          <div style={{ padding: '2rem' }}>
-            <Employees />
-          </div>
-        ) : dashboard.activeView === 'rewards' ? (
-          <div style={{ padding: '2rem' }}>
-            <Rewards />
-          </div>
-        ) : dashboard.activeView === 'analytics' ? (
-          <div style={{ padding: '2rem' }}>
-            <Analytics visits={dashboard.allVisits} restaurantId={dashboard.user?.restaurant_id!} />
-          </div>
-        ) : dashboard.activeView === 'settings' ? (
-          <div style={{ padding: '2rem' }}>
-            <RestaurantSettings restaurant={dashboard.restaurant} />
-          </div>
-        ) : dashboard.activeView === 'chat' ? (
-          <div style={{ padding: '2rem' }}>
-            <RestaurantChatDashboard />
-          </div>
-        ) : dashboard.activeView === 'billing' ? (
-          <div style={{ padding: '2rem' }}>
-            <BillingPanel />
-          </div>
-        ) : null}
+            <EmployeeOverviewPanel
+              visits={dashboard.visits}
+              reviews={dashboard.reviews}
+              dishes={dashboard.dishes}
+              restaurantId={dashboard.user?.restaurant_id!}
+              averagePointsPerVisit={dashboard.averagePointsPerVisit}
+              loyalCustomers={dashboard.loyalCustomers}
+              restRating={dashboard.restRating}
+            />
+          ) : dashboard.activeView === 'clients' ? (
+            <div style={{ padding: '2rem' }}>
+              <Clients />
+            </div>
+          ) : dashboard.activeView === 'dishes' ? (
+            <div style={{ padding: '2rem' }}>
+              <Dishes />
+            </div>
+          ) : dashboard.activeView === 'employees' ? (
+            <div style={{ padding: '2rem' }}>
+              <Employees />
+            </div>
+          ) : dashboard.activeView === 'rewards' ? (
+            <div style={{ padding: '2rem' }}>
+              <Rewards />
+            </div>
+          ) : dashboard.activeView === 'analytics' ? (
+            <div style={{ padding: '2rem' }}>
+              <Analytics
+                visits={dashboard.allVisits}
+                restaurantId={dashboard.user?.restaurant_id!}
+              />
+            </div>
+          ) : dashboard.activeView === 'settings' ? (
+            <div style={{ padding: '2rem' }}>
+              <RestaurantSettings restaurant={dashboard.restaurant} />
+            </div>
+          ) : dashboard.activeView === 'chat' ? (
+            <div style={{ padding: '2rem' }}>
+              <RestaurantChatDashboard />
+            </div>
+          ) : dashboard.activeView === 'billing' ? (
+            <div style={{ padding: '2rem' }}>
+              <BillingPanel />
+            </div>
+          ) : null}
         </div>
       </div>
     </div>

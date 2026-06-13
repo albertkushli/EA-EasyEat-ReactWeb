@@ -12,7 +12,15 @@ interface RestaurantTimetableCardProps {
 export default function RestaurantTimetableCard({ timetable }: RestaurantTimetableCardProps) {
   if (!timetable) return null;
 
-  const daysOrder = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'] as const;
+  const daysOrder = [
+    'monday',
+    'tuesday',
+    'wednesday',
+    'thursday',
+    'friday',
+    'saturday',
+    'sunday',
+  ] as const;
 
   const today = new Date().toLocaleDateString('en-US', { weekday: 'long' }).toLowerCase();
 
@@ -46,9 +54,7 @@ export default function RestaurantTimetableCard({ timetable }: RestaurantTimetab
 
           return (
             <div key={day} className={`he-timetable-row ${isToday ? 'active' : ''}`}>
-              <span className="he-timetable-day">
-                {day.charAt(0).toUpperCase() + day.slice(1)}
-              </span>
+              <span className="he-timetable-day">{day.charAt(0).toUpperCase() + day.slice(1)}</span>
 
               <span className="he-timetable-hours">
                 {timetable[day]

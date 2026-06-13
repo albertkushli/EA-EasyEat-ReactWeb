@@ -9,7 +9,9 @@ export default function DiscoverScreen() {
   const load = useRestaurantStore((s: any) => s.loadRestaurants);
   const navigate = useNavigate();
 
-  useEffect(() => { if (restaurants.length === 0) load(); }, [load, restaurants.length]);
+  useEffect(() => {
+    if (restaurants.length === 0) load();
+  }, [load, restaurants.length]);
 
   return (
     <div className="p-4">
@@ -30,10 +32,16 @@ export default function DiscoverScreen() {
             className="flex items-center gap-3 p-3 bg-white rounded-lg shadow-sm text-left"
             onClick={() => navigate('/map', { state: { openRestaurantId: r._id } })}
           >
-            <img src={r.profile.image?.[0] || ''} alt="" className="w-16 h-12 rounded-md object-cover" />
+            <img
+              src={r.profile.image?.[0] || ''}
+              alt=""
+              className="w-16 h-12 rounded-md object-cover"
+            />
             <div>
               <div className="font-medium">{r.profile.name}</div>
-              <div className="text-sm text-gray-500">{r.profile.category.join(', ')} • {r.profile.globalRating} ★</div>
+              <div className="text-sm text-gray-500">
+                {r.profile.category.join(', ')} • {r.profile.globalRating} ★
+              </div>
             </div>
           </button>
         ))}
@@ -41,4 +49,3 @@ export default function DiscoverScreen() {
     </div>
   );
 }
-

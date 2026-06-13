@@ -2,10 +2,42 @@ import { type FormEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useNavigate } from 'react-router-dom';
 import { QRCodeCanvas } from 'qrcode.react';
-import { ArrowLeft, CheckCircle, Clock, Coins, Gift, Heart, Home, Map, MapPin, QrCode, Save, Search, SlidersHorizontal, Star, Trophy, User, Wallet, X, Mail, Lock, LogOut, ShieldCheck, Moon, Sun } from 'lucide-react';
+import {
+  ArrowLeft,
+  CheckCircle,
+  Clock,
+  Coins,
+  Gift,
+  Heart,
+  Home,
+  Map,
+  MapPin,
+  QrCode,
+  Save,
+  Search,
+  SlidersHorizontal,
+  Star,
+  Trophy,
+  User,
+  Wallet,
+  X,
+  Mail,
+  Lock,
+  LogOut,
+  ShieldCheck,
+  Moon,
+  Sun,
+} from 'lucide-react';
 import LanguageDropdown from '@/shared/components/ui/LanguageDropdown';
 import type { ICustomer } from '@/types';
-import type { CustomerBadge, CustomerPointsWalletEntry, CustomerRestaurant, CustomerReward, CustomerTabId, CustomerVisit } from '../../hooks/useCustomerDashboard';
+import type {
+  CustomerBadge,
+  CustomerPointsWalletEntry,
+  CustomerRestaurant,
+  CustomerReward,
+  CustomerTabId,
+  CustomerVisit,
+} from '../../hooks/useCustomerDashboard';
 import CustomerChatButton from '@/features/chat/components/CustomerChatButton';
 import { useTheme } from '@/context/ThemeContext';
 
@@ -91,7 +123,15 @@ interface RewardQrModalProps {
   rewardId: string;
 }
 
-function getRestaurantId(entry: CustomerRestaurant | CustomerReward | CustomerPointsWalletEntry | CustomerVisit | null | undefined): string | undefined {
+function getRestaurantId(
+  entry:
+    | CustomerRestaurant
+    | CustomerReward
+    | CustomerPointsWalletEntry
+    | CustomerVisit
+    | null
+    | undefined,
+): string | undefined {
   if (!entry) return undefined;
   const restaurantId = 'restaurant_id' in entry ? entry.restaurant_id : undefined;
 
@@ -133,10 +173,20 @@ function getRestaurantDistance(restaurant: CustomerRestaurant, fallback = '—')
 }
 
 function getRestaurantVisitsCount(restaurant: CustomerRestaurant) {
-  return restaurant.profile?.visits ?? (restaurant as CustomerRestaurant & { visits?: number }).visits ?? 0;
+  return (
+    restaurant.profile?.visits ??
+    (restaurant as CustomerRestaurant & { visits?: number }).visits ??
+    0
+  );
 }
 
-function CustomerRestaurantCard({ restaurant, onClick }: { restaurant: CustomerRestaurant; onClick?: () => void }) {
+function CustomerRestaurantCard({
+  restaurant,
+  onClick,
+}: {
+  restaurant: CustomerRestaurant;
+  onClick?: () => void;
+}) {
   const { t } = useTranslation();
   const img = getRestaurantImage(restaurant);
   const rating = getRestaurantRating(restaurant);
@@ -144,10 +194,10 @@ function CustomerRestaurantCard({ restaurant, onClick }: { restaurant: CustomerR
   return (
     <div className="hc-res-card" onClick={onClick}>
       <div className="hc-res-card__img">
-        {img
-          ? <img src={img} alt={getRestaurantName(restaurant)} />
-          : null}
-        <div className="hc-res-card__img--placeholder" style={{ display: img ? 'none' : 'flex' }}>🍽️</div>
+        {img ? <img src={img} alt={getRestaurantName(restaurant)} /> : null}
+        <div className="hc-res-card__img--placeholder" style={{ display: img ? 'none' : 'flex' }}>
+          🍽️
+        </div>
         <div className="hc-res-card__rating">
           <Star size={12} fill="currentColor" />
           {rating}
@@ -155,7 +205,9 @@ function CustomerRestaurantCard({ restaurant, onClick }: { restaurant: CustomerR
       </div>
       <div className="hc-res-card__body">
         <p className="hc-res-card__name">{getRestaurantName(restaurant)}</p>
-        {getRestaurantDescription(restaurant) && <p className="hc-res-card__desc">{getRestaurantDescription(restaurant)}</p>}
+        {getRestaurantDescription(restaurant) && (
+          <p className="hc-res-card__desc">{getRestaurantDescription(restaurant)}</p>
+        )}
         <div className="hc-res-card__meta">
           {getRestaurantCity(restaurant) && (
             <span>
@@ -166,7 +218,8 @@ function CustomerRestaurantCard({ restaurant, onClick }: { restaurant: CustomerR
             <MapPin size={12} /> {getRestaurantDistance(restaurant)}
           </span>
           <span>
-            <Clock size={12} /> {getRestaurantVisitsCount(restaurant)} {t('dashboard.customer.status.visits')}
+            <Clock size={12} /> {getRestaurantVisitsCount(restaurant)}{' '}
+            {t('dashboard.customer.status.visits')}
           </span>
         </div>
       </div>
@@ -174,7 +227,13 @@ function CustomerRestaurantCard({ restaurant, onClick }: { restaurant: CustomerR
   );
 }
 
-function CustomerLargeRestaurantCard({ restaurant, onClick }: { restaurant: CustomerRestaurant; onClick: () => void }) {
+function CustomerLargeRestaurantCard({
+  restaurant,
+  onClick,
+}: {
+  restaurant: CustomerRestaurant;
+  onClick: () => void;
+}) {
   const { t } = useTranslation();
   const img = getRestaurantImage(restaurant);
   const rating = getRestaurantRating(restaurant);
@@ -183,7 +242,11 @@ function CustomerLargeRestaurantCard({ restaurant, onClick }: { restaurant: Cust
   return (
     <div className="hc-large-card" onClick={onClick}>
       <div className="hc-large-card__banner">
-        {img ? <img src={img} alt={getRestaurantName(restaurant)} /> : <div className="hc-banner-placeholder" />}
+        {img ? (
+          <img src={img} alt={getRestaurantName(restaurant)} />
+        ) : (
+          <div className="hc-banner-placeholder" />
+        )}
         {restaurant.profile?.hasOffer && (
           <div className="hc-large-card__badge">🔥 {t('dashboard.customer.status.offer')}</div>
         )}
@@ -199,10 +262,13 @@ function CustomerLargeRestaurantCard({ restaurant, onClick }: { restaurant: Cust
           </div>
         </div>
         <div className="hc-large-card__footer">
-          <span className="hc-large-card__dist"><MapPin size={14} /> {distance}</span>
+          <span className="hc-large-card__dist">
+            <MapPin size={14} /> {distance}
+          </span>
           {restaurant.profile?.pointsMultiplier && (
             <div className="hc-large-card__points-badge">
-              <Gift size={14} /> {restaurant.profile.pointsMultiplier}x {t('dashboard.customer.status.points').toUpperCase()}
+              <Gift size={14} /> {restaurant.profile.pointsMultiplier}x{' '}
+              {t('dashboard.customer.status.points').toUpperCase()}
             </div>
           )}
         </div>
@@ -235,8 +301,11 @@ function CustomerRestaurantDetail({
   const { t } = useTranslation();
   const img = getRestaurantImage(restaurant);
   const rating = getRestaurantRating(restaurant);
-  const userPointsForRestaurant = pointsWallet.find((wallet) => getRestaurantId(wallet) === restaurant._id)?.points || 0;
-  const restaurantRewards = allRewards.filter((reward) => getRestaurantId(reward) === restaurant._id);
+  const userPointsForRestaurant =
+    pointsWallet.find((wallet) => getRestaurantId(wallet) === restaurant._id)?.points || 0;
+  const restaurantRewards = allRewards.filter(
+    (reward) => getRestaurantId(reward) === restaurant._id,
+  );
   const isFavorite = favoriteRestaurants.some((favorite) => favorite._id === restaurant._id);
 
   return (
@@ -245,9 +314,21 @@ function CustomerRestaurantDetail({
         <ArrowLeft size={20} />
       </button>
       <div className="hc-restaurant-detail__banner hc-animate-fade">
-        {img ? <img src={img} alt={getRestaurantName(restaurant)} /> : <div className="hc-banner-placeholder" />}
+        {img ? (
+          <img src={img} alt={getRestaurantName(restaurant)} />
+        ) : (
+          <div className="hc-banner-placeholder" />
+        )}
       </div>
-      <div className="hc-restaurant-detail__header hc-animate-slide" style={{ animationDelay: '0.1s', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+      <div
+        className="hc-restaurant-detail__header hc-animate-slide"
+        style={{
+          animationDelay: '0.1s',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'flex-start',
+        }}
+      >
         <div>
           <h2>{getRestaurantName(restaurant)}</h2>
           <p>{getRestaurantCategory(restaurant).join(', ')}</p>
@@ -256,7 +337,11 @@ function CustomerRestaurantDetail({
           <button
             className={`hc-fav-btn ${isFavorite ? 'active' : ''}`}
             onClick={() => onToggleFavorite(restaurant)}
-            title={isFavorite ? t('dashboard.customer.actions.removeFavorite') : t('dashboard.customer.actions.addFavorite')}
+            title={
+              isFavorite
+                ? t('dashboard.customer.actions.removeFavorite')
+                : t('dashboard.customer.actions.addFavorite')
+            }
           >
             <Heart size={20} fill={isFavorite ? 'currentColor' : 'none'} />
           </button>
@@ -267,7 +352,10 @@ function CustomerRestaurantDetail({
       </div>
 
       {restaurant.profile?.pointsMultiplier && (
-        <div className="hc-points-multiplier-banner hc-animate-slide" style={{ animationDelay: '0.2s' }}>
+        <div
+          className="hc-points-multiplier-banner hc-animate-slide"
+          style={{ animationDelay: '0.2s' }}
+        >
           <div>
             <p className="hc-pmb-title">{t('dashboard.customer.details.multiplierTitle')}</p>
             <h3 className="hc-pmb-value">{restaurant.profile.pointsMultiplier}x</h3>
@@ -277,11 +365,16 @@ function CustomerRestaurantDetail({
         </div>
       )}
 
-      <div className="hc-restaurant-detail__info-grid hc-animate-slide" style={{ animationDelay: '0.3s' }}>
+      <div
+        className="hc-restaurant-detail__info-grid hc-animate-slide"
+        style={{ animationDelay: '0.3s' }}
+      >
         <div className="hc-info-box">
           <Coins size={18} className="text-orange" />
           <div>
-            <p>{userPointsForRestaurant} {t('dashboard.customer.status.points')}</p>
+            <p>
+              {userPointsForRestaurant} {t('dashboard.customer.status.points')}
+            </p>
             <span>{t('dashboard.customer.details.myPoints')}</span>
           </div>
         </div>
@@ -294,9 +387,15 @@ function CustomerRestaurantDetail({
         </div>
       </div>
 
-      <div className="hc-restaurant-detail__section hc-animate-slide" style={{ animationDelay: '0.4s' }}>
+      <div
+        className="hc-restaurant-detail__section hc-animate-slide"
+        style={{ animationDelay: '0.4s' }}
+      >
         <h3>{t('dashboard.customer.details.about')}</h3>
-        <p>{getRestaurantDescription(restaurant) || 'El millor restaurant del barri amb ingredients frescos i de qualitat.'}</p>
+        <p>
+          {getRestaurantDescription(restaurant) ||
+            'El millor restaurant del barri amb ingredients frescos i de qualitat.'}
+        </p>
       </div>
 
       <div className="hc-restaurant-detail__section">
@@ -307,15 +406,26 @@ function CustomerRestaurantDetail({
               <div key={reward._id} className="hc-reward-item">
                 <div>
                   <h4>{reward.name}</h4>
-                  <span>{reward.pointsRequired} {t('dashboard.customer.status.points')}</span>
+                  <span>
+                    {reward.pointsRequired} {t('dashboard.customer.status.points')}
+                  </span>
                 </div>
-                <button className='hc-reward-btn' onClick={() => { onSelectedReward(reward); return onOpenRewardQrModal() }}>
-                  <Gift size={20} className="text-orange" /> {t('dashboard.customer.actions.redeem')}
+                <button
+                  className="hc-reward-btn"
+                  onClick={() => {
+                    onSelectedReward(reward);
+                    return onOpenRewardQrModal();
+                  }}
+                >
+                  <Gift size={20} className="text-orange" />{' '}
+                  {t('dashboard.customer.actions.redeem')}
                 </button>
               </div>
             ))
           ) : (
-            <p className="hc-empty">{t('rewards.noRewards', 'Aquest restaurant no té recompenses registrades.')}</p>
+            <p className="hc-empty">
+              {t('rewards.noRewards', 'Aquest restaurant no té recompenses registrades.')}
+            </p>
           )}
         </div>
       </div>
@@ -344,24 +454,48 @@ export function CustomerSidebar({ activeTab, onTabChange, user, onLogout }: Cust
         <div className="hc-sidebar__logo">🍽️</div>
         <div>
           <p className="hc-sidebar__title">{t('navbar.logo', 'EasyEat')}</p>
-          <p className="hc-sidebar__subtitle">{t('auth.login.tagline', 'Tu experiencia gastronómica')}</p>
+          <p className="hc-sidebar__subtitle">
+            {t('auth.login.tagline', 'Tu experiencia gastronómica')}
+          </p>
         </div>
       </div>
 
       <nav className="hc-sidebar-nav">
-        <button type="button" className={activeTab === 'home' ? 'hc-sidebar-nav__item active' : 'hc-sidebar-nav__item'} onClick={() => onTabChange('home')}>
+        <button
+          type="button"
+          className={activeTab === 'home' ? 'hc-sidebar-nav__item active' : 'hc-sidebar-nav__item'}
+          onClick={() => onTabChange('home')}
+        >
           <Home size={18} />
           <span>{t('sidebar.home', 'Inici')}</span>
         </button>
-        <button type="button" className={activeTab === 'discover' ? 'hc-sidebar-nav__item active' : 'hc-sidebar-nav__item'} onClick={() => onTabChange('discover')}>
+        <button
+          type="button"
+          className={
+            activeTab === 'discover' ? 'hc-sidebar-nav__item active' : 'hc-sidebar-nav__item'
+          }
+          onClick={() => onTabChange('discover')}
+        >
           <MapPin size={18} />
           <span>{t('sidebar.discover', 'Descobrir')}</span>
         </button>
-        <button type="button" className={activeTab === 'rewards' ? 'hc-sidebar-nav__item active' : 'hc-sidebar-nav__item'} onClick={() => onTabChange('rewards')}>
+        <button
+          type="button"
+          className={
+            activeTab === 'rewards' ? 'hc-sidebar-nav__item active' : 'hc-sidebar-nav__item'
+          }
+          onClick={() => onTabChange('rewards')}
+        >
           <Gift size={18} />
           <span>{t('sidebar.rewards', 'Recompenses')}</span>
         </button>
-        <button type="button" className={activeTab === 'profile' ? 'hc-sidebar-nav__item active' : 'hc-sidebar-nav__item'} onClick={() => onTabChange('profile')}>
+        <button
+          type="button"
+          className={
+            activeTab === 'profile' ? 'hc-sidebar-nav__item active' : 'hc-sidebar-nav__item'
+          }
+          onClick={() => onTabChange('profile')}
+        >
           <User size={18} />
           <span>{t('sidebar.profile', 'Perfil')}</span>
         </button>
@@ -372,21 +506,32 @@ export function CustomerSidebar({ activeTab, onTabChange, user, onLogout }: Cust
           <div className="hc-sidebar-user-avatar">{user?.name?.[0]?.toUpperCase()}</div>
           <div>
             <p>{user?.name}</p>
-            <span>{
-              user?.role === 'owner' ? t('auth.roles.owner') :
-                user?.role === 'staff' ? t('auth.roles.staff') :
-                  t('auth.roles.customer')
-            }</span>
+            <span>
+              {user?.role === 'owner'
+                ? t('auth.roles.owner')
+                : user?.role === 'staff'
+                  ? t('auth.roles.staff')
+                  : t('auth.roles.customer')}
+            </span>
           </div>
         </div>
-        <button type="button" onClick={toggleTheme} className="hc-theme-toggle" aria-label={isDark ? 'Activar modo claro' : 'Activar modo oscuro'}>
+        <button
+          type="button"
+          onClick={toggleTheme}
+          className="hc-theme-toggle"
+          aria-label={isDark ? 'Activar modo claro' : 'Activar modo oscuro'}
+        >
           <span className="hc-theme-toggle__label">
             {isDark ? <Moon size={16} /> : <Sun size={16} />}
             {isDark ? 'Modo Oscuro' : 'Modo Claro'}
           </span>
-          <span className={`hc-theme-toggle__switch ${isDark ? 'active' : ''}`}><span /></span>
+          <span className={`hc-theme-toggle__switch ${isDark ? 'active' : ''}`}>
+            <span />
+          </span>
         </button>
-        <button onClick={onLogout} className="hc-sidebar-logout">{t('sidebar.logout', 'Logout')}</button>
+        <button onClick={onLogout} className="hc-sidebar-logout">
+          {t('sidebar.logout', 'Logout')}
+        </button>
         <LanguageDropdown />
         <Link
           to="/aviso-legal"
@@ -422,7 +567,9 @@ export function CustomerHomeTab({
         <div className="hc-hero__text">
           <p className="hc-hero__greeting">{t('dashboard.customer.welcome', 'Hola,')}</p>
           <h1 className="hc-hero__name">{user?.name?.split(' ')[0]}! 👋</h1>
-          <p className="hc-hero__sub">{t('dashboard.customer.discover', 'Descubre sabores que te esperan hoy')}</p>
+          <p className="hc-hero__sub">
+            {t('dashboard.customer.discover', 'Descubre sabores que te esperan hoy')}
+          </p>
         </div>
         <div className="hc-hero__orbs">
           <div className="hc-orb hc-orb--1" />
@@ -432,31 +579,47 @@ export function CustomerHomeTab({
 
       <section className="hc-stats">
         <div className="hc-stat-card hc-stat-card--points">
-          <div className="hc-stat-card__icon"><Coins size={22} /></div>
+          <div className="hc-stat-card__icon">
+            <Coins size={22} />
+          </div>
           <div className="hc-stat-card__info">
             <span className="hc-stat-card__value">{totalPoints.toLocaleString()}</span>
-            <span className="hc-stat-card__label">{t('dashboard.customer.stats.totalPoints', 'Punts totals')}</span>
+            <span className="hc-stat-card__label">
+              {t('dashboard.customer.stats.totalPoints', 'Punts totals')}
+            </span>
           </div>
         </div>
         <div className="hc-stat-card hc-stat-card--visits">
-          <div className="hc-stat-card__icon"><Clock size={22} /></div>
+          <div className="hc-stat-card__icon">
+            <Clock size={22} />
+          </div>
           <div className="hc-stat-card__info">
             <span className="hc-stat-card__value">{visits.length}</span>
-            <span className="hc-stat-card__label">{t('dashboard.customer.stats.visits', 'Visites')}</span>
+            <span className="hc-stat-card__label">
+              {t('dashboard.customer.stats.visits', 'Visites')}
+            </span>
           </div>
         </div>
         <div className="hc-stat-card hc-stat-card--badges">
-          <div className="hc-stat-card__icon"><Trophy size={22} /></div>
+          <div className="hc-stat-card__icon">
+            <Trophy size={22} />
+          </div>
           <div className="hc-stat-card__info">
             <span className="hc-stat-card__value">{badges.length}</span>
-            <span className="hc-stat-card__label">{t('dashboard.customer.stats.badges', 'Badges')}</span>
+            <span className="hc-stat-card__label">
+              {t('dashboard.customer.stats.badges', 'Badges')}
+            </span>
           </div>
         </div>
         <div className="hc-stat-card hc-stat-card--favs">
-          <div className="hc-stat-card__icon"><Heart size={22} /></div>
+          <div className="hc-stat-card__icon">
+            <Heart size={22} />
+          </div>
           <div className="hc-stat-card__info">
             <span className="hc-stat-card__value">{displayFavorites.length}</span>
-            <span className="hc-stat-card__label">{t('dashboard.customer.stats.favorites', 'Favorits')}</span>
+            <span className="hc-stat-card__label">
+              {t('dashboard.customer.stats.favorites', 'Favorits')}
+            </span>
           </div>
         </div>
       </section>
@@ -469,7 +632,9 @@ export function CustomerHomeTab({
 
       <section className="hc-section">
         <div className="hc-section__head">
-          <h2 className="hc-section__title"><Heart size={18} /> {t('dashboard.customer.sections.favorites', 'Els teus favorits')}</h2>
+          <h2 className="hc-section__title">
+            <Heart size={18} /> {t('dashboard.customer.sections.favorites', 'Els teus favorits')}
+          </h2>
         </div>
         {displayFavorites.length > 0 ? (
           <div className="hc-cards hc-cards--favs">
@@ -485,25 +650,46 @@ export function CustomerHomeTab({
             ))}
           </div>
         ) : (
-          <div className="hc-empty">{t('dashboard.customer.empty.favorites', 'No tienes restaurantes favoritos todavía.')}</div>
+          <div className="hc-empty">
+            {t('dashboard.customer.empty.favorites', 'No tienes restaurantes favoritos todavía.')}
+          </div>
         )}
       </section>
 
       {allRewards.length > 0 && (
         <section className="hc-section">
           <div className="hc-section__head">
-            <h2 className="hc-section__title"><Gift size={18} /> {t('dashboard.customer.sections.rewards', 'Recompensas destacadas')}</h2>
+            <h2 className="hc-section__title">
+              <Gift size={18} />{' '}
+              {t('dashboard.customer.sections.rewards', 'Recompensas destacadas')}
+            </h2>
           </div>
-          <div className="hc-rewards-carousel" style={{ display: 'flex', gap: '1.5rem', overflowX: 'auto', paddingBottom: '1.5rem', scrollSnapType: 'x mandatory' }}>
+          <div
+            className="hc-rewards-carousel"
+            style={{
+              display: 'flex',
+              gap: '1.5rem',
+              overflowX: 'auto',
+              paddingBottom: '1.5rem',
+              scrollSnapType: 'x mandatory',
+            }}
+          >
             {allRewards.slice(0, 6).map((reward, index) => {
-              const restaurant = restaurants.find((item) => getRestaurantId(item) === getRestaurantId(reward));
+              const restaurant = restaurants.find(
+                (item) => getRestaurantId(item) === getRestaurantId(reward),
+              );
               const image = restaurant ? getRestaurantImage(restaurant) : '';
 
               return (
                 <div
                   key={reward._id || index}
                   className="hc-reward-card-premium hc-animate-slide"
-                  style={{ animationDelay: `${0.1 * index}s`, backgroundImage: image ? `url(${image})` : 'linear-gradient(135deg, #f97316 0%, #ea580c 100%)' }}
+                  style={{
+                    animationDelay: `${0.1 * index}s`,
+                    backgroundImage: image
+                      ? `url(${image})`
+                      : 'linear-gradient(135deg, #f97316 0%, #ea580c 100%)',
+                  }}
                 >
                   <div className="hc-reward-card-premium__overlay" />
                   <div className="hc-reward-card-premium__content">
@@ -525,7 +711,9 @@ export function CustomerHomeTab({
       {badges.length > 0 && (
         <section className="hc-section">
           <div className="hc-section__head">
-            <h2 className="hc-section__title"><Trophy size={18} /> {t('dashboard.customer.sections.badges', 'Tus logros')}</h2>
+            <h2 className="hc-section__title">
+              <Trophy size={18} /> {t('dashboard.customer.sections.badges', 'Tus logros')}
+            </h2>
           </div>
           <div className="hc-badges-row">
             {badges.map((badge, index) => (
@@ -533,7 +721,10 @@ export function CustomerHomeTab({
                 <div className="hc-badge-card__icon">{badge.icon || '🏆'}</div>
                 <div className="hc-badge-card__info">
                   <p>{badge.title || `Badge ${index + 1}`}</p>
-                  <span>{badge.subtitle || t('dashboard.customer.objectives.level', 'Objetivo completado')}</span>
+                  <span>
+                    {badge.subtitle ||
+                      t('dashboard.customer.objectives.level', 'Objetivo completado')}
+                  </span>
                 </div>
               </div>
             ))}
@@ -543,7 +734,10 @@ export function CustomerHomeTab({
 
       <section className="hc-section">
         <div className="hc-section__head">
-          <h2 className="hc-section__title"><Clock size={18} /> {t('dashboard.customer.sections.objectives', 'Objetivos por alcanzar')}</h2>
+          <h2 className="hc-section__title">
+            <Clock size={18} />{' '}
+            {t('dashboard.customer.sections.objectives', 'Objetivos por alcanzar')}
+          </h2>
         </div>
         <div className="hc-objectives">
           <div className="hc-objective-card">
@@ -554,7 +748,9 @@ export function CustomerHomeTab({
             <div className="hc-progress-bar">
               <div className="hc-progress-bar__fill" style={{ width: `${objective1Progress}%` }} />
             </div>
-            <small>{t('dashboard.customer.objectives.progress', 'Progreso:')} {objective1Progress}%</small>
+            <small>
+              {t('dashboard.customer.objectives.progress', 'Progreso:')} {objective1Progress}%
+            </small>
           </div>
           <div className="hc-objective-card">
             <div className="hc-objective-card__header">
@@ -564,17 +760,23 @@ export function CustomerHomeTab({
             <div className="hc-progress-bar">
               <div className="hc-progress-bar__fill" style={{ width: `${objective2Progress}%` }} />
             </div>
-            <small>{t('dashboard.customer.objectives.progress', 'Progreso:')} {objective2Progress}%</small>
+            <small>
+              {t('dashboard.customer.objectives.progress', 'Progreso:')} {objective2Progress}%
+            </small>
           </div>
           <div className="hc-objective-card">
             <div className="hc-objective-card__header">
-              <p>{t('dashboard.customer.objectives.level', 'Alcanza nivel 10 en un restaurante')}</p>
+              <p>
+                {t('dashboard.customer.objectives.level', 'Alcanza nivel 10 en un restaurante')}
+              </p>
               <span>{Math.min(visits.length, 10)} / 10</span>
             </div>
             <div className="hc-progress-bar">
               <div className="hc-progress-bar__fill" style={{ width: `${objective3Progress}%` }} />
             </div>
-            <small>{t('dashboard.customer.objectives.progress', 'Progreso:')} {objective3Progress}%</small>
+            <small>
+              {t('dashboard.customer.objectives.progress', 'Progreso:')} {objective3Progress}%
+            </small>
           </div>
         </div>
       </section>
@@ -611,7 +813,6 @@ export function CustomerProfileTab({
       </div>
 
       <div className="max-w-[1000px] mx-auto px-6 lg:px-8 -mt-20 relative z-10 flex flex-col md:flex-row gap-8">
-
         {/* Columna Izquierda: Resumen y Actividad */}
         <div className="w-full md:w-1/3 flex flex-col gap-6">
           <div className="bg-white rounded-3xl shadow-sm border border-slate-200/60 p-6 flex flex-col items-center text-center">
@@ -623,18 +824,32 @@ export function CustomerProfileTab({
 
             <div className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-emerald-50 text-emerald-600 rounded-full text-xs font-bold uppercase tracking-wide">
               <ShieldCheck size={14} />
-              {user?.role === 'owner' ? t('auth.roles.owner') : user?.role === 'staff' ? t('auth.roles.staff') : t('auth.roles.customer', 'Cuenta Verificada')}
+              {user?.role === 'owner'
+                ? t('auth.roles.owner')
+                : user?.role === 'staff'
+                  ? t('auth.roles.staff')
+                  : t('auth.roles.customer', 'Cuenta Verificada')}
             </div>
 
             <div className="w-full h-px bg-slate-100 my-6"></div>
 
             <div className="w-full flex justify-between items-center text-sm mb-4">
-              <span className="text-slate-500 flex items-center gap-2"><Clock size={16} className="text-blue-500" /> {t('dashboard.customer.stats.visits', 'Visitas totales')}</span>
-              <span className="font-semibold text-slate-800 bg-slate-50 px-2.5 py-1 rounded-md">{visits.length}</span>
+              <span className="text-slate-500 flex items-center gap-2">
+                <Clock size={16} className="text-blue-500" />{' '}
+                {t('dashboard.customer.stats.visits', 'Visitas totales')}
+              </span>
+              <span className="font-semibold text-slate-800 bg-slate-50 px-2.5 py-1 rounded-md">
+                {visits.length}
+              </span>
             </div>
             <div className="w-full flex justify-between items-center text-sm mb-6">
-              <span className="text-slate-500 flex items-center gap-2"><Coins size={16} className="text-orange-500" /> {t('dashboard.customer.stats.totalPoints', 'Puntos acumulados')}</span>
-              <span className="font-semibold text-orange-600 bg-orange-50 px-2.5 py-1 rounded-md">{totalPoints}</span>
+              <span className="text-slate-500 flex items-center gap-2">
+                <Coins size={16} className="text-orange-500" />{' '}
+                {t('dashboard.customer.stats.totalPoints', 'Puntos acumulados')}
+              </span>
+              <span className="font-semibold text-orange-600 bg-orange-50 px-2.5 py-1 rounded-md">
+                {totalPoints}
+              </span>
             </div>
 
             {onLogout && (
@@ -652,7 +867,6 @@ export function CustomerProfileTab({
         {/* Columna Derecha: Formulario de Configuración */}
         <div className="w-full md:w-2/3">
           <form onSubmit={onSubmit} className="flex flex-col gap-6">
-
             {/* Tarjeta de Información Personal */}
             <div className="bg-white rounded-3xl shadow-sm border border-slate-200/60 overflow-hidden">
               <div className="px-6 py-5 border-b border-slate-100 bg-slate-50/50 flex items-center gap-3">
@@ -660,16 +874,28 @@ export function CustomerProfileTab({
                   <User size={18} />
                 </div>
                 <div>
-                  <h3 className="text-base font-bold text-slate-800">{t('dashboard.customer.profile.title', 'Información Personal')}</h3>
-                  <p className="text-xs text-slate-500 mt-0.5">{t('dashboard.customer.profile.subtitle', 'Actualiza tus datos básicos de contacto.')}</p>
+                  <h3 className="text-base font-bold text-slate-800">
+                    {t('dashboard.customer.profile.title', 'Información Personal')}
+                  </h3>
+                  <p className="text-xs text-slate-500 mt-0.5">
+                    {t(
+                      'dashboard.customer.profile.subtitle',
+                      'Actualiza tus datos básicos de contacto.',
+                    )}
+                  </p>
                 </div>
               </div>
               <div className="p-6 flex flex-col gap-5">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                   <div className="flex flex-col gap-1.5">
-                    <label className="text-sm font-semibold text-slate-700">{t('auth.register.form.fullName', 'Nombre completo')}</label>
+                    <label className="text-sm font-semibold text-slate-700">
+                      {t('auth.register.form.fullName', 'Nombre completo')}
+                    </label>
                     <div className="relative">
-                      <User size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+                      <User
+                        size={18}
+                        className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
+                      />
                       <input
                         type="text"
                         className={`w-full pl-10 pr-4 py-2.5 bg-slate-50 border rounded-xl text-sm focus:ring-2 focus:ring-orange-500 focus:bg-white transition-all outline-none ${nameError ? 'border-red-300 focus:border-red-500' : 'border-slate-200'}`}
@@ -679,13 +905,20 @@ export function CustomerProfileTab({
                         required
                       />
                     </div>
-                    {nameError && <span className="text-xs text-red-500 mt-1 font-medium">{nameError}</span>}
+                    {nameError && (
+                      <span className="text-xs text-red-500 mt-1 font-medium">{nameError}</span>
+                    )}
                   </div>
 
                   <div className="flex flex-col gap-1.5">
-                    <label className="text-sm font-semibold text-slate-700">{t('auth.register.form.email', 'Correo electrónico')}</label>
+                    <label className="text-sm font-semibold text-slate-700">
+                      {t('auth.register.form.email', 'Correo electrónico')}
+                    </label>
                     <div className="relative">
-                      <Mail size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+                      <Mail
+                        size={18}
+                        className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
+                      />
                       <input
                         type="email"
                         className={`w-full pl-10 pr-4 py-2.5 bg-slate-50 border rounded-xl text-sm focus:ring-2 focus:ring-orange-500 focus:bg-white transition-all outline-none ${emailError ? 'border-red-300 focus:border-red-500' : 'border-slate-200'}`}
@@ -695,7 +928,9 @@ export function CustomerProfileTab({
                         required
                       />
                     </div>
-                    {emailError && <span className="text-xs text-red-500 mt-1 font-medium">{emailError}</span>}
+                    {emailError && (
+                      <span className="text-xs text-red-500 mt-1 font-medium">{emailError}</span>
+                    )}
                   </div>
                 </div>
               </div>
@@ -708,15 +943,27 @@ export function CustomerProfileTab({
                   <Lock size={18} />
                 </div>
                 <div>
-                  <h3 className="text-base font-bold text-slate-800">{t('settings.security.title', 'Seguridad de la Cuenta')}</h3>
-                  <p className="text-xs text-slate-500 mt-0.5">{t('profile.form.passwordHint', 'Deja este campo en blanco si no deseas cambiarla.')}</p>
+                  <h3 className="text-base font-bold text-slate-800">
+                    {t('settings.security.title', 'Seguridad de la Cuenta')}
+                  </h3>
+                  <p className="text-xs text-slate-500 mt-0.5">
+                    {t(
+                      'profile.form.passwordHint',
+                      'Deja este campo en blanco si no deseas cambiarla.',
+                    )}
+                  </p>
                 </div>
               </div>
               <div className="p-6">
                 <div className="flex flex-col gap-1.5 max-w-md">
-                  <label className="text-sm font-semibold text-slate-700">{t('profile.form.password', 'Nueva contraseña')}</label>
+                  <label className="text-sm font-semibold text-slate-700">
+                    {t('profile.form.password', 'Nueva contraseña')}
+                  </label>
                   <div className="relative">
-                    <Lock size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+                    <Lock
+                      size={18}
+                      className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
+                    />
                     <input
                       type="password"
                       className={`w-full pl-10 pr-4 py-2.5 bg-slate-50 border rounded-xl text-sm focus:ring-2 focus:ring-slate-800 focus:bg-white transition-all outline-none ${passwordError ? 'border-red-300 focus:border-red-500' : 'border-slate-200'}`}
@@ -725,7 +972,9 @@ export function CustomerProfileTab({
                       onChange={(event) => onPasswordChange(event.target.value)}
                     />
                   </div>
-                  {passwordError && <span className="text-xs text-red-500 mt-1 font-medium">{passwordError}</span>}
+                  {passwordError && (
+                    <span className="text-xs text-red-500 mt-1 font-medium">{passwordError}</span>
+                  )}
                 </div>
               </div>
             </div>
@@ -735,7 +984,8 @@ export function CustomerProfileTab({
               <div className="w-full sm:w-auto">
                 {success && (
                   <div className="inline-flex items-center gap-2 px-4 py-2.5 bg-emerald-50 text-emerald-700 rounded-xl text-sm font-bold border border-emerald-100">
-                    <CheckCircle size={18} /> {t('settings.form.updated', 'Perfil actualizado con éxito')}
+                    <CheckCircle size={18} />{' '}
+                    {t('settings.form.updated', 'Perfil actualizado con éxito')}
                   </div>
                 )}
               </div>
@@ -763,7 +1013,7 @@ export function CustomerProfileTab({
                   onClick={() => {
                     const message = t(
                       'dashboard.customer.profile.dangerZone.confirm',
-                      'Estás a punto de eliminar tu cuenta.\n\nEsta acción es IRREVERSIBLE y perderás todos tus puntos, recompensas y tu historial de visitas de forma permanente.\n\n¿Estás completamente seguro de que quieres proceder?'
+                      'Estás a punto de eliminar tu cuenta.\n\nEsta acción es IRREVERSIBLE y perderás todos tus puntos, recompensas y tu historial de visitas de forma permanente.\n\n¿Estás completamente seguro de que quieres proceder?',
                     );
                     if (window.confirm(message)) {
                       onDeleteAccount();
@@ -772,11 +1022,12 @@ export function CustomerProfileTab({
                   className="px-6 py-2.5 text-red-500 hover:text-red-700 hover:bg-red-50 rounded-xl text-sm font-bold transition-all flex items-center gap-2"
                 >
                   <X size={16} />
-                  <span>{t('dashboard.customer.profile.dangerZone.delete', 'Eliminar cuenta')}</span>
+                  <span>
+                    {t('dashboard.customer.profile.dangerZone.delete', 'Eliminar cuenta')}
+                  </span>
                 </button>
               </div>
             )}
-
           </form>
         </div>
       </div>
@@ -815,11 +1066,15 @@ export function CustomerDiscoverView({
   ];
 
   const filteredRestaurants = restaurants.filter((restaurant) => {
-    const matchesSearch = (restaurant.profile?.name || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+    const matchesSearch =
+      (restaurant.profile?.name || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
       (restaurant.profile?.description || '').toLowerCase().includes(searchTerm.toLowerCase());
 
-    const matchesCategory = selectedCategory === 'all' ||
-      (restaurant.profile?.category || []).some((category) => category.toLowerCase().includes(selectedCategory.toLowerCase()));
+    const matchesCategory =
+      selectedCategory === 'all' ||
+      (restaurant.profile?.category || []).some((category) =>
+        category.toLowerCase().includes(selectedCategory.toLowerCase()),
+      );
 
     return matchesSearch && matchesCategory;
   });
@@ -843,7 +1098,15 @@ export function CustomerDiscoverView({
   return (
     <div className="hc-discover-view">
       <div className="hc-discover-header">
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '1rem', marginBottom: '1.5rem' }}>
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            gap: '1rem',
+            marginBottom: '1.5rem',
+          }}
+        >
           <h2 style={{ fontSize: '2rem', margin: 0 }}>{t('discover.title', 'Descobrir')}</h2>
           <button
             type="button"
@@ -887,7 +1150,10 @@ export function CustomerDiscoverView({
       </div>
 
       <div className="hc-discover-results">
-        <p className="hc-results-count"><strong>{filteredRestaurants.length}</strong> {t('discover.resultsCount', 'restaurants trobats')}</p>
+        <p className="hc-results-count">
+          <strong>{filteredRestaurants.length}</strong>{' '}
+          {t('discover.resultsCount', 'restaurants trobats')}
+        </p>
         <div className="hc-large-cards">
           {filteredRestaurants.map((restaurant) => (
             <CustomerLargeRestaurantCard
@@ -902,42 +1168,69 @@ export function CustomerDiscoverView({
   );
 }
 
-export function CustomerHistoryRewardsView({ visits, restaurants }: CustomerHistoryRewardsViewProps) {
+export function CustomerHistoryRewardsView({
+  visits,
+  restaurants,
+}: CustomerHistoryRewardsViewProps) {
   const totalVisits = visits.length;
   const totalMoneySpent = visits.reduce((sum, visit) => sum + (Number(visit.billAmount) || 0), 0);
-  const totalPointsEarned = visits.reduce((sum, visit) => sum + (Number(visit.pointsEarned) || 0), 0);
+  const totalPointsEarned = visits.reduce(
+    (sum, visit) => sum + (Number(visit.pointsEarned) || 0),
+    0,
+  );
 
   const getRestaurantInfo = (restaurantData: CustomerVisit['restaurant_id']) => {
     if (!restaurantData) return null;
     if (typeof restaurantData === 'object') return restaurantData;
-    return restaurants.find((restaurant) => restaurant._id === restaurantData || restaurant.id === restaurantData);
+    return restaurants.find(
+      (restaurant) => restaurant._id === restaurantData || restaurant.id === restaurantData,
+    );
   };
 
   const { t, i18n } = useTranslation();
   return (
     <div className="hc-rewards-dashboard hc-animate-fade">
       <div className="hc-discover-header">
-        <h2 style={{ fontSize: '2rem', marginBottom: '0.5rem', marginTop: 0 }}>{t('stats_dashboard.title', 'Les teves Estadístiques')}</h2>
-        <p style={{ color: 'var(--clr-text-muted)', marginBottom: '2rem' }}>{t('stats_dashboard.tagline', 'Així és com has aprofitat EasyEat fins ara.')}</p>
+        <h2 style={{ fontSize: '2rem', marginBottom: '0.5rem', marginTop: 0 }}>
+          {t('stats_dashboard.title', 'Les teves Estadístiques')}
+        </h2>
+        <p style={{ color: 'var(--clr-text-muted)', marginBottom: '2rem' }}>
+          {t('stats_dashboard.tagline', 'Així és com has aprofitat EasyEat fins ara.')}
+        </p>
       </div>
 
       <div className="hc-rewards-stats">
-        <div className="hc-stat-card hc-stat-card--money hc-animate-slide" style={{ animationDelay: '0.1s' }}>
-          <div className="hc-stat-card__icon"><Wallet size={24} /></div>
+        <div
+          className="hc-stat-card hc-stat-card--money hc-animate-slide"
+          style={{ animationDelay: '0.1s' }}
+        >
+          <div className="hc-stat-card__icon">
+            <Wallet size={24} />
+          </div>
           <div>
             <h3>{totalMoneySpent.toFixed(2)}€</h3>
             <p>{t('stats_dashboard.spent', 'Diners gastats')}</p>
           </div>
         </div>
-        <div className="hc-stat-card hc-stat-card--points hc-animate-slide" style={{ animationDelay: '0.2s' }}>
-          <div className="hc-stat-card__icon"><Coins size={24} /></div>
+        <div
+          className="hc-stat-card hc-stat-card--points hc-animate-slide"
+          style={{ animationDelay: '0.2s' }}
+        >
+          <div className="hc-stat-card__icon">
+            <Coins size={24} />
+          </div>
           <div>
             <h3>{totalPointsEarned}</h3>
             <p>{t('stats_dashboard.earned', 'Punts acumulats')}</p>
           </div>
         </div>
-        <div className="hc-stat-card hc-stat-card--visits hc-animate-slide" style={{ animationDelay: '0.3s' }}>
-          <div className="hc-stat-card__icon"><Clock size={24} /></div>
+        <div
+          className="hc-stat-card hc-stat-card--visits hc-animate-slide"
+          style={{ animationDelay: '0.3s' }}
+        >
+          <div className="hc-stat-card__icon">
+            <Clock size={24} />
+          </div>
           <div>
             <h3>{totalVisits}</h3>
             <p>{t('stats_dashboard.visits', 'Visites realitzades')}</p>
@@ -945,8 +1238,13 @@ export function CustomerHistoryRewardsView({ visits, restaurants }: CustomerHist
         </div>
       </div>
 
-      <div className="hc-rewards-history-section hc-animate-slide" style={{ animationDelay: '0.4s' }}>
-        <h3 className="hc-rewards-history-title">{t('stats_dashboard.history.title', "Historial d'activitat i recompenses escanejades")}</h3>
+      <div
+        className="hc-rewards-history-section hc-animate-slide"
+        style={{ animationDelay: '0.4s' }}
+      >
+        <h3 className="hc-rewards-history-title">
+          {t('stats_dashboard.history.title', "Historial d'activitat i recompenses escanejades")}
+        </h3>
         <div className="hc-rewards-history-list">
           {visits.length > 0 ? (
             visits.map((visit, index) => {
@@ -958,11 +1256,37 @@ export function CustomerHistoryRewardsView({ visits, restaurants }: CustomerHist
                 <div key={visit._id || index} className="hc-history-item">
                   <div className="hc-history-item__left">
                     <div className="hc-history-item__img">
-                      {image ? <img src={image} alt={restaurant ? getRestaurantName(restaurant) : 'Restaurant'} /> : <div className="placeholder">🍽️</div>}
+                      {image ? (
+                        <img
+                          src={image}
+                          alt={restaurant ? getRestaurantName(restaurant) : 'Restaurant'}
+                        />
+                      ) : (
+                        <div className="placeholder">🍽️</div>
+                      )}
                     </div>
                     <div className="hc-history-item__info">
-                      <h4>{restaurant ? getRestaurantName(restaurant) : t('stats_dashboard.history.unknownRestaurant', 'Restaurant desconegut')}</h4>
-                      <p>{date.toLocaleDateString(i18n.language === 'ca' ? 'ca-ES' : i18n.language === 'es' ? 'es-ES' : 'en-US', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</p>
+                      <h4>
+                        {restaurant
+                          ? getRestaurantName(restaurant)
+                          : t('stats_dashboard.history.unknownRestaurant', 'Restaurant desconegut')}
+                      </h4>
+                      <p>
+                        {date.toLocaleDateString(
+                          i18n.language === 'ca'
+                            ? 'ca-ES'
+                            : i18n.language === 'es'
+                              ? 'es-ES'
+                              : 'en-US',
+                          {
+                            day: '2-digit',
+                            month: 'short',
+                            year: 'numeric',
+                            hour: '2-digit',
+                            minute: '2-digit',
+                          },
+                        )}
+                      </p>
                     </div>
                   </div>
                   <div className="hc-history-item__right">
@@ -981,7 +1305,12 @@ export function CustomerHistoryRewardsView({ visits, restaurants }: CustomerHist
               );
             })
           ) : (
-            <div className="hc-empty">{t('stats_dashboard.history.empty', 'No tens cap visita ni recompensa registrada encara.')}</div>
+            <div className="hc-empty">
+              {t(
+                'stats_dashboard.history.empty',
+                'No tens cap visita ni recompensa registrada encara.',
+              )}
+            </div>
           )}
         </div>
       </div>
@@ -1000,7 +1329,9 @@ export function CustomerQrModal({ open, onClose, userId }: CustomerQrModalProps)
           <X size={24} />
         </button>
         <h3>{t('qr.user.title', 'El teu Codi QR')}</h3>
-        <p>{t('qr.user.desc', 'Mostra aquest codi al cambrer per fer el check-in i guanyar punts.')}</p>
+        <p>
+          {t('qr.user.desc', 'Mostra aquest codi al cambrer per fer el check-in i guanyar punts.')}
+        </p>
         <div className="hc-qr-container">
           <QRCodeCanvas
             value={userId}
@@ -1016,7 +1347,13 @@ export function CustomerQrModal({ open, onClose, userId }: CustomerQrModalProps)
   );
 }
 
-export function RewardQrModal({ open, onClose, userId, restaurantId, rewardId }: RewardQrModalProps) {
+export function RewardQrModal({
+  open,
+  onClose,
+  userId,
+  restaurantId,
+  rewardId,
+}: RewardQrModalProps) {
   const { t } = useTranslation();
   if (!open) return null;
 

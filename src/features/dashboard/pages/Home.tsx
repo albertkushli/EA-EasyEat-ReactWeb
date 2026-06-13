@@ -33,11 +33,19 @@ export default function Home() {
           <span>{t('navbar.logo')}</span>
         </Link>
         <div className="lp-nav-links">
-          <a href="#demo" className="lp-link">{t('navbar.links.demo')}</a>
-          <a href="#restaurantes" className="lp-link">{t('navbar.links.restaurants')}</a>
-          <a href="#funciona" className="lp-link">{t('navbar.links.howItWorks')}</a>
+          <a href="#demo" className="lp-link">
+            {t('navbar.links.demo')}
+          </a>
+          <a href="#restaurantes" className="lp-link">
+            {t('navbar.links.restaurants')}
+          </a>
+          <a href="#funciona" className="lp-link">
+            {t('navbar.links.howItWorks')}
+          </a>
           <LanguageDropdown />
-          <Link to="/login" className="lp-btn-acceder">{t('navbar.links.access')}</Link>
+          <Link to="/login" className="lp-btn-acceder">
+            {t('navbar.links.access')}
+          </Link>
         </div>
       </nav>
 
@@ -48,8 +56,10 @@ export default function Home() {
         <div className="lp-hero-content">
           <p className="lp-hero-badge">{t('hero.badge')}</p>
           <h1 className="lp-hero-title">
-            <span className="text-orange">{t('hero.title.win')}</span><br />
-            <span className="text-green">{t('hero.title.eat')}</span><br />
+            <span className="text-orange">{t('hero.title.win')}</span>
+            <br />
+            <span className="text-green">{t('hero.title.eat')}</span>
+            <br />
             {t('hero.title.live')}
           </h1>
           <p className="lp-hero-subtitle">{t('hero.subtitle')}</p>
@@ -115,15 +125,21 @@ export default function Home() {
           <h2 className="split-title">{t('features.foodie.title')}</h2>
           <ul className="split-list">
             <li className="split-item">
-              <div className="split-item-icon"><MapPin size={24} /></div>
+              <div className="split-item-icon">
+                <MapPin size={24} />
+              </div>
               <span>{t('features.foodie.items.discover')}</span>
             </li>
             <li className="split-item">
-              <div className="split-item-icon"><Trophy size={24} /></div>
+              <div className="split-item-icon">
+                <Trophy size={24} />
+              </div>
               <span>{t('features.foodie.items.accumulate')}</span>
             </li>
             <li className="split-item">
-              <div className="split-item-icon"><Gift size={24} /></div>
+              <div className="split-item-icon">
+                <Gift size={24} />
+              </div>
               <span>{t('features.foodie.items.redeem')}</span>
             </li>
           </ul>
@@ -134,15 +150,21 @@ export default function Home() {
           <h2 className="split-title">{t('features.business.title')}</h2>
           <ul className="split-list">
             <li className="split-item">
-              <div className="split-item-icon"><BarChart3 size={24} /></div>
+              <div className="split-item-icon">
+                <BarChart3 size={24} />
+              </div>
               <span>{t('features.business.items.analyze')}</span>
             </li>
             <li className="split-item">
-              <div className="split-item-icon"><Users size={24} /></div>
+              <div className="split-item-icon">
+                <Users size={24} />
+              </div>
               <span>{t('features.business.items.loyalty')}</span>
             </li>
             <li className="split-item">
-              <div className="split-item-icon"><Zap size={24} /></div>
+              <div className="split-item-icon">
+                <Zap size={24} />
+              </div>
               <span>{t('features.business.items.manage')}</span>
             </li>
           </ul>
@@ -212,17 +234,49 @@ export default function Home() {
           <h2 style={{ fontSize: '42px', fontWeight: 800, marginBottom: '24px' }}>
             {t('cta.ready')}
           </h2>
-          <p style={{ fontSize: '18px', color: '#64748b', marginBottom: '40px', maxWidth: '600px', margin: '0 auto 40px' }}>
+          <p
+            style={{
+              fontSize: '18px',
+              color: '#64748b',
+              marginBottom: '40px',
+              maxWidth: '600px',
+              margin: '0 auto 40px',
+            }}
+          >
             {t('cta.join')}
           </p>
-          <Link to="/login" className="lp-cta-btn lp-cta-btn--orange" style={{ display: 'inline-flex', margin: '0 auto' }}>
+          <Link
+            to="/login"
+            className="lp-cta-btn lp-cta-btn--orange"
+            style={{ display: 'inline-flex', margin: '0 auto' }}
+          >
             {t('cta.access')} <ArrowRight size={20} />
           </Link>
-          <div style={{ marginTop: '30px', display: 'flex', justifyContent: 'center', gap: '24px' }}>
-            <span style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '14px', fontWeight: 600, color: '#94a3b8' }}>
+          <div
+            style={{ marginTop: '30px', display: 'flex', justifyContent: 'center', gap: '24px' }}
+          >
+            <span
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                fontSize: '14px',
+                fontWeight: 600,
+                color: '#94a3b8',
+              }}
+            >
               <CheckCircle size={16} className="text-green" /> {t('cta.benefits.noCards')}
             </span>
-            <span style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '14px', fontWeight: 600, color: '#94a3b8' }}>
+            <span
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                fontSize: '14px',
+                fontWeight: 600,
+                color: '#94a3b8',
+              }}
+            >
               <CheckCircle size={16} className="text-green" /> {t('cta.benefits.free')}
             </span>
           </div>

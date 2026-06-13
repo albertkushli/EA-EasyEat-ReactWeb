@@ -18,7 +18,9 @@ export default function StaffProfilePanel({ user, restaurant }: StaffProfilePane
   return (
     <main className="flex-1 w-full h-full bg-slate-50/30">
       <div className="max-w-[1200px] w-full mx-auto px-8 py-10">
-        <h1 className="text-2xl font-bold text-slate-800 mb-8 tracking-tight uppercase">{t('dashboard.customer.staff.title', 'MI PERFIL')}</h1>
+        <h1 className="text-2xl font-bold text-slate-800 mb-8 tracking-tight uppercase">
+          {t('dashboard.customer.staff.title', 'MI PERFIL')}
+        </h1>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Tarjeta de Información Personal */}
@@ -30,7 +32,9 @@ export default function StaffProfilePanel({ user, restaurant }: StaffProfilePane
                 {user?.name?.[0]?.toUpperCase() || 'U'}
               </div>
               <div>
-                <h2 className="text-xl font-bold text-slate-800">{user?.name || t('auth.login.tabs.customer', 'Usuario')}</h2>
+                <h2 className="text-xl font-bold text-slate-800">
+                  {user?.name || t('auth.login.tabs.customer', 'Usuario')}
+                </h2>
                 <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-orange-100 text-orange-700 text-xs font-semibold mt-1">
                   <Shield className="w-3 h-3" />
                   {user?.role === 'owner' ? t('auth.roles.owner') : t('auth.roles.staff')}
@@ -42,16 +46,24 @@ export default function StaffProfilePanel({ user, restaurant }: StaffProfilePane
               <div className="flex items-center gap-3 p-3 rounded-lg bg-slate-50 border border-slate-100">
                 <Mail className="w-5 h-5 text-slate-400" />
                 <div>
-                  <div className="text-xs font-medium text-slate-500 uppercase tracking-wide">{t('dashboard.customer.staff.email', 'Email')}</div>
-                  <div className="text-sm font-semibold text-slate-700">{user?.email || t('dashboard.customer.staff.noProvide', 'No proporcionado')}</div>
+                  <div className="text-xs font-medium text-slate-500 uppercase tracking-wide">
+                    {t('dashboard.customer.staff.email', 'Email')}
+                  </div>
+                  <div className="text-sm font-semibold text-slate-700">
+                    {user?.email || t('dashboard.customer.staff.noProvide', 'No proporcionado')}
+                  </div>
                 </div>
               </div>
 
               <div className="flex items-center gap-3 p-3 rounded-lg bg-slate-50 border border-slate-100">
                 <User className="w-5 h-5 text-slate-400" />
                 <div>
-                  <div className="text-xs font-medium text-slate-500 uppercase tracking-wide">{t('dashboard.customer.staff.employeeId', 'ID de Empleado')}</div>
-                  <div className="text-sm font-semibold text-slate-700">{user?._id || user?.id || t('dashboard.customer.staff.unknown', 'Desconocido')}</div>
+                  <div className="text-xs font-medium text-slate-500 uppercase tracking-wide">
+                    {t('dashboard.customer.staff.employeeId', 'ID de Empleado')}
+                  </div>
+                  <div className="text-sm font-semibold text-slate-700">
+                    {user?._id || user?.id || t('dashboard.customer.staff.unknown', 'Desconocido')}
+                  </div>
                 </div>
               </div>
             </div>
@@ -66,7 +78,10 @@ export default function StaffProfilePanel({ user, restaurant }: StaffProfilePane
                 <Store className="w-8 h-8" />
               </div>
               <div>
-                <h2 className="text-xl font-bold text-slate-800">{restaurant?.profile?.name || t('dashboard.customer.staff.restaurant', 'Restaurante')}</h2>
+                <h2 className="text-xl font-bold text-slate-800">
+                  {restaurant?.profile?.name ||
+                    t('dashboard.customer.staff.restaurant', 'Restaurante')}
+                </h2>
                 <div className="flex items-center gap-1 text-amber-500 text-sm font-bold mt-1">
                   ⭐ {Number(restaurant?.profile?.globalRating ?? 0).toFixed(1)}
                 </div>
@@ -77,17 +92,28 @@ export default function StaffProfilePanel({ user, restaurant }: StaffProfilePane
               <div className="flex items-center gap-3 p-3 rounded-lg bg-slate-50 border border-slate-100">
                 <MapPin className="w-5 h-5 text-slate-400" />
                 <div>
-                  <div className="text-xs font-medium text-slate-500 uppercase tracking-wide">{t('dashboard.customer.staff.address', 'Dirección')}</div>
-                  <div className="text-sm font-semibold text-slate-700">{restaurant?.profile?.location?.address || t('dashboard.customer.staff.noProvide', 'No proporcionada')}</div>
+                  <div className="text-xs font-medium text-slate-500 uppercase tracking-wide">
+                    {t('dashboard.customer.staff.address', 'Dirección')}
+                  </div>
+                  <div className="text-sm font-semibold text-slate-700">
+                    {restaurant?.profile?.location?.address ||
+                      t('dashboard.customer.staff.noProvide', 'No proporcionada')}
+                  </div>
                 </div>
               </div>
 
               <div className="flex items-center gap-3 p-3 rounded-lg bg-slate-50 border border-slate-100">
                 <Phone className="w-5 h-5 text-slate-400" />
                 <div>
-                  <div className="text-xs font-medium text-slate-500 uppercase tracking-wide">{t('dashboard.customer.staff.contact', 'Contacto')}</div>
+                  <div className="text-xs font-medium text-slate-500 uppercase tracking-wide">
+                    {t('dashboard.customer.staff.contact', 'Contacto')}
+                  </div>
                   <div className="text-sm font-semibold text-slate-700">
-                    {restaurant?.profile?.contact?.phone || t('dashboard.customer.staff.noPhone', 'Sin teléfono')} / {restaurant?.profile?.contact?.email || t('dashboard.customer.staff.noEmail', 'Sin email')}
+                    {restaurant?.profile?.contact?.phone ||
+                      t('dashboard.customer.staff.noPhone', 'Sin teléfono')}{' '}
+                    /{' '}
+                    {restaurant?.profile?.contact?.email ||
+                      t('dashboard.customer.staff.noEmail', 'Sin email')}
                   </div>
                 </div>
               </div>
@@ -100,11 +126,12 @@ export default function StaffProfilePanel({ user, restaurant }: StaffProfilePane
                   onClick={async () => {
                     const message = t(
                       'settings.dangerZone.confirm',
-                      'Estás a punto de eliminar tu restaurante.\n\nEsta acción es IRREVERSIBLE. Tu perfil ya no será visible y perderás acceso a todos los datos asociados de forma permanente.\n\n¿Estás completamente seguro de que quieres proceder?'
+                      'Estás a punto de eliminar tu restaurante.\n\nEsta acción es IRREVERSIBLE. Tu perfil ya no será visible y perderás acceso a todos los datos asociados de forma permanente.\n\n¿Estás completamente seguro de que quieres proceder?',
                     );
                     if (window.confirm(message)) {
                       setLoading(true);
-                      const restaurantId = user?.restaurant_id || restaurant?._id || (restaurant as any)?.id;
+                      const restaurantId =
+                        user?.restaurant_id || restaurant?._id || (restaurant as any)?.id;
                       if (restaurantId) {
                         try {
                           await softDeleteRestaurant(restaurantId);
@@ -120,7 +147,11 @@ export default function StaffProfilePanel({ user, restaurant }: StaffProfilePane
                   disabled={loading}
                   className="px-6 py-2.5 text-red-500 hover:text-red-700 hover:bg-red-50 rounded-xl text-sm font-bold transition-all flex items-center justify-center gap-2 disabled:opacity-50 w-full"
                 >
-                  {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <X className="w-4 h-4" />}
+                  {loading ? (
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  ) : (
+                    <X className="w-4 h-4" />
+                  )}
                   <span>{t('settings.dangerZone.delete', 'Eliminar restaurante')}</span>
                 </button>
               </div>

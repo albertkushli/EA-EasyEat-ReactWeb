@@ -8,9 +8,22 @@ import { IRestaurant, IRestaurantStats, IVisit, IPaginatedResponse } from '@/typ
 import type { Restaurant } from '@/types/Restaurant';
 import { extractArray, parsePaginatedResponse, sortByDateDesc } from '@/utils/response-parser';
 
-function normalizeRestaurantLocation(rawLocation: any, rawRestaurant: any): Restaurant['profile']['location'] {
-  const latitude = rawLocation?.latitude ?? rawLocation?.lat ?? rawRestaurant?.location?.latitude ?? rawRestaurant?.location?.lat;
-  const longitude = rawLocation?.longitude ?? rawLocation?.lng ?? rawLocation?.lon ?? rawRestaurant?.location?.longitude ?? rawRestaurant?.location?.lng ?? rawRestaurant?.location?.lon;
+function normalizeRestaurantLocation(
+  rawLocation: any,
+  rawRestaurant: any,
+): Restaurant['profile']['location'] {
+  const latitude =
+    rawLocation?.latitude ??
+    rawLocation?.lat ??
+    rawRestaurant?.location?.latitude ??
+    rawRestaurant?.location?.lat;
+  const longitude =
+    rawLocation?.longitude ??
+    rawLocation?.lng ??
+    rawLocation?.lon ??
+    rawRestaurant?.location?.longitude ??
+    rawRestaurant?.location?.lng ??
+    rawRestaurant?.location?.lon;
 
   return {
     city: rawLocation?.city ?? rawRestaurant?.profile?.location?.city ?? '',
@@ -61,9 +74,7 @@ function normalizeRestaurant(rawRestaurant: IRestaurant | any): Restaurant {
  */
 export async function fetchRestaurantFull(restaurantId: string): Promise<IRestaurant | null> {
   try {
-    const res = await apiClient.get<IRestaurant>(
-      API_ENDPOINTS.RESTAURANT_FULL(restaurantId)
-    );
+    const res = await apiClient.get<IRestaurant>(API_ENDPOINTS.RESTAURANT_FULL(restaurantId));
     return res.data ?? null;
   } catch (err) {
     console.error('Error fetching full restaurant:', err);
@@ -77,7 +88,7 @@ export async function fetchRestaurantFull(restaurantId: string): Promise<IRestau
 export async function fetchRestaurantStats(restaurantId: string): Promise<IRestaurantStats | null> {
   try {
     const res = await apiClient.get<IRestaurantStats>(
-      API_ENDPOINTS.RESTAURANT_STATISTICS(restaurantId)
+      API_ENDPOINTS.RESTAURANT_STATISTICS(restaurantId),
     );
 
     // Soporta distintos formatos de respuesta
@@ -97,13 +108,12 @@ export async function fetchRestaurantStats(restaurantId: string): Promise<IResta
 export async function fetchRestaurantVisits(
   restaurantId: string,
   page: number = 1,
-  limit: number = 1000
+  limit: number = 1000,
 ): Promise<IPaginatedResponse<IVisit>> {
   try {
-    const res = await apiClient.get(
-      API_ENDPOINTS.RESTAURANT_VISITS(restaurantId),
-      { params: { page, limit } }
-    );
+    const res = await apiClient.get(API_ENDPOINTS.RESTAURANT_VISITS(restaurantId), {
+      params: { page, limit },
+    });
 
     const parsed = parsePaginatedResponse<IVisit>(res.data, limit);
 
@@ -132,25 +142,23 @@ export async function fetchRestaurantVisits(
  */
 export async function fetchAllRestaurantVisits(
   restaurantId: string,
-  pageSize: number = 200
+  pageSize: number = 200,
 ): Promise<IVisit[]> {
   if (!restaurantId) return [];
 
   try {
-    const firstResponse = await apiClient.get(
-      API_ENDPOINTS.RESTAURANT_VISITS(restaurantId),
-      { params: { page: 1, limit: pageSize } }
-    );
+    const firstResponse = await apiClient.get(API_ENDPOINTS.RESTAURANT_VISITS(restaurantId), {
+      params: { page: 1, limit: pageSize },
+    });
 
     const firstPage = parsePaginatedResponse<IVisit>(firstResponse.data, pageSize);
     const allVisits = [...firstPage.data];
 
     // Recorre todas las páginas
     for (let page = 2; page <= firstPage.meta.totalPages; page += 1) {
-      const response = await apiClient.get(
-        API_ENDPOINTS.RESTAURANT_VISITS(restaurantId),
-        { params: { page, limit: pageSize } }
-      );
+      const response = await apiClient.get(API_ENDPOINTS.RESTAURANT_VISITS(restaurantId), {
+        params: { page, limit: pageSize },
+      });
 
       const parsedPage = parsePaginatedResponse<IVisit>(response.data, pageSize);
       allVisits.push(...parsedPage.data);
@@ -168,7 +176,7 @@ export const updateRestaurant = async (restaurantId: string, restaurantData: any
     const response = await apiClient.put(`/restaurants/${restaurantId}`, restaurantData);
     return response.data?.data || response.data;
   } catch (error) {
-    console.error("Error updating restaurant:", error);
+    console.error('Error updating restaurant:', error);
     throw error;
   }
 };
@@ -178,7 +186,7 @@ export const getRestaurant = async (restaurantId: string) => {
     const response = await apiClient.get(`/restaurants/${restaurantId}`);
     return response.data?.data || response.data;
   } catch (error) {
-    console.error("Error fetching restaurant:", error);
+    console.error('Error fetching restaurant:', error);
     throw error;
   }
 };
@@ -217,12 +225,10 @@ export async function fetchRestaurants(): Promise<Restaurant[]> {
 export async function fetchNearbyRestaurants(
   lat: number,
   lng: number,
-  maxDistance: number = 5000
+  maxDistance: number = 5000,
 ): Promise<Restaurant[]> {
   try {
-    const res = await apiClient.get(
-      API_ENDPOINTS.RESTAURANTS_NEAR_BY(lng, lat, maxDistance)
-    );
+    const res = await apiClient.get(API_ENDPOINTS.RESTAURANTS_NEAR_BY(lng, lat, maxDistance));
 
     const data = res.data?.data || res.data || [];
     return Array.isArray(data) ? data.map(normalizeRestaurant) : [];

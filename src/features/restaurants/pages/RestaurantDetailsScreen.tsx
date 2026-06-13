@@ -65,7 +65,9 @@ export default function RestaurantDetailsScreen() {
   const location = useLocation();
   const routeState = (location.state as RestaurantRouteState | null) ?? null;
 
-  const [restaurant, setRestaurant] = useState<RestaurantSource | null>(routeState?.restaurant ?? null);
+  const [restaurant, setRestaurant] = useState<RestaurantSource | null>(
+    routeState?.restaurant ?? null,
+  );
   const [stats, setStats] = useState<IRestaurantStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -123,7 +125,9 @@ export default function RestaurantDetailsScreen() {
   }, [restaurantId, routeState?.restaurant]);
 
   const images = getRestaurantImages(restaurant);
-  const primaryImage = images[0] || 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=1200&h=700&fit=crop&q=80';
+  const primaryImage =
+    images[0] ||
+    'https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=1200&h=700&fit=crop&q=80';
   const rating = getRestaurantRating(restaurant);
   const description = getRestaurantDescription(restaurant);
   const categories = getRestaurantCategories(restaurant);
@@ -187,7 +191,9 @@ export default function RestaurantDetailsScreen() {
                   )}
                 </div>
                 <h1 className="text-3xl font-bold tracking-tight md:text-5xl">{displayName}</h1>
-                <p className="mt-2 max-w-3xl text-sm text-white/85 md:text-base">{description || 'No description available for this restaurant yet.'}</p>
+                <p className="mt-2 max-w-3xl text-sm text-white/85 md:text-base">
+                  {description || 'No description available for this restaurant yet.'}
+                </p>
               </div>
             </div>
 
@@ -201,14 +207,18 @@ export default function RestaurantDetailsScreen() {
                         <Building2 className="h-4 w-4" />
                         Restaurant ID
                       </div>
-                      <p className="mt-2 break-all text-sm font-semibold text-gray-900">{displayId}</p>
+                      <p className="mt-2 break-all text-sm font-semibold text-gray-900">
+                        {displayId}
+                      </p>
                     </div>
                     <div className="rounded-2xl bg-gray-50 p-4">
                       <div className="flex items-center gap-2 text-sm font-medium text-gray-500">
                         <Clock3 className="h-4 w-4" />
                         Average rating
                       </div>
-                      <p className="mt-2 text-sm font-semibold text-gray-900">{formatNumber(rating)} / 10</p>
+                      <p className="mt-2 text-sm font-semibold text-gray-900">
+                        {formatNumber(rating)} / 10
+                      </p>
                     </div>
                   </div>
                 </section>
@@ -218,7 +228,10 @@ export default function RestaurantDetailsScreen() {
                   <div className="mt-3 flex flex-wrap gap-2">
                     {categories.length > 0 ? (
                       categories.map((category) => (
-                        <span key={category} className="rounded-full bg-[#FFF0F0] px-3 py-1 text-sm font-medium text-[#FF5A5F]">
+                        <span
+                          key={category}
+                          className="rounded-full bg-[#FFF0F0] px-3 py-1 text-sm font-medium text-[#FF5A5F]"
+                        >
                           {category}
                         </span>
                       ))
@@ -264,9 +277,12 @@ export default function RestaurantDetailsScreen() {
                         <span>{contact.email}</span>
                       </div>
                     )}
-                    {!locationInfo?.address && !locationInfo?.city && !contact?.phone && !contact?.email && (
-                      <p className="text-sm text-gray-500">No contact information available.</p>
-                    )}
+                    {!locationInfo?.address &&
+                      !locationInfo?.city &&
+                      !contact?.phone &&
+                      !contact?.email && (
+                        <p className="text-sm text-gray-500">No contact information available.</p>
+                      )}
                   </div>
                 </div>
 
@@ -274,16 +290,28 @@ export default function RestaurantDetailsScreen() {
                   <h2 className="text-base font-semibold">Highlights</h2>
                   <div className="mt-4 grid gap-3">
                     <div className="rounded-xl bg-white p-4 shadow-sm">
-                      <div className="text-xs font-medium uppercase tracking-wide text-gray-500">Total visits</div>
-                      <div className="mt-1 text-2xl font-bold text-gray-900">{formatNumber(stats?.totalVisits)}</div>
+                      <div className="text-xs font-medium uppercase tracking-wide text-gray-500">
+                        Total visits
+                      </div>
+                      <div className="mt-1 text-2xl font-bold text-gray-900">
+                        {formatNumber(stats?.totalVisits)}
+                      </div>
                     </div>
                     <div className="rounded-xl bg-white p-4 shadow-sm">
-                      <div className="text-xs font-medium uppercase tracking-wide text-gray-500">Average points per visit</div>
-                      <div className="mt-1 text-2xl font-bold text-gray-900">{formatNumber(stats?.averagePointsPerVisit)}</div>
+                      <div className="text-xs font-medium uppercase tracking-wide text-gray-500">
+                        Average points per visit
+                      </div>
+                      <div className="mt-1 text-2xl font-bold text-gray-900">
+                        {formatNumber(stats?.averagePointsPerVisit)}
+                      </div>
                     </div>
                     <div className="rounded-xl bg-white p-4 shadow-sm">
-                      <div className="text-xs font-medium uppercase tracking-wide text-gray-500">Total revenue</div>
-                      <div className="mt-1 text-2xl font-bold text-gray-900">{formatNumber(stats?.totalRevenue)}</div>
+                      <div className="text-xs font-medium uppercase tracking-wide text-gray-500">
+                        Total revenue
+                      </div>
+                      <div className="mt-1 text-2xl font-bold text-gray-900">
+                        {formatNumber(stats?.totalRevenue)}
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -304,4 +332,3 @@ export default function RestaurantDetailsScreen() {
     </div>
   );
 }
-

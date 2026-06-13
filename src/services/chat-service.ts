@@ -53,14 +53,19 @@ export const chatService = {
    */
   getOrCreateConversation: async (
     customerId: string,
-    restaurantId: string
+    restaurantId: string,
   ): Promise<Conversation> => {
     console.log('[chatService] POST /chat/conversations', { customerId, restaurantId });
     const response = await apiClient.post('/chat/conversations', {
       customerId,
       restaurantId,
     });
-    console.log('[chatService] Response status:', response.status, 'data:', JSON.stringify(response.data));
+    console.log(
+      '[chatService] Response status:',
+      response.status,
+      'data:',
+      JSON.stringify(response.data),
+    );
     // Backend returns { message: '...', data: conversation }
     const conv = response.data?.data ?? response.data;
     return conv;
@@ -71,9 +76,7 @@ export const chatService = {
    * Backend: GET /chat/conversations/customer/:customerId
    */
   getCustomerConversations: async (customerId: string): Promise<Conversation[]> => {
-    const response = await apiClient.get(
-      `/chat/conversations/customer/${customerId}`
-    );
+    const response = await apiClient.get(`/chat/conversations/customer/${customerId}`);
     return response.data.data ?? [];
   },
 
@@ -82,9 +85,7 @@ export const chatService = {
    * Backend: GET /chat/conversations/restaurant/:restaurantId
    */
   getRestaurantConversations: async (restaurantId: string): Promise<Conversation[]> => {
-    const response = await apiClient.get(
-      `/chat/conversations/restaurant/${restaurantId}`
-    );
+    const response = await apiClient.get(`/chat/conversations/restaurant/${restaurantId}`);
     return response.data.data ?? [];
   },
 
@@ -93,9 +94,7 @@ export const chatService = {
    * Backend: GET /chat/conversations/:conversationId/messages
    */
   getMessages: async (conversationId: string): Promise<Message[]> => {
-    const response = await apiClient.get(
-      `/chat/conversations/${conversationId}/messages`
-    );
+    const response = await apiClient.get(`/chat/conversations/${conversationId}/messages`);
     return response.data.data ?? [];
   },
 
@@ -103,10 +102,7 @@ export const chatService = {
    * Mark all messages in a conversation as read.
    * Backend: PATCH /chat/conversations/:conversationId/read
    */
-  markConversationAsRead: async (
-    conversationId: string,
-    userId: string
-  ): Promise<void> => {
+  markConversationAsRead: async (conversationId: string, userId: string): Promise<void> => {
     await apiClient.patch(`/chat/conversations/${conversationId}/read`, {
       userId,
     });

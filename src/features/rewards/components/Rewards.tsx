@@ -1,8 +1,13 @@
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { Reward } from "@/types/Reward";
-import { getRewardsByRestaurant, createReward, updateReward, deleteReward } from "@/services/reward.service";
-import { useAuth } from "@/context/AuthContext";
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Reward } from '@/types/Reward';
+import {
+  getRewardsByRestaurant,
+  createReward,
+  updateReward,
+  deleteReward,
+} from '@/services/reward.service';
+import { useAuth } from '@/context/AuthContext';
 import {
   Gift,
   Star,
@@ -13,11 +18,11 @@ import {
   Plus,
   Edit2,
   Trash2,
-  BarChart3
-} from "lucide-react";
-import RewardModal from "@/features/rewards/components/RewardModal";
-import PaywallModal from "@/features/rewards/components/PaywallModal";
-import { useTranslation } from "react-i18next";
+  BarChart3,
+} from 'lucide-react';
+import RewardModal from '@/features/rewards/components/RewardModal';
+import PaywallModal from '@/features/rewards/components/PaywallModal';
+import { useTranslation } from 'react-i18next';
 
 export default function Rewards() {
   const { t } = useTranslation();
@@ -32,14 +37,16 @@ export default function Rewards() {
   const [isPaywallOpen, setIsPaywallOpen] = useState(false);
   const [selectedReward, setSelectedReward] = useState<Reward | null>(null);
 
-  const restaurantId = user?.restaurant_id || restaurant?._id || restaurant?.id || "";
+  const restaurantId = user?.restaurant_id || restaurant?._id || restaurant?.id || '';
 
   useEffect(() => {
     if (restaurantId) {
       loadRewards();
     } else {
       setLoading(false);
-      setError(t('employees.errorNoRestaurant') || "No se pudo identificar el restaurante del usuario.");
+      setError(
+        t('employees.errorNoRestaurant') || 'No se pudo identificar el restaurante del usuario.',
+      );
     }
   }, [restaurantId, t]);
 
@@ -50,8 +57,10 @@ export default function Rewards() {
       const data = await getRewardsByRestaurant(restaurantId);
       setRewards(data);
     } catch (err: any) {
-      console.error("Error loading rewards:", err);
-      setError(err.message || t('rewards.errorLoading') || "No se pudieron cargar las recompensas.");
+      console.error('Error loading rewards:', err);
+      setError(
+        err.message || t('rewards.errorLoading') || 'No se pudieron cargar las recompensas.',
+      );
     } finally {
       setLoading(false);
     }
@@ -59,7 +68,7 @@ export default function Rewards() {
 
   const handleAddClick = () => {
     const currentPlan = restaurant?.plan || 'free';
-    const activeRewardsCount = rewards.filter(r => r.active).length;
+    const activeRewardsCount = rewards.filter((r) => r.active).length;
 
     if (currentPlan === 'free' && activeRewardsCount >= 5) {
       setIsPaywallOpen(true);
@@ -76,12 +85,16 @@ export default function Rewards() {
   };
 
   const handleDeleteClick = async (rewardId: string) => {
-    if (window.confirm(t('rewards.confirmDelete') || "¿Estás seguro de que quieres eliminar esta recompensa?")) {
+    if (
+      window.confirm(
+        t('rewards.confirmDelete') || '¿Estás seguro de que quieres eliminar esta recompensa?',
+      )
+    ) {
       try {
         await deleteReward(rewardId, restaurantId);
-        setRewards(rewards.filter(r => r._id !== rewardId));
+        setRewards(rewards.filter((r) => r._id !== rewardId));
       } catch (err) {
-        alert(t('rewards.errorDelete') || "Error al eliminar la recompensa");
+        alert(t('rewards.errorDelete') || 'Error al eliminar la recompensa');
       }
     }
   };
@@ -89,7 +102,7 @@ export default function Rewards() {
   const handleSaveReward = async (rewardData: Partial<Reward>) => {
     try {
       const currentPlan = restaurant?.plan || 'free';
-      const activeRewardsCount = rewards.filter(r => r.active).length;
+      const activeRewardsCount = rewards.filter((r) => r.active).length;
 
       // If free tier and activating a reward (creating active, or updating inactive to active)
       if (currentPlan === 'free' && rewardData.active) {
@@ -102,15 +115,21 @@ export default function Rewards() {
       }
 
       if (selectedReward) {
-        const updated = await updateReward(selectedReward._id, { ...rewardData, restaurant_id: restaurantId });
-        setRewards(rewards.map(r => r._id === selectedReward._id ? updated : r));
+        const updated = await updateReward(selectedReward._id, {
+          ...rewardData,
+          restaurant_id: restaurantId,
+        });
+        setRewards(rewards.map((r) => (r._id === selectedReward._id ? updated : r)));
       } else {
         const created = await createReward({ ...rewardData, restaurant_id: restaurantId });
         setRewards([...rewards, created]);
       }
     } catch (err: any) {
-      console.error("Error saving reward:", err);
-      if (err?.response?.data?.error === 'PLAN_LIMIT_REACHED' || err?.message?.includes('PLAN_LIMIT_REACHED')) {
+      console.error('Error saving reward:', err);
+      if (
+        err?.response?.data?.error === 'PLAN_LIMIT_REACHED' ||
+        err?.message?.includes('PLAN_LIMIT_REACHED')
+      ) {
         setIsPaywallOpen(true);
       } else {
         throw err;
@@ -163,7 +182,9 @@ export default function Rewards() {
             <Gift className="w-10 h-10 text-gray-200" />
           </div>
           <h3 className="text-xl font-black text-gray-800">{t('rewards.noRewards')}</h3>
-          <p className="text-gray-500 mt-2 max-w-xs mx-auto text-sm leading-relaxed">{t('rewards.noRewardsSubtitle')}</p>
+          <p className="text-gray-500 mt-2 max-w-xs mx-auto text-sm leading-relaxed">
+            {t('rewards.noRewardsSubtitle')}
+          </p>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -181,12 +202,16 @@ export default function Rewards() {
                 <div className="flex items-center gap-1 bg-gray-50 p-1 rounded-xl">
                   <button
                     onClick={() => handleEditClick(reward)}
-                    className="p-1.5 rounded-lg text-gray-400 hover:text-blue-500 hover:bg-white transition-all" title={t('rewards.editReward')}>
+                    className="p-1.5 rounded-lg text-gray-400 hover:text-blue-500 hover:bg-white transition-all"
+                    title={t('rewards.editReward')}
+                  >
                     <Edit2 className="w-3.5 h-3.5" />
                   </button>
                   <button
                     onClick={() => handleDeleteClick(reward._id)}
-                    className="p-1.5 rounded-lg text-gray-400 hover:text-red-500 hover:bg-white transition-all" title={t('rewards.deleteReward')}>
+                    className="p-1.5 rounded-lg text-gray-400 hover:text-red-500 hover:bg-white transition-all"
+                    title={t('rewards.deleteReward')}
+                  >
                     <Trash2 className="w-3.5 h-3.5" />
                   </button>
                 </div>
@@ -196,31 +221,42 @@ export default function Rewards() {
               <div className="flex-1">
                 <div className="flex items-center gap-2 mb-1">
                   <h3 className="font-black text-gray-800 text-lg leading-tight group-hover:text-orange-600 transition-colors">
-                    {t(`rewards.data.${reward?.name?.toLowerCase().replace(/\s+/g, '_')}`, reward?.name)}
+                    {t(
+                      `rewards.data.${reward?.name?.toLowerCase().replace(/\s+/g, '_')}`,
+                      reward?.name,
+                    )}
                   </h3>
-                  <div className={`px-1.5 py-0.5 rounded text-[8px] font-black uppercase tracking-tighter ${reward?.active
-                    ? "bg-green-100 text-green-600"
-                    : "bg-gray-100 text-gray-400"
-                    }`}>
+                  <div
+                    className={`px-1.5 py-0.5 rounded text-[8px] font-black uppercase tracking-tighter ${
+                      reward?.active ? 'bg-green-100 text-green-600' : 'bg-gray-100 text-gray-400'
+                    }`}
+                  >
                     {reward?.active ? t('clients.active') : t('clients.inactive')}
                   </div>
                 </div>
                 <p className="text-gray-500 text-sm font-medium line-clamp-2 leading-snug">
-                  {t(`rewards.data.${reward?.name?.toLowerCase().replace(/\s+/g, '_')}_desc`, reward?.description || t('rewards.details.noDescription'))}
+                  {t(
+                    `rewards.data.${reward?.name?.toLowerCase().replace(/\s+/g, '_')}_desc`,
+                    reward?.description || t('rewards.details.noDescription'),
+                  )}
                 </p>
               </div>
 
               {/* Stats & Footer */}
               <div className="pt-4 border-t border-gray-50 mt-2 grid grid-cols-2 gap-4">
                 <div>
-                  <p className="text-[9px] font-black text-gray-300 uppercase tracking-widest mb-1">{t('rewards.details.pointsCost')}</p>
+                  <p className="text-[9px] font-black text-gray-300 uppercase tracking-widest mb-1">
+                    {t('rewards.details.pointsCost')}
+                  </p>
                   <div className="flex items-center gap-1.5 text-orange-500 font-black">
                     <Star className="w-4 h-4 fill-current" />
                     <span className="text-xl">{reward?.pointsRequired}</span>
                   </div>
                 </div>
                 <div className="text-right">
-                  <p className="text-[9px] font-black text-gray-300 uppercase tracking-widest mb-1">{t('analytics.export.rewards')}</p>
+                  <p className="text-[9px] font-black text-gray-300 uppercase tracking-widest mb-1">
+                    {t('analytics.export.rewards')}
+                  </p>
                   <div className="flex items-center justify-end gap-1.5 text-green-500 font-black">
                     <BarChart3 className="w-4 h-4" />
                     <span className="text-xl">{reward?.timesRedeemed || 0}</span>
@@ -231,7 +267,9 @@ export default function Rewards() {
               {reward?.expiry && (
                 <div className="flex items-center gap-1.5 text-[9px] font-black text-gray-300 uppercase tracking-widest">
                   <Clock className="w-3 h-3" />
-                  <span>{t('rewards.details.expires')}: {new Date(reward.expiry).toLocaleDateString()}</span>
+                  <span>
+                    {t('rewards.details.expires')}: {new Date(reward.expiry).toLocaleDateString()}
+                  </span>
                 </div>
               )}
 
@@ -256,10 +294,9 @@ export default function Rewards() {
         onClose={() => setIsPaywallOpen(false)}
         onUpgrade={() => {
           setIsPaywallOpen(false);
-          navigate("/dashboard/billing");
+          navigate('/dashboard/billing');
         }}
       />
     </div>
   );
 }
-

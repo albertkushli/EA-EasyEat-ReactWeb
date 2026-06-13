@@ -51,7 +51,7 @@ export default function Login() {
         const google = (window as any).google;
         if (!google) return;
 
-        const clientID = import.meta.env.VITE_GOOGLE_CLIENT_ID ;
+        const clientID = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 
         google.accounts.id.initialize({
           client_id: clientID,
@@ -75,16 +75,13 @@ export default function Login() {
 
         const btnElement = document.getElementById('google-signin-btn');
         if (btnElement) {
-          google.accounts.id.renderButton(
-            btnElement,
-            {
-              theme: 'outline',
-              size: 'large',
-              width: btnElement.clientWidth || 364,
-              text: 'continue_with',
-              shape: 'rectangular',
-            }
-          );
+          google.accounts.id.renderButton(btnElement, {
+            theme: 'outline',
+            size: 'large',
+            width: btnElement.clientWidth || 364,
+            text: 'continue_with',
+            shape: 'rectangular',
+          });
         }
 
         google.accounts.id.prompt();
@@ -140,10 +137,18 @@ export default function Login() {
         <p className="auth-subtitle">{t('auth.login.subtitle')}</p>
 
         <div className="login-tabs">
-          <button type="button" className={`tab-btn ${loginType === 'customer' ? 'active' : ''}`} onClick={() => setLoginType('customer')}>
+          <button
+            type="button"
+            className={`tab-btn ${loginType === 'customer' ? 'active' : ''}`}
+            onClick={() => setLoginType('customer')}
+          >
             <UserIcon size={16} /> {t('auth.login.tabs.customer')}
           </button>
-          <button type="button" className={`tab-btn ${loginType === 'employee' ? 'active' : ''}`} onClick={() => setLoginType('employee')}>
+          <button
+            type="button"
+            className={`tab-btn ${loginType === 'employee' ? 'active' : ''}`}
+            onClick={() => setLoginType('employee')}
+          >
             <Briefcase size={16} /> {t('auth.login.tabs.restaurant')}
           </button>
         </div>
@@ -157,7 +162,9 @@ export default function Login() {
 
         <form onSubmit={handleSubmit} noValidate>
           <div className="form-group">
-            <label className="form-label" htmlFor="login-email">{t('auth.login.form.email')}</label>
+            <label className="form-label" htmlFor="login-email">
+              {t('auth.login.form.email')}
+            </label>
             <div className="input-wrapper">
               <Mail className="input-icon" size={18} />
               <input
@@ -175,7 +182,9 @@ export default function Login() {
           </div>
 
           <div className="form-group">
-            <label className="form-label" htmlFor="login-password">{t('auth.login.form.password')}</label>
+            <label className="form-label" htmlFor="login-password">
+              {t('auth.login.form.password')}
+            </label>
             <div className="input-wrapper">
               <Lock className="input-icon" size={18} />
               <input
@@ -192,14 +201,21 @@ export default function Login() {
                 type="button"
                 className="input-icon-right"
                 onClick={() => setShowPwd((value) => !value)}
-                title={showPwd ? t('auth.login.form.hidePassword') : t('auth.login.form.showPassword')}
+                title={
+                  showPwd ? t('auth.login.form.hidePassword') : t('auth.login.form.showPassword')
+                }
               >
                 {showPwd ? <EyeOff size={18} /> : <Eye size={18} />}
               </button>
             </div>
           </div>
 
-          <button id="login-submit-btn" type="submit" className="btn btn--primary" disabled={loading}>
+          <button
+            id="login-submit-btn"
+            type="submit"
+            className="btn btn--primary"
+            disabled={loading}
+          >
             {loading ? t('auth.login.form.loading') : t('auth.login.form.submit')}
           </button>
         </form>
@@ -214,7 +230,10 @@ export default function Login() {
 
         {loginType === 'customer' && (
           <div className="auth-footer">
-            {t('auth.login.footer.noAccount')} <Link to="/register" className="auth-link">{t('auth.login.footer.register')}</Link>
+            {t('auth.login.footer.noAccount')}{' '}
+            <Link to="/register" className="auth-link">
+              {t('auth.login.footer.register')}
+            </Link>
           </div>
         )}
       </div>

@@ -86,13 +86,8 @@ export const BottomSheet: React.FC<BottomSheetProps> = ({
           )}
 
           {/* Content */}
-          <motion.div
-            ref={containerRef}
-            className="flex-1 overflow-y-auto px-6 pb-safe"
-          >
-            <motion.div animate={{ y: scrollProgress * 5 }}>
-              {children}
-            </motion.div>
+          <motion.div ref={containerRef} className="flex-1 overflow-y-auto px-6 pb-safe">
+            <motion.div animate={{ y: scrollProgress * 5 }}>{children}</motion.div>
           </motion.div>
         </div>
       </motion.div>
@@ -101,4 +96,3 @@ export const BottomSheet: React.FC<BottomSheetProps> = ({
 };
 
 export default BottomSheet;
-

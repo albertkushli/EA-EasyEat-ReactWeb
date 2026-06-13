@@ -1,9 +1,41 @@
 export const RESTAURANT_CATEGORIES = [
-  'Italià', 'Japonès', 'Sushi', 'Mexicà', 'Xinès', 'Indi', 'Tailandès', 'Francès',
-  'Espanyol', 'Grec', 'Turc', 'Coreà', 'Vietnamita', 'Alemany', 'Brasileny', 'Peruà',
-  'Vegà', 'Vegetarià', 'Marisc', 'Carn', 'Pizzeria', 'Cafeteria', 'Ramen', 'Gluten Free',
-  'Gourmet', 'Fast Food', 'Buffet', 'Food Truck', 'Lounge', 'Pub', 'Wine Bar', 'Rooftop',
-  'Bar', 'Taperia', 'Gelateria', 'Estrella Michelin', 'Street Food',
+  'Italià',
+  'Japonès',
+  'Sushi',
+  'Mexicà',
+  'Xinès',
+  'Indi',
+  'Tailandès',
+  'Francès',
+  'Espanyol',
+  'Grec',
+  'Turc',
+  'Coreà',
+  'Vietnamita',
+  'Alemany',
+  'Brasileny',
+  'Peruà',
+  'Vegà',
+  'Vegetarià',
+  'Marisc',
+  'Carn',
+  'Pizzeria',
+  'Cafeteria',
+  'Ramen',
+  'Gluten Free',
+  'Gourmet',
+  'Fast Food',
+  'Buffet',
+  'Food Truck',
+  'Lounge',
+  'Pub',
+  'Wine Bar',
+  'Rooftop',
+  'Bar',
+  'Taperia',
+  'Gelateria',
+  'Estrella Michelin',
+  'Street Food',
 ] as const;
 
 export type RestaurantCategory = (typeof RESTAURANT_CATEGORIES)[number];
@@ -69,4 +101,3 @@ export interface Restaurant {
 }
 
 export type RestaurantId = Restaurant['_id'] | string;
-

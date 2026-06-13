@@ -12,7 +12,7 @@ export const supportService = {
    */
   sendSupportMessage: async (
     message: string,
-    history: SupportChatMessage[] = []
+    history: SupportChatMessage[] = [],
   ): Promise<string> => {
     try {
       const response = await apiClient.post('/support/chat', {
@@ -24,8 +24,8 @@ export const supportService = {
     } catch (error: any) {
       console.error('[supportService] Error sending message:', error);
       throw new Error(
-        error.response?.data?.message || 
-        'No se pudo conectar con el asistente. Por favor, inténtalo de nuevo.'
+        error.response?.data?.message ||
+          'No se pudo conectar con el asistente. Por favor, inténtalo de nuevo.',
       );
     }
   },

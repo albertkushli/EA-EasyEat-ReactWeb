@@ -1,18 +1,11 @@
-import { useEffect, useState, useMemo } from "react";
-import { Customer } from "@/types/Customer";
-import { getAllCustomers } from "@/services/customer.service";
-import { getVisitsByRestaurant } from "@/services/visit.service";
-import { useAuth } from "@/context/AuthContext";
-import {
-  Search,
-  User,
-  Mail,
-  ChevronRight,
-  AlertCircle,
-  Loader2,
-} from "lucide-react";
-import { useTranslation } from "react-i18next";
-import CustomerDetailModal from "../components/CustomerDetailModal";
+import { useEffect, useState, useMemo } from 'react';
+import { Customer } from '@/types/Customer';
+import { getAllCustomers } from '@/services/customer.service';
+import { getVisitsByRestaurant } from '@/services/visit.service';
+import { useAuth } from '@/context/AuthContext';
+import { Search, User, Mail, ChevronRight, AlertCircle, Loader2 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
+import CustomerDetailModal from '../components/CustomerDetailModal';
 
 export default function Clients() {
   const { user, restaurant } = useAuth() as any;
@@ -20,22 +13,21 @@ export default function Clients() {
   const [clients, setClients] = useState<Customer[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchTerm, setSearchTerm] = useState('');
 
   // Modal state
   const [selectedClient, setSelectedClient] = useState<Customer | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [restaurantVisits, setRestaurantVisits] = useState<any[]>([]);
 
-  const restaurantId =
-    user?.restaurant_id || restaurant?._id || restaurant?.id || "";
+  const restaurantId = user?.restaurant_id || restaurant?._id || restaurant?.id || '';
 
   useEffect(() => {
     if (restaurantId) {
       loadClients();
     } else {
       setLoading(false);
-      setError(t("clients.errorNoRestaurant"));
+      setError(t('clients.errorNoRestaurant'));
     }
   }, [restaurantId, t]);
 
@@ -53,16 +45,13 @@ export default function Clients() {
       // 3. Filtrar por restaurante actual
       const filteredVisits = visits.filter(
         (visit: any) =>
-          String(visit.restaurant_id?._id || visit.restaurant_id) ===
-          String(restaurantId),
+          String(visit.restaurant_id?._id || visit.restaurant_id) === String(restaurantId),
       );
 
       // 4. Sacar los customer_id únicos
       const uniqueCustomerIds = [
         ...new Set(
-          filteredVisits.map((visit: any) =>
-            String(visit.customer_id?._id || visit.customer_id),
-          ),
+          filteredVisits.map((visit: any) => String(visit.customer_id?._id || visit.customer_id)),
         ),
       ];
 
@@ -76,8 +65,8 @@ export default function Clients() {
 
       setClients(restaurantCustomers);
     } catch (err: any) {
-      console.error("Error loading clients:", err);
-      setError(err.message || t("clients.errorLoading"));
+      console.error('Error loading clients:', err);
+      setError(err.message || t('clients.errorLoading'));
     } finally {
       setLoading(false);
     }
@@ -102,10 +91,10 @@ export default function Clients() {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
         <div>
           <h1 className="text-3xl font-black text-gray-900 dark:text-white tracking-tight">
-            {t("clients.title").toUpperCase()}
+            {t('clients.title').toUpperCase()}
           </h1>
           <p className="text-gray-500 dark:text-slate-300 font-medium mt-1">
-            {t("clients.subtitle")}
+            {t('clients.subtitle')}
           </p>
         </div>
       </div>
@@ -117,7 +106,7 @@ export default function Clients() {
         </div>
         <input
           type="text"
-          placeholder={t("clients.searchPlaceholder")}
+          placeholder={t('clients.searchPlaceholder')}
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           className="ee-input pl-12 pr-4 py-4 border-2 shadow-sm focus:ring-4 focus:ring-orange-500/10 focus:border-orange-500 transition-all text-gray-700 dark:text-white font-medium"
@@ -128,7 +117,7 @@ export default function Clients() {
       {loading ? (
         <div className="ee-card flex flex-col items-center justify-center py-20 border-2 border-dashed">
           <Loader2 className="w-10 h-10 text-orange-500 animate-spin mb-4" />
-          <p className="text-gray-500 font-bold">{t("clients.loading")}</p>
+          <p className="text-gray-500 font-bold">{t('clients.loading')}</p>
         </div>
       ) : error ? (
         <div className="flex flex-col items-center justify-center py-20 bg-white rounded-3xl border-2 border-dashed border-red-100">
@@ -138,17 +127,15 @@ export default function Clients() {
             onClick={loadClients}
             className="mt-4 px-6 py-2 bg-red-50 text-red-600 rounded-xl font-bold hover:bg-red-100 transition-colors"
           >
-            {t("clients.retry")}
+            {t('clients.retry')}
           </button>
         </div>
       ) : filteredClients.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-20 bg-white rounded-3xl border-2 border-dashed border-gray-100">
           <User className="w-10 h-10 text-gray-300 mb-4" />
-          <p className="text-gray-500 font-bold">{t("clients.noResults")}</p>
+          <p className="text-gray-500 font-bold">{t('clients.noResults')}</p>
           <p className="text-gray-400 text-sm">
-            {searchTerm
-              ? t("clients.noResultsSearch")
-              : t("clients.noResultsEmpty")}
+            {searchTerm ? t('clients.noResultsSearch') : t('clients.noResultsEmpty')}
           </p>
         </div>
       ) : (
@@ -167,9 +154,9 @@ export default function Clients() {
                   <img
                     src={
                       client.profilePictures?.[0] ||
-                      `https://ui-avatars.com/api/?name=${encodeURIComponent(client.name || "U")}&background=f97316&color=fff`
+                      `https://ui-avatars.com/api/?name=${encodeURIComponent(client.name || 'U')}&background=f97316&color=fff`
                     }
-                    alt={client.name || "Customer"}
+                    alt={client.name || 'Customer'}
                     className="w-14 h-14 rounded-2xl object-cover shadow-sm group-hover:scale-105 transition-transform duration-300"
                   />
                   {client.isActive && (
@@ -179,12 +166,12 @@ export default function Clients() {
 
                 <div className="flex-1 min-w-0">
                   <h3 className="font-bold text-gray-800 dark:text-white truncate group-hover:text-orange-600 transition-colors">
-                    {client.name || t("components.employeeCard.noName")}
+                    {client.name || t('components.employeeCard.noName')}
                   </h3>
                   <div className="flex items-center gap-1.5 mt-1 text-gray-500 dark:text-slate-300">
                     <Mail className="w-3.5 h-3.5" />
                     <span className="text-xs truncate">
-                      {client.email || t("components.employeeCard.noEmail")}
+                      {client.email || t('components.employeeCard.noEmail')}
                     </span>
                   </div>
 
@@ -192,13 +179,11 @@ export default function Clients() {
                     <span
                       className={`px-2 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider ${
                         client.isActive
-                          ? "bg-green-100 text-green-600"
-                          : "bg-gray-100 text-gray-500"
+                          ? 'bg-green-100 text-green-600'
+                          : 'bg-gray-100 text-gray-500'
                       }`}
                     >
-                      {client.isActive
-                        ? t("clients.active")
-                        : t("clients.inactive")}
+                      {client.isActive ? t('clients.active') : t('clients.inactive')}
                     </span>
                     <div className="flex items-center text-orange-500 opacity-0 group-hover:opacity-100 transform translate-x-2 group-hover:translate-x-0 transition-all">
                       <span className="text-xs font-bold mr-1">DETALLES</span>

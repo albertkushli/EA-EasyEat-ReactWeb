@@ -511,7 +511,7 @@ body,
 }
 
 /* Toggle thumbs must stay visible */
-.dark aside [class*="rounded-full"].bg-white,
+.dark aside [class*='rounded-full'].bg-white,
 .dark .hc-theme-toggle__switch span {
   background-color: #ffffff !important;
 }

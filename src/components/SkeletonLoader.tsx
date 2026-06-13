@@ -47,4 +47,3 @@ export const SkeletonLoader: React.FC<{ show?: boolean }> = ({ show = true }) =>
 };
 
 export default SkeletonLoader;
-

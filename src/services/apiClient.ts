@@ -12,12 +12,12 @@ export function getStoredAuthToken(): string | null {
     if (directToken) return directToken;
 
     const stored = localStorage.getItem('auth_data');
-  const legacyStored = localStorage.getItem(STORAGE_KEYS.AUTH_DATA);
-  const authBlob = stored ?? legacyStored;
+    const legacyStored = localStorage.getItem(STORAGE_KEYS.AUTH_DATA);
+    const authBlob = stored ?? legacyStored;
 
-  if (!authBlob) return null;
+    if (!authBlob) return null;
 
-  const parsed = JSON.parse(authBlob);
+    const parsed = JSON.parse(authBlob);
     return parsed?.accessToken ?? parsed?.token ?? null;
   } catch {
     return null;
@@ -52,7 +52,9 @@ apiClient.interceptors.response.use(
   (response) => response,
   (error) => {
     // Allow callers to suppress logging by adding header 'X-Suppress-Error-Log'
-    const suppress = error.config?.headers?.['X-Suppress-Error-Log'] || error.config?.headers?.['x-suppress-error-log'];
+    const suppress =
+      error.config?.headers?.['X-Suppress-Error-Log'] ||
+      error.config?.headers?.['x-suppress-error-log'];
     if (!suppress) {
       console.error('❌ API ERROR:', {
         url: error.config?.url,
@@ -77,7 +79,7 @@ apiClient.interceptors.response.use(
     }
 
     return Promise.reject(error);
-  }
+  },
 );
 
 export default apiClient;
