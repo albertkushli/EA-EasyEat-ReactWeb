@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { X, Bot, Send, Loader2, RotateCcw } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { askAssistant } from '@/services/llm.service';
-import '../styles/AssistantChat.css';
+import '@/styles/AssistantChat.css';
 import ReactMarkdown from 'react-markdown'
 
 interface Message {
