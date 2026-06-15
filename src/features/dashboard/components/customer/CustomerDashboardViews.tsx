@@ -1,4 +1,4 @@
-import { type FormEvent } from 'react';
+import { type FormEvent, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useNavigate } from 'react-router-dom';
 import { QRCodeCanvas } from 'qrcode.react';
@@ -27,6 +27,7 @@ import {
   ShieldCheck,
   Moon,
   Sun,
+  Bot,
 } from 'lucide-react';
 import LanguageDropdown from '@/shared/components/ui/LanguageDropdown';
 import type { ICustomer } from '@/types';
@@ -40,6 +41,7 @@ import type {
 } from '../../hooks/useCustomerDashboard';
 import CustomerChatButton from '@/features/chat/components/CustomerChatButton';
 import { trackEvent } from '@/services/matomo';
+import AssistantChat from '@/features/assistant/components/AssistantChat';
 import { useTheme } from '@/context/ThemeContext';
 
 interface CustomerSidebarProps {
@@ -1056,6 +1058,7 @@ export function CustomerDiscoverView({
 }: CustomerDiscoverViewProps) {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const [isAssistantOpen, setIsAssistantOpen] = useState(false);
   const categories = [
     { name: 'all', icon: '🍽️', label: t('discover.categories.all', 'Tots') },
     { name: 'Sushi', icon: '🍣', label: t('discover.categories.sushi', 'Sushi') },
@@ -1096,6 +1099,7 @@ export function CustomerDiscoverView({
   }
 
   return (
+    <>
     <div className="hc-discover-view">
       <div className="hc-discover-header">
         <div
@@ -1109,6 +1113,16 @@ export function CustomerDiscoverView({
         >
           <h2 style={{ fontSize: '2rem', margin: 0 }}>{t('discover.title', 'Descobrir')}</h2>
           <button
+              type="button"
+              className='hc-map-btn'
+              onClick={() => setIsAssistantOpen(true)}
+              title={t("discover.talkAssistant", "Parla amb l'assistent")}
+              aria-label={t('discover.talkAssistant', "Parla amb l'assistent")}
+            >
+              <Bot size={18} />
+              <span>{t('discover.assistant', "Assistent")}</span>
+            </button>
+          <button
             type="button"
             className="hc-map-btn"
             onClick={() => navigate('/map')}
@@ -1120,20 +1134,20 @@ export function CustomerDiscoverView({
           </button>
         </div>
 
-        <div className="hc-search-bar">
-          <div className="hc-search-input">
-            <Search size={18} />
-            <input
-              type="text"
-              placeholder={t('discover.searchPlaceholder', 'Busca per nom o cuina...')}
-              value={searchTerm}
-              onChange={(event) => onSearchTermChange(event.target.value)}
-            />
+          <div className="hc-search-bar">
+            <div className="hc-search-input">
+              <Search size={18} />
+              <input
+                type="text"
+                placeholder={t('discover.searchPlaceholder', 'Busca per nom o cuina...')}
+                value={searchTerm}
+                onChange={(event) => onSearchTermChange(event.target.value)}
+              />
+            </div>
+            <button className="hc-filter-btn">
+              <SlidersHorizontal size={18} />
+            </button>
           </div>
-          <button className="hc-filter-btn">
-            <SlidersHorizontal size={18} />
-          </button>
-        </div>
 
         <div className="hc-category-pills">
           {categories.map((category) => (
@@ -1171,6 +1185,10 @@ export function CustomerDiscoverView({
         </div>
       </div>
     </div>
+
+    {/* AI Assistant side panel */}
+      <AssistantChat isOpen={isAssistantOpen} onClose={() => setIsAssistantOpen(false)} />
+    </>
   );
 }
 
