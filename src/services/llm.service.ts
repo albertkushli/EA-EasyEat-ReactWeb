@@ -25,7 +25,7 @@ export async function askAssistant(prompt:string): Promise<IResponse> {
     else if (res.status == 400) {
       return {
         message: res.data.message,
-        response: "Rere has been an error with missing parameters, please try again and, if the error persists, please, contact us.",
+        response: "There has been an error with missing parameters, please try again and, if the error persists, please, contact us.",
         done: true,
         done_reason: "Error"
       }
@@ -34,7 +34,7 @@ export async function askAssistant(prompt:string): Promise<IResponse> {
     else {
       return {
         message: res.data.message,
-        response: "Rere has been an error with the server, please try again and, if the error persists, please, contact us.",
+        response: "There has been an error with the server, please try again and, if the error persists, please, contact us.",
         done: true,
         done_reason: "Error"
       };
