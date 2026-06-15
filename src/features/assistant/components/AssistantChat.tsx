@@ -75,7 +75,7 @@ const AssistantChat: React.FC<AssistantChatProps> = ({ isOpen, onClose }) => {
       const errorMessage: Message = {
         id: `error-${Date.now()}`,
         role: 'assistant',
-        text: t('assistant.error', "S'ha produït un error. Torna-ho a intentar."),
+        text: t('assistant.error', "An error occurred. Please try again."),
         timestamp: new Date(),
       };
       setMessages((prev) => [...prev, errorMessage]);
@@ -122,10 +122,10 @@ const AssistantChat: React.FC<AssistantChatProps> = ({ isOpen, onClose }) => {
               <Bot size={20} />
             </div>
             <div>
-              <h3 className="ac-header__title">{t('assistant.title', 'Assistent IA')}</h3>
+              <h3 className="ac-header__title">{t('assistant.title', 'AI Assistant')}</h3>
               <span className="ac-header__subtitle">{t('assistant.subtitle', "EasyEat · IA")}</span>
-              <span className="ac-header__subtitle">{t('assistant.notes1', "L'assistent no té memòria.")}</span>
-              <span className="ac-header__subtitle">{t('assistant.notes2', "Les converses no es guarden.")}</span>
+              <span className="ac-header__subtitle">{t('assistant.notes1', "The assistant has no memory.")}</span>
+              <span className="ac-header__subtitle">{t('assistant.notes2', "Conversations are not saved.")}</span>
             </div>
           </div>
           <div className="ac-header__actions">
@@ -133,8 +133,8 @@ const AssistantChat: React.FC<AssistantChatProps> = ({ isOpen, onClose }) => {
               <button
                 className="ac-icon-btn"
                 onClick={handleClearChat}
-                title={t('assistant.clear', 'Netejar conversa')}
-                aria-label={t('assistant.clear', 'Netejar conversa')}
+                title={t('assistant.clear', 'Clear conversation')}
+                aria-label={t('assistant.clear', 'Clear conversation')}
               >
                 <RotateCcw size={16} />
               </button>
@@ -142,7 +142,7 @@ const AssistantChat: React.FC<AssistantChatProps> = ({ isOpen, onClose }) => {
             <button
               className="ac-icon-btn"
               onClick={onClose}
-              aria-label={t('assistant.close', 'Tancar assistent')}
+              aria-label={t('assistant.close', 'Close assistant')}
             >
               <X size={20} />
             </button>
@@ -156,15 +156,15 @@ const AssistantChat: React.FC<AssistantChatProps> = ({ isOpen, onClose }) => {
               <div className="ac-empty__orb">
                 <Bot size={32} />
               </div>
-              <p className="ac-empty__title">{t('assistant.empty.title', 'Com puc ajudar-te?')}</p>
+              <p className="ac-empty__title">{t('assistant.empty.title', 'How can I help you?')}</p>
               <p className="ac-empty__desc">
-                {t('assistant.empty.desc', 'Pregunta\'m qualsevol cosa sobre restaurants, menú, recomanacions o punts.')}
+                {t('assistant.empty.desc', 'Ask me anything about restaurants, menu, recommendations, or points.')}
               </p>
               <div className="ac-suggestions">
                 {[
-                  t('assistant.suggestion.1', "Quins restaurants tens disponibles?"),
-                  t('assistant.suggestion.2', "On puc menjar per menys de 10€?"),
-                  t('assistant.suggestion.3', "Recomana'm un restaurant de pizza"),
+                  t('assistant.suggestion.1', "What restaurants do you have available?"),
+                  t('assistant.suggestion.2', "Where can I eat for less than €10?"),
+                  t('assistant.suggestion.3', "Recommend me a pizza restaurant"),
                 ].map((suggestion) => (
                   <button
                     key={suggestion}
@@ -207,7 +207,7 @@ const AssistantChat: React.FC<AssistantChatProps> = ({ isOpen, onClose }) => {
                   </div>
                   <div className="ac-message__bubble ac-message__bubble--loading">
                     <Loader2 size={16} className="ac-spinner" />
-                    <span>{t('assistant.thinking', 'Pensant...')}</span>
+                    <span>{t('assistant.thinking', 'Thinking...')}</span>
                   </div>
                 </div>
               )}
@@ -226,7 +226,7 @@ const AssistantChat: React.FC<AssistantChatProps> = ({ isOpen, onClose }) => {
               value={inputText}
               onChange={(e) => setInputText(e.target.value)}
               onKeyDown={handleKeyDown}
-              placeholder={t('assistant.placeholder', 'Escriu el teu missatge...')}
+              placeholder={t('assistant.placeholder', 'Type your message...')}
               disabled={isLoading}
               className="ac-textarea"
               style={{ minHeight: '20px' }}
@@ -237,13 +237,13 @@ const AssistantChat: React.FC<AssistantChatProps> = ({ isOpen, onClose }) => {
               onClick={handleSend}
               disabled={!inputText.trim() || isLoading}
               className="ac-send-btn"
-              aria-label={t('assistant.send', 'Enviar missatge')}
+              aria-label={t('assistant.send', 'Send message')}
             >
               <Send size={16} />
             </button>
           </div>
           <p className="ac-input-hint">
-            {t('assistant.hint', 'Enter per enviar · Shift+Enter per nova línia')}
+            {t('assistant.hint', 'Enter to send · Shift+Enter for new line')}
           </p>
         </div>
       </div>
