@@ -11,6 +11,7 @@ import LegalNotice from '@/features/legal/LegalNotice';
 import MatomoTracker from '@/components/MatomoTracker';
 import MapScreenPremium from '@/imports/MapScreenPremium';
 import SupportChat from '@/features/support/components/SupportChat';
+import AccessibilityPanel from '@/features/accessibility/AccessibilityPanel';
 import { useMapExperienceData } from '@/features/restaurants/hooks/useMapExperienceData';
 
 function ProtectedRoute({ children }: { children: ReactNode }) {
@@ -111,6 +112,7 @@ export default function App() {
             </Routes>
           </Router>
           <SupportChat />
+          <AccessibilityPanel />
         </ChatProvider>
       </AuthProvider>
     </ThemeProvider>
