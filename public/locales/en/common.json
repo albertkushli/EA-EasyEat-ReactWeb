@@ -709,5 +709,27 @@
       "interact": "Interact with the demo",
       "start": "Start with EasyEat"
     }
+  },
+  "assistant": {
+    "title": "AI Assistant",
+    "subtitle": "EasyEat · AI",
+    "notes1": "The assistant has no memory.",
+    "notes2": "Conversations are not saved.",
+    "clear": "Clear conversation",
+    "close": "Close assistant",
+    "error": "An error occurred. Please try again.",
+    "empty": {
+      "title": "How can I help you?",
+      "desc": "Ask me anything about restaurants, menu, recommendations, or points."
+    },
+    "suggestion": {
+      "1": "What restaurants do you have available?",
+      "2": "Where can I eat for less than €10?",
+      "3": "Recommend me a pizza restaurant"
+    },
+    "thinking": "Thinking...",
+    "placeholder": "Type your message...",
+    "send": "Send message",
+    "hint": "Enter to send · Shift+Enter for new line"
   }
 }

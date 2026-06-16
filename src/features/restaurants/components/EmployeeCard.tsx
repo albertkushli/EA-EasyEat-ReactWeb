@@ -35,7 +35,7 @@ function safeToNumber(value: any, fallback: number = 0): number {
 }
 
 function extractEmployeeProfile(employee: IEmployee, t: any): EmployeeProfile {
-  const profile = employee?.profile as any || {};
+  const profile = (employee?.profile as any) || {};
   return {
     name: profile?.name || t('components.employeeCard.noName'),
     email: profile?.email || t('components.employeeCard.noEmail'),
@@ -59,9 +59,7 @@ function extractEmployeeStats(employee: IEmployeeStats, visits: IVisit[] = []): 
 
   if (revenue === 0 && visits && visits.length > 0) {
     const employeeVisits = visits.filter(
-      (v) =>
-        String((v as any).employee_id) === String(employee?._id) &&
-        !(v as any).deletedAt
+      (v) => String((v as any).employee_id) === String(employee?._id) && !(v as any).deletedAt,
     );
     revenue = employeeVisits.reduce((sum, v) => sum + ((v as any).billAmount || 0), 0);
     visits_count = employeeVisits.length;
@@ -95,9 +93,7 @@ function extractEmployeeStatus(employee: IEmployeeStats, t: any): EmployeeStatus
 const EmployeeInfo: FC<{ profile: EmployeeProfile }> = ({ profile }) => (
   <div className="he-employee-left">
     <span className="he-employee-name">{profile.name}</span>
-    <span className={`he-role-pill he-role-${profile.role}`}>
-      {profile.role.toUpperCase()}
-    </span>
+    <span className={`he-role-pill he-role-${profile.role}`}>{profile.role.toUpperCase()}</span>
     <span className="he-employee-sub">{profile.email}</span>
     <span className="he-employee-sub">{profile.phone}</span>
   </div>

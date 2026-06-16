@@ -700,5 +700,27 @@
       "interact": "Interactuar amb la demo",
       "start": "Començar amb EasyEat"
     }
+  },
+  "assistant": {
+    "title": "Assistent IA",
+    "subtitle": "EasyEat · IA",
+    "notes1": "L'assistent no té memòria.",
+    "notes2": "Les converses no es guarden.",
+    "clear": "Netejar conversa",
+    "close": "Tancar assistent",
+    "error": "S'ha produït un error. Torna-ho a intentar.",
+    "empty": {
+      "title": "Com puc ajudar-te?",
+      "desc": "Pregunta'm qualsevol cosa sobre restaurants, menú, recomanacions o punts."
+    },
+    "suggestion": {
+      "1": "Quins restaurants tens disponibles?",
+      "2": "On puc menjar per menys de 10€?",
+      "3": "Recomana'm un restaurant de pizza"
+    },
+    "thinking": "Pensant...",
+    "placeholder": "Escriu el teu missatge...",
+    "send": "Enviar missatge",
+    "hint": "Enter per enviar · Shift+Enter per nova línia"
   }
 }

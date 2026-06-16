@@ -15,9 +15,7 @@ export async function fetchEmployeesWithStats(restaurantId: string): Promise<IEm
   if (!restaurantId) return [];
 
   try {
-    const res = await apiClient.get(
-      API_ENDPOINTS.EMPLOYEES_WITH_STATS(restaurantId)
-    );
+    const res = await apiClient.get(API_ENDPOINTS.EMPLOYEES_WITH_STATS(restaurantId));
 
     // Normaliza respuesta: { data: [...] } o [...]
     const employees = extractArray<IEmployeeStats>(res.data);
@@ -33,17 +31,17 @@ export const getEmployeesByRestaurant = async (restaurantId: string) => {
     const response = await apiClient.get(`/employees/restaurant/${restaurantId}/stats`);
     return response.data?.data || response.data || [];
   } catch (error) {
-    console.error("Error fetching employees:", error);
+    console.error('Error fetching employees:', error);
     throw error;
   }
 };
 
 export const createEmployee = async (employeeData: any) => {
   try {
-    const response = await apiClient.post("/employees", employeeData);
+    const response = await apiClient.post('/employees', employeeData);
     return response.data?.data || response.data;
   } catch (error) {
-    console.error("Error creating employee:", error);
+    console.error('Error creating employee:', error);
     throw error;
   }
 };
@@ -53,7 +51,7 @@ export const updateEmployee = async (employeeId: string, employeeData: any) => {
     const response = await apiClient.put(`/employees/${employeeId}`, employeeData);
     return response.data?.data || response.data;
   } catch (error) {
-    console.error("Error updating employee:", error);
+    console.error('Error updating employee:', error);
     throw error;
   }
 };
@@ -63,7 +61,7 @@ export const deleteEmployee = async (employeeId: string) => {
     const response = await apiClient.delete(`/employees/${employeeId}/hard`);
     return response.data;
   } catch (error) {
-    console.error("Error deleting employee:", error);
+    console.error('Error deleting employee:', error);
     throw error;
   }
 };

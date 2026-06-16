@@ -82,7 +82,10 @@ const RestaurantMarker = memo<RestaurantMarkerProps>(
     const markerColor = isNearby ? MAP_THEME.accent : MAP_THEME.primary;
 
     // Memoize marker URL to avoid regenerating on every render
-    const markerUrl = useMemo(() => createMarkerUrl(markerColor, 36, isSelected, isNearby), [markerColor, isSelected, isNearby]);
+    const markerUrl = useMemo(
+      () => createMarkerUrl(markerColor, 36, isSelected, isNearby),
+      [markerColor, isSelected, isNearby],
+    );
 
     // Memoize icon config to avoid recreating object
     const iconConfig = useMemo(
@@ -91,7 +94,7 @@ const RestaurantMarker = memo<RestaurantMarkerProps>(
         scaledSize: new (window as any).google.maps.Size(36, 36),
         anchor: new (window as any).google.maps.Point(18, 36),
       }),
-      [markerUrl]
+      [markerUrl],
     );
 
     if (!coords) return null;
@@ -117,7 +120,7 @@ const RestaurantMarker = memo<RestaurantMarkerProps>(
       (prevProps.restaurant as any).isNearby === (nextProps.restaurant as any).isNearby &&
       prevCoordsKey === nextCoordsKey
     );
-  }
+  },
 );
 
 RestaurantMarker.displayName = 'RestaurantMarker';
@@ -192,7 +195,7 @@ const GoogleMapComponent: React.FC<GoogleMapComponentProps> = ({
       mapRef.current = map;
       onMapLoad?.(map);
     },
-    [onMapLoad]
+    [onMapLoad],
   );
 
   if (loadError) {
@@ -250,50 +253,50 @@ const GoogleMapComponent: React.FC<GoogleMapComponentProps> = ({
       onLoad={handleMapLoad}
     >
       {showClusters ? (
-          <MarkerClusterer
-            options={{
-              maxZoom: 14,
-              styles: [
-                {
-                  height: 53,
-                  width: 53,
-                  textColor: '#ffffff',
-                  background: MAP_THEME.cluster,
-                  borderRadius: '50%',
-                  lineHeight: '53px',
-                  fontSize: '12px',
-                  fontWeight: 'bold',
-                  textAlign: 'center',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  boxShadow: `0 10px 30px ${MAP_THEME.clusterShadow}`,
-                  border: '2px solid rgba(255, 255, 255, 0.8)',
-                },
-              ] as any,
-            }}
-            // provide children explicitly to satisfy typings
-            children={(clusterer: any) => (
-              <>
-                    {restaurants.map((restaurant) => {
-                      const restaurantId = restaurant._id;
-                      if (!restaurantId) return null;
+        <MarkerClusterer
+          options={{
+            maxZoom: 14,
+            styles: [
+              {
+                height: 53,
+                width: 53,
+                textColor: '#ffffff',
+                background: MAP_THEME.cluster,
+                borderRadius: '50%',
+                lineHeight: '53px',
+                fontSize: '12px',
+                fontWeight: 'bold',
+                textAlign: 'center',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                boxShadow: `0 10px 30px ${MAP_THEME.clusterShadow}`,
+                border: '2px solid rgba(255, 255, 255, 0.8)',
+              },
+            ] as any,
+          }}
+          // provide children explicitly to satisfy typings
+          children={(clusterer: any) => (
+            <>
+              {restaurants.map((restaurant) => {
+                const restaurantId = restaurant._id;
+                if (!restaurantId) return null;
 
-                      return (
-                      <Fragment key={restaurantId}>
-                        <RestaurantMarker
-                          restaurant={restaurant}
-                          isSelected={selectedRestaurantId === restaurant._id}
-                          onClick={() => handleMarkerClick(restaurantId)}
-                          clusterer={clusterer}
-                        />
-                      </Fragment>
-                      );
-                    })}
-                <UserLocationMarker coords={userLocation} />
-              </>
-            )}
-          />
+                return (
+                  <Fragment key={restaurantId}>
+                    <RestaurantMarker
+                      restaurant={restaurant}
+                      isSelected={selectedRestaurantId === restaurant._id}
+                      onClick={() => handleMarkerClick(restaurantId)}
+                      clusterer={clusterer}
+                    />
+                  </Fragment>
+                );
+              })}
+              <UserLocationMarker coords={userLocation} />
+            </>
+          )}
+        />
       ) : (
         <>
           {restaurants.map((restaurant) => {
@@ -321,4 +324,3 @@ GoogleMapComponent.displayName = 'GoogleMapComponent';
 
 export default GoogleMapComponent;
 export { type GoogleMapComponentProps, DEFAULT_CENTER, DEFAULT_ZOOM };
-

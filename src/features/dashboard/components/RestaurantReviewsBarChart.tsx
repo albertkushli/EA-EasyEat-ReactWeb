@@ -23,17 +23,17 @@ function average(values: number[]) {
 
 function buildReviewStats(reviews: any, restaurantId: any, t: any) {
   const chartKeys = [
-    { key: 'foodQuality', name: t("components.reviewScores.categories.food") },
-    { key: 'staffService', name: t("components.reviewScores.categories.service") },
-    { key: 'cleanliness', name: t("components.reviewScores.categories.cleanliness") },
-    { key: 'environment', name: t("components.reviewScores.categories.environment") },
+    { key: 'foodQuality', name: t('components.reviewScores.categories.food') },
+    { key: 'staffService', name: t('components.reviewScores.categories.service') },
+    { key: 'cleanliness', name: t('components.reviewScores.categories.cleanliness') },
+    { key: 'environment', name: t('components.reviewScores.categories.environment') },
   ];
 
   const currentRestaurantId = normalizeRestaurantId(restaurantId);
   const restaurantReviews = Array.isArray(reviews)
-    ? reviews.filter((review) =>
-      normalizeRestaurantId(review?.restaurant_id) === currentRestaurantId,
-    )
+    ? reviews.filter(
+        (review) => normalizeRestaurantId(review?.restaurant_id) === currentRestaurantId,
+      )
     : [];
 
   return chartKeys.map(({ key, name }) => {
@@ -48,48 +48,65 @@ function buildReviewStats(reviews: any, restaurantId: any, t: any) {
   });
 }
 
-export default function RestaurantReviewsBarChart({ reviews, restaurantId }: { reviews: IReview[], restaurantId: string }) {
+export default function RestaurantReviewsBarChart({
+  reviews,
+  restaurantId,
+}: {
+  reviews: IReview[];
+  restaurantId: string;
+}) {
   const { t } = useTranslation();
   const data = buildReviewStats(reviews, restaurantId, t);
-  const hasReviews = Array.isArray(reviews) && reviews.some(
-    (review) => normalizeRestaurantId(review?.restaurant_id) === normalizeRestaurantId(restaurantId),
-  );
+  const hasReviews =
+    Array.isArray(reviews) &&
+    reviews.some(
+      (review) =>
+        normalizeRestaurantId(review?.restaurant_id) === normalizeRestaurantId(restaurantId),
+    );
 
   if (!hasReviews) {
     return (
-      <div style={{
-        width: '100%',
-        padding: 'var(--sp-md)',
-        background: 'var(--glass-bg)',
-        border: '1px solid var(--glass-border)',
-        borderRadius: '16px',
-        backdropFilter: 'blur(12px)',
-      }}>
-        <h3 style={{ marginBottom: 'var(--sp-sm)', fontSize: '0.95rem', fontWeight: 700 }}>{t("components.reviewScores.title")}</h3>
+      <div
+        style={{
+          width: '100%',
+          padding: 'var(--sp-md)',
+          background: 'var(--glass-bg)',
+          border: '1px solid var(--glass-border)',
+          borderRadius: '16px',
+          backdropFilter: 'blur(12px)',
+        }}
+      >
+        <h3 style={{ marginBottom: 'var(--sp-sm)', fontSize: '0.95rem', fontWeight: 700 }}>
+          {t('components.reviewScores.title')}
+        </h3>
         <p style={{ color: 'var(--clr-text-muted)', fontSize: 'var(--text-sm)' }}>
-          {t("components.reviewScores.noReviews")}
+          {t('components.reviewScores.noReviews')}
         </p>
       </div>
     );
   }
 
   return (
-    <div style={{
-      width: '100%',
-      minWidth: 0,
-      padding: 'var(--sp-md)',
-      borderRadius: '16px',
-      background: 'var(--glass-bg)',
-      border: '1px solid var(--glass-border)',
-      backdropFilter: 'blur(12px)',
-    }}>
-      <h3 style={{
-        marginBottom: 'var(--sp-md)',
-        fontSize: '0.95rem',
-        fontWeight: 700,
-        color: 'var(--clr-text)',
-      }}>
-        {t("components.reviewScores.title")}
+    <div
+      style={{
+        width: '100%',
+        minWidth: 0,
+        padding: 'var(--sp-md)',
+        borderRadius: '16px',
+        background: 'var(--glass-bg)',
+        border: '1px solid var(--glass-border)',
+        backdropFilter: 'blur(12px)',
+      }}
+    >
+      <h3
+        style={{
+          marginBottom: 'var(--sp-md)',
+          fontSize: '0.95rem',
+          fontWeight: 700,
+          color: 'var(--clr-text)',
+        }}
+      >
+        {t('components.reviewScores.title')}
       </h3>
 
       <div style={{ width: '100%', height: 220 }}>
@@ -110,7 +127,7 @@ export default function RestaurantReviewsBarChart({ reviews, restaurantId }: { r
             />
             <Tooltip
               cursor={{ fill: 'rgba(255,255,255,0.04)' }}
-              formatter={(value) => [value, t("components.reviewScores.average")]}
+              formatter={(value) => [value, t('components.reviewScores.average')]}
               contentStyle={{
                 background: 'var(--glass-bg)',
                 border: '1px solid var(--glass-border)',
@@ -118,17 +135,9 @@ export default function RestaurantReviewsBarChart({ reviews, restaurantId }: { r
                 fontSize: '12px',
               }}
             />
-            <Bar
-              dataKey="value"
-              radius={[6, 6, 0, 0]}
-              isAnimationActive={true}
-              barSize={35}
-            >
+            <Bar dataKey="value" radius={[6, 6, 0, 0]} isAnimationActive={true} barSize={35}>
               {data.map((entry, index) => (
-                <Cell
-                  key={`cell-${index}`}
-                  fill={entry.value > 5 ? '#10b981' : '#ef4444'}
-                />
+                <Cell key={`cell-${index}`} fill={entry.value > 5 ? '#10b981' : '#ef4444'} />
               ))}
             </Bar>
           </BarChart>

@@ -28,7 +28,7 @@ export async function fetchRestaurantReviews(restaurantId: string): Promise<IRev
 
   try {
     const res = await apiClient.get(
-      `${API_ENDPOINTS.REVIEWS_BY_RESTAURANT(restaurantId)}?limit=1000`
+      `${API_ENDPOINTS.REVIEWS_BY_RESTAURANT(restaurantId)}?limit=1000`,
     );
     return extractArray<IReview>(res.data);
   } catch (err) {
@@ -40,7 +40,9 @@ export async function fetchRestaurantReviews(restaurantId: string): Promise<IRev
 /**
  * Crea una nueva reseña
  */
-export async function createReview(review: Omit<IReview, '_id' | 'id' | 'createdAt' | 'updatedAt'>): Promise<IReview | null> {
+export async function createReview(
+  review: Omit<IReview, '_id' | 'id' | 'createdAt' | 'updatedAt'>,
+): Promise<IReview | null> {
   try {
     const res = await apiClient.post<IReview>(API_ENDPOINTS.REVIEWS, review);
     return res.data ?? null;
@@ -53,7 +55,10 @@ export async function createReview(review: Omit<IReview, '_id' | 'id' | 'created
 /**
  * Actualiza una reseña existente
  */
-export async function updateReview(reviewId: string, updates: Partial<IReview>): Promise<IReview | null> {
+export async function updateReview(
+  reviewId: string,
+  updates: Partial<IReview>,
+): Promise<IReview | null> {
   try {
     const res = await apiClient.put<IReview>(`${API_ENDPOINTS.REVIEWS}/${reviewId}`, updates);
     return res.data ?? null;

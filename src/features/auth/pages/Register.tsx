@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Mail, Lock, Eye, EyeOff, AlertCircle, User, Check, X } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { useTranslation } from 'react-i18next';
+import { trackEvent } from '@/services/matomo';
 
 interface RegisterFormState {
   name: string;
@@ -66,7 +67,7 @@ export default function Register() {
         const google = (window as any).google;
         if (!google) return;
 
-        const clientID = import.meta.env.VITE_GOOGLE_CLIENT_ID ;
+        const clientID = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 
         google.accounts.id.initialize({
           client_id: clientID,
@@ -90,16 +91,13 @@ export default function Register() {
 
         const btnElement = document.getElementById('google-signin-btn');
         if (btnElement) {
-          google.accounts.id.renderButton(
-            btnElement,
-            {
-              theme: 'outline',
-              size: 'large',
-              width: btnElement.clientWidth || 364,
-              text: 'signup_with',
-              shape: 'rectangular',
-            }
-          );
+          google.accounts.id.renderButton(btnElement, {
+            theme: 'outline',
+            size: 'large',
+            width: btnElement.clientWidth || 364,
+            text: 'signup_with',
+            shape: 'rectangular',
+          });
         }
 
         google.accounts.id.prompt();
@@ -109,13 +107,18 @@ export default function Register() {
     }
   }, [loginGoogle, navigate, t]);
 
-  const rules = useMemo(() => ({
-    length: form.password.length >= 8,
-    uppercase: /[A-Z]/.test(form.password),
-    match: form.password !== '' && form.password === form.confirmPassword,
-  }), [form.password, form.confirmPassword]);
+  const rules = useMemo(
+    () => ({
+      length: form.password.length >= 8,
+      uppercase: /[A-Z]/.test(form.password),
+      match: form.password !== '' && form.password === form.confirmPassword,
+    }),
+    [form.password, form.confirmPassword],
+  );
 
-  const isValid = Boolean(rules.length && rules.uppercase && rules.match && form.name && form.email);
+  const isValid = Boolean(
+    rules.length && rules.uppercase && rules.match && form.name && form.email,
+  );
 
   function handleChange(event: ChangeEvent<HTMLInputElement>) {
     setForm((prev) => ({ ...prev, [event.target.name]: event.target.value }));
@@ -141,6 +144,7 @@ export default function Register() {
       });
 
       if (result.success) {
+        trackEvent('Auth', 'Register success', 'customer');
         navigate('/dashboard');
       } else {
         setError(result.error ?? t('auth.errors.serverError'));
@@ -176,7 +180,9 @@ export default function Register() {
 
         <form onSubmit={handleSubmit} noValidate>
           <div className="form-group">
-            <label className="form-label" htmlFor="register-name">{t('auth.register.form.fullName')}</label>
+            <label className="form-label" htmlFor="register-name">
+              {t('auth.register.form.fullName')}
+            </label>
             <div className="input-wrapper">
               <User className="input-icon" size={18} />
               <input
@@ -194,7 +200,9 @@ export default function Register() {
           </div>
 
           <div className="form-group">
-            <label className="form-label" htmlFor="register-email">{t('auth.register.form.email')}</label>
+            <label className="form-label" htmlFor="register-email">
+              {t('auth.register.form.email')}
+            </label>
             <div className="input-wrapper">
               <Mail className="input-icon" size={18} />
               <input
@@ -211,7 +219,9 @@ export default function Register() {
           </div>
 
           <div className="form-group" style={{ marginBottom: '0.5rem' }}>
-            <label className="form-label" htmlFor="register-password">{t('auth.register.form.password')}</label>
+            <label className="form-label" htmlFor="register-password">
+              {t('auth.register.form.password')}
+            </label>
             <div className="input-wrapper">
               <Lock className="input-icon" size={18} />
               <input
@@ -224,7 +234,11 @@ export default function Register() {
                 onChange={handleChange}
                 autoComplete="new-password"
               />
-              <button type="button" className="input-icon-right" onClick={() => setShowPwd((value) => !value)}>
+              <button
+                type="button"
+                className="input-icon-right"
+                onClick={() => setShowPwd((value) => !value)}
+              >
                 {showPwd ? <EyeOff size={18} /> : <Eye size={18} />}
               </button>
             </div>
@@ -232,11 +246,16 @@ export default function Register() {
 
           <div className="pwd-tracker" style={{ marginBottom: '1.25rem' }}>
             <RuleChecker isValid={rules.length} label={t('auth.register.form.rules.length')} />
-            <RuleChecker isValid={rules.uppercase} label={t('auth.register.form.rules.uppercase')} />
+            <RuleChecker
+              isValid={rules.uppercase}
+              label={t('auth.register.form.rules.uppercase')}
+            />
           </div>
 
           <div className="form-group">
-            <label className="form-label" htmlFor="register-confirm-password">{t('auth.register.form.confirmPassword')}</label>
+            <label className="form-label" htmlFor="register-confirm-password">
+              {t('auth.register.form.confirmPassword')}
+            </label>
             <div className="input-wrapper">
               <Lock className="input-icon" size={18} />
               <input
@@ -258,7 +277,12 @@ export default function Register() {
             </div>
           )}
 
-          <button type="submit" className="btn btn--primary" disabled={loading || !isValid} style={{ marginTop: '1rem' }}>
+          <button
+            type="submit"
+            className="btn btn--primary"
+            disabled={loading || !isValid}
+            style={{ marginTop: '1rem' }}
+          >
             {loading ? t('auth.register.form.loading') : t('auth.register.form.submit')}
           </button>
         </form>
@@ -272,7 +296,10 @@ export default function Register() {
         </div>
 
         <div className="auth-footer">
-          {t('auth.register.footer.hasAccount')} <Link to="/login" className="auth-link">{t('auth.register.footer.login')}</Link>
+          {t('auth.register.footer.hasAccount')}{' '}
+          <Link to="/login" className="auth-link">
+            {t('auth.register.footer.login')}
+          </Link>
         </div>
       </div>
     </div>

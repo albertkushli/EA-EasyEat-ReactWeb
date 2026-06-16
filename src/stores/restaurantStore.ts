@@ -2,7 +2,6 @@ import { create } from 'zustand';
 import type { Restaurant } from '@/types/Restaurant';
 import { fetchRestaurants, fetchNearbyRestaurants } from '@/services/restaurant.service';
 
-
 interface RestaurantStore {
   restaurants: Restaurant[];
   loading: boolean;
@@ -13,7 +12,7 @@ interface RestaurantStore {
 export const useRestaurantStore = create<RestaurantStore>((set) => ({
   restaurants: [],
   loading: false,
-  
+
   loadRestaurants: async () => {
     set({ loading: true });
     try {
@@ -24,13 +23,17 @@ export const useRestaurantStore = create<RestaurantStore>((set) => ({
       set({ restaurants: [], loading: false });
     }
   },
-  
+
   loadNearby: async (lat: number, lng: number, maxDistance: number = 5000) => {
     set({ loading: true });
     try {
-      const nearby = (await fetchNearbyRestaurants(lat, lng, maxDistance)) as unknown as Restaurant[];
+      const nearby = (await fetchNearbyRestaurants(
+        lat,
+        lng,
+        maxDistance,
+      )) as unknown as Restaurant[];
       // Mark results as nearby when appropriate (some APIs include distanceKm)
-      const annotated: Restaurant[] = nearby.map((r) => ({ ...r, isNearby: true } as Restaurant));
+      const annotated: Restaurant[] = nearby.map((r) => ({ ...r, isNearby: true }) as Restaurant);
       set({ restaurants: annotated, loading: false });
     } catch (err) {
       console.error('Error loading nearby restaurants:', err);
@@ -38,4 +41,3 @@ export const useRestaurantStore = create<RestaurantStore>((set) => ({
     }
   },
 }));
-

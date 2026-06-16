@@ -1,8 +1,8 @@
-import { useState, useEffect } from "react";
-import { X, Save, Loader2, Trophy, Star, MessageSquare } from "lucide-react";
-import { Reward } from "@/types/Reward";
-import { motion, AnimatePresence } from "framer-motion";
-import { useTranslation } from "react-i18next";
+import { useState, useEffect } from 'react';
+import { X, Save, Loader2, Trophy, Star, MessageSquare } from 'lucide-react';
+import { Reward } from '@/types/Reward';
+import { motion, AnimatePresence } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 
 interface RewardModalProps {
   isOpen: boolean;
@@ -14,8 +14,8 @@ interface RewardModalProps {
 export default function RewardModal({ isOpen, onClose, onSave, reward }: RewardModalProps) {
   const { t } = useTranslation();
   const [formData, setFormData] = useState<Partial<Reward>>({
-    name: "",
-    description: "",
+    name: '',
+    description: '',
     pointsRequired: 0,
     active: true,
   });
@@ -28,8 +28,8 @@ export default function RewardModal({ isOpen, onClose, onSave, reward }: RewardM
       });
     } else {
       setFormData({
-        name: "",
-        description: "",
+        name: '',
+        description: '',
         pointsRequired: 0,
         active: true,
       });
@@ -43,7 +43,7 @@ export default function RewardModal({ isOpen, onClose, onSave, reward }: RewardM
       await onSave(formData);
       onClose();
     } catch (error) {
-      console.error("Error saving reward:", error);
+      console.error('Error saving reward:', error);
     } finally {
       setLoading(false);
     }
@@ -68,10 +68,15 @@ export default function RewardModal({ isOpen, onClose, onSave, reward }: RewardM
                   <Trophy className="w-6 h-6" />
                 </div>
                 <h2 className="text-2xl font-black tracking-tight">
-                  {reward ? t('rewards.editReward').toUpperCase() : t('rewards.addReward').toUpperCase()}
+                  {reward
+                    ? t('rewards.editReward').toUpperCase()
+                    : t('rewards.addReward').toUpperCase()}
                 </h2>
               </div>
-              <button onClick={onClose} className="p-2 hover:bg-white/20 rounded-full transition-colors">
+              <button
+                onClick={onClose}
+                className="p-2 hover:bg-white/20 rounded-full transition-colors"
+              >
                 <X className="w-6 h-6" />
               </button>
             </div>
@@ -80,7 +85,9 @@ export default function RewardModal({ isOpen, onClose, onSave, reward }: RewardM
           <form onSubmit={handleSubmit} className="p-8 space-y-6">
             <div className="space-y-4">
               <div className="space-y-1.5">
-                <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">{t('rewards.form.name')}</label>
+                <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">
+                  {t('rewards.form.name')}
+                </label>
                 <input
                   required
                   type="text"
@@ -92,21 +99,27 @@ export default function RewardModal({ isOpen, onClose, onSave, reward }: RewardM
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">{t('rewards.details.pointsCost')}</label>
+                <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">
+                  {t('rewards.details.pointsCost')}
+                </label>
                 <div className="relative">
                   <Star className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-300" />
                   <input
                     required
                     type="number"
                     value={formData.pointsRequired}
-                    onChange={(e) => setFormData({ ...formData, pointsRequired: parseInt(e.target.value) })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, pointsRequired: parseInt(e.target.value) })
+                    }
                     className="w-full p-3 pl-10 bg-gray-50 border border-gray-100 rounded-xl text-sm font-bold text-gray-700 focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 outline-none transition-all"
                   />
                 </div>
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">{t('rewards.details.description')}</label>
+                <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">
+                  {t('rewards.details.description')}
+                </label>
                 <textarea
                   value={formData.description}
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
@@ -123,7 +136,10 @@ export default function RewardModal({ isOpen, onClose, onSave, reward }: RewardM
                   onChange={(e) => setFormData({ ...formData, active: e.target.checked })}
                   className="w-5 h-5 rounded border-gray-300 text-orange-500 focus:ring-orange-500"
                 />
-                <label htmlFor="active" className="text-sm font-bold text-gray-700 cursor-pointer select-none">
+                <label
+                  htmlFor="active"
+                  className="text-sm font-bold text-gray-700 cursor-pointer select-none"
+                >
                   {t('rewards.form.activeTagline')}
                 </label>
               </div>

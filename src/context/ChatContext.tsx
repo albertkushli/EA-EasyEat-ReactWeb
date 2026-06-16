@@ -10,12 +10,7 @@ import {
 } from 'react';
 import { io, Socket } from 'socket.io-client';
 import { useAuth } from './AuthContext';
-import {
-  chatService,
-  Message,
-  Conversation,
-  SenderRole,
-} from '@/services/chat-service';
+import { chatService, Message, Conversation, SenderRole } from '@/services/chat-service';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Context type
@@ -68,11 +63,17 @@ export const ChatProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const roleRef = useRef(role);
   const userRef = useRef(user);
 
-  useEffect(() => { activeIdRef.current = activeConversationId; }, [activeConversationId]);
-  useEffect(() => { roleRef.current = role; }, [role]);
-  useEffect(() => { userRef.current = user; }, [user]);
+  useEffect(() => {
+    activeIdRef.current = activeConversationId;
+  }, [activeConversationId]);
+  useEffect(() => {
+    roleRef.current = role;
+  }, [role]);
+  useEffect(() => {
+    userRef.current = user;
+  }, [user]);
 
-  const activeConversation = conversations.find(c => c._id === activeConversationId) ?? null;
+  const activeConversation = conversations.find((c) => c._id === activeConversationId) ?? null;
 
   // ── Fetch conversations (role-aware) ────────────────────────────────────────
   const fetchConversations = useCallback(async () => {
@@ -121,8 +122,9 @@ export const ChatProvider: FC<{ children: ReactNode }> = ({ children }) => {
       return;
     }
 
-    // Connect to backend socket (proxied by Vite → localhost:1337)
-    const newSocket = io('/', {
+    // Connect to backend socket (proxied by Vite if VITE_API_URL is empty)
+    const socketUrl = import.meta.env.VITE_API_URL || '/';
+    const newSocket = io(socketUrl, {
       auth: { token },
       transports: ['websocket', 'polling'],
       reconnection: true,
@@ -162,30 +164,31 @@ export const ChatProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
       // Append to current conversation if it matches
       if (message.conversation === currentActiveId) {
-        setMessages(prev => {
-          if (prev.find(m => m._id === message._id)) return prev;
+        setMessages((prev) => {
+          if (prev.find((m) => m._id === message._id)) return prev;
           return [...prev, message];
         });
       }
 
       // Update conversation list (last message, ordering)
-      setConversations(prev => {
-        const exists = prev.some(c => c._id === message.conversation);
+      setConversations((prev) => {
+        const exists = prev.some((c) => c._id === message.conversation);
         if (!exists) {
           // Conversation not yet in list — refresh
           setTimeout(() => fetchConversations(), 500);
           return prev;
         }
 
-        const updated = prev.map(conv => {
+        const updated = prev.map((conv) => {
           if (conv._id === message.conversation) {
             return { ...conv, lastMessage: message, lastMessageAt: message.createdAt };
           }
           return conv;
         });
 
-        return [...updated].sort((a, b) =>
-          new Date(b.lastMessageAt ?? 0).getTime() - new Date(a.lastMessageAt ?? 0).getTime()
+        return [...updated].sort(
+          (a, b) =>
+            new Date(b.lastMessageAt ?? 0).getTime() - new Date(a.lastMessageAt ?? 0).getTime(),
         );
       });
     });
@@ -232,48 +235,68 @@ export const ChatProvider: FC<{ children: ReactNode }> = ({ children }) => {
   }, []);
 
   /** Create or retrieve a conversation then make it active (customer-side) */
-  const startConversation = useCallback(async (restaurantId: string): Promise<string> => {
-    const u = userRef.current as any;
-    const customerId = u?._id ?? u?.id ?? u?.customer_id;
+  const startConversation = useCallback(
+    async (restaurantId: string): Promise<string> => {
+      const u = userRef.current as any;
+      const customerId = u?._id ?? u?.id ?? u?.customer_id;
 
-    console.log('[Chat] startConversation called', { restaurantId, user: u, customerId, role: roleRef.current });
+      console.log('[Chat] startConversation called', {
+        restaurantId,
+        user: u,
+        customerId,
+        role: roleRef.current,
+      });
 
-    if (!customerId) {
-      throw new Error(`No se encontró el ID del cliente. Usuario: ${JSON.stringify(u)}`);
-    }
+      if (!customerId) {
+        throw new Error(`No se encontró el ID del cliente. Usuario: ${JSON.stringify(u)}`);
+      }
 
-    const conv = await chatService.getOrCreateConversation(customerId, restaurantId);
-    console.log('[Chat] Conversation received (full object):', JSON.stringify(conv));
+      const conv = await chatService.getOrCreateConversation(customerId, restaurantId);
+      console.log('[Chat] Conversation received (full object):', JSON.stringify(conv));
 
-    // Mongoose can return either _id or id depending on serialization
-    const convId = conv?._id ?? (conv as any)?.id;
+      // Mongoose can return either _id or id depending on serialization
+      const convId = conv?._id ?? (conv as any)?.id;
 
-    if (!convId) {
-      throw new Error(`La respuesta del servidor no contiene una conversación válida. Recibido: ${JSON.stringify(conv)}`);
-    }
+      if (!convId) {
+        throw new Error(
+          `La respuesta del servidor no contiene una conversación válida. Recibido: ${JSON.stringify(conv)}`,
+        );
+      }
 
-    setActiveConversationId(String(convId));
-    await fetchConversations();
-    return String(convId);
-  }, [fetchConversations, setActiveConversationId]);
+      setActiveConversationId(String(convId));
+      await fetchConversations();
+      return String(convId);
+    },
+    [fetchConversations, setActiveConversationId],
+  );
 
   /** Send a message in the active conversation via socket */
-  const sendMessage = useCallback((contenido: string) => {
-    if (!socket || !isConnected || !activeConversationId) {
-      console.warn('Cannot send message: socket not ready or no active conversation');
-      return;
-    }
-    const u = userRef.current as any;
-    const senderId = u?._id ?? u?.id;
-    const senderRole: SenderRole = (roleRef.current as SenderRole) ?? 'customer';
+  const sendMessage = useCallback(
+    (contenido: string) => {
+      if (!socket || !isConnected || !activeConversationId) {
+        console.warn('Cannot send message: socket not ready or no active conversation');
+        return;
+      }
+      const u = userRef.current as any;
+      const senderId = u?._id ?? u?.id;
 
-    socket.emit('chat:sendMessage', {
-      conversationId: activeConversationId,
-      senderId,
-      senderRole,
-      contenido,
-    });
-  }, [socket, isConnected, activeConversationId]);
+      let senderRole: SenderRole = 'customer';
+      const currentRole = roleRef.current;
+      if (currentRole === 'owner') {
+        senderRole = 'owner';
+      } else if (currentRole === 'staff' || currentRole === 'admin') {
+        senderRole = 'employee';
+      }
+
+      socket.emit('chat:sendMessage', {
+        conversationId: activeConversationId,
+        senderId,
+        senderRole,
+        contenido,
+      });
+    },
+    [socket, isConnected, activeConversationId],
+  );
 
   const value: ChatContextType = {
     socket,

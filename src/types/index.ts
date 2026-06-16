@@ -167,10 +167,12 @@ export interface IEmployeeStats {
 // ─────────────────────────────────────────
 
 export interface IRestaurantStats {
-  restaurant_id: {
-    _id?: string;
-    id?: string;
-  } | string;
+  restaurant_id:
+    | {
+        _id?: string;
+        id?: string;
+      }
+    | string;
   loyalCustomers?: number;
   averagePointsPerVisit?: number;
   averageRating?: number;

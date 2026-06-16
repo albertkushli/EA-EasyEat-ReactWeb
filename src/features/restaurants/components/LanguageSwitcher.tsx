@@ -1,14 +1,14 @@
-import i18n from "i18next";
-import { Globe } from "lucide-react";
-import { motion } from "framer-motion";
+import i18n from 'i18next';
+import { Globe } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 export default function LanguageSwitcher() {
   const currentLanguage = i18n.language;
 
   const languages = [
-    { code: "ca", label: "CA" },
-    { code: "es", label: "ES" },
-    { code: "en", label: "EN" },
+    { code: 'ca', label: 'CA' },
+    { code: 'es', label: 'ES' },
+    { code: 'en', label: 'EN' },
   ];
 
   return (
@@ -22,8 +22,8 @@ export default function LanguageSwitcher() {
           onClick={() => i18n.changeLanguage(lang.code)}
           className={`relative px-3 py-1 text-[10px] font-black transition-all duration-300 rounded-lg ${
             currentLanguage === lang.code
-              ? "text-white"
-              : "text-gray-500 hover:text-gray-800 hover:bg-white/50"
+              ? 'text-white'
+              : 'text-gray-500 hover:text-gray-800 hover:bg-white/50'
           }`}
         >
           {currentLanguage === lang.code && (
@@ -31,7 +31,7 @@ export default function LanguageSwitcher() {
               layoutId="activeLang"
               className="absolute inset-0 bg-orange-500 rounded-lg shadow-sm"
               initial={false}
-              transition={{ type: "spring", stiffness: 500, damping: 30 }}
+              transition={{ type: 'spring', stiffness: 500, damping: 30 }}
             />
           )}
           <span className="relative z-10">{lang.label}</span>

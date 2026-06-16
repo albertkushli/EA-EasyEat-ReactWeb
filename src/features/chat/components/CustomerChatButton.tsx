@@ -84,7 +84,9 @@ const CustomerChatButton: React.FC<CustomerChatButtonProps> = ({
                   <h3 className="font-bold text-base leading-tight">
                     {restaurantName ?? 'Chat con el restaurante'}
                   </h3>
-                  <span className={`flex items-center gap-1.5 text-[11px] mt-0.5 ${isConnected ? 'text-green-200' : 'text-red-200'}`}>
+                  <span
+                    className={`flex items-center gap-1.5 text-[11px] mt-0.5 ${isConnected ? 'text-green-200' : 'text-red-200'}`}
+                  >
                     {isConnected ? <Wifi size={11} /> : <WifiOff size={11} />}
                     {isConnected ? 'Conectado' : 'Sin conexión'}
                   </span>

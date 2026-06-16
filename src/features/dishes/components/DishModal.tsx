@@ -1,8 +1,23 @@
-import { useState, useEffect } from "react";
-import { X, Save, Loader2, Utensils, Euro, List, Image, Scale, ChefHat, AlertCircle, Heart, Flame, Clock, Check } from "lucide-react";
-import type { Dish } from "../../../types/Dish";
-import { motion, AnimatePresence } from "framer-motion";
-import { useTranslation } from "react-i18next";
+import { useState, useEffect } from 'react';
+import {
+  X,
+  Save,
+  Loader2,
+  Utensils,
+  Euro,
+  List,
+  Image,
+  Scale,
+  ChefHat,
+  AlertCircle,
+  Heart,
+  Flame,
+  Clock,
+  Check,
+} from 'lucide-react';
+import type { Dish } from '../../../types/Dish';
+import { motion, AnimatePresence } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 
 interface DishModalProps {
   isOpen: boolean;
@@ -11,77 +26,118 @@ interface DishModalProps {
   dish?: Dish | null;
 }
 
-const ALLERGEN_OPTIONS = ['gluten', 'shellfish', 'nuts', 'dairy', 'eggs', 'soy', 'fish', 'sesame', 'mustard', 'celery', 'lupins', 'molluscs', 'sulphites'];
-const DIETARY_OPTIONS = ['vegan', 'vegetarian', 'gluten-free', 'halal', 'kosher', 'dairy-free', 'nut-free'];
-const FLAVOR_OPTIONS = ['spicy', 'mild', 'sweet', 'sour', 'salty', 'bitter', 'umami', 'smoky', 'rich', 'light', 'creamy', 'tangy', 'fresh', 'hearty', 'nutty'];
+const ALLERGEN_OPTIONS = [
+  'gluten',
+  'shellfish',
+  'nuts',
+  'dairy',
+  'eggs',
+  'soy',
+  'fish',
+  'sesame',
+  'mustard',
+  'celery',
+  'lupins',
+  'molluscs',
+  'sulphites',
+];
+const DIETARY_OPTIONS = [
+  'vegan',
+  'vegetarian',
+  'gluten-free',
+  'halal',
+  'kosher',
+  'dairy-free',
+  'nut-free',
+];
+const FLAVOR_OPTIONS = [
+  'spicy',
+  'mild',
+  'sweet',
+  'sour',
+  'salty',
+  'bitter',
+  'umami',
+  'smoky',
+  'rich',
+  'light',
+  'creamy',
+  'tangy',
+  'fresh',
+  'hearty',
+  'nutty',
+];
 const AVAILABILITY_OPTIONS = ['breakfast', 'brunch', 'lunch', 'happy-hour', 'dinner', 'all-day'];
 
 export default function DishModal({ isOpen, onClose, onSave, dish }: DishModalProps) {
   const { t } = useTranslation();
   const [formData, setFormData] = useState<Partial<Dish>>({
-    name: "",
+    name: '',
     price: 0,
-    section: "Mains",
-    description: "",
+    section: 'Mains',
+    description: '',
     active: true,
     images: [],
-    portionSize: "medium",
+    portionSize: 'medium',
     ingredients: [],
     allergens: [],
     dietaryFlags: [],
     flavorProfile: [],
-    availableAt: ["lunch", "dinner"],
+    availableAt: ['lunch', 'dinner'],
   });
   const [loading, setLoading] = useState(false);
 
   // Helper for text-to-array inputs
   const [textInputs, setTextInputs] = useState({
-    images: "",
-    ingredients: "",
+    images: '',
+    ingredients: '',
   });
 
   useEffect(() => {
     if (dish) {
       setFormData({ ...dish });
       setTextInputs({
-        images: dish.images?.join(", ") || "",
-        ingredients: dish.ingredients?.join(", ") || "",
+        images: dish.images?.join(', ') || '',
+        ingredients: dish.ingredients?.join(', ') || '',
       });
     } else {
       const defaultState = {
-        name: "",
+        name: '',
         price: 0,
-        section: "Mains" as const,
-        description: "",
+        section: 'Mains' as const,
+        description: '',
         active: true,
         images: [],
-        portionSize: "medium" as const,
+        portionSize: 'medium' as const,
         ingredients: [],
         allergens: [],
         dietaryFlags: [],
         flavorProfile: [],
-        availableAt: ["lunch", "dinner"],
+        availableAt: ['lunch', 'dinner'],
       };
       setFormData(defaultState);
       setTextInputs({
-        images: "",
-        ingredients: "",
+        images: '',
+        ingredients: '',
       });
     }
   }, [dish, isOpen]);
 
   const handleTextToArray = (field: 'images' | 'ingredients', value: string) => {
-    setTextInputs(prev => ({ ...prev, [field]: value }));
-    const arrayValue = value.split(',').map(s => s.trim()).filter(Boolean);
-    setFormData(prev => ({ ...prev, [field]: arrayValue }));
+    setTextInputs((prev) => ({ ...prev, [field]: value }));
+    const arrayValue = value
+      .split(',')
+      .map((s) => s.trim())
+      .filter(Boolean);
+    setFormData((prev) => ({ ...prev, [field]: arrayValue }));
   };
 
   const toggleEnumItem = (field: keyof Dish, item: string) => {
     const currentArray = (formData[field] as string[]) || [];
     const newArray = currentArray.includes(item)
-      ? currentArray.filter(i => i !== item)
+      ? currentArray.filter((i) => i !== item)
       : [...currentArray, item];
-    setFormData(prev => ({ ...prev, [field]: newArray }));
+    setFormData((prev) => ({ ...prev, [field]: newArray }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -91,7 +147,7 @@ export default function DishModal({ isOpen, onClose, onSave, dish }: DishModalPr
       await onSave(formData);
       onClose();
     } catch (error) {
-      console.error("Error saving dish:", error);
+      console.error('Error saving dish:', error);
     } finally {
       setLoading(false);
     }
@@ -99,7 +155,14 @@ export default function DishModal({ isOpen, onClose, onSave, dish }: DishModalPr
 
   if (!isOpen) return null;
 
-  const TagSelector = ({ label, icon: Icon, options, selectedItems, onToggle, colorClass }: any) => (
+  const TagSelector = ({
+    label,
+    icon: Icon,
+    options,
+    selectedItems,
+    onToggle,
+    colorClass,
+  }: any) => (
     <div className="space-y-2">
       <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1 flex items-center gap-2">
         <Icon className="w-3 h-3" /> {label}
@@ -113,9 +176,9 @@ export default function DishModal({ isOpen, onClose, onSave, dish }: DishModalPr
               type="button"
               onClick={() => onToggle(option)}
               className={`px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-tight transition-all flex items-center gap-1.5 border ${
-                isSelected 
-                ? `${colorClass} border-transparent shadow-sm scale-105` 
-                : 'bg-white border-gray-100 text-gray-400 hover:border-gray-200'
+                isSelected
+                  ? `${colorClass} border-transparent shadow-sm scale-105`
+                  : 'bg-white border-gray-100 text-gray-400 hover:border-gray-200'
               }`}
             >
               {isSelected && <Check className="w-3 h-3" />}
@@ -147,17 +210,21 @@ export default function DishModal({ isOpen, onClose, onSave, dish }: DishModalPr
                   {dish ? t('dishes.editDish') : t('dishes.addDish')}
                 </h2>
               </div>
-              <button onClick={onClose} className="p-2 hover:bg-white/20 rounded-full transition-colors">
+              <button
+                onClick={onClose}
+                className="p-2 hover:bg-white/20 rounded-full transition-colors"
+              >
                 <X className="w-6 h-6" />
               </button>
             </div>
           </div>
 
-          <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-6 sm:p-8 space-y-10 scrollbar-hide">
-            
+          <form
+            onSubmit={handleSubmit}
+            className="flex-1 overflow-y-auto p-6 sm:p-8 space-y-10 scrollbar-hide"
+          >
             {/* Grid Layout for Forms */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
-              
               {/* Left Column: Basic Info */}
               <div className="space-y-6">
                 <div className="space-y-4">
@@ -165,10 +232,12 @@ export default function DishModal({ isOpen, onClose, onSave, dish }: DishModalPr
                     <div className="w-1.5 h-1.5 rounded-full bg-orange-500" />
                     {t('dishes.form.basicInfo', 'Información básica')}
                   </h3>
-                  
+
                   <div className="space-y-4">
                     <div className="space-y-1.5">
-                      <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">{t('dishes.form.name')}</label>
+                      <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">
+                        {t('dishes.form.name')}
+                      </label>
                       <input
                         required
                         type="text"
@@ -181,7 +250,9 @@ export default function DishModal({ isOpen, onClose, onSave, dish }: DishModalPr
 
                     <div className="grid grid-cols-2 gap-4">
                       <div className="space-y-1.5">
-                        <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">{t('dishes.form.price')} (€)</label>
+                        <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">
+                          {t('dishes.form.price')} (€)
+                        </label>
                         <div className="relative">
                           <Euro className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-300" />
                           <input
@@ -189,19 +260,25 @@ export default function DishModal({ isOpen, onClose, onSave, dish }: DishModalPr
                             type="number"
                             step="0.01"
                             value={formData.price}
-                            onChange={(e) => setFormData({ ...formData, price: parseFloat(e.target.value) })}
+                            onChange={(e) =>
+                              setFormData({ ...formData, price: parseFloat(e.target.value) })
+                            }
                             className="w-full p-3 pl-10 bg-gray-50 border border-gray-100 rounded-xl text-sm font-bold text-gray-700 focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 outline-none transition-all"
                           />
                         </div>
                       </div>
 
                       <div className="space-y-1.5">
-                        <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">{t('dishes.form.section')}</label>
+                        <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">
+                          {t('dishes.form.section')}
+                        </label>
                         <div className="relative">
                           <List className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-300" />
                           <select
                             value={formData.section}
-                            onChange={(e) => setFormData({ ...formData, section: e.target.value as any })}
+                            onChange={(e) =>
+                              setFormData({ ...formData, section: e.target.value as any })
+                            }
                             className="w-full p-3 pl-10 bg-gray-50 border border-gray-100 rounded-xl text-sm font-bold text-gray-700 focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 outline-none transition-all appearance-none"
                           >
                             <option value="Starters">{t('dishes.sections.starters')}</option>
@@ -216,7 +293,9 @@ export default function DishModal({ isOpen, onClose, onSave, dish }: DishModalPr
                     </div>
 
                     <div className="space-y-1.5">
-                      <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">{t('dishes.form.image')}</label>
+                      <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">
+                        {t('dishes.form.image')}
+                      </label>
                       <div className="relative">
                         <Image className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-300" />
                         <input
@@ -229,19 +308,27 @@ export default function DishModal({ isOpen, onClose, onSave, dish }: DishModalPr
                       </div>
                       {formData.images?.[0] && (
                         <div className="mt-3 relative w-full h-32 rounded-2xl overflow-hidden border border-gray-100 shadow-sm">
-                          <img src={formData.images[0]} alt="Preview" className="w-full h-full object-cover" />
+                          <img
+                            src={formData.images[0]}
+                            alt="Preview"
+                            className="w-full h-full object-cover"
+                          />
                           <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
                         </div>
                       )}
                     </div>
 
                     <div className="space-y-1.5">
-                      <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">{t('dishes.form.portionSize')}</label>
+                      <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">
+                        {t('dishes.form.portionSize')}
+                      </label>
                       <div className="relative">
                         <Scale className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-300" />
                         <select
                           value={formData.portionSize}
-                          onChange={(e) => setFormData({ ...formData, portionSize: e.target.value as any })}
+                          onChange={(e) =>
+                            setFormData({ ...formData, portionSize: e.target.value as any })
+                          }
                           className="w-full p-3 pl-10 bg-gray-50 border border-gray-100 rounded-xl text-sm font-bold text-gray-700 focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 outline-none transition-all appearance-none"
                         >
                           <option value="small">{t('dishes.portionSizes.small')}</option>
@@ -253,7 +340,9 @@ export default function DishModal({ isOpen, onClose, onSave, dish }: DishModalPr
                     </div>
 
                     <div className="space-y-1.5">
-                      <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">{t('dishes.form.ingredients')}</label>
+                      <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">
+                        {t('dishes.form.ingredients')}
+                      </label>
                       <div className="relative">
                         <ChefHat className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-300" />
                         <input
@@ -269,7 +358,9 @@ export default function DishModal({ isOpen, onClose, onSave, dish }: DishModalPr
                 </div>
 
                 <div className="space-y-1.5 pt-4">
-                  <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">{t('dishes.details.description')}</label>
+                  <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">
+                    {t('dishes.details.description')}
+                  </label>
                   <textarea
                     value={formData.description}
                     onChange={(e) => setFormData({ ...formData, description: e.target.value })}
@@ -287,8 +378,8 @@ export default function DishModal({ isOpen, onClose, onSave, dish }: DishModalPr
                 </h3>
 
                 <div className="space-y-6">
-                  <TagSelector 
-                    label={t('dishes.form.availability')} 
+                  <TagSelector
+                    label={t('dishes.form.availability')}
                     icon={Clock}
                     options={AVAILABILITY_OPTIONS}
                     selectedItems={formData.availableAt || []}
@@ -296,8 +387,8 @@ export default function DishModal({ isOpen, onClose, onSave, dish }: DishModalPr
                     colorClass="bg-blue-500 text-white"
                   />
 
-                  <TagSelector 
-                    label={t('dishes.form.dietary')} 
+                  <TagSelector
+                    label={t('dishes.form.dietary')}
                     icon={Heart}
                     options={DIETARY_OPTIONS}
                     selectedItems={formData.dietaryFlags || []}
@@ -305,8 +396,8 @@ export default function DishModal({ isOpen, onClose, onSave, dish }: DishModalPr
                     colorClass="bg-green-500 text-white"
                   />
 
-                  <TagSelector 
-                    label={t('dishes.form.flavor')} 
+                  <TagSelector
+                    label={t('dishes.form.flavor')}
                     icon={Flame}
                     options={FLAVOR_OPTIONS}
                     selectedItems={formData.flavorProfile || []}
@@ -314,8 +405,8 @@ export default function DishModal({ isOpen, onClose, onSave, dish }: DishModalPr
                     colorClass="bg-orange-500 text-white"
                   />
 
-                  <TagSelector 
-                    label={t('dishes.form.allergens')} 
+                  <TagSelector
+                    label={t('dishes.form.allergens')}
                     icon={AlertCircle}
                     options={ALLERGEN_OPTIONS}
                     selectedItems={formData.allergens || []}
@@ -354,4 +445,3 @@ export default function DishModal({ isOpen, onClose, onSave, dish }: DishModalPr
     </AnimatePresence>
   );
 }
-

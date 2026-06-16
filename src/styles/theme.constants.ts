@@ -207,4 +207,3 @@ export const useResponsive = () => {
 };
 
 export default PREMIUM_THEME;
-

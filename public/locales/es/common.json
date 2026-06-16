@@ -711,5 +711,27 @@
       "interact": "Interactuar con la demo",
       "start": "Empezar con EasyEat"
     }
+  },
+  "assistant": {
+    "title": "Asistente IA",
+    "subtitle": "EasyEat · IA",
+    "notes1": "El asistente no tiene memoria.",
+    "notes2": "Las conversaciones no se guardan.",
+    "clear": "Limpiar conversación",
+    "close": "Cerrar asistente",
+    "error": "Se ha producido un error. Inténtalo de nuevo.",
+    "empty": {
+      "title": "¿Cómo puedo ayudarte?",
+      "desc": "Pregúntame cualquier cosa sobre restaurantes, menú, recomendaciones o puntos."
+    },
+    "suggestion": {
+      "1": "¿Qué restaurantes tienes disponibles?",
+      "2": "¿Dónde puedo comer por menos de 10€?",
+      "3": "Recomiéndame un restaurante de pizza"
+    },
+    "thinking": "Pensando...",
+    "placeholder": "Escribe tu mensaje...",
+    "send": "Enviar mensaje",
+    "hint": "Enter para enviar · Shift+Enter para nueva línea"
   }
 }

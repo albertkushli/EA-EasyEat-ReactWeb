@@ -11,7 +11,7 @@ import { DEFAULT_META } from '../constants';
  */
 export function parsePaginatedResponse<T>(
   payload: any,
-  fallbackLimit: number = 10
+  fallbackLimit: number = 10,
 ): IPaginatedResponse<T> {
   // Caso: { visits: [] }
   if (Array.isArray(payload?.visits)) {
@@ -60,13 +60,9 @@ export function extractArray<T>(payload: any): T[] {
 /**
  * Ordena items por fecha descendente (más recientes primero)
  */
-export function sortByDateDesc<T extends { date?: any; createdAt?: any }>(
-  items: T[]
-): T[] {
+export function sortByDateDesc<T extends { date?: any; createdAt?: any }>(items: T[]): T[] {
   return [...items].sort(
-    (a, b) =>
-      new Date(b.date || b.createdAt).getTime() -
-      new Date(a.date || a.createdAt).getTime()
+    (a, b) => new Date(b.date || b.createdAt).getTime() - new Date(a.date || a.createdAt).getTime(),
   );
 }
 

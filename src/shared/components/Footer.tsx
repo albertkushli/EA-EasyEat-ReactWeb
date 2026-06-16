@@ -15,17 +15,41 @@ export default function Footer() {
         <div>
           <h4 className="footer-title">{t('footer.sections.platform')}</h4>
           <ul className="footer-links">
-            <li><Link to="/#clientes" className="footer-link">{t('navbar.links.customers')}</Link></li>
-            <li><Link to="/#restaurantes" className="footer-link">{t('navbar.links.restaurants')}</Link></li>
-            <li><Link to="/#funciona" className="footer-link">{t('navbar.links.howItWorks')}</Link></li>
+            <li>
+              <Link to="/#clientes" className="footer-link">
+                {t('navbar.links.customers')}
+              </Link>
+            </li>
+            <li>
+              <Link to="/#restaurantes" className="footer-link">
+                {t('navbar.links.restaurants')}
+              </Link>
+            </li>
+            <li>
+              <Link to="/#funciona" className="footer-link">
+                {t('navbar.links.howItWorks')}
+              </Link>
+            </li>
           </ul>
         </div>
         <div>
           <h4 className="footer-title">{t('footer.sections.legal')}</h4>
           <ul className="footer-links">
-            <li><Link to="/aviso-legal" className="footer-link">{t('footer.links.legalNotice')}</Link></li>
-            <li><Link to="/aviso-legal" className="footer-link">{t('footer.links.privacy')}</Link></li>
-            <li><Link to="/aviso-legal" className="footer-link">{t('footer.links.cookies')}</Link></li>
+            <li>
+              <Link to="/aviso-legal" className="footer-link">
+                {t('footer.links.legalNotice')}
+              </Link>
+            </li>
+            <li>
+              <Link to="/aviso-legal" className="footer-link">
+                {t('footer.links.privacy')}
+              </Link>
+            </li>
+            <li>
+              <Link to="/aviso-legal" className="footer-link">
+                {t('footer.links.cookies')}
+              </Link>
+            </li>
           </ul>
         </div>
       </div>

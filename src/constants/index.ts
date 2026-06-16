@@ -55,10 +55,8 @@ export const API_ENDPOINTS = {
 
   // Employees
   EMPLOYEES: '/employees',
-  EMPLOYEES_BY_RESTAURANT: (restaurantId: string) =>
-    `/employees/restaurant/${restaurantId}`,
-  EMPLOYEES_WITH_STATS: (restaurantId: string) =>
-    `/employees/restaurant/${restaurantId}/stats`,
+  EMPLOYEES_BY_RESTAURANT: (restaurantId: string) => `/employees/restaurant/${restaurantId}`,
+  EMPLOYEES_WITH_STATS: (restaurantId: string) => `/employees/restaurant/${restaurantId}/stats`,
 
   // Restaurants
   RESTAURANTS: '/restaurants',
@@ -70,18 +68,15 @@ export const API_ENDPOINTS = {
 
   // Statistics
   STATISTICS: '/statistics',
-  RESTAURANT_STATISTICS: (restaurantId: string) =>
-    `/statistics/restaurant/${restaurantId}`,
+  RESTAURANT_STATISTICS: (restaurantId: string) => `/statistics/restaurant/${restaurantId}`,
 
   // Visits
   VISITS: '/visits',
-  VISITS_BY_RESTAURANT: (restaurantId: string) =>
-    `/restaurants/${restaurantId}/visits`,
+  VISITS_BY_RESTAURANT: (restaurantId: string) => `/restaurants/${restaurantId}/visits`,
 
   // Reviews
   REVIEWS: '/reviews',
-  REVIEWS_BY_RESTAURANT: (restaurantId: string) =>
-    `/restaurants/${restaurantId}/reviews`,
+  REVIEWS_BY_RESTAURANT: (restaurantId: string) => `/restaurants/${restaurantId}/reviews`,
 
   // Reports
   REPORTS: '/reports',
@@ -93,3 +88,5 @@ export const API_ENDPOINTS = {
   REWARD_REDEMPTIONS_BY_RESTAURANT: (restaurantId: string) =>
     `/rewardRedemptions/restaurant/${restaurantId}`,
 } as const;
+
+export const DEFAULT_MODEL = "qwen2.5:14b";

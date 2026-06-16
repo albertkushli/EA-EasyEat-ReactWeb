@@ -51,9 +51,11 @@ export default function RestaurantRantingCard() {
         padding: 16,
       }}
     >
-      <h3 style={{ margin: 0, marginBottom: 10 }}>{t("components.restaurantRating.title")}</h3>
+      <h3 style={{ margin: 0, marginBottom: 10 }}>{t('components.restaurantRating.title')}</h3>
       {loading ? (
-        <p style={{ margin: 0, color: 'var(--clr-text-muted)' }}>{t("components.restaurantRating.loading")}</p>
+        <p style={{ margin: 0, color: 'var(--clr-text-muted)' }}>
+          {t('components.restaurantRating.loading')}
+        </p>
       ) : (
         <p style={{ margin: 0, fontWeight: 700 }}>⭐ {safeRating.toFixed(1)}</p>
       )}
