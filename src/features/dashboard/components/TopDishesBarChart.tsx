@@ -13,6 +13,7 @@ import type { Dish } from "@/types/Dish";
 export default function TopDishesBarChart({ dishes }: { dishes: Dish[] }) {
   const data = useMemo(() => {
     return dishes
+      .filter((dish) => dish.active !== false)
       .filter((dish) => dish.avgRating && dish.avgRating > 0)
       .sort((a, b) => (b.avgRating || 0) - (a.avgRating || 0))
       .slice(0, 5)
@@ -25,13 +26,21 @@ export default function TopDishesBarChart({ dishes }: { dishes: Dish[] }) {
       }));
   }, [dishes]);
 
+  if (data.length === 0) {
+    return (
+      <div className="w-full h-full min-h-[260px] flex items-center justify-center text-sm text-slate-400 italic">
+        No hay datos suficientes para generar el ranking de platos.
+      </div>
+    );
+  }
+
   return (
     <div className="w-full h-full min-h-[260px]">
       <ResponsiveContainer width="100%" height="100%">
         <BarChart
           data={data}
           layout="vertical"
-          margin={{ top: 5, right: 30, left: 10, bottom: 5 }}
+          margin={{ top: 10, right: 20, left: 10, bottom: 35 }}
         >
           <CartesianGrid
             strokeDasharray="3 3"
@@ -48,7 +57,7 @@ export default function TopDishesBarChart({ dishes }: { dishes: Dish[] }) {
           <YAxis
             dataKey="name"
             type="category"
-            width={90}
+            width={120}
             tick={{ fontSize: 11, fill: "#64748b" }}
             axisLine={false}
             tickLine={false}
