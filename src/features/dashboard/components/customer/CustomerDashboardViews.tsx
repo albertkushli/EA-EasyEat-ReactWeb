@@ -912,7 +912,6 @@ function CustomerRestaurantDetail({
 
                 <button
                   className="btn-like"
-                  disabled={likedReviewIds.includes(review._id || review.id || '')}
                   onClick={() => handleLikeReview(review._id || review.id, review.likes)}
                   style={{
                     display: 'inline-flex',
@@ -930,9 +929,7 @@ function CustomerRestaurantDetail({
                     padding: '0.25rem 0.75rem',
                     borderRadius: '999px',
                     fontSize: '0.8rem',
-                    cursor: likedReviewIds.includes(review._id || review.id || '')
-                      ? 'default'
-                      : 'pointer',
+                    cursor: 'pointer',
                     fontWeight: likedReviewIds.includes(review._id || review.id || '')
                       ? 600
                       : 'normal',
