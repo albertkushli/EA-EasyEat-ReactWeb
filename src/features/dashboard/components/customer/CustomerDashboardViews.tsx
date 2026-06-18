@@ -638,6 +638,7 @@ function CustomerRestaurantDetail({
   onOpenQrModal: () => void;
   onOpenRewardQrModal: () => void;
 }) {
+  const { user } = useAuth();
   const { t } = useTranslation();
   const [reportOpen, setReportOpen] = useState(false);
   const [reviewOpen, setReviewOpen] = useState(false);
@@ -652,50 +653,56 @@ function CustomerRestaurantDetail({
 
   const [reviews, setReviews] = useState<IReview[]>([]);
   const [loadingReviews, setLoadingReviews] = useState(true);
-  const [likedReviewIds, setLikedReviewIds] = useState<string[]>(() => {
-    try {
-      const saved = localStorage.getItem('likedReviewIds');
-      return saved ? JSON.parse(saved) : [];
-    } catch {
-      return [];
-    }
-  });
 
-  useEffect(() => {
-    localStorage.setItem('likedReviewIds', JSON.stringify(likedReviewIds));
-  }, [likedReviewIds]);
+  const isReviewLiked = (review: IReview) => {
+    const userId = user?.id || user?._id;
+    if (!userId || !review.likedBy) return false;
+    return review.likedBy.some(id => String(id) === String(userId));
+  };
 
   const handleLikeReview = async (reviewId?: string, currentLikes = 0) => {
     if (!reviewId) return;
-    const isAlreadyLiked = likedReviewIds.includes(reviewId);
-    if (isAlreadyLiked) return; // Do not allow unliking or liking again
+    const review = reviews.find(r => r._id === reviewId || r.id === reviewId);
+    if (!review) return;
 
-    const nextLikes = currentLikes + 1;
+    const isAlreadyLiked = isReviewLiked(review);
+    const nextLikes = isAlreadyLiked ? Math.max(0, currentLikes - 1) : currentLikes + 1;
+    const userId = user?.id || user?._id;
 
     // Optimistic UI update
     setReviews(prev => prev.map(rev => {
       const id = rev._id ?? rev.id;
       if (id === reviewId) {
-        return { ...rev, likes: nextLikes };
+        let updatedLikedBy = rev.likedBy || [];
+        if (isAlreadyLiked) {
+          updatedLikedBy = updatedLikedBy.filter(uid => String(uid) !== String(userId));
+        } else if (userId) {
+          updatedLikedBy = [...updatedLikedBy, String(userId)];
+        }
+        return { ...rev, likes: nextLikes, likedBy: updatedLikedBy };
       }
       return rev;
     }));
 
-    setLikedReviewIds(prev => [...prev, reviewId]);
-
     try {
-      await reviewService.likeReview(reviewId);
+      const updatedReview = await reviewService.likeReview(reviewId);
+      if (updatedReview) {
+        setReviews(prev => prev.map(rev => {
+          const id = rev._id ?? rev.id;
+          const updatedId = updatedReview._id ?? updatedReview.id;
+          return id === updatedId ? updatedReview : rev;
+        }));
+      }
     } catch (err) {
       console.error('Error updating review likes:', err);
       // Rollback
       setReviews(prev => prev.map(rev => {
         const id = rev._id ?? rev.id;
         if (id === reviewId) {
-          return { ...rev, likes: currentLikes };
+          return review;
         }
         return rev;
       }));
-      setLikedReviewIds(prev => prev.filter(id => id !== reviewId));
     }
   };
 
@@ -917,20 +924,20 @@ function CustomerRestaurantDetail({
                     display: 'inline-flex',
                     alignItems: 'center',
                     gap: '0.25rem',
-                    border: likedReviewIds.includes(review._id || review.id || '')
+                    border: isReviewLiked(review)
                       ? '1px solid rgba(249, 115, 22, 0.3)'
                       : '1px solid rgba(0,0,0,0.05)',
-                    background: likedReviewIds.includes(review._id || review.id || '')
+                    background: isReviewLiked(review)
                       ? '#fff7ed'
                       : '#f8fafc',
-                    color: likedReviewIds.includes(review._id || review.id || '')
+                    color: isReviewLiked(review)
                       ? '#ea580c'
                       : 'inherit',
                     padding: '0.25rem 0.75rem',
                     borderRadius: '999px',
                     fontSize: '0.8rem',
                     cursor: 'pointer',
-                    fontWeight: likedReviewIds.includes(review._id || review.id || '')
+                    fontWeight: isReviewLiked(review)
                       ? 600
                       : 'normal',
                     transition: 'all 0.2s ease'

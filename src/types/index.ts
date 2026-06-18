@@ -153,6 +153,7 @@ export interface IReview {
   ratings?: IReviewRatings;
   comment?: string;
   likes?: number;
+  likedBy?: string[];
   deleted?: boolean;
   createdAt?: string | Date;
   updatedAt?: string | Date;
