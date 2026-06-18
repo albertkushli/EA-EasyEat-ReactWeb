@@ -81,10 +81,24 @@ export async function deleteReview(reviewId: string): Promise<boolean> {
   }
 }
 
+/**
+ * Da un like a una reseña
+ */
+export async function likeReview(reviewId: string): Promise<IReview | null> {
+  try {
+    const res = await apiClient.post<IReview>(`${API_ENDPOINTS.REVIEWS}/${reviewId}/like`);
+    return res.data ?? null;
+  } catch (err) {
+    console.error('Error liking review:', err);
+    return null;
+  }
+}
+
 export const reviewService = {
   fetchAllReviews,
   fetchRestaurantReviews,
   createReview,
   updateReview,
   deleteReview,
+  likeReview,
 };

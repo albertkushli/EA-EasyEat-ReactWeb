@@ -652,14 +652,25 @@ function CustomerRestaurantDetail({
 
   const [reviews, setReviews] = useState<IReview[]>([]);
   const [loadingReviews, setLoadingReviews] = useState(true);
-  const [likedReviewIds, setLikedReviewIds] = useState<string[]>([]);
+  const [likedReviewIds, setLikedReviewIds] = useState<string[]>(() => {
+    try {
+      const saved = localStorage.getItem('likedReviewIds');
+      return saved ? JSON.parse(saved) : [];
+    } catch {
+      return [];
+    }
+  });
+
+  useEffect(() => {
+    localStorage.setItem('likedReviewIds', JSON.stringify(likedReviewIds));
+  }, [likedReviewIds]);
 
   const handleLikeReview = async (reviewId?: string, currentLikes = 0) => {
     if (!reviewId) return;
     const isAlreadyLiked = likedReviewIds.includes(reviewId);
+    if (isAlreadyLiked) return; // Do not allow unliking or liking again
 
-    // Toggle likes count
-    const nextLikes = isAlreadyLiked ? Math.max(0, currentLikes - 1) : currentLikes + 1;
+    const nextLikes = currentLikes + 1;
 
     // Optimistic UI update
     setReviews(prev => prev.map(rev => {
@@ -670,14 +681,10 @@ function CustomerRestaurantDetail({
       return rev;
     }));
 
-    if (isAlreadyLiked) {
-      setLikedReviewIds(prev => prev.filter(id => id !== reviewId));
-    } else {
-      setLikedReviewIds(prev => [...prev, reviewId]);
-    }
+    setLikedReviewIds(prev => [...prev, reviewId]);
 
     try {
-      await reviewService.updateReview(reviewId, { likes: nextLikes });
+      await reviewService.likeReview(reviewId);
     } catch (err) {
       console.error('Error updating review likes:', err);
       // Rollback
@@ -688,11 +695,7 @@ function CustomerRestaurantDetail({
         }
         return rev;
       }));
-      if (isAlreadyLiked) {
-        setLikedReviewIds(prev => [...prev, reviewId]);
-      } else {
-        setLikedReviewIds(prev => prev.filter(id => id !== reviewId));
-      }
+      setLikedReviewIds(prev => prev.filter(id => id !== reviewId));
     }
   };
 
@@ -909,6 +912,7 @@ function CustomerRestaurantDetail({
 
                 <button
                   className="btn-like"
+                  disabled={likedReviewIds.includes(review._id || review.id || '')}
                   onClick={() => handleLikeReview(review._id || review.id, review.likes)}
                   style={{
                     display: 'inline-flex',
@@ -926,7 +930,9 @@ function CustomerRestaurantDetail({
                     padding: '0.25rem 0.75rem',
                     borderRadius: '999px',
                     fontSize: '0.8rem',
-                    cursor: 'pointer',
+                    cursor: likedReviewIds.includes(review._id || review.id || '')
+                      ? 'default'
+                      : 'pointer',
                     fontWeight: likedReviewIds.includes(review._id || review.id || '')
                       ? 600
                       : 'normal',
@@ -953,33 +959,37 @@ function CustomerRestaurantDetail({
         <Flag size={18} /> {t('dashboard.customer.actions.reportRestaurant', 'Denunciar restaurante')}
       </button>
 
-      {reportOpen && (
-        <CustomerReportModal
-          open={reportOpen}
-          restaurant={restaurant}
-          onClose={() => setReportOpen(false)}
-        />
-      )}
+      {
+    reportOpen && (
+      <CustomerReportModal
+        open={reportOpen}
+        restaurant={restaurant}
+        onClose={() => setReportOpen(false)}
+      />
+    )
+  }
 
-      {reviewOpen && (
-        <CustomerReviewModal
-          open={reviewOpen}
-          restaurant={restaurant}
-          onClose={() => setReviewOpen(false)}
-          onReviewCreated={(newReview) => {
-            setReviews((prev) => [newReview, ...prev]);
-          }}
-        />
-      )}
+  {
+    reviewOpen && (
+      <CustomerReviewModal
+        open={reviewOpen}
+        restaurant={restaurant}
+        onClose={() => setReviewOpen(false)}
+        onReviewCreated={(newReview) => {
+          setReviews((prev) => [newReview, ...prev]);
+        }}
+      />
+    )
+  }
 
-      {/* Chat con el restaurante */}
-      <div style={{ marginTop: '1rem' }}>
-        <CustomerChatButton
-          restaurantId={restaurant._id ?? (restaurant as any).id ?? ''}
-          restaurantName={getRestaurantName(restaurant)}
-        />
-      </div>
-    </div>
+  {/* Chat con el restaurante */ }
+  <div style={{ marginTop: '1rem' }}>
+    <CustomerChatButton
+      restaurantId={restaurant._id ?? (restaurant as any).id ?? ''}
+      restaurantName={getRestaurantName(restaurant)}
+    />
+  </div>
+    </div >
   );
 }
 
