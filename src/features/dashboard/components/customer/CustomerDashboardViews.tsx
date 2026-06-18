@@ -1,6 +1,7 @@
 import { type FormEvent, useState, useEffect, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '@/context/AuthContext';
 import { QRCodeCanvas } from 'qrcode.react';
 import {
   ArrowLeft,
@@ -305,6 +306,189 @@ function CustomerReportModal({
   );
 }
 
+function CustomerReviewModal({
+  open,
+  restaurant,
+  onClose,
+  onReviewCreated,
+}: {
+  open: boolean;
+  restaurant: CustomerRestaurant;
+  onClose: () => void;
+  onReviewCreated: (newReview: IReview) => void;
+}) {
+  const { t } = useTranslation();
+  const { user } = useAuth();
+  const [comment, setComment] = useState('');
+  const [globalRating, setGlobalRating] = useState(10);
+  const [error, setError] = useState('');
+  const [submitting, setSubmitting] = useState(false);
+  const restaurantId = restaurant._id ?? (restaurant as any).id ?? '';
+
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    const trimmedComment = comment.trim();
+
+    if (!restaurantId) {
+      alert(t('reviews.error.missingRestaurant', 'No s\'ha pogut identificar el restaurant.'));
+      return;
+    }
+
+    if (!user?._id && !user?.id) {
+      alert(t('reviews.error.missingUser', 'Has d\'iniciar sessió per publicar una opinió.'));
+      return;
+    }
+
+    setSubmitting(true);
+    setError('');
+
+    try {
+      const newReview = await reviewService.createReview({
+        customer_id: user?._id || user?.id,
+        restaurant_id: restaurantId,
+        globalRating,
+        comment: trimmedComment,
+        likes: 0,
+        images: [],
+        ratings: {
+          foodQuality: globalRating,
+          staffService: globalRating,
+          cleanliness: globalRating,
+          environment: globalRating,
+        },
+      });
+
+      if (newReview) {
+        alert(t('reviews.success', 'Opinió enviada correctament!'));
+        onReviewCreated(newReview);
+        onClose();
+      } else {
+        setError(t('reviews.error.failed', 'No s\'ha pogut publicar la opinió.'));
+      }
+    } catch (err) {
+      console.error('Error creating review:', err);
+      setError(t('reviews.error.failed', 'No s\'ha pogut publicar la opinió.'));
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  if (!open) return null;
+
+  return (
+    <div
+      role="presentation"
+      onClick={onClose}
+      style={{
+        position: 'fixed',
+        inset: 0,
+        zIndex: 999,
+        background: 'rgba(15, 23, 42, 0.58)',
+        backdropFilter: 'blur(8px)',
+        padding: '1rem',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}
+    >
+      <div
+        className="auth-card hc-modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="restaurant-review-title"
+        onClick={(event) => event.stopPropagation()}
+        style={{ width: '100%', maxWidth: '560px', padding: '2rem', background: '#fff' }}
+      >
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginBottom: '1.5rem' }}>
+          <h3 id="restaurant-review-title" style={{ margin: 0, fontSize: '1.6rem', color: '#1e293b' }}>
+            {t('reviews.modal.title', 'Escriure una opinió')}
+          </h3>
+          <p style={{ margin: 0, color: '#64748b', fontSize: '0.95rem', lineHeight: 1.5 }}>
+            {t('reviews.modal.description', 'Comparteix la teva experiència en aquest restaurant.')}
+          </p>
+        </div>
+
+        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+          {/* Valoració */}
+          <div className="flex flex-col gap-2" style={{ marginBottom: '1rem' }}>
+            <label className="text-sm font-semibold text-slate-700">
+              {t('reviews.modal.ratingLabel', 'Valoració global (1-10)')}
+            </label>
+            <div className="flex items-center gap-1.5 flex-wrap" style={{ display: 'flex', gap: '0.35rem', flexWrap: 'wrap' }}>
+              {Array.from({ length: 10 }, (_, i) => i + 1).map((val) => (
+                <button
+                  key={val}
+                  type="button"
+                  onClick={() => setGlobalRating(val)}
+                  style={{
+                    width: '2.5rem',
+                    height: '2.5rem',
+                    borderRadius: '50%',
+                    border: '1px solid rgba(0,0,0,0.1)',
+                    background: globalRating === val ? 'linear-gradient(135deg, #f97316, #ea580c)' : '#f8fafc',
+                    color: globalRating === val ? '#fff' : '#475569',
+                    fontWeight: 700,
+                    cursor: 'pointer',
+                    transition: 'all 0.2s',
+                    boxShadow: globalRating === val ? '0 4px 10px rgba(249, 115, 22, 0.3)' : 'none',
+                  }}
+                >
+                  {val}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Comentari */}
+          <div className="flex flex-col gap-2">
+            <label htmlFor="restaurant-review-comment" className="text-sm font-semibold text-slate-700">
+              {t('reviews.modal.commentLabel', 'El teu comentari')}
+            </label>
+            <textarea
+              id="restaurant-review-comment"
+              className="form-input"
+              style={{ minHeight: '100px', resize: 'none', padding: '1rem', width: '100%', boxSizing: 'border-box' }}
+              value={comment}
+              onChange={(event) => {
+                setComment(event.target.value);
+                if (error) setError('');
+              }}
+              placeholder={t('reviews.modal.placeholder', 'Què t\'ha semblat el menjar, el servei i l\'ambient?')}
+            />
+            {error && <p className="text-sm font-medium text-red-500">{error}</p>}
+          </div>
+
+          <div style={{ display: 'flex', flexWrap: 'wrap-reverse', gap: '0.75rem', justifyContent: 'flex-end', marginTop: '1rem' }}>
+            <button
+              type="button"
+              className="btn"
+              onClick={onClose}
+              style={{ width: 'auto', minWidth: '120px', background: '#fff', color: '#ea580c', border: '1px solid rgba(249, 115, 22, 0.22)' }}
+            >
+              {t('reviews.actions.cancel', 'Cancelar')}
+            </button>
+            <button
+              type="submit"
+              className="btn"
+              disabled={submitting}
+              style={{
+                width: 'auto',
+                minWidth: '150px',
+                background: 'linear-gradient(135deg, #f97316, #ea580c)',
+                color: '#ffffff',
+                boxShadow: '0 12px 25px -8px rgba(249, 115, 22, 0.75)',
+              }}
+            >
+              {submitting ? t('reviews.actions.submitting', 'Publicant…') : t('reviews.actions.submit', 'Publicar opinió')}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+}
+
 function getRestaurantVisitsCount(restaurant: CustomerRestaurant) {
   return (
     restaurant.profile?.visits ??
@@ -456,6 +640,7 @@ function CustomerRestaurantDetail({
 }) {
   const { t } = useTranslation();
   const [reportOpen, setReportOpen] = useState(false);
+  const [reviewOpen, setReviewOpen] = useState(false);
   const img = getRestaurantImage(restaurant);
   const rating = getRestaurantRating(restaurant);
   const userPointsForRestaurant =
@@ -663,7 +848,32 @@ function CustomerRestaurantDetail({
       </div>
 
       <div className="hc-restaurant-detail__section hc-animate-slide" style={{ animationDelay: '0.5s' }}>
-        <h3>{t('reviews.title', 'Opinions dels clients')}</h3>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+          <h3 style={{ margin: 0 }}>{t('reviews.title', 'Opinions dels clients')}</h3>
+          <button
+            onClick={() => setReviewOpen(true)}
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '0.5rem',
+              padding: '0.5rem 1rem',
+              borderRadius: '999px',
+              border: 'none',
+              background: 'linear-gradient(135deg, #f97316, #ea580c)',
+              color: '#fff',
+              fontSize: '0.85rem',
+              fontWeight: 600,
+              cursor: 'pointer',
+              boxShadow: '0 4px 10px rgba(249, 115, 22, 0.2)',
+              transition: 'transform 0.2s',
+            }}
+            onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.03)'}
+            onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
+          >
+            <Star size={16} fill="currentColor" />
+            {t('reviews.addReview', 'Opinar')}
+          </button>
+        </div>
         {loadingReviews ? (
           <div className="text-center py-4 text-sm text-slate-500">{t('reviews.loading', 'Carregant opinions...')}</div>
         ) : reviews.length > 0 ? (
@@ -748,6 +958,17 @@ function CustomerRestaurantDetail({
           open={reportOpen}
           restaurant={restaurant}
           onClose={() => setReportOpen(false)}
+        />
+      )}
+
+      {reviewOpen && (
+        <CustomerReviewModal
+          open={reviewOpen}
+          restaurant={restaurant}
+          onClose={() => setReviewOpen(false)}
+          onReviewCreated={(newReview) => {
+            setReviews((prev) => [newReview, ...prev]);
+          }}
         />
       )}
 
