@@ -1,8 +1,8 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState, type ReactNode } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { ArrowLeft, Building2, Clock3, Mail, MapPin, Phone, Star } from 'lucide-react';
-import { restaurantService } from '@/services';
-import type { IRestaurant, IRestaurantStats } from '@/types';
+import { restaurantService, reviewService } from '@/services';
+import type { IRestaurant, IRestaurantStats, IReview } from '@/types';
 import type { Restaurant } from '@/types/Restaurant';
 
 type RestaurantSource = Restaurant | IRestaurant;
@@ -59,6 +59,29 @@ function formatNumber(value: number | undefined | null): string {
   return new Intl.NumberFormat('es-ES', { maximumFractionDigits: 1 }).format(value);
 }
 
+function Card({ children, className = '' }: { children: ReactNode; className?: string }) {
+  return (
+    <div className={`rounded-2xl border border-black/5 bg-white p-5 shadow-sm space-y-4 ${className}`}>
+      {children}
+    </div>
+  );
+}
+
+function formatDate(dateValue: string | Date | undefined | null): string {
+  if (!dateValue) return '—';
+  try {
+    const d = new Date(dateValue);
+    if (isNaN(d.getTime())) return '—';
+    return d.toLocaleDateString(undefined, {
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric',
+    });
+  } catch {
+    return '—';
+  }
+}
+
 export default function RestaurantDetailsScreen() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
@@ -69,6 +92,7 @@ export default function RestaurantDetailsScreen() {
     routeState?.restaurant ?? null,
   );
   const [stats, setStats] = useState<IRestaurantStats | null>(null);
+  const [reviews, setReviews] = useState<IReview[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -81,6 +105,7 @@ export default function RestaurantDetailsScreen() {
       if (!restaurantId) {
         setRestaurant(null);
         setStats(null);
+        setReviews([]);
         setError('Restaurant identifier is missing.');
         setLoading(false);
         return;
@@ -90,11 +115,13 @@ export default function RestaurantDetailsScreen() {
       setError(null);
       setRestaurant(routeState?.restaurant ?? null);
       setStats(null);
+      setReviews([]);
 
       try {
-        const [fullRestaurant, restaurantStats] = await Promise.all([
+        const [fullRestaurant, restaurantStats, restaurantReviews] = await Promise.all([
           restaurantService.fetchRestaurantFull(restaurantId),
           restaurantService.fetchRestaurantStats(restaurantId),
+          reviewService.fetchRestaurantReviews(restaurantId),
         ]);
 
         if (cancelled) return;
@@ -106,6 +133,7 @@ export default function RestaurantDetailsScreen() {
         }
 
         setStats(restaurantStats);
+        setReviews(restaurantReviews || []);
       } catch (err) {
         if (cancelled) return;
         console.error('Error loading restaurant details:', err);
@@ -246,6 +274,47 @@ export default function RestaurantDetailsScreen() {
                   <p className="mt-3 max-w-4xl whitespace-pre-line text-sm leading-6 text-gray-600">
                     {description || 'No description available for this restaurant yet.'}
                   </p>
+                </section>
+
+                <section className="space-y-4">
+                  <h2 className="text-lg font-semibold">Reviews</h2>
+                  {reviews.length > 0 ? (
+                    <div className="grid gap-4">
+                      {reviews.map((review) => (
+                        <Card key={review._id || review.id}>
+                          <div className="flex justify-between">
+                            <span className="font-semibold text-amber-500 flex items-center gap-1">
+                              ⭐ {review.globalRating}/10
+                            </span>
+
+                            <span className="text-gray-500 text-sm">
+                              {formatDate(review.date || review.createdAt)}
+                            </span>
+                          </div>
+
+                          <p className="text-sm text-gray-700">{review.comment || 'No comment provided.'}</p>
+
+                          {review.images && review.images.length > 0 && (
+                            <div className="grid grid-cols-3 gap-2">
+                              {review.images.map((img) => (
+                                <img
+                                  key={img}
+                                  src={img}
+                                  className="rounded-lg h-24 w-full object-cover"
+                                />
+                              ))}
+                            </div>
+                          )}
+
+                          <button className="inline-flex items-center gap-1 rounded-full border border-black/5 bg-gray-50 px-3 py-1 text-xs font-semibold text-gray-600 transition hover:bg-gray-100">
+                            👍 {review.likes || 0}
+                          </button>
+                        </Card>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-sm text-gray-500">No reviews available yet.</p>
+                  )}
                 </section>
               </div>
 

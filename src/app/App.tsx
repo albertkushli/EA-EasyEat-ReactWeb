@@ -8,6 +8,7 @@ import { Dashboard, Home } from '@/features/dashboard';
 import { Clients } from '@/features/customers';
 import DiscoverScreen from '@/screens/DiscoverScreen';
 import LegalNotice from '@/features/legal/LegalNotice';
+import RestaurantDetailsScreen from '@/features/restaurants/pages/RestaurantDetailsScreen';
 import MatomoTracker from '@/components/MatomoTracker';
 import MapScreenPremium from '@/imports/MapScreenPremium';
 import SupportChat from '@/features/support/components/SupportChat';
@@ -104,7 +105,7 @@ export default function App() {
               {/*<Route path="/map" element={<MapScreen />} />*/}
               <Route
                 path="/restaurant/:id"
-                element={<div className="p-4">Restaurant details placeholder</div>}
+                element={<RestaurantDetailsScreen />}
               />
 
               <Route path="/map" element={<MapRouteWrapper />} />

@@ -1,4 +1,4 @@
-import { type FormEvent, useState } from 'react';
+import { type FormEvent, useState, useEffect, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useNavigate } from 'react-router-dom';
 import { QRCodeCanvas } from 'qrcode.react';
@@ -31,7 +31,7 @@ import {
   Bot,
 } from 'lucide-react';
 import LanguageDropdown from '@/shared/components/ui/LanguageDropdown';
-import type { ICustomer } from '@/types';
+import type { ICustomer, IReview } from '@/types';
 import type {
   CustomerBadge,
   CustomerPointsWalletEntry,
@@ -41,6 +41,7 @@ import type {
   CustomerVisit,
 } from '../../hooks/useCustomerDashboard';
 import CustomerChatButton from '@/features/chat/components/CustomerChatButton';
+import { reviewService } from '@/services';
 import { reportService } from '@/services/report.service';
 import { trackEvent } from '@/services/matomo';
 import AssistantChat from '@/features/assistant/components/AssistantChat';
@@ -409,6 +410,29 @@ function CustomerLargeRestaurantCard({
   );
 }
 
+function Card({ children, className = '' }: { children: ReactNode; className?: string }) {
+  return (
+    <div className={`rounded-2xl border border-black/5 bg-white p-5 shadow-sm space-y-4 ${className}`}>
+      {children}
+    </div>
+  );
+}
+
+function formatDate(dateValue: string | Date | undefined | null): string {
+  if (!dateValue) return '—';
+  try {
+    const d = new Date(dateValue);
+    if (isNaN(d.getTime())) return '—';
+    return d.toLocaleDateString(undefined, {
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric',
+    });
+  } catch {
+    return '—';
+  }
+}
+
 function CustomerRestaurantDetail({
   restaurant,
   pointsWallet,
@@ -440,6 +464,38 @@ function CustomerRestaurantDetail({
     (reward) => getRestaurantId(reward) === restaurant._id,
   );
   const isFavorite = favoriteRestaurants.some((favorite) => favorite._id === restaurant._id);
+
+  const [reviews, setReviews] = useState<IReview[]>([]);
+  const [loadingReviews, setLoadingReviews] = useState(true);
+
+  useEffect(() => {
+    let active = true;
+    async function loadReviews() {
+      const resId = restaurant._id ?? (restaurant as any).id;
+      if (!resId) {
+        setReviews([]);
+        setLoadingReviews(false);
+        return;
+      }
+      setLoadingReviews(true);
+      try {
+        const data = await reviewService.fetchRestaurantReviews(resId);
+        if (active) {
+          setReviews(data || []);
+        }
+      } catch (err) {
+        console.error('Error fetching reviews:', err);
+      } finally {
+        if (active) {
+          setLoadingReviews(false);
+        }
+      }
+    }
+    loadReviews();
+    return () => {
+      active = false;
+    };
+  }, [restaurant]);
 
   return (
     <div className="hc-restaurant-detail">
@@ -561,6 +617,67 @@ function CustomerRestaurantDetail({
             </p>
           )}
         </div>
+      </div>
+
+      <div className="hc-restaurant-detail__section hc-animate-slide" style={{ animationDelay: '0.5s' }}>
+        <h3>{t('reviews.title', 'Opinions dels clients')}</h3>
+        {loadingReviews ? (
+          <div className="text-center py-4 text-sm text-slate-500">{t('reviews.loading', 'Carregant opinions...')}</div>
+        ) : reviews.length > 0 ? (
+          <div className="grid gap-4" style={{ display: 'grid', gap: '1rem', marginTop: '1rem' }}>
+            {reviews.map((review) => (
+              <Card key={review._id || review.id}>
+                <div className="flex justify-between" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span className="font-semibold text-orange-500" style={{ fontWeight: 600, color: '#f97316' }}>
+                    ⭐ {review.globalRating}/10
+                  </span>
+
+                  <span className="text-gray-500 text-sm" style={{ color: '#64748b', fontSize: '0.85rem' }}>
+                    {formatDate(review.date || review.createdAt)}
+                  </span>
+                </div>
+
+                <p className="text-sm text-slate-700" style={{ fontSize: '0.9rem', color: '#334155', margin: '0.5rem 0' }}>
+                  {review.comment || t('reviews.noComment', 'Sense comentaris')}
+                </p>
+
+                {review.images && review.images.length > 0 && (
+                  <div className="grid grid-cols-3 gap-2" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.5rem', margin: '0.5rem 0' }}>
+                    {review.images.map((img) => (
+                      <img
+                        key={img}
+                        src={img}
+                        className="rounded-lg h-24 w-full object-cover"
+                        style={{ borderRadius: '0.5rem', height: '6rem', width: '100%', objectFit: 'cover' }}
+                      />
+                    ))}
+                  </div>
+                )}
+
+                <button 
+                  className="btn-like" 
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '0.25rem',
+                    border: '1px solid rgba(0,0,0,0.05)',
+                    background: '#f8fafc',
+                    padding: '0.25rem 0.75rem',
+                    borderRadius: '999px',
+                    fontSize: '0.8rem',
+                    cursor: 'pointer'
+                  }}
+                >
+                  👍 {review.likes || 0}
+                </button>
+              </Card>
+            ))}
+          </div>
+        ) : (
+          <p className="hc-empty" style={{ marginTop: '1rem' }}>
+            {t('reviews.noReviews', 'Aquest restaurant encara no té opinions.')}
+          </p>
+        )}
       </div>
 
       <button className="hc-checkin-btn" onClick={onOpenQrModal}>
