@@ -93,8 +93,51 @@ export default function RestaurantDetailsScreen() {
   );
   const [stats, setStats] = useState<IRestaurantStats | null>(null);
   const [reviews, setReviews] = useState<IReview[]>([]);
+  const [likedReviewIds, setLikedReviewIds] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  const handleLikeReview = async (reviewId?: string, currentLikes = 0) => {
+    if (!reviewId) return;
+    const isAlreadyLiked = likedReviewIds.includes(reviewId);
+    
+    // Toggle likes count
+    const nextLikes = isAlreadyLiked ? Math.max(0, currentLikes - 1) : currentLikes + 1;
+    
+    // Optimistic UI update
+    setReviews(prev => prev.map(rev => {
+      const id = rev._id ?? rev.id;
+      if (id === reviewId) {
+        return { ...rev, likes: nextLikes };
+      }
+      return rev;
+    }));
+    
+    if (isAlreadyLiked) {
+      setLikedReviewIds(prev => prev.filter(id => id !== reviewId));
+    } else {
+      setLikedReviewIds(prev => [...prev, reviewId]);
+    }
+    
+    try {
+      await reviewService.updateReview(reviewId, { likes: nextLikes });
+    } catch (err) {
+      console.error('Error updating review likes:', err);
+      // Rollback
+      setReviews(prev => prev.map(rev => {
+        const id = rev._id ?? rev.id;
+        if (id === reviewId) {
+          return { ...rev, likes: currentLikes };
+        }
+        return rev;
+      }));
+      if (isAlreadyLiked) {
+        setLikedReviewIds(prev => [...prev, reviewId]);
+      } else {
+        setLikedReviewIds(prev => prev.filter(id => id !== reviewId));
+      }
+    }
+  };
 
   const restaurantId = useMemo(() => id?.trim() || null, [id]);
 
@@ -306,7 +349,14 @@ export default function RestaurantDetailsScreen() {
                             </div>
                           )}
 
-                          <button className="inline-flex items-center gap-1 rounded-full border border-black/5 bg-gray-50 px-3 py-1 text-xs font-semibold text-gray-600 transition hover:bg-gray-100">
+                          <button 
+                            onClick={() => handleLikeReview(review._id || review.id, review.likes)}
+                            className={`inline-flex items-center gap-1 rounded-full border px-3 py-1 text-xs font-semibold transition ${
+                              likedReviewIds.includes(review._id || review.id || '')
+                                ? 'border-amber-300 bg-amber-50 text-amber-600 font-bold'
+                                : 'border-black/5 bg-gray-50 text-gray-600 hover:bg-gray-100'
+                            }`}
+                          >
                             👍 {review.likes || 0}
                           </button>
                         </Card>

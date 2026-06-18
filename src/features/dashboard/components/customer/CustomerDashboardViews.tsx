@@ -467,6 +467,49 @@ function CustomerRestaurantDetail({
 
   const [reviews, setReviews] = useState<IReview[]>([]);
   const [loadingReviews, setLoadingReviews] = useState(true);
+  const [likedReviewIds, setLikedReviewIds] = useState<string[]>([]);
+
+  const handleLikeReview = async (reviewId?: string, currentLikes = 0) => {
+    if (!reviewId) return;
+    const isAlreadyLiked = likedReviewIds.includes(reviewId);
+
+    // Toggle likes count
+    const nextLikes = isAlreadyLiked ? Math.max(0, currentLikes - 1) : currentLikes + 1;
+
+    // Optimistic UI update
+    setReviews(prev => prev.map(rev => {
+      const id = rev._id ?? rev.id;
+      if (id === reviewId) {
+        return { ...rev, likes: nextLikes };
+      }
+      return rev;
+    }));
+
+    if (isAlreadyLiked) {
+      setLikedReviewIds(prev => prev.filter(id => id !== reviewId));
+    } else {
+      setLikedReviewIds(prev => [...prev, reviewId]);
+    }
+
+    try {
+      await reviewService.updateReview(reviewId, { likes: nextLikes });
+    } catch (err) {
+      console.error('Error updating review likes:', err);
+      // Rollback
+      setReviews(prev => prev.map(rev => {
+        const id = rev._id ?? rev.id;
+        if (id === reviewId) {
+          return { ...rev, likes: currentLikes };
+        }
+        return rev;
+      }));
+      if (isAlreadyLiked) {
+        setLikedReviewIds(prev => [...prev, reviewId]);
+      } else {
+        setLikedReviewIds(prev => prev.filter(id => id !== reviewId));
+      }
+    }
+  };
 
   useEffect(() => {
     let active = true;
@@ -654,18 +697,30 @@ function CustomerRestaurantDetail({
                   </div>
                 )}
 
-                <button 
-                  className="btn-like" 
+                <button
+                  className="btn-like"
+                  onClick={() => handleLikeReview(review._id || review.id, review.likes)}
                   style={{
                     display: 'inline-flex',
                     alignItems: 'center',
                     gap: '0.25rem',
-                    border: '1px solid rgba(0,0,0,0.05)',
-                    background: '#f8fafc',
+                    border: likedReviewIds.includes(review._id || review.id || '')
+                      ? '1px solid rgba(249, 115, 22, 0.3)'
+                      : '1px solid rgba(0,0,0,0.05)',
+                    background: likedReviewIds.includes(review._id || review.id || '')
+                      ? '#fff7ed'
+                      : '#f8fafc',
+                    color: likedReviewIds.includes(review._id || review.id || '')
+                      ? '#ea580c'
+                      : 'inherit',
                     padding: '0.25rem 0.75rem',
                     borderRadius: '999px',
                     fontSize: '0.8rem',
-                    cursor: 'pointer'
+                    cursor: 'pointer',
+                    fontWeight: likedReviewIds.includes(review._id || review.id || '')
+                      ? 600
+                      : 'normal',
+                    transition: 'all 0.2s ease'
                   }}
                 >
                   👍 {review.likes || 0}
