@@ -1,6 +1,7 @@
-import { type FormEvent, useState } from 'react';
+import { type FormEvent, useState, useEffect, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '@/context/AuthContext';
 import { QRCodeCanvas } from 'qrcode.react';
 import {
   ArrowLeft,
@@ -31,7 +32,7 @@ import {
   Bot,
 } from 'lucide-react';
 import LanguageDropdown from '@/shared/components/ui/LanguageDropdown';
-import type { ICustomer } from '@/types';
+import type { ICustomer, IReview } from '@/types';
 import type {
   CustomerBadge,
   CustomerPointsWalletEntry,
@@ -41,6 +42,7 @@ import type {
   CustomerVisit,
 } from '../../hooks/useCustomerDashboard';
 import CustomerChatButton from '@/features/chat/components/CustomerChatButton';
+import { reviewService } from '@/services';
 import { reportService } from '@/services/report.service';
 import { trackEvent } from '@/services/matomo';
 import AssistantChat from '@/features/assistant/components/AssistantChat';
@@ -304,6 +306,189 @@ function CustomerReportModal({
   );
 }
 
+function CustomerReviewModal({
+  open,
+  restaurant,
+  onClose,
+  onReviewCreated,
+}: {
+  open: boolean;
+  restaurant: CustomerRestaurant;
+  onClose: () => void;
+  onReviewCreated: (newReview: IReview) => void;
+}) {
+  const { t } = useTranslation();
+  const { user } = useAuth();
+  const [comment, setComment] = useState('');
+  const [globalRating, setGlobalRating] = useState(10);
+  const [error, setError] = useState('');
+  const [submitting, setSubmitting] = useState(false);
+  const restaurantId = restaurant._id ?? (restaurant as any).id ?? '';
+
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    const trimmedComment = comment.trim();
+
+    if (!restaurantId) {
+      alert(t('reviews.error.missingRestaurant', 'No s\'ha pogut identificar el restaurant.'));
+      return;
+    }
+
+    if (!user?._id && !user?.id) {
+      alert(t('reviews.error.missingUser', 'Has d\'iniciar sessió per publicar una opinió.'));
+      return;
+    }
+
+    setSubmitting(true);
+    setError('');
+
+    try {
+      const newReview = await reviewService.createReview({
+        customer_id: user?._id || user?.id,
+        restaurant_id: restaurantId,
+        globalRating,
+        comment: trimmedComment,
+        likes: 0,
+        images: [],
+        ratings: {
+          foodQuality: globalRating,
+          staffService: globalRating,
+          cleanliness: globalRating,
+          environment: globalRating,
+        },
+      });
+
+      if (newReview) {
+        alert(t('reviews.success', 'Opinió enviada correctament!'));
+        onReviewCreated(newReview);
+        onClose();
+      } else {
+        setError(t('reviews.error.failed', 'No s\'ha pogut publicar la opinió.'));
+      }
+    } catch (err) {
+      console.error('Error creating review:', err);
+      setError(t('reviews.error.failed', 'No s\'ha pogut publicar la opinió.'));
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  if (!open) return null;
+
+  return (
+    <div
+      role="presentation"
+      onClick={onClose}
+      style={{
+        position: 'fixed',
+        inset: 0,
+        zIndex: 999,
+        background: 'rgba(15, 23, 42, 0.58)',
+        backdropFilter: 'blur(8px)',
+        padding: '1rem',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}
+    >
+      <div
+        className="auth-card hc-modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="restaurant-review-title"
+        onClick={(event) => event.stopPropagation()}
+        style={{ width: '100%', maxWidth: '560px', padding: '2rem', background: '#fff' }}
+      >
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginBottom: '1.5rem' }}>
+          <h3 id="restaurant-review-title" style={{ margin: 0, fontSize: '1.6rem', color: '#1e293b' }}>
+            {t('reviews.modal.title', 'Escriure una opinió')}
+          </h3>
+          <p style={{ margin: 0, color: '#64748b', fontSize: '0.95rem', lineHeight: 1.5 }}>
+            {t('reviews.modal.description', 'Comparteix la teva experiència en aquest restaurant.')}
+          </p>
+        </div>
+
+        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+          {/* Valoració */}
+          <div className="flex flex-col gap-2" style={{ marginBottom: '1rem' }}>
+            <label className="text-sm font-semibold text-slate-700">
+              {t('reviews.modal.ratingLabel', 'Valoració global (1-10)')}
+            </label>
+            <div className="flex items-center gap-1.5 flex-wrap" style={{ display: 'flex', gap: '0.35rem', flexWrap: 'wrap' }}>
+              {Array.from({ length: 10 }, (_, i) => i + 1).map((val) => (
+                <button
+                  key={val}
+                  type="button"
+                  onClick={() => setGlobalRating(val)}
+                  style={{
+                    width: '2.5rem',
+                    height: '2.5rem',
+                    borderRadius: '50%',
+                    border: '1px solid rgba(0,0,0,0.1)',
+                    background: globalRating === val ? 'linear-gradient(135deg, #f97316, #ea580c)' : '#f8fafc',
+                    color: globalRating === val ? '#fff' : '#475569',
+                    fontWeight: 700,
+                    cursor: 'pointer',
+                    transition: 'all 0.2s',
+                    boxShadow: globalRating === val ? '0 4px 10px rgba(249, 115, 22, 0.3)' : 'none',
+                  }}
+                >
+                  {val}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Comentari */}
+          <div className="flex flex-col gap-2">
+            <label htmlFor="restaurant-review-comment" className="text-sm font-semibold text-slate-700">
+              {t('reviews.modal.commentLabel', 'El teu comentari')}
+            </label>
+            <textarea
+              id="restaurant-review-comment"
+              className="form-input"
+              style={{ minHeight: '100px', resize: 'none', padding: '1rem', width: '100%', boxSizing: 'border-box' }}
+              value={comment}
+              onChange={(event) => {
+                setComment(event.target.value);
+                if (error) setError('');
+              }}
+              placeholder={t('reviews.modal.placeholder', 'Què t\'ha semblat el menjar, el servei i l\'ambient?')}
+            />
+            {error && <p className="text-sm font-medium text-red-500">{error}</p>}
+          </div>
+
+          <div style={{ display: 'flex', flexWrap: 'wrap-reverse', gap: '0.75rem', justifyContent: 'flex-end', marginTop: '1rem' }}>
+            <button
+              type="button"
+              className="btn"
+              onClick={onClose}
+              style={{ width: 'auto', minWidth: '120px', background: '#fff', color: '#ea580c', border: '1px solid rgba(249, 115, 22, 0.22)' }}
+            >
+              {t('reviews.actions.cancel', 'Cancelar')}
+            </button>
+            <button
+              type="submit"
+              className="btn"
+              disabled={submitting}
+              style={{
+                width: 'auto',
+                minWidth: '150px',
+                background: 'linear-gradient(135deg, #f97316, #ea580c)',
+                color: '#ffffff',
+                boxShadow: '0 12px 25px -8px rgba(249, 115, 22, 0.75)',
+              }}
+            >
+              {submitting ? t('reviews.actions.submitting', 'Publicant…') : t('reviews.actions.submit', 'Publicar opinió')}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+}
+
 function getRestaurantVisitsCount(restaurant: CustomerRestaurant) {
   return (
     restaurant.profile?.visits ??
@@ -409,6 +594,29 @@ function CustomerLargeRestaurantCard({
   );
 }
 
+function Card({ children, className = '' }: { children: ReactNode; className?: string }) {
+  return (
+    <div className={`rounded-2xl border border-black/5 bg-white p-5 shadow-sm space-y-4 ${className}`}>
+      {children}
+    </div>
+  );
+}
+
+function formatDate(dateValue: string | Date | undefined | null): string {
+  if (!dateValue) return '—';
+  try {
+    const d = new Date(dateValue);
+    if (isNaN(d.getTime())) return '—';
+    return d.toLocaleDateString(undefined, {
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric',
+    });
+  } catch {
+    return '—';
+  }
+}
+
 function CustomerRestaurantDetail({
   restaurant,
   pointsWallet,
@@ -430,8 +638,10 @@ function CustomerRestaurantDetail({
   onOpenQrModal: () => void;
   onOpenRewardQrModal: () => void;
 }) {
+  const { user } = useAuth();
   const { t } = useTranslation();
   const [reportOpen, setReportOpen] = useState(false);
+  const [reviewOpen, setReviewOpen] = useState(false);
   const img = getRestaurantImage(restaurant);
   const rating = getRestaurantRating(restaurant);
   const userPointsForRestaurant =
@@ -440,6 +650,90 @@ function CustomerRestaurantDetail({
     (reward) => getRestaurantId(reward) === restaurant._id,
   );
   const isFavorite = favoriteRestaurants.some((favorite) => favorite._id === restaurant._id);
+
+  const [reviews, setReviews] = useState<IReview[]>([]);
+  const [loadingReviews, setLoadingReviews] = useState(true);
+
+  const isReviewLiked = (review: IReview) => {
+    const userId = user?.id || user?._id;
+    if (!userId || !review.likedBy) return false;
+    return review.likedBy.some(id => String(id) === String(userId));
+  };
+
+  const handleLikeReview = async (reviewId?: string, currentLikes = 0) => {
+    if (!reviewId) return;
+    const review = reviews.find(r => r._id === reviewId || r.id === reviewId);
+    if (!review) return;
+
+    const isAlreadyLiked = isReviewLiked(review);
+    const nextLikes = isAlreadyLiked ? Math.max(0, currentLikes - 1) : currentLikes + 1;
+    const userId = user?.id || user?._id;
+
+    // Optimistic UI update
+    setReviews(prev => prev.map(rev => {
+      const id = rev._id ?? rev.id;
+      if (id === reviewId) {
+        let updatedLikedBy = rev.likedBy || [];
+        if (isAlreadyLiked) {
+          updatedLikedBy = updatedLikedBy.filter(uid => String(uid) !== String(userId));
+        } else if (userId) {
+          updatedLikedBy = [...updatedLikedBy, String(userId)];
+        }
+        return { ...rev, likes: nextLikes, likedBy: updatedLikedBy };
+      }
+      return rev;
+    }));
+
+    try {
+      const updatedReview = await reviewService.likeReview(reviewId);
+      if (updatedReview) {
+        setReviews(prev => prev.map(rev => {
+          const id = rev._id ?? rev.id;
+          const updatedId = updatedReview._id ?? updatedReview.id;
+          return id === updatedId ? updatedReview : rev;
+        }));
+      }
+    } catch (err) {
+      console.error('Error updating review likes:', err);
+      // Rollback
+      setReviews(prev => prev.map(rev => {
+        const id = rev._id ?? rev.id;
+        if (id === reviewId) {
+          return review;
+        }
+        return rev;
+      }));
+    }
+  };
+
+  useEffect(() => {
+    let active = true;
+    async function loadReviews() {
+      const resId = restaurant._id ?? (restaurant as any).id;
+      if (!resId) {
+        setReviews([]);
+        setLoadingReviews(false);
+        return;
+      }
+      setLoadingReviews(true);
+      try {
+        const data = await reviewService.fetchRestaurantReviews(resId);
+        if (active) {
+          setReviews(data || []);
+        }
+      } catch (err) {
+        console.error('Error fetching reviews:', err);
+      } finally {
+        if (active) {
+          setLoadingReviews(false);
+        }
+      }
+    }
+    loadReviews();
+    return () => {
+      active = false;
+    };
+  }, [restaurant]);
 
   return (
     <div className="hc-restaurant-detail">
@@ -563,6 +857,104 @@ function CustomerRestaurantDetail({
         </div>
       </div>
 
+      <div className="hc-restaurant-detail__section hc-animate-slide" style={{ animationDelay: '0.5s' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+          <h3 style={{ margin: 0 }}>{t('reviews.title', 'Opinions dels clients')}</h3>
+          <button
+            onClick={() => setReviewOpen(true)}
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '0.5rem',
+              padding: '0.5rem 1rem',
+              borderRadius: '999px',
+              border: 'none',
+              background: 'linear-gradient(135deg, #f97316, #ea580c)',
+              color: '#fff',
+              fontSize: '0.85rem',
+              fontWeight: 600,
+              cursor: 'pointer',
+              boxShadow: '0 4px 10px rgba(249, 115, 22, 0.2)',
+              transition: 'transform 0.2s',
+            }}
+            onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.03)'}
+            onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
+          >
+            <Star size={16} fill="currentColor" />
+            {t('reviews.addReview', 'Opinar')}
+          </button>
+        </div>
+        {loadingReviews ? (
+          <div className="text-center py-4 text-sm text-slate-500">{t('reviews.loading', 'Carregant opinions...')}</div>
+        ) : reviews.length > 0 ? (
+          <div className="grid gap-4" style={{ display: 'grid', gap: '1rem', marginTop: '1rem' }}>
+            {reviews.map((review) => (
+              <Card key={review._id || review.id}>
+                <div className="flex justify-between" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span className="font-semibold text-orange-500" style={{ fontWeight: 600, color: '#f97316' }}>
+                    ⭐ {review.globalRating}/10
+                  </span>
+
+                  <span className="text-gray-500 text-sm" style={{ color: '#64748b', fontSize: '0.85rem' }}>
+                    {formatDate(review.date || review.createdAt)}
+                  </span>
+                </div>
+
+                <p className="text-sm text-slate-700" style={{ fontSize: '0.9rem', color: '#334155', margin: '0.5rem 0' }}>
+                  {review.comment || t('reviews.noComment', 'Sense comentaris')}
+                </p>
+
+                {review.images && review.images.length > 0 && (
+                  <div className="grid grid-cols-3 gap-2" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.5rem', margin: '0.5rem 0' }}>
+                    {review.images.map((img) => (
+                      <img
+                        key={img}
+                        src={img}
+                        className="rounded-lg h-24 w-full object-cover"
+                        style={{ borderRadius: '0.5rem', height: '6rem', width: '100%', objectFit: 'cover' }}
+                      />
+                    ))}
+                  </div>
+                )}
+
+                <button
+                  className="btn-like"
+                  onClick={() => handleLikeReview(review._id || review.id, review.likes)}
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '0.25rem',
+                    border: isReviewLiked(review)
+                      ? '1px solid rgba(249, 115, 22, 0.3)'
+                      : '1px solid rgba(0,0,0,0.05)',
+                    background: isReviewLiked(review)
+                      ? '#fff7ed'
+                      : '#f8fafc',
+                    color: isReviewLiked(review)
+                      ? '#ea580c'
+                      : 'inherit',
+                    padding: '0.25rem 0.75rem',
+                    borderRadius: '999px',
+                    fontSize: '0.8rem',
+                    cursor: 'pointer',
+                    fontWeight: isReviewLiked(review)
+                      ? 600
+                      : 'normal',
+                    transition: 'all 0.2s ease'
+                  }}
+                >
+                  👍 {review.likes || 0}
+                </button>
+              </Card>
+            ))}
+          </div>
+        ) : (
+          <p className="hc-empty" style={{ marginTop: '1rem' }}>
+            {t('reviews.noReviews', 'Aquest restaurant encara no té opinions.')}
+          </p>
+        )}
+      </div>
+
       <button className="hc-checkin-btn" onClick={onOpenQrModal}>
         <QrCode size={20} /> {t('dashboard.customer.actions.checkIn')}
       </button>
@@ -571,22 +963,37 @@ function CustomerRestaurantDetail({
         <Flag size={18} /> {t('dashboard.customer.actions.reportRestaurant', 'Denunciar restaurante')}
       </button>
 
-      {reportOpen && (
-        <CustomerReportModal
-          open={reportOpen}
-          restaurant={restaurant}
-          onClose={() => setReportOpen(false)}
-        />
-      )}
+      {
+    reportOpen && (
+      <CustomerReportModal
+        open={reportOpen}
+        restaurant={restaurant}
+        onClose={() => setReportOpen(false)}
+      />
+    )
+  }
 
-      {/* Chat con el restaurante */}
-      <div style={{ marginTop: '1rem' }}>
-        <CustomerChatButton
-          restaurantId={restaurant._id ?? (restaurant as any).id ?? ''}
-          restaurantName={getRestaurantName(restaurant)}
-        />
-      </div>
-    </div>
+  {
+    reviewOpen && (
+      <CustomerReviewModal
+        open={reviewOpen}
+        restaurant={restaurant}
+        onClose={() => setReviewOpen(false)}
+        onReviewCreated={(newReview) => {
+          setReviews((prev) => [newReview, ...prev]);
+        }}
+      />
+    )
+  }
+
+  {/* Chat con el restaurante */ }
+  <div style={{ marginTop: '1rem' }}>
+    <CustomerChatButton
+      restaurantId={restaurant._id ?? (restaurant as any).id ?? ''}
+      restaurantName={getRestaurantName(restaurant)}
+    />
+  </div>
+    </div >
   );
 }
 
@@ -632,7 +1039,7 @@ export function CustomerSidebar({ activeTab, onTabChange, user, onLogout }: Cust
           onClick={() => onTabChange('rewards')}
         >
           <Gift size={18} />
-          <span>{t('sidebar.rewards', 'Recompenses')}</span>
+          <span>{t('sidebar.pointsWallet', 'Cartera de Punts')}</span>
         </button>
         <button
           type="button"
@@ -1242,19 +1649,19 @@ export function CustomerDiscoverView({
 
   return (
     <>
-    <div className="hc-discover-view">
-      <div className="hc-discover-header">
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            gap: '1rem',
-            marginBottom: '1.5rem',
-          }}
-        >
-          <h2 style={{ fontSize: '2rem', margin: 0 }}>{t('discover.title', 'Descobrir')}</h2>
-          <button
+      <div className="hc-discover-view">
+        <div className="hc-discover-header">
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              gap: '1rem',
+              marginBottom: '1.5rem',
+            }}
+          >
+            <h2 style={{ fontSize: '2rem', margin: 0 }}>{t('discover.title', 'Descobrir')}</h2>
+            <button
               type="button"
               className='hc-map-btn'
               onClick={() => setIsAssistantOpen(true)}
@@ -1264,17 +1671,17 @@ export function CustomerDiscoverView({
               <Bot size={18} />
               <span>{t('discover.assistant', "Assistent")}</span>
             </button>
-          <button
-            type="button"
-            className="hc-map-btn"
-            onClick={() => navigate('/map')}
-            title={t('discover.openMap', 'Obrir el mapa')}
-            aria-label={t('discover.openMap', 'Obrir el mapa')}
-          >
-            <Map size={18} />
-            <span>{t('discover.map', 'Mapa')}</span>
-          </button>
-        </div>
+            <button
+              type="button"
+              className="hc-map-btn"
+              onClick={() => navigate('/map')}
+              title={t('discover.openMap', 'Obrir el mapa')}
+              aria-label={t('discover.openMap', 'Obrir el mapa')}
+            >
+              <Map size={18} />
+              <span>{t('discover.map', 'Mapa')}</span>
+            </button>
+          </div>
 
           <div className="hc-search-bar">
             <div className="hc-search-input">
@@ -1291,44 +1698,44 @@ export function CustomerDiscoverView({
             </button>
           </div>
 
-        <div className="hc-category-pills">
-          {categories.map((category) => (
-            <button
-              key={category.name}
-              className={`hc-category-pill ${selectedCategory === category.name ? 'active' : ''}`}
-              onClick={() => {
-                trackEvent('Discover', 'Filter category', category.name);
-                onCategoryChange(category.name);
-              }}
-            >
-              <span style={{ fontSize: '1.2rem', lineHeight: 1 }}>{category.icon}</span>
-              {category.label}
-            </button>
-          ))}
+          <div className="hc-category-pills">
+            {categories.map((category) => (
+              <button
+                key={category.name}
+                className={`hc-category-pill ${selectedCategory === category.name ? 'active' : ''}`}
+                onClick={() => {
+                  trackEvent('Discover', 'Filter category', category.name);
+                  onCategoryChange(category.name);
+                }}
+              >
+                <span style={{ fontSize: '1.2rem', lineHeight: 1 }}>{category.icon}</span>
+                {category.label}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className="hc-discover-results">
+          <p className="hc-results-count">
+            <strong>{filteredRestaurants.length}</strong>{' '}
+            {t('discover.resultsCount', 'restaurants trobats')}
+          </p>
+          <div className="hc-large-cards">
+            {filteredRestaurants.map((restaurant) => (
+              <CustomerLargeRestaurantCard
+                key={restaurant._id || restaurant.id}
+                restaurant={restaurant}
+                onClick={() => {
+                  trackEvent('Restaurant', 'Open detail', restaurant.profile?.name);
+                  onSelectRestaurant(restaurant);
+                }}
+              />
+            ))}
+          </div>
         </div>
       </div>
 
-      <div className="hc-discover-results">
-        <p className="hc-results-count">
-          <strong>{filteredRestaurants.length}</strong>{' '}
-          {t('discover.resultsCount', 'restaurants trobats')}
-        </p>
-        <div className="hc-large-cards">
-          {filteredRestaurants.map((restaurant) => (
-            <CustomerLargeRestaurantCard
-              key={restaurant._id || restaurant.id}
-              restaurant={restaurant}
-              onClick={() => {
-                trackEvent('Restaurant', 'Open detail', restaurant.profile?.name);
-                onSelectRestaurant(restaurant);
-              }}
-            />
-          ))}
-        </div>
-      </div>
-    </div>
-
-    {/* AI Assistant side panel */}
+      {/* AI Assistant side panel */}
       <AssistantChat isOpen={isAssistantOpen} onClose={() => setIsAssistantOpen(false)} />
     </>
   );
