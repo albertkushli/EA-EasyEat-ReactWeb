@@ -37,6 +37,9 @@ export default function HomeEmployee() {
         onViewChange={dashboard.setActiveView}
         restaurantName={dashboard.restName}
         restaurantAddress={dashboard.restAddress}
+        restaurants={dashboard.restaurants}
+        selectedRestaurant={dashboard.selectedRestaurant}
+        onRestaurantChange={dashboard.setSelectedRestaurant}
       />
 
       <div className="he-shell">
@@ -46,13 +49,16 @@ export default function HomeEmployee() {
 
         <div className="he-content">
           {dashboard.activeView === 'profile' ? (
-            <StaffProfilePanel user={dashboard.user} restaurant={dashboard.restaurant} />
+            <StaffProfilePanel
+              user={dashboard.user}
+              restaurant={dashboard.selectedRestaurant ?? dashboard.restaurant}
+            />
           ) : dashboard.activeView === 'dashboard' ? (
             <EmployeeOverviewPanel
               visits={dashboard.visits}
               reviews={dashboard.reviews}
               dishes={dashboard.dishes}
-              restaurantId={dashboard.user?.restaurant_id!}
+              restaurantId={dashboard.selectedRestaurant?._id ?? dashboard.restaurant?._id ?? dashboard.user?.restaurant_id!}
               averagePointsPerVisit={dashboard.averagePointsPerVisit}
               loyalCustomers={dashboard.loyalCustomers}
               restRating={dashboard.restRating}
@@ -78,13 +84,13 @@ export default function HomeEmployee() {
               visits={dashboard.allVisits}
               reviews={dashboard.reviews}
               dishes={dashboard.dishes}
-              restaurantId={dashboard.user?.restaurant_id!}
+              restaurantId={dashboard.selectedRestaurant?._id ?? dashboard.restaurant?._id ?? dashboard.user?.restaurant_id!}
               restaurantKpis={dashboard.restaurantKpis}
               restRating={dashboard.restRating}
             />
           ) : dashboard.activeView === 'settings' ? (
             <div style={{ padding: '2rem' }}>
-              <RestaurantSettings restaurant={dashboard.restaurant} />
+              <RestaurantSettings restaurant={dashboard.selectedRestaurant ?? dashboard.restaurant} />
             </div>
           ) : dashboard.activeView === 'chat' ? (
             <div style={{ padding: '2rem' }}>
