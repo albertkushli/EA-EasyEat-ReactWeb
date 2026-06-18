@@ -76,7 +76,9 @@ export const API_ENDPOINTS = {
 
   // Reviews
   REVIEWS: '/reviews',
-  REVIEWS_BY_RESTAURANT: (restaurantId: string) => `/restaurants/${restaurantId}/reviews`,
+  REVIEW_BY_ID: (reviewId: string) => `/reviews/${reviewId}`,
+  REVIEWS_BY_RESTAURANT: (restaurantId: string) => `/reviews/restaurant/${restaurantId}`,
+  REVIEW_RESTORE: (reviewId: string) => `/reviews/${reviewId}/restore`,
 
   // Reports
   REPORTS: '/reports',
