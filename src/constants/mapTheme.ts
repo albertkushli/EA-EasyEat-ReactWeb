@@ -10,4 +10,3 @@ export const MAP_THEME = {
   clusterShadow: 'rgba(14, 26, 54, 0.28)',
   glow: 'rgba(14, 26, 54, 0.18)',
 } as const;
-

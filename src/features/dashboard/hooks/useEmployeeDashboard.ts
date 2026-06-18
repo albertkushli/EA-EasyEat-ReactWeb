@@ -52,14 +52,42 @@ export function useEmployeeDashboard(): UseEmployeeDashboardResult {
   const [loading, setLoading] = useState(true);
   const isOwner = role === USER_ROLES.OWNER;
   const [activeView, setActiveView] = useState(() => {
-    if (view && ['profile', 'dashboard', 'clients', 'dishes', 'employees', 'rewards', 'analytics', 'settings', 'chat', 'billing'].includes(view)) {
+    if (
+      view &&
+      [
+        'profile',
+        'dashboard',
+        'clients',
+        'dishes',
+        'employees',
+        'rewards',
+        'analytics',
+        'settings',
+        'chat',
+        'billing',
+      ].includes(view)
+    ) {
       return view;
     }
     return isOwner ? 'dashboard' : 'profile';
   });
 
   useEffect(() => {
-    if (view && ['profile', 'dashboard', 'clients', 'dishes', 'employees', 'rewards', 'analytics', 'settings', 'chat', 'billing'].includes(view)) {
+    if (
+      view &&
+      [
+        'profile',
+        'dashboard',
+        'clients',
+        'dishes',
+        'employees',
+        'rewards',
+        'analytics',
+        'settings',
+        'chat',
+        'billing',
+      ].includes(view)
+    ) {
       setActiveView(view);
     }
   }, [view]);
@@ -171,7 +199,8 @@ export function useEmployeeDashboard(): UseEmployeeDashboardResult {
   const loyalCustomers = Number(restaurantKpis?.loyalCustomers ?? 0);
   const averagePointsPerVisit = Number(restaurantKpis?.averagePointsPerVisit ?? 0);
 
-  const isDataLoading = loading || ((role === USER_ROLES.OWNER || role === USER_ROLES.STAFF) && !restaurant);
+  const isDataLoading =
+    loading || ((role === USER_ROLES.OWNER || role === USER_ROLES.STAFF) && !restaurant);
 
   return {
     t,

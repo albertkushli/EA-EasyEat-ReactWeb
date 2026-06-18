@@ -3,10 +3,7 @@ import plugin from 'tailwindcss/plugin';
 /** @type {import('tailwindcss').Config} */
 export default {
   darkMode: 'class',
-  content: [
-    "./index.html",
-    "./src/**/*.{js,ts,jsx,tsx}",
-  ],
+  content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
   theme: {
     extend: {
       colors: {
@@ -48,15 +45,15 @@ export default {
         'glass-dark': 'rgba(0, 0, 0, 0.5)',
       },
       backdropBlur: {
-        'xs': '2px',
+        xs: '2px',
       },
       boxShadow: {
-        'elevated': '0 20px 40px rgba(0, 0, 0, 0.12)',
-        'card': '0 4px 20px rgba(0, 0, 0, 0.08)',
+        elevated: '0 20px 40px rgba(0, 0, 0, 0.12)',
+        card: '0 4px 20px rgba(0, 0, 0, 0.08)',
         'card-hover': '0 12px 32px rgba(0, 0, 0, 0.15)',
       },
       animation: {
-        'shimmer': 'shimmer 2s infinite',
+        shimmer: 'shimmer 2s infinite',
         'fade-in': 'fade-in 0.5s ease-out',
         'slide-up': 'slide-up 0.4s ease-out',
       },
@@ -103,4 +100,4 @@ export default {
       });
     }),
   ],
-}
+};

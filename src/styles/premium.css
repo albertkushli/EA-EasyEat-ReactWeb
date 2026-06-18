@@ -14,13 +14,24 @@ body {
 /* Component styles (moved out of @layer to avoid requiring @tailwind components in this file) */
 /* Premium card with glassmorphism */
 .card-glass {
-  @apply bg-white/95 backdrop-blur-xl rounded-2xl border border-white/20 shadow-lg;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 1rem;
+  box-shadow:
+    0 10px 15px -3px rgba(15, 23, 42, 0.1),
+    0 4px 6px -4px rgba(15, 23, 42, 0.1);
 }
 
 .card-glass-lg {
-  @apply bg-white/95 backdrop-blur-xl rounded-3xl border border-white/20 shadow-2xl;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 1.5rem;
+  box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.25);
 }
-
 /* Smooth animations */
 .animate-in {
   animation: slideInUp 0.3s ease-out forwards;
@@ -47,10 +58,19 @@ body {
 
 /* Premium button styles */
 .btn-premium {
-  @apply relative px-6 py-3 rounded-xl font-semibold transition-all duration-200;
+  position: relative;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.75rem;
+  border: none;
+  font-weight: 600;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    background-position 0.2s ease;
   background: linear-gradient(135deg, #ff9800 0%, #f57c00 100%);
   color: white;
   box-shadow: 0 4px 15px rgba(255, 152, 0, 0.3);
+  cursor: pointer;
 }
 
 .btn-premium:hover {
@@ -64,12 +84,7 @@ body {
 
 /* Shimmer effect */
 .shimmer {
-  background: linear-gradient(
-    90deg,
-    #f0f0f0 25%,
-    #e0e0e0 50%,
-    #f0f0f0 75%
-  );
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
   background-size: 1000px 100%;
   animation: shimmer 2s infinite;
 }
@@ -139,7 +154,11 @@ a:focus-visible {
 /* Smooth transitions for touch devices */
 @media (hover: hover) {
   button {
-    transition: all 0.2s ease-out;
+    transition:
+      transform 0.2s ease-out,
+      box-shadow 0.2s ease-out,
+      background-color 0.2s ease-out,
+      color 0.2s ease-out;
   }
 }
 
@@ -154,4 +173,3 @@ a:focus-visible {
     scroll-behavior: auto !important;
   }
 }
-

@@ -1,10 +1,10 @@
-import apiClient from "@/services/apiClient";
-import { Reward } from "@/types/Reward";
+import apiClient from '@/services/apiClient';
+import { Reward } from '@/types/Reward';
 import { API_ENDPOINTS } from '../constants';
 
 export const getRewardsByRestaurant = async (restaurantId: string) => {
   if (!restaurantId) {
-    console.warn("getRewardsByRestaurant: No restaurantId provided");
+    console.warn('getRewardsByRestaurant: No restaurantId provided');
     return [];
   }
 
@@ -12,19 +12,19 @@ export const getRewardsByRestaurant = async (restaurantId: string) => {
     const response = await apiClient.get(`/rewards/restaurant/${restaurantId}`);
     const json = response.data;
     const data = json?.data || json;
-    return Array.isArray(data) ? data : (data.rewards || []);
+    return Array.isArray(data) ? data : data.rewards || [];
   } catch (error: any) {
-    console.error("getRewardsByRestaurant error:", error.response?.data || error.message);
+    console.error('getRewardsByRestaurant error:', error.response?.data || error.message);
     throw error;
   }
 };
 
 export const createReward = async (rewardData: Partial<Reward>) => {
   try {
-    const response = await apiClient.post("/rewards", rewardData);
+    const response = await apiClient.post('/rewards', rewardData);
     return response.data?.data || response.data;
   } catch (error: any) {
-    console.error("createReward error:", error.response?.data || error.message);
+    console.error('createReward error:', error.response?.data || error.message);
     throw error;
   }
 };
@@ -34,7 +34,7 @@ export const updateReward = async (rewardId: string, rewardData: Partial<Reward>
     const response = await apiClient.put(`/rewards/${rewardId}`, rewardData);
     return response.data?.data || response.data;
   } catch (error: any) {
-    console.error("updateReward error:", error.response?.data || error.message);
+    console.error('updateReward error:', error.response?.data || error.message);
     throw error;
   }
 };
@@ -42,11 +42,11 @@ export const updateReward = async (rewardId: string, rewardData: Partial<Reward>
 export const deleteReward = async (rewardId: string, restaurantId: string) => {
   try {
     const response = await apiClient.delete(`/rewards/${rewardId}/soft`, {
-      params: { restaurant_id: restaurantId }
+      params: { restaurant_id: restaurantId },
     });
     return response.data;
   } catch (error: any) {
-    console.error("deleteReward error:", error.response?.data || error.message);
+    console.error('deleteReward error:', error.response?.data || error.message);
     throw error;
   }
 };
@@ -58,9 +58,7 @@ export async function fetchRedemptionsByRestaurant(restaurantId: string): Promis
   if (!restaurantId) return [];
 
   try {
-    const res = await apiClient.get(
-      API_ENDPOINTS.REWARD_REDEMPTIONS_BY_RESTAURANT(restaurantId)
-    );
+    const res = await apiClient.get(API_ENDPOINTS.REWARD_REDEMPTIONS_BY_RESTAURANT(restaurantId));
     const json = res.data;
     const data = json?.data || json;
     return Array.isArray(data) ? data : [];
@@ -69,4 +67,3 @@ export async function fetchRedemptionsByRestaurant(restaurantId: string): Promis
     return [];
   }
 }
-

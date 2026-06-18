@@ -85,9 +85,7 @@ function estimatedTime(restaurantId?: string): string {
   if (!restaurantId) return times[0];
 
   // Keep value deterministic per restaurant to avoid visual jitter on rerenders.
-  const idx = restaurantId
-    .split('')
-    .reduce((acc, ch) => acc + ch.charCodeAt(0), 0) % times.length;
+  const idx = restaurantId.split('').reduce((acc, ch) => acc + ch.charCodeAt(0), 0) % times.length;
 
   return times[idx];
 }
@@ -187,7 +185,9 @@ const RestaurantListCard: FC<{
       </div>
 
       <div className="flex-1 p-3 min-w-0">
-        <p className="font-semibold text-[13px] text-gray-900 truncate leading-tight mb-0.5">{name}</p>
+        <p className="font-semibold text-[13px] text-gray-900 truncate leading-tight mb-0.5">
+          {name}
+        </p>
         <p className="text-[11px] text-gray-500 mb-2">{getCuisine(restaurant)}</p>
 
         <div className="flex flex-wrap gap-1.5 items-center">
@@ -208,7 +208,9 @@ const RestaurantListCard: FC<{
             {estimatedTime(restaurant._id)} min
           </span>
 
-          <span className="text-[11px] text-gray-500 bg-gray-50 px-2 py-0.5 rounded-md">{getPrice(restaurant)}</span>
+          <span className="text-[11px] text-gray-500 bg-gray-50 px-2 py-0.5 rounded-md">
+            {getPrice(restaurant)}
+          </span>
         </div>
       </div>
     </motion.div>
@@ -244,8 +246,11 @@ const MapStatsOverlay: FC<{ total: number; nearby: number }> = ({ total, nearby 
     className="absolute top-4 left-4 z-20 bg-white/90 backdrop-blur-xl rounded-2xl p-3.5 border border-white/60 shadow-lg"
   >
     <div className="flex items-center gap-2.5 mb-2.5">
-        <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ background: MAP_THEME.accentSoft }}>
-          <Building2 className="w-4 h-4" style={{ color: MAP_THEME.accent }} />
+      <div
+        className="w-7 h-7 rounded-lg flex items-center justify-center"
+        style={{ background: MAP_THEME.accentSoft }}
+      >
+        <Building2 className="w-4 h-4" style={{ color: MAP_THEME.accent }} />
       </div>
       <div>
         <p className="text-[15px] font-semibold text-gray-900 leading-none">{total}</p>
@@ -257,7 +262,10 @@ const MapStatsOverlay: FC<{ total: number; nearby: number }> = ({ total, nearby 
       <>
         <div className="h-px bg-black/[0.06] mb-2.5" />
         <div className="flex items-center gap-2.5">
-          <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ background: MAP_THEME.primarySoft }}>
+          <div
+            className="w-7 h-7 rounded-lg flex items-center justify-center"
+            style={{ background: MAP_THEME.primarySoft }}
+          >
             <Flame className="w-4 h-4" style={{ color: MAP_THEME.accent }} />
           </div>
           <div>
@@ -321,7 +329,7 @@ export const MapScreenPremium: FC<Props> = ({
       list = list.filter(
         (r) =>
           (r.profile?.name || '').toLowerCase().includes(q) ||
-          (r.profile?.category || []).some((c) => c.toLowerCase().includes(q))
+          (r.profile?.category || []).some((c) => c.toLowerCase().includes(q)),
       );
     }
 
@@ -357,18 +365,15 @@ export const MapScreenPremium: FC<Props> = ({
     }
   }, [initialSelectedRestaurantId]);
 
-  const handleSelectRestaurant = useCallback(
-    (id: string) => {
-      setSelectedId((prev) => (prev === id ? null : id));
-    },
-    []
-  );
+  const handleSelectRestaurant = useCallback((id: string) => {
+    setSelectedId((prev) => (prev === id ? null : id));
+  }, []);
 
   const handleViewDetails = useCallback(
     (restaurantId: string) => {
       navigate(`/dashboard?tab=discover&restaurantId=${restaurantId}`);
     },
-    [navigate]
+    [navigate],
   );
 
   const handleNearMe = useCallback(async () => {
@@ -415,7 +420,9 @@ export const MapScreenPremium: FC<Props> = ({
     <div
       className={[
         'flex w-full bg-[#F6F7FB] lg:flex-row',
-        embedded ? `${EMBEDDED_CONTAINER_HEIGHT_CLASS} min-h-[620px] max-h-[900px] flex-col` : 'h-screen flex-col',
+        embedded
+          ? `${EMBEDDED_CONTAINER_HEIGHT_CLASS} min-h-[620px] max-h-[900px] flex-col`
+          : 'h-screen flex-col',
       ].join(' ')}
       style={{ background: '#F6F7FB', fontFamily: "'DM Sans', system-ui, sans-serif" }}
     >
@@ -431,7 +438,10 @@ export const MapScreenPremium: FC<Props> = ({
               </div>
               <span className="font-bold text-[17px] text-gray-900">{brandLabel}</span>
             </div>
-            <span className="text-xs font-medium px-3 py-1 rounded-full" style={{ background: MAP_THEME.primaryLighter, color: PRIMARY }}>
+            <span
+              className="text-xs font-medium px-3 py-1 rounded-full"
+              style={{ background: MAP_THEME.primaryLighter, color: PRIMARY }}
+            >
               {filtered.length} places
             </span>
           </div>
@@ -482,8 +492,13 @@ export const MapScreenPremium: FC<Props> = ({
         <div className="h-px bg-black/[0.05] mx-5 mt-3" />
 
         <div className="flex items-center justify-between px-5 py-2.5">
-          <span className="text-[12px] text-gray-400">{isLoading ? 'Loading...' : `${filtered.length} restaurants`}</span>
-          <button className="flex items-center gap-1.5 text-[12px] font-medium" style={{ color: PRIMARY }}>
+          <span className="text-[12px] text-gray-400">
+            {isLoading ? 'Loading...' : `${filtered.length} restaurants`}
+          </span>
+          <button
+            className="flex items-center gap-1.5 text-[12px] font-medium"
+            style={{ color: PRIMARY }}
+          >
             <SlidersHorizontal className="w-3.5 h-3.5" />
             Sort
           </button>
@@ -554,7 +569,9 @@ export const MapScreenPremium: FC<Props> = ({
               onClick={() => setShowClusters((v) => !v)}
               className={[
                 'flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium border transition-all',
-                showClusters ? 'text-white border-transparent' : 'bg-white text-gray-600 border-black/[0.08]',
+                showClusters
+                  ? 'text-white border-transparent'
+                  : 'bg-white text-gray-600 border-black/[0.08]',
               ].join(' ')}
               style={showClusters ? { background: PRIMARY } : undefined}
             >
@@ -620,7 +637,7 @@ export const MapScreenPremium: FC<Props> = ({
             </motion.button>
           </div>
 
-           <NearMeButton onClick={handleNearMe} loading={nearMeLoading} />
+          <NearMeButton onClick={handleNearMe} loading={nearMeLoading} />
 
           {/* Restaurant Preview Card */}
           <RestaurantPreviewCard

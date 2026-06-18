@@ -48,7 +48,11 @@
   align-items: center !important;
   gap: 0.5rem !important;
   white-space: nowrap !important;
-  transition: all 0.2s ease !important;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.2s ease !important;
 }
 
 .hc-sidebar-nav__item:hover {
@@ -90,7 +94,10 @@
 .hc-sidebar-logout {
   padding: 0.5rem 1rem !important;
   border-radius: 99px !important;
-  transition: all 0.2s ease !important;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease,
+    transform 0.2s ease !important;
 }
 
 .hc-sidebar-logout:hover {
@@ -184,27 +191,3 @@
 .hc-objectives .hc-objective-card:nth-child(3) {
   animation-delay: 0.3s;
 }
-
-/* Pulse animation for hero orbs */
-@keyframes hc-pulse {
-  0% {
-    transform: scale(1);
-    opacity: 0.5;
-  }
-
-  50% {
-    transform: scale(1.05);
-    opacity: 0.7;
-  }
-
-  100% {
-    transform: scale(1);
-    opacity: 0.5;
-  }
-}
-
-.hc-hero::before {
-  animation: hc-pulse 6s infinite ease-in-out;
-}
-
-

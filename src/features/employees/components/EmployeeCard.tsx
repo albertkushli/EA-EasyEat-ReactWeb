@@ -52,7 +52,10 @@ export default function EmployeeCard({ employee, onEdit, onDelete }: EmployeeCar
   };
 
   const stats = {
-    visits: safeToNumber(employee?.stats?.totalVisits ?? employee?.stats?.visits ?? employee?.visits, 0),
+    visits: safeToNumber(
+      employee?.stats?.totalVisits ?? employee?.stats?.visits ?? employee?.visits,
+      0,
+    ),
     revenue: safeToNumber(employee?.stats?.revenue ?? 0, 0),
     rating: safeToNumber(employee?.stats?.averageRating ?? employee?.rating, 0),
   };
@@ -76,8 +79,12 @@ export default function EmployeeCard({ employee, onEdit, onDelete }: EmployeeCar
           </div>
           <div className="min-w-0 flex-1">
             <div className="flex flex-wrap items-center gap-2 mb-1">
-              <h3 className="text-lg font-bold text-gray-800 truncate m-0 p-0 leading-tight">{profile.name}</h3>
-              <span className={`text-[10px] font-black px-2 py-0.5 rounded border uppercase tracking-wider whitespace-nowrap shrink-0 ${roleClass}`}>
+              <h3 className="text-lg font-bold text-gray-800 truncate m-0 p-0 leading-tight">
+                {profile.name}
+              </h3>
+              <span
+                className={`text-[10px] font-black px-2 py-0.5 rounded border uppercase tracking-wider whitespace-nowrap shrink-0 ${roleClass}`}
+              >
                 {profile.role}
               </span>
             </div>
@@ -118,21 +125,29 @@ export default function EmployeeCard({ employee, onEdit, onDelete }: EmployeeCar
             <TrendingUp className="w-4 h-4 text-orange-500 shrink-0" />
             <span className="text-base font-black truncate">{stats.visits}</span>
           </div>
-          <p className="text-[10px] font-bold text-gray-400 uppercase tracking-tighter truncate">{t('dashboard.customer.stats.visits')}</p>
+          <p className="text-[10px] font-bold text-gray-400 uppercase tracking-tighter truncate">
+            {t('dashboard.customer.stats.visits')}
+          </p>
         </div>
         <div className="text-center border-l border-r border-gray-100">
           <div className="flex items-center justify-center gap-1 text-gray-800 mb-0.5">
             <DollarSign className="w-4 h-4 text-green-500 shrink-0" />
-            <span className="text-base font-black truncate">{CURRENCY_FORMATTER.format(stats.revenue)}</span>
+            <span className="text-base font-black truncate">
+              {CURRENCY_FORMATTER.format(stats.revenue)}
+            </span>
           </div>
-          <p className="text-[10px] font-bold text-gray-400 uppercase tracking-tighter truncate">{t('analytics.export.rewards')}</p>
+          <p className="text-[10px] font-bold text-gray-400 uppercase tracking-tighter truncate">
+            {t('analytics.export.rewards')}
+          </p>
         </div>
         <div className="text-center">
           <div className="flex items-center justify-center gap-1 text-gray-800 mb-0.5">
             <Star className="w-4 h-4 text-yellow-400 fill-current shrink-0" />
             <span className="text-base font-black truncate">{stats.rating.toFixed(1)}</span>
           </div>
-          <p className="text-[10px] font-bold text-gray-400 uppercase tracking-tighter truncate">{t('components.trends.rating')}</p>
+          <p className="text-[10px] font-bold text-gray-400 uppercase tracking-tighter truncate">
+            {t('components.trends.rating')}
+          </p>
         </div>
       </div>
     </div>

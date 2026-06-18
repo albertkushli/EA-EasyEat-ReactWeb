@@ -1,4 +1,7 @@
-/* ── Animations ── */
+/* =========================================================
+   ANIMATIONS — animacions reutilitzables
+   ========================================================= */
+
 @keyframes hc-fade-in {
   from {
     opacity: 0;
@@ -30,19 +33,6 @@
   animation: hc-slide-up 0.5s ease-out both;
 }
 
-/* ── Tab panel fallback ── */
-.hc-tab-panel {
-  background: #fff !important;
-  border-radius: 24px !important;
-  box-shadow: 0 2px 16px rgba(0, 0, 0, 0.04) !important;
-  border: 1px solid rgba(0, 0, 0, 0.04) !important;
-}
-
-.auth-card {
-  background: #fff !important;
-  box-shadow: 0 2px 16px rgba(0, 0, 0, 0.04) !important;
-}
-
 /* Pulse animation for hero orbs */
 @keyframes hc-pulse {
   0% {
@@ -63,4 +53,13 @@
 
 .hc-hero::before {
   animation: hc-pulse 6s infinite ease-in-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hc-animate-fade,
+  .hc-animate-slide,
+  .hc-hero::before {
+    animation: none;
+    opacity: 1;
+  }
 }

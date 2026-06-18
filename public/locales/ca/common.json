@@ -224,7 +224,8 @@
         "removeFavorite": "Treure de preferits",
         "checkIn": "Fer Check-in ara",
         "redeem": "Reclamar",
-        "showQr": "Mostrar el codi QR"
+        "showQr": "Mostrar el codi QR",
+        "reportRestaurant": "Denunciar restaurant"
       },
       "details": {
         "about": "Sobre el restaurant",
@@ -232,6 +233,24 @@
         "multiplierTitle": "Multiplica els teus punts!",
         "multiplierDesc": "Aconsegueix punts extra per cada visita a aquest restaurant!"
       }
+    },
+    "report": {
+      "title": "Denunciar restaurant",
+      "description": "Explica'ns per què cal revisar aquest restaurant.",
+      "fieldLabel": "Motiu de la denúncia",
+      "helper": "Escriu un motiu clar i breu.",
+      "remaining": "{{count}} / 500 caràcters",
+      "validation": {
+        "min": "El motiu ha de tenir almenys 3 caràcters.",
+        "max": "El motiu no pot superar els 500 caràcters."
+      },
+      "actions": {
+        "send": "Enviar denúncia",
+        "sending": "Enviant…",
+        "cancel": "Cancel·lar"
+      },
+      "success": "Denúncia enviada correctament",
+      "error": "No s'ha pogut enviar la denúncia"
     },
     "employee": {
       "loadingOwner": "Carregant panell de Propietari…",
@@ -681,5 +700,27 @@
       "interact": "Interactuar amb la demo",
       "start": "Començar amb EasyEat"
     }
+  },
+  "assistant": {
+    "title": "Assistent IA",
+    "subtitle": "EasyEat · IA",
+    "notes1": "L'assistent no té memòria.",
+    "notes2": "Les converses no es guarden.",
+    "clear": "Netejar conversa",
+    "close": "Tancar assistent",
+    "error": "S'ha produït un error. Torna-ho a intentar.",
+    "empty": {
+      "title": "Com puc ajudar-te?",
+      "desc": "Pregunta'm qualsevol cosa sobre restaurants, menú, recomanacions o punts."
+    },
+    "suggestion": {
+      "1": "Quins restaurants tens disponibles?",
+      "2": "On puc menjar per menys de 10€?",
+      "3": "Recomana'm un restaurant de pizza"
+    },
+    "thinking": "Pensant...",
+    "placeholder": "Escriu el teu missatge...",
+    "send": "Enviar missatge",
+    "hint": "Enter per enviar · Shift+Enter per nova línia"
   }
 }

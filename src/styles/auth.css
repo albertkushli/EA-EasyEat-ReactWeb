@@ -17,7 +17,9 @@
   color: var(--auth-text);
   overflow-y: auto;
   overflow-x: hidden;
-  transition: all 0.6s ease;
+  transition:
+    background 0.6s ease,
+    color 0.6s ease;
 }
 
 /* Theme Classes applied to .auth-page */
@@ -83,19 +85,14 @@
   z-index: 10;
   width: 100%;
   max-width: 460px;
-  background: var(--auth-card-bg);
+  background: #ffffff;
   backdrop-filter: blur(40px);
   -webkit-backdrop-filter: blur(40px);
   border: 1px solid var(--auth-card-border);
   border-radius: 28px;
   padding: 3rem;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.1), inset 0 0 0 1px rgba(255, 255, 255, 0.8);
+  box-shadow: 0 2px 16px rgba(0, 0, 0, 0.04);
   text-align: left;
-}
-
-.auth-card {
-  background: #fff !important;
-  box-shadow: 0 2px 16px rgba(0, 0, 0, 0.04) !important;
 }
 
 .brand {
@@ -165,7 +162,11 @@
   font-weight: 700;
   color: var(--auth-text-muted);
   cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease,
+    background-position 0.3s ease,
+    opacity 0.3s ease;
 }
 
 .tab-btn.active {
@@ -194,32 +195,35 @@
   width: 100%;
 }
 
-.input-icon {
+.input-icon,
+.input-icon-right {
   position: absolute;
-  left: 1rem;
   color: var(--auth-text-muted);
-  transition: color 0.3s;
   z-index: 2;
+  transition: color 0.3s ease;
+}
+
+.input-icon {
+  left: 1rem;
   pointer-events: none;
 }
 
 .input-icon-right {
-  position: absolute;
   right: 1rem;
-  color: var(--auth-text-muted);
   background: none;
   border: none;
   cursor: pointer;
   padding: 0;
   display: flex;
-  z-index: 2;
-  transition: color 0.3s;
 }
 
 .input-icon-right:hover {
   color: var(--auth-text);
 }
-
+/* TODO CSS refactor:
+   Aquest patró és equivalent a .ee-input de components.css.
+   Es manté temporalment per compatibilitat amb auth.
+*/
 .form-input {
   width: 100%;
   padding: 0.9rem 1rem 0.9rem 2.8rem !important;
@@ -229,7 +233,10 @@
   font-size: 1rem;
   color: var(--auth-text);
   font-weight: 500;
-  transition: all 0.3s;
+  transition:
+    border-color 0.3s ease,
+    box-shadow 0.3s ease,
+    background-color 0.3s ease;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
   box-sizing: border-box;
 }
@@ -242,14 +249,19 @@
 .form-input:focus {
   outline: none;
   border-color: var(--primary);
-  box-shadow: 0 0 0 4px var(--primary-light), 0 4px 6px rgba(0, 0, 0, 0.05);
+  box-shadow:
+    0 0 0 4px var(--primary-light),
+    0 4px 6px rgba(0, 0, 0, 0.05);
   background: #ffffff;
 }
 
-.form-input:focus~.input-icon {
+.form-input:focus ~ .input-icon {
   color: var(--primary);
 }
-
+/* TODO CSS refactor:
+   Aquest patró és equivalent a .ee-btn / .ee-btn-primary de components.css.
+   Es manté temporalment per compatibilitat amb les pantalles d'autenticació.
+*/
 .btn {
   width: 100%;
   padding: 1rem;
@@ -262,7 +274,11 @@
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease,
+    background-position 0.3s ease,
+    opacity 0.3s ease;
   letter-spacing: 0.2px;
 }
 
@@ -298,7 +314,9 @@
   color: var(--primary);
   font-weight: 700;
   text-decoration: none;
-  transition: all 0.2s;
+  transition:
+    opacity 0.2s ease,
+    border-color 0.2s ease;
   border-bottom: 2px solid transparent;
   padding-bottom: 1px;
 }
@@ -354,7 +372,7 @@
   font-size: 0.85rem;
   font-weight: 500;
   color: var(--auth-text-muted);
-  transition: all 0.3s;
+  transition: color 0.3s ease;
 }
 
 .pwd-rule.valid {
@@ -370,7 +388,10 @@
   justify-content: center;
   background: rgba(0, 0, 0, 0.15);
   color: #fff;
-  transition: all 0.3s;
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease,
+    transform 0.3s ease;
   font-size: 0.6rem;
   box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
 }
@@ -401,11 +422,11 @@
 }
 
 .auth-divider::before {
-  margin-right: .75rem;
+  margin-right: 0.75rem;
 }
 
 .auth-divider::after {
-  margin-left: .75rem;
+  margin-left: 0.75rem;
 }
 
 /* Contenedor de Botón de Google */
@@ -418,7 +439,9 @@
   min-height: 44px;
   background: transparent;
   border-radius: 14px;
-  transition: all 0.3s ease;
+  transition:
+    background-color 0.3s ease,
+    box-shadow 0.3s ease;
 }
 
 .google-signin-container iframe {

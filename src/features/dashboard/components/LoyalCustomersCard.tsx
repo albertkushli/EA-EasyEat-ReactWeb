@@ -8,7 +8,7 @@ export default function LoyalCustomersCard({ value }: { value: number }) {
     <MetricCard
       icon={<Users size={20} />}
       value={value}
-      label={t("components.metrics.loyalCustomers")}
+      label={t('components.metrics.loyalCustomers')}
       variant="customers"
     />
   );

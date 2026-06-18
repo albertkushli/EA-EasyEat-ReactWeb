@@ -224,7 +224,8 @@
         "removeFavorite": "Remove from favorites",
         "checkIn": "Check-in now",
         "redeem": "Redeem",
-        "showQr": "Show QR code"
+        "showQr": "Show QR code",
+        "reportRestaurant": "Report restaurant"
       },
       "details": {
         "about": "About the restaurant",
@@ -232,6 +233,24 @@
         "multiplierTitle": "Multiply your points!",
         "multiplierDesc": "Get extra points for every visit to this restaurant!"
       }
+    },
+    "report": {
+      "title": "Report restaurant",
+      "description": "Tell us why this restaurant should be reviewed.",
+      "fieldLabel": "Report reason",
+      "helper": "Write a clear and concise reason.",
+      "remaining": "{{count}} / 500 characters",
+      "validation": {
+        "min": "The reason must be at least 3 characters long.",
+        "max": "The reason cannot exceed 500 characters."
+      },
+      "actions": {
+        "send": "Send report",
+        "sending": "Sending…",
+        "cancel": "Cancel"
+      },
+      "success": "Report sent successfully",
+      "error": "Could not send the report"
     },
     "employee": {
       "loadingOwner": "Loading Owner dashboard…",
@@ -690,5 +709,27 @@
       "interact": "Interact with the demo",
       "start": "Start with EasyEat"
     }
+  },
+  "assistant": {
+    "title": "AI Assistant",
+    "subtitle": "EasyEat · AI",
+    "notes1": "The assistant has no memory.",
+    "notes2": "Conversations are not saved.",
+    "clear": "Clear conversation",
+    "close": "Close assistant",
+    "error": "An error occurred. Please try again.",
+    "empty": {
+      "title": "How can I help you?",
+      "desc": "Ask me anything about restaurants, menu, recommendations, or points."
+    },
+    "suggestion": {
+      "1": "What restaurants do you have available?",
+      "2": "Where can I eat for less than €10?",
+      "3": "Recommend me a pizza restaurant"
+    },
+    "thinking": "Thinking...",
+    "placeholder": "Type your message...",
+    "send": "Send message",
+    "hint": "Enter to send · Shift+Enter for new line"
   }
 }

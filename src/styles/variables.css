@@ -3,60 +3,19 @@
    ========================================================= */
 
 :root {
+  /* Base theme tokens */
   --text: #6b6375;
   --text-h: #08060d;
-  --bg: #fff;
+  --bg: #ffffff;
   --border: #e5e4e7;
   --code-bg: #f4f3ec;
   --accent: #aa3bff;
   --accent-bg: rgba(170, 59, 255, 0.1);
   --accent-border: rgba(170, 59, 255, 0.5);
   --social-bg: rgba(244, 243, 236, 0.5);
-  --shadow:
-    rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
+  --shadow: rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
 
-  --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --mono: ui-monospace, Consolas, monospace;
-
-  font: 18px/145% var(--sans);
-  letter-spacing: 0.18px;
-  color-scheme: light dark;
-  color: var(--text);
-  background: var(--bg);
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-
-  @media (max-width: 1024px) {
-    font-size: 16px;
-  }
-}
-
-/* Dark mode overrides */
-@media (prefers-color-scheme: dark) {
-  :root {
-    --text: #9ca3af;
-    --text-h: #f3f4f6;
-    --bg: #16171d;
-    --border: #2e303a;
-    --code-bg: #1f2028;
-    --accent: #c084fc;
-    --accent-bg: rgba(192, 132, 252, 0.15);
-    --accent-border: rgba(192, 132, 252, 0.5);
-    --social-bg: rgba(47, 48, 58, 0.5);
-    --shadow:
-      rgba(0, 0, 0, 0.4) 0 10px 15px -3px, rgba(0, 0, 0, 0.25) 0 4px 6px -2px;
-  }
-
-  #social .button-icon {
-    filter: invert(1) brightness(2);
-  }
-}
-
-/* Auth & Customer/Employee theme variables */
-:root {
+  /* Brand theme tokens */
   --theme-customer: hsl(26, 95%, 55%);
   --theme-customer-grad: hsl(35, 95%, 60%);
   --theme-customer-light: hsla(26, 95%, 55%, 0.1);
@@ -67,6 +26,7 @@
   --theme-employee-light: hsla(142, 71%, 45%, 0.1);
   --theme-employee-glow: hsla(142, 71%, 45%, 0.4);
 
+  /* Auth tokens */
   --auth-bg-start: #f8fafc;
   --auth-bg-end: #e2e8f0;
   --auth-text: #0f172a;
@@ -76,25 +36,59 @@
   --auth-input-bg: rgba(255, 255, 255, 0.95);
   --auth-input-border: #cbd5e1;
 
-  /* Global theme tokens (customer/dark context) */
+  /* App surface tokens */
   --clr-bg: #0f172a;
   --clr-surface: #111827;
   --clr-card: rgba(255, 255, 255, 0.05);
   --clr-border: rgba(255, 255, 255, 0.1);
-
   --clr-primary: #f97316;
   --clr-accent: #22c55e;
-
   --clr-text: #ffffff;
   --clr-text-muted: #9ca3af;
 
-  --font: system-ui, -apple-system, sans-serif;
-
+  /* Shared effects */
   --shadow-md: 0 10px 20px rgba(0, 0, 0, 0.3);
   --shadow-lg: 0 20px 40px rgba(0, 0, 0, 0.4);
-
   --glass-bg: rgba(255, 255, 255, 0.04);
   --glass-border: rgba(255, 255, 255, 0.08);
   --grad-brand: linear-gradient(135deg, #f97316, #22c55e);
   --ease-out: cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* Typography */
+  --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
+  --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
+  --mono: ui-monospace, Consolas, monospace;
+  --font: system-ui, -apple-system, sans-serif;
+
+  font: 18px/145% var(--sans);
+  letter-spacing: 0.18px;
+  color-scheme: light;
+  color: var(--text);
+  background: var(--bg);
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Manual dark mode controlled by the app */
+.dark {
+  --text: #9ca3af;
+  --text-h: #f3f4f6;
+  --bg: #16171d;
+  --border: #2e303a;
+  --code-bg: #1f2028;
+  --accent: #c084fc;
+  --accent-bg: rgba(192, 132, 252, 0.15);
+  --accent-border: rgba(192, 132, 252, 0.5);
+  --social-bg: rgba(47, 48, 58, 0.5);
+  --shadow: rgba(0, 0, 0, 0.4) 0 10px 15px -3px, rgba(0, 0, 0, 0.25) 0 4px 6px -2px;
+
+  color-scheme: dark;
+}
+
+@media (max-width: 1024px) {
+  :root {
+    font-size: 16px;
+  }
 }

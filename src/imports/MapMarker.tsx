@@ -8,7 +8,7 @@ export function createMarkerUrl(
   color: string,
   size: number = 36,
   isSelected: boolean = false,
-  isNearby: boolean = false
+  isNearby: boolean = false,
 ): string {
   const primaryColor = isNearby ? MAP_THEME.nearby : color;
   const glowSize = isSelected ? 8 : 0; // number (stdDeviation expects a number)
@@ -33,5 +33,3 @@ export function createMarkerUrl(
 
   return `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg)}`;
 }
-
-

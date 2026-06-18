@@ -1,8 +1,23 @@
-import { LayoutDashboard, Users, Gift, BarChart3, Settings, LogOut, Store, UtensilsCrossed, Users2, MessageSquare, CreditCard } from "lucide-react";
-import { motion } from "framer-motion";
-import { useAuth } from "@/context/AuthContext";
-import { useTranslation } from "react-i18next";
-import { Link, useNavigate } from "react-router-dom";
+import {
+  LayoutDashboard,
+  Users,
+  Gift,
+  BarChart3,
+  Settings,
+  LogOut,
+  Store,
+  UtensilsCrossed,
+  Users2,
+  MessageSquare,
+  CreditCard,
+  Moon,
+  Sun,
+} from 'lucide-react';
+import { motion } from 'framer-motion';
+import { useAuth } from '@/context/AuthContext';
+import { useTranslation } from 'react-i18next';
+import { Link, useNavigate } from 'react-router-dom';
+import { useTheme } from '@/context/ThemeContext';
 
 interface SidebarProps {
   activeView: string;
@@ -11,16 +26,22 @@ interface SidebarProps {
   restaurantAddress?: string;
 }
 
-export function Sidebar({ activeView, onViewChange, restaurantName, restaurantAddress }: SidebarProps) {
+export function Sidebar({
+  activeView,
+  onViewChange,
+  restaurantName,
+  restaurantAddress,
+}: SidebarProps) {
   const { user, logout, role } = useAuth();
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const { isDark, toggleTheme } = useTheme();
   const isOwner = role === 'owner';
 
   const baseMenuItems = [
     { id: 'profile', icon: Users, label: t('sidebar.profile', 'Perfil') },
   ];
-  
+
   const ownerMenuItems = [
     { id: 'dashboard', icon: LayoutDashboard, label: t('sidebar.dashboard', 'Panel de control') },
     { id: 'clients', icon: Users, label: t('sidebar.clients', 'Clientes') },
@@ -30,7 +51,7 @@ export function Sidebar({ activeView, onViewChange, restaurantName, restaurantAd
     { id: 'analytics', icon: BarChart3, label: t('sidebar.analytics', 'Estadísticas') },
     { id: 'chat', icon: MessageSquare, label: t('sidebar.chat', 'Chat') },
     { id: 'billing', icon: CreditCard, label: t('sidebar.billing', 'Suscripción') },
-    { id: 'settings', icon: Settings, label: t('sidebar.settings', 'Ajustes') }
+    { id: 'settings', icon: Settings, label: t('sidebar.settings', 'Ajustes') },
   ];
 
   // Si es owner, ve su perfil más todo lo demás. Si es staff, solo su perfil.
@@ -46,7 +67,9 @@ export function Sidebar({ activeView, onViewChange, restaurantName, restaurantAd
             <Store className="h-5 w-5" />
           </div>
           <div className="min-w-0">
-            <div className="text-lg font-black leading-tight text-white truncate">{restaurantName}</div>
+            <div className="text-lg font-black leading-tight text-white truncate">
+              {restaurantName}
+            </div>
             {restaurantAddress && (
               <div className="mt-1 flex items-center gap-1 text-[10px] font-medium text-slate-400 opacity-80">
                 <span>📍</span>
@@ -68,12 +91,15 @@ export function Sidebar({ activeView, onViewChange, restaurantName, restaurantAd
                   onViewChange(item.id);
                   navigate(`/dashboard/${item.id}`);
                 }}
-                className={`flex w-full items-center gap-3 rounded-2xl px-4 py-3 text-left transition-all duration-200 ${activeView === item.id
-                  ? 'bg-gradient-to-r from-orange-500 to-red-500 text-white shadow-lg shadow-orange-500/20'
-                  : 'text-slate-200/85 hover:bg-white/5 hover:text-white'
-                  }`}
+                className={`flex w-full items-center gap-3 rounded-2xl px-4 py-3 text-left transition-all duration-200 ${
+                  activeView === item.id
+                    ? 'bg-gradient-to-r from-orange-500 to-red-500 text-white shadow-lg shadow-orange-500/20'
+                    : 'text-slate-200/85 hover:bg-white/5 hover:text-white'
+                }`}
               >
-                <item.icon className={`h-5 w-5 ${activeView === item.id ? 'text-white' : 'text-slate-300/90'}`} />
+                <item.icon
+                  className={`h-5 w-5 ${activeView === item.id ? 'text-white' : 'text-slate-300/90'}`}
+                />
                 <span className="text-base font-semibold">{item.label}</span>
               </motion.button>
             </motion.li>
@@ -88,14 +114,38 @@ export function Sidebar({ activeView, onViewChange, restaurantName, restaurantAd
             {user?.name?.[0]?.toUpperCase() || 'U'}
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-bold truncate">{user?.name || t('auth.login.tabs.customer')}</p>
-            <p className="text-xs text-slate-300/70 truncate">{
-              user?.role === 'owner' ? t('auth.roles.owner') :
-              user?.role === 'staff' ? t('auth.roles.staff') :
-              t('auth.roles.customer')
-            }</p>
+            <p className="text-sm font-bold truncate">
+              {user?.name || t('auth.login.tabs.customer')}
+            </p>
+            <p className="text-xs text-slate-300/70 truncate">
+              {user?.role === 'owner'
+                ? t('auth.roles.owner')
+                : user?.role === 'staff'
+                  ? t('auth.roles.staff')
+                  : t('auth.roles.customer')}
+            </p>
           </div>
         </div>
+
+        {/* Selector de tema */}
+        <button
+          type="button"
+          onClick={toggleTheme}
+          className="flex w-full items-center justify-between rounded-lg px-4 py-2.5 text-slate-200/85 transition-all duration-200 hover:bg-white/5 hover:text-white"
+          aria-label={isDark ? 'Activar modo claro' : 'Activar modo oscuro'}
+        >
+          <span className="flex items-center gap-3">
+            {isDark ? <Moon className="h-5 w-5" /> : <Sun className="h-5 w-5" />}
+            <span className="text-sm font-semibold">{isDark ? 'Modo Oscuro' : 'Modo Claro'}</span>
+          </span>
+          <span
+            className={`relative h-6 w-10 rounded-full transition-colors ${isDark ? 'bg-orange-500' : 'bg-slate-600'}`}
+          >
+            <span
+              className={`absolute left-1 top-1 h-4 w-4 rounded-full bg-white transition-transform ${isDark ? 'translate-x-4' : 'translate-x-0'}`}
+            />
+          </span>
+        </button>
 
         {/* Botón de logout */}
         <motion.button

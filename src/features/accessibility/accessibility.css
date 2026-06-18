@@ -1,0 +1,346 @@
+/* ==========================================================================
+   Accessibility Floating Button & Modal Styles
+   ========================================================================== */
+
+/* Floating Button - Positioned at bottom: 96px to prevent overlap with Support Chat */
+.accessibility-floating-button {
+  position: fixed;
+  right: 40px;
+  bottom: 110px;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  border: none;
+  background: linear-gradient(135deg, #0077b6, #0096c7);
+  color: white;
+  cursor: pointer;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8px 20px rgba(0, 119, 182, 0.35);
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.accessibility-floating-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 26px rgba(0, 119, 182, 0.45);
+}
+
+.accessibility-icon {
+  width: 30px;
+  height: 30px;
+  fill: white;
+}
+
+/* Modal Overlay */
+.accessibility-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 10000;
+  background-color: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(2px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+/* Accessibility Modal */
+.accessibility-modal {
+  width: 100%;
+  max-width: 800px;
+  max-height: 85vh;
+  background-color: #ffffff;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+  display: flex;
+  flex-direction: column;
+  animation: accelFadeIn 0.3s ease-out;
+}
+
+@keyframes accelFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Modal Header */
+.accessibility-header {
+  background-color: #0077b6;
+  color: #ffffff;
+  padding: 18px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 2px solid #005f8f;
+}
+
+.accessibility-header h2 {
+  margin: 0;
+  font-size: 22px;
+  color: #ffffff;
+  font-family:
+    system-ui,
+    -apple-system,
+    sans-serif;
+  font-weight: 600;
+}
+
+.accessibility-close-button {
+  background: transparent;
+  border: none;
+  color: #ffffff;
+  font-size: 22px;
+  font-weight: bold;
+  cursor: pointer;
+  padding: 5px 10px;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+
+.accessibility-close-button:hover {
+  background-color: rgba(255, 255, 255, 0.15);
+}
+
+/* Modal Content & Grid Layout */
+.accessibility-content {
+  padding: 24px;
+  overflow-y: auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 20px;
+  background-color: #f8fafc;
+}
+
+/* Reset All Button at the top of content */
+.accessibility-reset-all {
+  grid-column: 1 / -1;
+  justify-self: end;
+  background-color: #ef4444;
+  color: #ffffff;
+  font-weight: 600;
+  border: none;
+  border-radius: 6px;
+  padding: 10px 20px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.accessibility-reset-all:hover {
+  background-color: #dc2626;
+}
+
+/* Sections */
+.accessibility-section {
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 12px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.02);
+}
+
+.accessibility-section h3 {
+  margin: 0 0 4px 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #334155;
+  font-family:
+    system-ui,
+    -apple-system,
+    sans-serif;
+  border-bottom: 1px solid #f1f5f9;
+  padding-bottom: 6px;
+}
+
+/* Control Elements */
+.accessibility-control-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+}
+
+.accessibility-control-row input[type='color'] {
+  flex-grow: 1;
+  height: 40px;
+  padding: 0;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.accessibility-control-row button,
+.accessibility-section button:not(.accessibility-reset-all):not(.toggle-images-btn) {
+  padding: 8px 12px;
+  background-color: #e2e8f0;
+  color: #334155;
+  font-weight: 500;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.15s;
+}
+
+.accessibility-control-row button:hover,
+.accessibility-section button:not(.accessibility-reset-all):not(.toggle-images-btn):hover {
+  background-color: #cbd5e1;
+}
+
+/* Font Selector Buttons */
+.accessibility-font-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.accessibility-font-buttons button {
+  flex: 1;
+  padding: 10px;
+  font-size: 14px;
+}
+
+.accessibility-font-buttons button.active {
+  background-color: #0077b6;
+  color: #ffffff;
+}
+
+/* Slider Controls Row */
+.accessibility-control-row-slider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.accessibility-control-row-slider button {
+  width: 32px;
+  height: 32px;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 !important;
+}
+
+.accessibility-control-row-slider input[type='range'] {
+  flex: 1;
+  cursor: pointer;
+}
+
+.value-display {
+  font-weight: bold;
+  min-width: 45px;
+  text-align: right;
+  font-size: 14px;
+  color: #475569;
+}
+
+/* Section Reset Button */
+.section-reset-btn {
+  margin-top: auto;
+  align-self: flex-start;
+}
+
+/* Image Visibility Button */
+.toggle-images-btn {
+  background-color: #0284c7;
+  color: white;
+  font-weight: 600;
+  border: none;
+  border-radius: 6px;
+  padding: 10px 15px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  width: 100%;
+}
+
+.toggle-images-btn:hover {
+  background-color: #0369a1;
+}
+
+.toggle-images-btn.hidden {
+  background-color: #f59e0b;
+}
+
+.toggle-images-btn.hidden:hover {
+  background-color: #d97706;
+}
+
+/* ==========================================================================
+   GLOBAL ACCESSIBILITY OVERRIDES (SAFE AND NON-DESTRUCTIVE)
+   ========================================================================== */
+
+/* 1. Fondo global - Corregido selector 'body.accessibility-enabled' */
+body.accessibility-enabled {
+  background-color: var(--accessibility-bg-color) !important;
+}
+
+body.accessibility-enabled #root,
+body.accessibility-enabled main,
+body.accessibility-enabled .dashboard-page,
+body.accessibility-enabled .page-content,
+body.accessibility-enabled .main-content {
+  background-color: var(--accessibility-bg-color) !important;
+}
+
+/* 
+   2. Textos seguros - Se aplican las fuentes, tamaños y colores de texto a las
+   etiquetas de contenido pero excluyendo barras de navegación, menús, botones,
+   iconos, campos de entrada, widgets y al propio panel de accesibilidad.
+*/
+body.accessibility-enabled
+  :where(p, h1, h2, h3, h4, h5, h6, li, label, td, th, dt, dd):not(button *):not(.btn *):not(
+    .button *
+  ):not(.support-chat-container *):not(.accessibility-overlay *):not(.he-topbar *):not(
+    .hc-sidebar *
+  ):not(.bg-sidebar *):not(input *):not(select *):not(textarea *):not(.lucide *):not(
+    .material-icons *
+  ):not(.navbar *):not(.nav-link) {
+  color: var(--accessibility-text-color) !important;
+  font-family: var(--accessibility-font-family) !important;
+  font-size: var(--accessibility-font-size) !important;
+  letter-spacing: var(--accessibility-letter-spacing) !important;
+  line-height: var(--accessibility-line-height) !important;
+}
+
+body.accessibility-enabled
+  span:not(.lucide):not(.material-icons):not(.icon):not(.accessibility-icon):not(
+    [class*='icon']
+  ):not(.he-topbar *):not(.hc-sidebar *):not(.bg-sidebar *):not(.navbar *):not(button *):not(
+    .btn *
+  ):not(.button *):not(input *):not(select *):not(textarea *):not(.support-chat-container *):not(
+    .accessibility-overlay *
+  ),
+body.accessibility-enabled
+  a:not(.btn):not(.button):not([class*='nav']):not(.hc-sidebar-nav__item):not(.he-topbar *):not(
+    .hc-sidebar *
+  ):not(.bg-sidebar *):not(.navbar *):not(button *):not(.btn *):not(.button *):not(
+    .support-chat-container *
+  ):not(.accessibility-overlay *) {
+  color: var(--accessibility-text-color) !important;
+  font-family: var(--accessibility-font-family) !important;
+  font-size: var(--accessibility-font-size) !important;
+  letter-spacing: var(--accessibility-letter-spacing) !important;
+  line-height: var(--accessibility-line-height) !important;
+}
+
+/* 3. Ocultar imágenes de forma segura (sin borrar SVGs, iconos ni botones) */
+.accessibility-hide-images img:not(.accessibility-overlay img):not(.support-chat-container img),
+.accessibility-hide-images
+  picture:not(.accessibility-overlay picture):not(.support-chat-container picture) {
+  display: none !important;
+}

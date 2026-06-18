@@ -224,7 +224,8 @@
         "removeFavorite": "Quitar de favoritos",
         "checkIn": "Hacer Check-in ahora",
         "redeem": "Reclamar",
-        "showQr": "Mostrar el código QR"
+        "showQr": "Mostrar el código QR",
+        "reportRestaurant": "Denunciar restaurante"
       },
       "details": {
         "about": "Sobre el restaurante",
@@ -232,6 +233,24 @@
         "multiplierTitle": "¡Multiplica tus puntos!",
         "multiplierDesc": "¡Consigue puntos extra por cada visita a este restaurante!"
       }
+    },
+    "report": {
+      "title": "Denunciar restaurante",
+      "description": "Cuéntanos por qué este restaurante debería revisarse.",
+      "fieldLabel": "Motivo de la denuncia",
+      "helper": "Escribe un motivo claro y breve.",
+      "remaining": "{{count}} / 500 caracteres",
+      "validation": {
+        "min": "El motivo debe tener al menos 3 caracteres.",
+        "max": "El motivo no puede superar los 500 caracteres."
+      },
+      "actions": {
+        "send": "Enviar denuncia",
+        "sending": "Enviando…",
+        "cancel": "Cancelar"
+      },
+      "success": "Denuncia enviada correctamente",
+      "error": "No se ha podido enviar la denuncia"
     },
     "employee": {
       "loadingOwner": "Cargando panel de Propietario…",
@@ -692,5 +711,27 @@
       "interact": "Interactuar con la demo",
       "start": "Empezar con EasyEat"
     }
+  },
+  "assistant": {
+    "title": "Asistente IA",
+    "subtitle": "EasyEat · IA",
+    "notes1": "El asistente no tiene memoria.",
+    "notes2": "Las conversaciones no se guardan.",
+    "clear": "Limpiar conversación",
+    "close": "Cerrar asistente",
+    "error": "Se ha producido un error. Inténtalo de nuevo.",
+    "empty": {
+      "title": "¿Cómo puedo ayudarte?",
+      "desc": "Pregúntame cualquier cosa sobre restaurantes, menú, recomendaciones o puntos."
+    },
+    "suggestion": {
+      "1": "¿Qué restaurantes tienes disponibles?",
+      "2": "¿Dónde puedo comer por menos de 10€?",
+      "3": "Recomiéndame un restaurante de pizza"
+    },
+    "thinking": "Pensando...",
+    "placeholder": "Escribe tu mensaje...",
+    "send": "Enviar mensaje",
+    "hint": "Enter para enviar · Shift+Enter para nueva línea"
   }
 }
