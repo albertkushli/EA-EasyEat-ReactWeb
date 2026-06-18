@@ -632,7 +632,7 @@ export function CustomerSidebar({ activeTab, onTabChange, user, onLogout }: Cust
           onClick={() => onTabChange('rewards')}
         >
           <Gift size={18} />
-          <span>{t('sidebar.rewards', 'Recompenses')}</span>
+          <span>{t('sidebar.pointsWallet', 'Cartera de Punts')}</span>
         </button>
         <button
           type="button"
@@ -1242,19 +1242,19 @@ export function CustomerDiscoverView({
 
   return (
     <>
-    <div className="hc-discover-view">
-      <div className="hc-discover-header">
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            gap: '1rem',
-            marginBottom: '1.5rem',
-          }}
-        >
-          <h2 style={{ fontSize: '2rem', margin: 0 }}>{t('discover.title', 'Descobrir')}</h2>
-          <button
+      <div className="hc-discover-view">
+        <div className="hc-discover-header">
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              gap: '1rem',
+              marginBottom: '1.5rem',
+            }}
+          >
+            <h2 style={{ fontSize: '2rem', margin: 0 }}>{t('discover.title', 'Descobrir')}</h2>
+            <button
               type="button"
               className='hc-map-btn'
               onClick={() => setIsAssistantOpen(true)}
@@ -1264,17 +1264,17 @@ export function CustomerDiscoverView({
               <Bot size={18} />
               <span>{t('discover.assistant', "Assistent")}</span>
             </button>
-          <button
-            type="button"
-            className="hc-map-btn"
-            onClick={() => navigate('/map')}
-            title={t('discover.openMap', 'Obrir el mapa')}
-            aria-label={t('discover.openMap', 'Obrir el mapa')}
-          >
-            <Map size={18} />
-            <span>{t('discover.map', 'Mapa')}</span>
-          </button>
-        </div>
+            <button
+              type="button"
+              className="hc-map-btn"
+              onClick={() => navigate('/map')}
+              title={t('discover.openMap', 'Obrir el mapa')}
+              aria-label={t('discover.openMap', 'Obrir el mapa')}
+            >
+              <Map size={18} />
+              <span>{t('discover.map', 'Mapa')}</span>
+            </button>
+          </div>
 
           <div className="hc-search-bar">
             <div className="hc-search-input">
@@ -1291,44 +1291,44 @@ export function CustomerDiscoverView({
             </button>
           </div>
 
-        <div className="hc-category-pills">
-          {categories.map((category) => (
-            <button
-              key={category.name}
-              className={`hc-category-pill ${selectedCategory === category.name ? 'active' : ''}`}
-              onClick={() => {
-                trackEvent('Discover', 'Filter category', category.name);
-                onCategoryChange(category.name);
-              }}
-            >
-              <span style={{ fontSize: '1.2rem', lineHeight: 1 }}>{category.icon}</span>
-              {category.label}
-            </button>
-          ))}
+          <div className="hc-category-pills">
+            {categories.map((category) => (
+              <button
+                key={category.name}
+                className={`hc-category-pill ${selectedCategory === category.name ? 'active' : ''}`}
+                onClick={() => {
+                  trackEvent('Discover', 'Filter category', category.name);
+                  onCategoryChange(category.name);
+                }}
+              >
+                <span style={{ fontSize: '1.2rem', lineHeight: 1 }}>{category.icon}</span>
+                {category.label}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className="hc-discover-results">
+          <p className="hc-results-count">
+            <strong>{filteredRestaurants.length}</strong>{' '}
+            {t('discover.resultsCount', 'restaurants trobats')}
+          </p>
+          <div className="hc-large-cards">
+            {filteredRestaurants.map((restaurant) => (
+              <CustomerLargeRestaurantCard
+                key={restaurant._id || restaurant.id}
+                restaurant={restaurant}
+                onClick={() => {
+                  trackEvent('Restaurant', 'Open detail', restaurant.profile?.name);
+                  onSelectRestaurant(restaurant);
+                }}
+              />
+            ))}
+          </div>
         </div>
       </div>
 
-      <div className="hc-discover-results">
-        <p className="hc-results-count">
-          <strong>{filteredRestaurants.length}</strong>{' '}
-          {t('discover.resultsCount', 'restaurants trobats')}
-        </p>
-        <div className="hc-large-cards">
-          {filteredRestaurants.map((restaurant) => (
-            <CustomerLargeRestaurantCard
-              key={restaurant._id || restaurant.id}
-              restaurant={restaurant}
-              onClick={() => {
-                trackEvent('Restaurant', 'Open detail', restaurant.profile?.name);
-                onSelectRestaurant(restaurant);
-              }}
-            />
-          ))}
-        </div>
-      </div>
-    </div>
-
-    {/* AI Assistant side panel */}
+      {/* AI Assistant side panel */}
       <AssistantChat isOpen={isAssistantOpen} onClose={() => setIsAssistantOpen(false)} />
     </>
   );
