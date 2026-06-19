@@ -134,15 +134,27 @@ export interface IPaginatedResponse<T> {
 // RESEÑAS
 // ─────────────────────────────────────────
 
+export interface IReviewRatings {
+  foodQuality?: number;
+  staffService?: number;
+  cleanliness?: number;
+  environment?: number;
+}
+
 export interface IReview {
   _id?: string;
   id?: string;
-  restaurant_id: string | any;
+  employee_id?: string | null;
   customer_id: string | any;
+  restaurant_id: string | any;
+  date?: string | Date;
   globalRating: number;
+  images?: string[];
+  ratings?: IReviewRatings;
   comment?: string;
   likes?: number;
-  date?: string | Date;
+  likedBy?: string[];
+  deleted?: boolean;
   createdAt?: string | Date;
   updatedAt?: string | Date;
 }

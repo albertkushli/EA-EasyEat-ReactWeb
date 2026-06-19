@@ -385,6 +385,7 @@
     "dishes": "Carta / Plats",
     "employees": "Empleats",
     "rewards": "Recompenses",
+    "pointsWallet": "Cartera de Punts",
     "analytics": "Estadístiques",
     "settings": "Ajustos",
     "logout": "Tancar sessió",
@@ -416,7 +417,7 @@
       "title": "Tendències de l'últim mes",
       "subtitle": "Visites vs Recompenses canviades",
       "visits": "Visites",
-      "rewards": "Premis"
+      "rewards": "Recompenses"
     },
     "prediction": {
       "title": "Predicció",
@@ -452,7 +453,7 @@
       "lastVisit": "Última Visita",
       "loyalty": "Fidelització",
       "currentLevel": "Nivell actual",
-      "rewardsRedeemed": "Premis canviats",
+      "rewardsRedeemed": "Recompenses canviades",
       "preferences": "Preferències",
       "visitHistory": "Historial de Visites",
       "lastReviews": "Últimes Ressenyes",

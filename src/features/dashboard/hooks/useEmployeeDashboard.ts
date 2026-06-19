@@ -1,11 +1,11 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '@/context/AuthContext';
 import { restaurantService, reviewService } from '@/services';
 import { getDishesByRestaurant } from '@/services/dish.service';
 import { DEFAULT_META, USER_ROLES, VISITS_LIMIT, VISITS_PAGE_SIZE } from '@/constants';
-import type { IEmployeeStats, IRestaurantStats, IReview, IVisit, UserRole } from '@/types';
+import type { IEmployeeStats, IRestaurant, IRestaurantStats, IReview, IVisit, UserRole } from '@/types';
 import type { Dish } from '@/types/Dish';
 
 interface UseEmployeeDashboardResult {
@@ -14,6 +14,9 @@ interface UseEmployeeDashboardResult {
   role: UserRole | null;
   token: string | null;
   restaurant: ReturnType<typeof useAuth>['restaurant'];
+  restaurants: IRestaurant[];
+  selectedRestaurant: IRestaurant | null;
+  setSelectedRestaurant: (restaurant: IRestaurant | null) => void;
   logout: ReturnType<typeof useAuth>['logout'];
   activeView: string;
   setActiveView: (view: string) => void;
@@ -48,9 +51,14 @@ export function useEmployeeDashboard(): UseEmployeeDashboardResult {
   const [reviews, setReviews] = useState<IReview[]>([]);
   const [employees] = useState<IEmployeeStats[]>([]);
   const [dishes, setDishes] = useState<Dish[]>([]);
+  const [restaurants, setRestaurants] = useState<IRestaurant[]>([]);
+  const [selectedRestaurant, setSelectedRestaurant] = useState<IRestaurant | null>(null);
   const { view } = useParams();
   const [loading, setLoading] = useState(true);
   const isOwner = role === USER_ROLES.OWNER;
+  const activeRestaurant = selectedRestaurant ?? restaurant;
+  const activeRestaurantId = activeRestaurant?._id ?? activeRestaurant?.id ?? user?.restaurant_id ?? '';
+
   const [activeView, setActiveView] = useState(() => {
     if (
       view &&
@@ -95,14 +103,16 @@ export function useEmployeeDashboard(): UseEmployeeDashboardResult {
   useEffect(() => {
     async function fetchVisits() {
       setLoading(true);
-      if (!user?.restaurant_id) {
+      if (!activeRestaurantId) {
+        setVisits([]);
+        setVisitsMeta(DEFAULT_META);
         setLoading(false);
         return;
       }
 
       try {
         const response = await restaurantService.fetchRestaurantVisits(
-          user.restaurant_id,
+          activeRestaurantId,
           visitsPage,
           VISITS_LIMIT,
         );
@@ -116,34 +126,64 @@ export function useEmployeeDashboard(): UseEmployeeDashboardResult {
     }
 
     fetchVisits();
-  }, [user?.restaurant_id, token, visitsPage]);
+  }, [activeRestaurantId, token, visitsPage]);
 
   useEffect(() => {
     async function loadAllVisits() {
-      if (!user?.restaurant_id) {
+      if (!activeRestaurantId) {
         setAllVisits([]);
         return;
       }
 
       const visitsData = await restaurantService.fetchAllRestaurantVisits(
-        user.restaurant_id,
+        activeRestaurantId,
         VISITS_PAGE_SIZE,
       );
       setAllVisits(visitsData);
     }
 
     loadAllVisits();
-  }, [user?.restaurant_id, token]);
+  }, [activeRestaurantId, token]);
+
+  useEffect(() => {
+    async function fetchOwnerRestaurants() {
+      if (role !== USER_ROLES.OWNER || !user?._id) {
+        return;
+      }
+
+      try {
+        const ownedRestaurants = await restaurantService.fetchRestaurantsByOwner(user._id);
+        setRestaurants(ownedRestaurants);
+
+        if (!selectedRestaurant) {
+          const matchedRestaurant =
+            ownedRestaurants.find(
+              (rest) => rest._id === restaurant?._id || rest._id === restaurant?.id,
+            ) ??
+            ownedRestaurants.find((rest) => rest._id === user.restaurant_id) ??
+            restaurant ??
+            ownedRestaurants[0] ??
+            null;
+
+          setSelectedRestaurant(matchedRestaurant);
+        }
+      } catch (error) {
+        console.error('Error fetching owner restaurants:', error);
+      }
+    }
+
+    fetchOwnerRestaurants();
+  }, [role, user?._id, restaurant, selectedRestaurant]);
 
   useEffect(() => {
     async function fetchKpis() {
-      if (!token || !user?.restaurant_id) {
+      if (!token || !activeRestaurantId) {
         setRestaurantKpis(null);
         return;
       }
 
       try {
-        const stats = await restaurantService.fetchRestaurantStats(user.restaurant_id);
+        const stats = await restaurantService.fetchRestaurantStats(activeRestaurantId);
         setRestaurantKpis(stats);
       } catch (error) {
         console.error('Error fetching restaurant KPIs:', error);
@@ -152,17 +192,17 @@ export function useEmployeeDashboard(): UseEmployeeDashboardResult {
     }
 
     fetchKpis();
-  }, [token, user?.restaurant_id]);
+  }, [token, activeRestaurantId]);
 
   useEffect(() => {
     async function fetchReviews() {
-      if (!token || !user?.restaurant_id) {
+      if (!token || !activeRestaurantId) {
         setReviews([]);
         return;
       }
 
       try {
-        const data = await reviewService.fetchRestaurantReviews(user.restaurant_id);
+        const data = await reviewService.fetchRestaurantReviews(activeRestaurantId);
         setReviews(data);
       } catch (error) {
         console.error('Error fetching reviews:', error);
@@ -171,17 +211,17 @@ export function useEmployeeDashboard(): UseEmployeeDashboardResult {
     }
 
     fetchReviews();
-  }, [token, user?.restaurant_id]);
+  }, [token, activeRestaurantId]);
 
   useEffect(() => {
     async function fetchDishes() {
-      if (!token || !user?.restaurant_id) {
+      if (!token || !activeRestaurantId) {
         setDishes([]);
         return;
       }
 
       try {
-        const data = await getDishesByRestaurant(user.restaurant_id);
+        const data = await getDishesByRestaurant(activeRestaurantId);
         setDishes(data);
       } catch (error) {
         console.error('Error fetching dishes:', error);
@@ -190,17 +230,24 @@ export function useEmployeeDashboard(): UseEmployeeDashboardResult {
     }
 
     fetchDishes();
-  }, [token, user?.restaurant_id]);
+  }, [token, activeRestaurantId]);
 
-  const restName = restaurant?.profile?.name || t('dashboard.employee.yourRestaurant');
-  const restRating = restaurant?.profile?.globalRating;
-  const restAddress = restaurant?.profile?.location?.address;
+  const restName = activeRestaurant?.profile?.name || t('dashboard.employee.yourRestaurant');
+  const restRating = activeRestaurant?.profile?.globalRating;
+  const restAddress = activeRestaurant?.profile?.location?.address;
 
   const loyalCustomers = Number(restaurantKpis?.loyalCustomers ?? 0);
   const averagePointsPerVisit = Number(restaurantKpis?.averagePointsPerVisit ?? 0);
 
   const isDataLoading =
-    loading || ((role === USER_ROLES.OWNER || role === USER_ROLES.STAFF) && !restaurant);
+    loading || ((role === USER_ROLES.OWNER || role === USER_ROLES.STAFF) && !activeRestaurant);
+
+  const handleSelectedRestaurantChange = useCallback(
+    (restaurant: IRestaurant | null) => {
+      setSelectedRestaurant(restaurant);
+    },
+    [],
+  );
 
   return {
     t,
@@ -208,6 +255,9 @@ export function useEmployeeDashboard(): UseEmployeeDashboardResult {
     role: role as UserRole | null,
     token,
     restaurant,
+    restaurants,
+    selectedRestaurant,
+    setSelectedRestaurant: handleSelectedRestaurantChange,
     logout,
     activeView,
     setActiveView,

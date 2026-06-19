@@ -219,6 +219,21 @@ export async function fetchRestaurants(): Promise<Restaurant[]> {
   }
 }
 
+export async function fetchRestaurantsByOwner(ownerId: string): Promise<Restaurant[]> {
+  if (!ownerId) return [];
+
+  try {
+    const res = await apiClient.get(API_ENDPOINTS.RESTAURANTS, {
+      params: { owner_id: ownerId },
+    });
+
+    return extractArray<IRestaurant>(res.data).map(normalizeRestaurant);
+  } catch (err) {
+    console.error('Error fetching owner restaurants:', err);
+    return [];
+  }
+}
+
 /**
  * Obtiene restaurantes cercanos a una ubicación
  */
@@ -243,6 +258,7 @@ export const restaurantService = {
   fetchRestaurantStats,
   fetchRestaurantVisits,
   fetchAllRestaurantVisits,
+  fetchRestaurantsByOwner,
   updateRestaurant,
   getRestaurant,
   softDeleteRestaurant,
