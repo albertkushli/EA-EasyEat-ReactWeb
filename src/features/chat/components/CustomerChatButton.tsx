@@ -3,6 +3,7 @@ import { MessageSquare, X, Loader2, Wifi, WifiOff, AlertCircle } from 'lucide-re
 import { motion, AnimatePresence } from 'framer-motion';
 import { useChat } from '@/context/ChatContext';
 import ChatWindow from './ChatWindow';
+import { Card } from '@/app/components/ui/card';
 
 interface CustomerChatButtonProps {
   restaurantId: string;
