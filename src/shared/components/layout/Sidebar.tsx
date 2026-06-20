@@ -47,9 +47,7 @@ export function Sidebar({
   const hasRestaurantSelector = Array.isArray(restaurants) && restaurants.length > 1;
   const currentRestaurantId = selectedRestaurant?._id ?? restaurants?.[0]?._id ?? '';
 
-  const baseMenuItems = [
-    { id: 'profile', icon: Users, label: t('sidebar.profile', 'Perfil') },
-  ];
+  const baseMenuItems = [{ id: 'profile', icon: Users, label: t('sidebar.profile', 'Perfil') }];
 
   const ownerMenuItems = [
     { id: 'dashboard', icon: LayoutDashboard, label: t('sidebar.dashboard', 'Panel de control') },
@@ -95,7 +93,8 @@ export function Sidebar({
             <select
               value={currentRestaurantId}
               onChange={(event) => {
-                const nextRestaurant = restaurants?.find((rest) => rest._id === event.target.value) ?? null;
+                const nextRestaurant =
+                  restaurants?.find((rest) => rest._id === event.target.value) ?? null;
                 onRestaurantChange?.(nextRestaurant);
               }}
               className="w-full rounded-2xl border border-white/10 bg-slate-950/70 px-3 py-2 text-sm text-white outline-none transition duration-200 focus:border-orange-400 focus:ring-4 focus:ring-orange-500/10"
@@ -121,10 +120,11 @@ export function Sidebar({
                   onViewChange(item.id);
                   navigate(`/dashboard/${item.id}`);
                 }}
-                className={`flex w-full items-center gap-3 rounded-2xl px-4 py-3 text-left transition-all duration-200 ${activeView === item.id
-                  ? 'bg-gradient-to-r from-orange-500 to-red-500 text-white shadow-lg shadow-orange-500/20'
-                  : 'text-slate-200/85 hover:bg-white/5 hover:text-white'
-                  }`}
+                className={`flex w-full items-center gap-3 rounded-2xl px-4 py-3 text-left transition-all duration-200 ${
+                  activeView === item.id
+                    ? 'bg-gradient-to-r from-orange-500 to-red-500 text-white shadow-lg shadow-orange-500/20'
+                    : 'text-slate-200/85 hover:bg-white/5 hover:text-white'
+                }`}
               >
                 <item.icon
                   className={`h-5 w-5 ${activeView === item.id ? 'text-white' : 'text-slate-300/90'}`}

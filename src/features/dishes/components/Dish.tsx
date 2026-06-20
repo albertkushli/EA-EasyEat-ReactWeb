@@ -1,4 +1,4 @@
-import { useEffect, useState, type MouseEvent } from 'react';
+import { useEffect, useState, useCallback, type MouseEvent } from 'react';
 import {
   getDishesByRestaurant,
   createDish,
@@ -10,7 +10,6 @@ import { useAuth } from '../../../context/AuthContext';
 import {
   ChevronDown,
   Info,
-  Euro,
   Clock,
   AlertCircle,
   Loader2,
@@ -38,30 +37,43 @@ export default function Dishes() {
 
   const restaurantId = user?.restaurant_id || restaurant?._id || restaurant?.id || '';
 
-  useEffect(() => {
-    if (restaurantId) {
-      loadDishes();
-    } else {
-      setLoading(false);
-      setError(
-        t('employees.errorNoRestaurant') || 'No se pudo identificar el restaurante del usuario.',
-      );
+  const loadDishes = useCallback(async () => {
+    try {
+      queueMicrotask(() => {
+        setLoading(true);
+        setError(null);
+      });
+      const data = await getDishesByRestaurant(restaurantId);
+      queueMicrotask(() => {
+        setDishes(data);
+      });
+    } catch (err: unknown) {
+      console.error('Error loading dishes:', err);
+      const msg = err instanceof Error ? err.message : '';
+      queueMicrotask(() => {
+        setError(msg || t('dishes.errorLoading') || 'No se pudieron cargar los platos.');
+      });
+    } finally {
+      queueMicrotask(() => {
+        setLoading(false);
+      });
     }
   }, [restaurantId, t]);
 
-  const loadDishes = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      const data = await getDishesByRestaurant(restaurantId);
-      setDishes(data);
-    } catch (err: any) {
-      console.error('Error loading dishes:', err);
-      setError(err.message || t('dishes.errorLoading') || 'No se pudieron cargar los platos.');
-    } finally {
-      setLoading(false);
+  useEffect(() => {
+    if (restaurantId) {
+      queueMicrotask(() => {
+        loadDishes();
+      });
+    } else {
+      queueMicrotask(() => {
+        setLoading(false);
+        setError(
+          t('employees.errorNoRestaurant') || 'No se pudo identificar el restaurante del usuario.',
+        );
+      });
     }
-  };
+  }, [restaurantId, t, loadDishes]);
 
   const handleAddClick = () => {
     setSelectedDish(null);
@@ -84,7 +96,7 @@ export default function Dishes() {
       try {
         await deleteDish(dishId, restaurantId);
         setDishes(dishes.filter((d) => d._id !== dishId));
-      } catch (err) {
+      } catch {
         alert(t('dishes.errorDelete') || 'Error al eliminar el plato');
       }
     }

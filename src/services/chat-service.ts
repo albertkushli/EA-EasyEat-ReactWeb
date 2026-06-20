@@ -10,8 +10,8 @@ export type SenderRole = 'customer' | 'employee' | 'owner';
 export interface Message {
   _id: string;
   conversation: string;
-  customer: any;
-  restaurant: any;
+  customer: Record<string, unknown> | string;
+  restaurant: Record<string, unknown> | string;
   sender: string;
   senderRole: SenderRole;
   contenido: string;

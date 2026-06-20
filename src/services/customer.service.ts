@@ -2,6 +2,7 @@
 // SERVICIO DE CLIENTES
 // ============================================
 
+import { isAxiosError } from 'axios';
 import apiClient from '@/services/apiClient';
 import { API_ENDPOINTS } from '../constants';
 import { ICustomer } from '../types';
@@ -9,11 +10,15 @@ import { ICustomer } from '../types';
 /**
  * Obtiene un cliente por ID con relaciones pobladas (visitas, reseñas, etc.)
  */
-export async function fetchCustomerFull(customerId: string): Promise<any | null> {
+export async function fetchCustomerFull(
+  customerId: string,
+): Promise<Record<string, unknown> | null> {
   if (!customerId) return null;
 
   try {
-    const res = await apiClient.get<any>(API_ENDPOINTS.CUSTOMER_FULL(customerId));
+    const res = await apiClient.get<Record<string, unknown>>(
+      API_ENDPOINTS.CUSTOMER_FULL(customerId),
+    );
     return res.data ?? null;
   } catch (err) {
     console.error('Error fetching customer full:', err);
@@ -92,8 +97,12 @@ export const getCustomersByRestaurant = async (restaurantId: string) => {
     const json = response.data;
 
     return Array.isArray(json?.data) ? json.data : Array.isArray(json) ? json : [];
-  } catch (error: any) {
-    console.error('getCustomersByRestaurant error:', error.response?.data || error.message);
+  } catch (error: unknown) {
+    if (isAxiosError(error)) {
+      console.error('getCustomersByRestaurant error:', error.response?.data || error.message);
+    } else {
+      console.error('getCustomersByRestaurant error:', error);
+    }
     throw error;
   }
 };
@@ -103,8 +112,12 @@ export const getAllCustomers = async () => {
     const response = await apiClient.get(`/customers?limit=1000`);
     const json = response.data;
     return Array.isArray(json?.data) ? json.data : Array.isArray(json) ? json : [];
-  } catch (error: any) {
-    console.error('getAllCustomers error:', error.response?.data || error.message);
+  } catch (error: unknown) {
+    if (isAxiosError(error)) {
+      console.error('getAllCustomers error:', error.response?.data || error.message);
+    } else {
+      console.error('getAllCustomers error:', error);
+    }
     throw error;
   }
 };

@@ -4,9 +4,11 @@ import { useNavigate } from 'react-router-dom';
 import { Map } from 'lucide-react';
 import type { Restaurant } from '@/types/Restaurant';
 
+import type { RestaurantStore } from '@/stores/restaurantStore';
+
 export default function DiscoverScreen() {
-  const restaurants = useRestaurantStore((s: any) => s.restaurants);
-  const load = useRestaurantStore((s: any) => s.loadRestaurants);
+  const restaurants = useRestaurantStore((s: RestaurantStore) => s.restaurants);
+  const load = useRestaurantStore((s: RestaurantStore) => s.loadRestaurants);
   const navigate = useNavigate();
 
   useEffect(() => {

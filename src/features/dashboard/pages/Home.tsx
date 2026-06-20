@@ -13,7 +13,6 @@ import {
   Gift,
   MapPin,
   Search,
-  Star,
   Trophy,
   Users,
   Zap,

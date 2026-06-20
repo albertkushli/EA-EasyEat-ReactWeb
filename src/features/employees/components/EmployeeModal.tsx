@@ -6,8 +6,8 @@ import { useTranslation } from 'react-i18next';
 interface EmployeeModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSave: (employee: any) => Promise<void>;
-  employee?: any | null;
+  onSave: (employee: Record<string, unknown>) => Promise<void>;
+  employee?: Record<string, unknown> | null;
 }
 
 export default function EmployeeModal({ isOpen, onClose, onSave, employee }: EmployeeModalProps) {
@@ -22,23 +22,25 @@ export default function EmployeeModal({ isOpen, onClose, onSave, employee }: Emp
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (employee) {
-      setFormData({
-        name: employee.profile?.name || '',
-        email: employee.profile?.email || '',
-        phone: employee.profile?.phone || '',
-        role: employee.profile?.role || 'staff',
-        password: '', // Don't show password
-      });
-    } else {
-      setFormData({
-        name: '',
-        email: '',
-        phone: '',
-        role: 'staff',
-        password: '',
-      });
-    }
+    queueMicrotask(() => {
+      if (employee) {
+        setFormData({
+          name: (employee.profile as Record<string, unknown>)?.name as string || '',
+          email: (employee.profile as Record<string, unknown>)?.email as string || '',
+          phone: (employee.profile as Record<string, unknown>)?.phone as string || '',
+          role: (employee.profile as Record<string, unknown>)?.role as string || 'staff',
+          password: '', // Don't show password
+        });
+      } else {
+        setFormData({
+          name: '',
+          email: '',
+          phone: '',
+          role: 'staff',
+          password: '',
+        });
+      }
+    });
   }, [employee, isOpen]);
 
   const handleSubmit = async (e: React.FormEvent) => {

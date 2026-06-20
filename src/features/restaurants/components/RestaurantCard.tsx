@@ -16,9 +16,11 @@ type RestaurantCardRestaurant = {
 
 interface RestaurantCardProps {
   restaurant: RestaurantCardRestaurant;
+  onClick?: () => void;
+  onClose?: () => void;
 }
 
-export default function RestaurantCard({ restaurant }: RestaurantCardProps) {
+export default function RestaurantCard({ restaurant, onClick, onClose }: RestaurantCardProps) {
   const { t } = useTranslation();
   const profile = restaurant.profile || {};
   const imageUrl =

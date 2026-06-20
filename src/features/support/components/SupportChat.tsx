@@ -113,7 +113,7 @@ const SupportChat: React.FC = () => {
       };
 
       setMessages((prev) => [...prev, botMessage]);
-    } catch (err: any) {
+    } catch (err: Record<string, unknown>) {
       console.error('[SupportChat] Error:', err);
       setError(err.message || 'Error al conectar con el servidor.');
     } finally {

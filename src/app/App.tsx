@@ -34,7 +34,8 @@ function PublicRoute({ children }: { children: ReactNode }) {
 export default function App() {
   function MapRouteWrapper() {
     const location = useLocation();
-    const state: any = (location && (location.state as any)) || {};
+    const state: Record<string, unknown> =
+      (location && (location.state as Record<string, unknown>)) || {};
     const { restaurants, loading, coords, handleRequestNearby } = useMapExperienceData();
 
     return (
@@ -42,7 +43,7 @@ export default function App() {
         restaurants={restaurants}
         userLocation={coords}
         isLoading={loading}
-        initialSelectedRestaurantId={state.openRestaurantId}
+        initialSelectedRestaurantId={state.openRestaurantId as string | undefined}
         onRequestNearby={handleRequestNearby}
       />
     );
@@ -103,10 +104,7 @@ export default function App() {
               />
               <Route path="/discover" element={<DiscoverScreen />} />
               {/*<Route path="/map" element={<MapScreen />} />*/}
-              <Route
-                path="/restaurant/:id"
-                element={<RestaurantDetailsScreen />}
-              />
+              <Route path="/restaurant/:id" element={<RestaurantDetailsScreen />} />
 
               <Route path="/map" element={<MapRouteWrapper />} />
               <Route path="/aviso-legal" element={<LegalNotice />} />

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Store,
   Clock,
@@ -19,17 +19,19 @@ import {
   Loader2,
 } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { updateRestaurant, softDeleteRestaurant } from '@/services/restaurant.service';
+import { updateRestaurant } from '@/services/restaurant.service';
 import { useAuth } from '@/context/AuthContext';
 import { useTranslation } from 'react-i18next';
 
+import { Restaurant } from '@/types/Restaurant';
+
 interface SettingsProps {
-  restaurant: any;
+  restaurant: Partial<Restaurant> | null;
 }
 
 export default function Settings({ restaurant: initialRestaurant }: SettingsProps) {
   const { t } = useTranslation();
-  const { user, logout } = useAuth() as any;
+  const { user } = useAuth();
   const [activeTab, setActiveTab] = useState('general');
   const [loading, setLoading] = useState(false);
   const [restaurant, setRestaurant] = useState(initialRestaurant);
@@ -58,7 +60,10 @@ export default function Settings({ restaurant: initialRestaurant }: SettingsProp
     setLoading(true);
     try {
       const restaurantId = user?.restaurant_id || restaurant?._id;
-      const updated = await updateRestaurant(restaurantId, restaurant);
+      const updated = await updateRestaurant(
+        restaurantId as string,
+        restaurant as Partial<Restaurant>,
+      );
       setRestaurant(updated);
       setIsEditingSchedule(false);
       alert(t('settings.successSave') || 'Configuración guardada correctamente');
@@ -76,41 +81,41 @@ export default function Settings({ restaurant: initialRestaurant }: SettingsProp
     field: 'open' | 'close',
     value: string,
   ) => {
-    const newTimetable = { ...timetable };
+    const newTimetable: any = { ...timetable };
     if (!newTimetable[day]) newTimetable[day] = [{ open: '09:00', close: '22:00' }];
     newTimetable[day][index][field] = value;
     setRestaurant({
       ...restaurant,
       profile: {
-        ...restaurant.profile,
+        ...restaurant?.profile,
         timetable: newTimetable,
-      },
+      } as Restaurant['profile'],
     });
   };
 
   const addTimeSlot = (day: string) => {
-    const newTimetable = { ...timetable };
+    const newTimetable: any = { ...timetable };
     if (!newTimetable[day]) newTimetable[day] = [];
     newTimetable[day].push({ open: '09:00', close: '22:00' });
     setRestaurant({
       ...restaurant,
       profile: {
-        ...restaurant.profile,
+        ...restaurant?.profile,
         timetable: newTimetable,
-      },
+      } as Restaurant['profile'],
     });
   };
 
   const removeTimeSlot = (day: string, index: number) => {
-    const newTimetable = { ...timetable };
+    const newTimetable: any = { ...timetable };
     if (newTimetable[day]) {
       newTimetable[day].splice(index, 1);
       setRestaurant({
         ...restaurant,
         profile: {
-          ...restaurant.profile,
+          ...restaurant?.profile,
           timetable: newTimetable,
-        },
+        } as Restaurant['profile'],
       });
     }
   };
@@ -175,7 +180,10 @@ export default function Settings({ restaurant: initialRestaurant }: SettingsProp
                   label={t('settings.general.name')}
                   value={restaurant?.profile?.name}
                   onChange={(val: string) =>
-                    setRestaurant({ ...restaurant, profile: { ...restaurant.profile, name: val } })
+                    setRestaurant({
+                      ...restaurant,
+                      profile: { ...restaurant?.profile, name: val } as any,
+                    })
                   }
                 />
                 <InputGroup
@@ -184,7 +192,7 @@ export default function Settings({ restaurant: initialRestaurant }: SettingsProp
                   onChange={(val: string) =>
                     setRestaurant({
                       ...restaurant,
-                      profile: { ...restaurant.profile, category: val },
+                      profile: { ...restaurant?.profile, category: val } as any,
                     })
                   }
                 />
@@ -196,9 +204,9 @@ export default function Settings({ restaurant: initialRestaurant }: SettingsProp
                     setRestaurant({
                       ...restaurant,
                       profile: {
-                        ...restaurant.profile,
-                        contact: { ...restaurant.profile?.contact, email: val },
-                      },
+                        ...restaurant?.profile,
+                        contact: { ...restaurant?.profile?.contact, email: val },
+                      } as any,
                     })
                   }
                 />
@@ -210,9 +218,9 @@ export default function Settings({ restaurant: initialRestaurant }: SettingsProp
                     setRestaurant({
                       ...restaurant,
                       profile: {
-                        ...restaurant.profile,
-                        contact: { ...restaurant.profile?.contact, phone: val },
-                      },
+                        ...restaurant?.profile,
+                        contact: { ...restaurant?.profile?.contact, phone: val },
+                      } as any,
                     })
                   }
                 />
@@ -225,9 +233,9 @@ export default function Settings({ restaurant: initialRestaurant }: SettingsProp
                       setRestaurant({
                         ...restaurant,
                         profile: {
-                          ...restaurant.profile,
-                          location: { ...restaurant.profile.location, address: val },
-                        },
+                          ...restaurant?.profile,
+                          location: { ...restaurant?.profile?.location, address: val },
+                        } as any,
                       })
                     }
                   />
@@ -240,9 +248,9 @@ export default function Settings({ restaurant: initialRestaurant }: SettingsProp
                     setRestaurant({
                       ...restaurant,
                       profile: {
-                        ...restaurant.profile,
-                        contact: { ...restaurant.profile?.contact, website: val },
-                      },
+                        ...restaurant?.profile,
+                        contact: { ...restaurant?.profile?.contact, website: val },
+                      } as any,
                     })
                   }
                 />
@@ -337,7 +345,7 @@ export default function Settings({ restaurant: initialRestaurant }: SettingsProp
                       <div className="flex items-center gap-4">
                         {isEditingSchedule ? (
                           <div className="flex flex-col gap-2">
-                            {slots?.map((s: any, i: number) => (
+                            {slots?.map((s: { open: string; close: string }, i: number) => (
                               <div key={i} className="flex items-center gap-2">
                                 <input
                                   type="time"
@@ -377,7 +385,7 @@ export default function Settings({ restaurant: initialRestaurant }: SettingsProp
                           </span>
                         ) : (
                           <div className="flex gap-2">
-                            {slots.map((s: any, i: number) => (
+                            {slots.map((s: { open: string; close: string }, i: number) => (
                               <span
                                 key={i}
                                 className={`text-sm font-bold ${isToday ? 'text-orange-600' : 'text-gray-500'}`}
@@ -465,168 +473,172 @@ export default function Settings({ restaurant: initialRestaurant }: SettingsProp
                 </button>
               </div>
 
-              <div className="space-y-2">
-                <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">
-                  {t('settings.points.method')}
-                </p>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <button
-                    type="button"
-                    onClick={() =>
-                      setRestaurant({
-                        ...restaurant,
-                        profile: {
-                          ...restaurant.profile,
-                          pointsSystem: {
-                            ...(restaurant.profile.pointsSystem || {}),
-                            method: 'simple',
-                          },
-                        },
-                      })
-                    }
-                    className={`p-6 rounded-3xl border-2 transition-all text-left space-y-2 ${
-                      restaurant.profile.pointsSystem?.method === 'simple'
-                        ? 'border-orange-500 bg-orange-50'
-                        : 'border-gray-100 bg-gray-50 hover:border-gray-200'
-                    }`}
-                  >
-                    <div className="flex items-center justify-between">
-                      <h4 className="font-black text-gray-800">
-                        {t('settings.points.simple.title')}
-                      </h4>
-                      {restaurant.profile.pointsSystem?.method === 'simple' && (
-                        <div className="w-4 h-4 bg-orange-500 rounded-full border-4 border-white shadow-sm" />
-                      )}
-                    </div>
-                    <p className="text-xs text-gray-500 leading-relaxed">
-                      {t('settings.points.simple.description')}
+              {restaurant != null && (
+                <>
+                  <div className="space-y-2">
+                    <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">
+                      {t('settings.points.method')}
                     </p>
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() =>
-                      setRestaurant({
-                        ...restaurant,
-                        profile: {
-                          ...restaurant.profile,
-                          pointsSystem: {
-                            ...(restaurant.profile.pointsSystem || {}),
-                            method: 'exponential',
-                          },
-                        },
-                      })
-                    }
-                    className={`p-6 rounded-3xl border-2 transition-all text-left space-y-2 ${
-                      restaurant.profile.pointsSystem?.method === 'exponential'
-                        ? 'border-orange-500 bg-orange-50'
-                        : 'border-gray-100 bg-gray-50 hover:border-gray-200'
-                    }`}
-                  >
-                    <div className="flex items-center justify-between">
-                      <h4 className="font-black text-gray-800">
-                        {t('settings.points.exponential.title')}
-                      </h4>
-                      {restaurant.profile.pointsSystem?.method === 'exponential' && (
-                        <div className="w-4 h-4 bg-orange-500 rounded-full border-4 border-white shadow-sm" />
-                      )}
-                    </div>
-                    <p className="text-xs text-gray-500 leading-relaxed">
-                      {t('settings.points.exponential.description')}
-                    </p>
-                  </button>
-                </div>
-              </div>
-
-              <div className="p-8 bg-gray-50 rounded-[2rem] border border-gray-100 animate-in fade-in duration-500">
-                {restaurant.profile.pointsSystem?.method === 'simple' ? (
-                  <div className="space-y-6">
-                    <div className="flex items-center gap-4 text-orange-600 mb-2">
-                      <Coins className="w-6 h-6" />
-                      <h4 className="font-black text-lg">Configuración Método Simple</h4>
-                    </div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-end">
-                      <InputGroup
-                        label={t('settings.points.simple.pointsPerEuro')}
-                        type="number"
-                        value={restaurant.profile.pointsSystem?.pointsPerEuro}
-                        onChange={(val: string) =>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <button
+                        type="button"
+                        onClick={() =>
                           setRestaurant({
                             ...restaurant,
                             profile: {
-                              ...restaurant.profile,
+                              ...restaurant?.profile,
                               pointsSystem: {
-                                ...(restaurant.profile.pointsSystem || {}),
-                                pointsPerEuro: Number(val),
+                                ...(restaurant?.profile?.pointsSystem || {}),
+                                method: 'simple',
                               },
-                            },
+                            } as Restaurant['profile'],
                           })
                         }
-                      />
-                      <div className="bg-white p-4 rounded-2xl border border-orange-100 shadow-sm flex items-center justify-center gap-3">
-                        <span className="text-2xl font-black text-gray-400">1€</span>
-                        <span className="text-gray-300 font-black">=</span>
-                        <span className="text-2xl font-black text-orange-500">
-                          {restaurant.profile.pointsSystem?.pointsPerEuro || 10} pts
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="space-y-6">
-                    <div className="flex items-center gap-4 text-orange-600 mb-2">
-                      <Zap className="w-6 h-6" />
-                      <h4 className="font-black text-lg">Configuración Método Inteligente</h4>
-                    </div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
-                      <InputGroup
-                        label={t('settings.points.exponential.maxPoints')}
-                        type="number"
-                        value={
-                          restaurant.profile.pointsSystem?.maxPointsVisit ??
-                          restaurant.profile.maxPointsVisit
-                        }
-                        onChange={(val: string) =>
+                        className={`p-6 rounded-3xl border-2 transition-all text-left space-y-2 ${
+                          restaurant?.profile?.pointsSystem?.method === 'simple'
+                            ? 'border-orange-500 bg-orange-50'
+                            : 'border-gray-100 bg-gray-50 hover:border-gray-200'
+                        }`}
+                      >
+                        <div className="flex items-center justify-between">
+                          <h4 className="font-black text-gray-800">
+                            {t('settings.points.simple.title')}
+                          </h4>
+                          {restaurant?.profile?.pointsSystem?.method === 'simple' && (
+                            <div className="w-4 h-4 bg-orange-500 rounded-full border-4 border-white shadow-sm" />
+                          )}
+                        </div>
+                        <p className="text-xs text-gray-500 leading-relaxed">
+                          {t('settings.points.simple.description')}
+                        </p>
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() =>
                           setRestaurant({
                             ...restaurant,
                             profile: {
-                              ...restaurant.profile,
+                              ...restaurant?.profile,
                               pointsSystem: {
-                                ...(restaurant.profile.pointsSystem || {}),
-                                maxPointsVisit: Number(val),
+                                ...(restaurant?.profile?.pointsSystem || {}),
+                                method: 'exponential',
                               },
-                            },
+                            } as Restaurant['profile'],
                           })
                         }
-                      />
-                      <div className="text-xs text-gray-500 bg-white p-5 rounded-2xl border border-gray-100 leading-relaxed italic">
-                        "Este método ajusta los puntos según el gasto del cliente, su frecuencia de
-                        visita y el ticket medio de tu local. Es ideal para fomentar la recurrencia
-                        real."
-                      </div>
+                        className={`p-6 rounded-3xl border-2 transition-all text-left space-y-2 ${
+                          restaurant?.profile?.pointsSystem?.method === 'exponential'
+                            ? 'border-orange-500 bg-orange-50'
+                            : 'border-gray-100 bg-gray-50 hover:border-gray-200'
+                        }`}
+                      >
+                        <div className="flex items-center justify-between">
+                          <h4 className="font-black text-gray-800">
+                            {t('settings.points.exponential.title')}
+                          </h4>
+                          {restaurant?.profile?.pointsSystem?.method === 'exponential' && (
+                            <div className="w-4 h-4 bg-orange-500 rounded-full border-4 border-white shadow-sm" />
+                          )}
+                        </div>
+                        <p className="text-xs text-gray-500 leading-relaxed">
+                          {t('settings.points.exponential.description')}
+                        </p>
+                      </button>
                     </div>
                   </div>
-                )}
-              </div>
 
-              <div className="flex items-center justify-between p-6 bg-blue-50 rounded-3xl border border-blue-100">
-                <div className="flex items-center gap-4">
-                  <div className="p-3 bg-white rounded-2xl text-blue-600 shadow-sm">
-                    <ShieldCheck className="w-6 h-6" />
+                  <div className="p-8 bg-gray-50 rounded-[2rem] border border-gray-100 animate-in fade-in duration-500">
+                    {restaurant.profile?.pointsSystem?.method === 'simple' ? (
+                      <div className="space-y-6">
+                        <div className="flex items-center gap-4 text-orange-600 mb-2">
+                          <Coins className="w-6 h-6" />
+                          <h4 className="font-black text-lg">Configuración Método Simple</h4>
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-end">
+                          <InputGroup
+                            label={t('settings.points.simple.pointsPerEuro')}
+                            type="number"
+                            value={restaurant.profile?.pointsSystem?.pointsPerEuro}
+                            onChange={(val: string) =>
+                              setRestaurant({
+                                ...restaurant,
+                                profile: {
+                                  ...(restaurant.profile as any),
+                                  pointsSystem: {
+                                    ...(restaurant.profile?.pointsSystem || {}),
+                                    pointsPerEuro: Number(val),
+                                  },
+                                },
+                              })
+                            }
+                          />
+                          <div className="bg-white p-4 rounded-2xl border border-orange-100 shadow-sm flex items-center justify-center gap-3">
+                            <span className="text-2xl font-black text-gray-400">1€</span>
+                            <span className="text-gray-300 font-black">=</span>
+                            <span className="text-2xl font-black text-orange-500">
+                              {restaurant.profile?.pointsSystem?.pointsPerEuro || 10} pts
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="space-y-6">
+                        <div className="flex items-center gap-4 text-orange-600 mb-2">
+                          <Zap className="w-6 h-6" />
+                          <h4 className="font-black text-lg">Configuración Método Inteligente</h4>
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
+                          <InputGroup
+                            label={t('settings.points.exponential.maxPoints')}
+                            type="number"
+                            value={
+                              restaurant.profile?.pointsSystem?.maxPointsVisit ??
+                              (restaurant.profile as any)?.maxPointsVisit
+                            }
+                            onChange={(val: string) =>
+                              setRestaurant({
+                                ...restaurant,
+                                profile: {
+                                  ...(restaurant.profile as any),
+                                  pointsSystem: {
+                                    ...(restaurant.profile?.pointsSystem || {}),
+                                    maxPointsVisit: Number(val),
+                                  },
+                                },
+                              })
+                            }
+                          />
+                          <div className="text-xs text-gray-500 bg-white p-5 rounded-2xl border border-gray-100 leading-relaxed italic">
+                            "Este método ajusta los puntos según el gasto del cliente, su frecuencia
+                            de visita y el ticket medio de tu local. Es ideal para fomentar la
+                            recurrencia real."
+                          </div>
+                        </div>
+                      </div>
+                    )}
                   </div>
-                  <div>
-                    <h4 className="font-black text-gray-800">
-                      {t('settings.points.fraudProtection.title')}
-                    </h4>
-                    <p className="text-xs text-gray-500 font-medium">
-                      {t('settings.points.fraudProtection.description')}
-                    </p>
+
+                  <div className="flex items-center justify-between p-6 bg-blue-50 rounded-3xl border border-blue-100">
+                    <div className="flex items-center gap-4">
+                      <div className="p-3 bg-white rounded-2xl text-blue-600 shadow-sm">
+                        <ShieldCheck className="w-6 h-6" />
+                      </div>
+                      <div>
+                        <h4 className="font-black text-gray-800">
+                          {t('settings.points.fraudProtection.title')}
+                        </h4>
+                        <p className="text-xs text-gray-500 font-medium">
+                          {t('settings.points.fraudProtection.description')}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="w-12 h-6 bg-blue-600 rounded-full flex items-center justify-end px-1 cursor-pointer">
+                      <div className="w-4 h-4 bg-white rounded-full shadow-sm" />
+                    </div>
                   </div>
-                </div>
-                <div className="w-12 h-6 bg-blue-600 rounded-full flex items-center justify-end px-1 cursor-pointer">
-                  <div className="w-4 h-4 bg-white rounded-full shadow-sm" />
-                </div>
-              </div>
+                </>
+              )}
             </section>
           )}
         </div>
@@ -635,7 +647,19 @@ export default function Settings({ restaurant: initialRestaurant }: SettingsProp
   );
 }
 
-function NavButton({ label, icon: Icon, active, onClick }: any) {
+function NavButton({
+  label,
+  icon: Icon,
+  active,
+  onClick,
+  id: _id,
+}: {
+  label: string;
+  icon: React.ComponentType<{ className?: string }>;
+  active: boolean;
+  onClick: () => void;
+  id?: string;
+}) {
   return (
     <button
       onClick={onClick}
@@ -651,7 +675,19 @@ function NavButton({ label, icon: Icon, active, onClick }: any) {
   );
 }
 
-function InputGroup({ label, value, onChange, icon: Icon, type = 'text' }: any) {
+function InputGroup({
+  label,
+  value,
+  onChange,
+  icon: Icon,
+  type = 'text',
+}: {
+  label: string;
+  value: any;
+  onChange: (val: string) => void;
+  icon?: any;
+  type?: string;
+}) {
   return (
     <div className="space-y-1.5">
       <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">
@@ -672,7 +708,19 @@ function InputGroup({ label, value, onChange, icon: Icon, type = 'text' }: any) 
   );
 }
 
-function ToggleItem({ icon: Icon, title, description, defaultEnabled, color }: any) {
+function ToggleItem({
+  icon: Icon,
+  title,
+  description,
+  defaultEnabled,
+  color,
+}: {
+  icon: any;
+  title: string;
+  description: string;
+  defaultEnabled: boolean;
+  color: string;
+}) {
   const [enabled, setEnabled] = useState(defaultEnabled);
 
   return (

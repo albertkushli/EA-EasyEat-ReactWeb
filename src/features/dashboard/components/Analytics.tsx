@@ -32,14 +32,14 @@ import { getRewardsByRestaurant, fetchRedemptionsByRestaurant } from '@/services
 import { useTranslation } from 'react-i18next';
 
 interface AnalyticsProps {
-  visits: any[];
+  visits: Record<string, unknown>[];
   restaurantId: string;
 }
 
 export default function Analytics({ visits, restaurantId }: AnalyticsProps) {
   const { t } = useTranslation();
-  const [rewards, setRewards] = useState<any[]>([]);
-  const [redemptions, setRedemptions] = useState<any[]>([]);
+  const [rewards, setRewards] = useState<unknown[]>([]);
+  const [redemptions, setRedemptions] = useState<unknown[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -70,7 +70,7 @@ export default function Analytics({ visits, restaurantId }: AnalyticsProps) {
       ]);
       setRewards(rewardData);
       setRedemptions(redemptionData);
-    } catch (err: any) {
+    } catch (err: Record<string, unknown>) {
       console.error('Error loading analytics data:', err);
       setError(t('analytics.errorLoading') || 'No se pudieron cargar algunos datos de análisis.');
     } finally {
@@ -113,7 +113,7 @@ export default function Analytics({ visits, restaurantId }: AnalyticsProps) {
       return d >= sixtyDaysAgo && d < thirtyDaysAgo;
     });
 
-    const getUniqueCustomers = (vList: any[]) =>
+    const getUniqueCustomers = (vList: Record<string, unknown>[]) =>
       new Set(vList.map((v) => String(v.customer_id?._id || v.customer_id))).size;
 
     const uniqueCustomers = getUniqueCustomers(restaurantVisits);
@@ -121,13 +121,13 @@ export default function Analytics({ visits, restaurantId }: AnalyticsProps) {
     const prevUniqueCustomers = getUniqueCustomers(prevMonthVisits);
 
     // Retention: Customers with more than 1 visit ever
-    const customerVisitCounts = restaurantVisits.reduce((acc: any, v) => {
+    const customerVisitCounts = restaurantVisits.reduce((acc: Record<string, unknown>, v) => {
       const id = String(v.customer_id?._id || v.customer_id);
       acc[id] = (acc[id] || 0) + 1;
       return acc;
     }, {});
     const recurrentCustomers = Object.values(customerVisitCounts).filter(
-      (count: any) => count > 1,
+      (count: Record<string, unknown>) => count > 1,
     ).length;
 
     const revenue = restaurantVisits.reduce((sum, v) => sum + Number(v.billAmount || 0), 0);
@@ -175,7 +175,7 @@ export default function Analytics({ visits, restaurantId }: AnalyticsProps) {
 
   // Chart Data (Real data grouping by day)
   const chartData = useMemo(() => {
-    const data: any[] = [];
+    const data: Record<string, unknown>[] = [];
 
     // 1. Filtrar visitas válidas para este restaurante
     const restaurantVisits = visits.filter((v) => {
@@ -492,7 +492,7 @@ export default function Analytics({ visits, restaurantId }: AnalyticsProps) {
   );
 }
 
-function KPICard({ title, value, variation, icon: Icon, gradient }: any) {
+function KPICard({ title, value, variation, icon: Icon, gradient }: Record<string, unknown>) {
   const isPositive = variation >= 0;
 
   return (
@@ -525,7 +525,7 @@ function KPICard({ title, value, variation, icon: Icon, gradient }: any) {
   );
 }
 
-function SmartAlert({ type, message, icon: Icon }: any) {
+function SmartAlert({ type, message, icon: Icon }: Record<string, unknown>) {
   const colors = {
     warning: 'bg-orange-50 border-orange-200 text-orange-700',
     success: 'bg-emerald-50 border-emerald-200 text-emerald-700',

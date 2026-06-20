@@ -3,19 +3,20 @@
 // ============================================
 
 import { IPaginatedResponse, IPaginationMeta } from '../types';
-import { DEFAULT_META } from '../constants';
 
 /**
  * Normaliza respuestas paginadas del backend
  * Soporta múltiples formatos de respuesta
  */
 export function parsePaginatedResponse<T>(
-  payload: any,
+  payload: unknown,
   fallbackLimit: number = 10,
 ): IPaginatedResponse<T> {
+  const p = payload as Record<string, unknown> | null;
+
   // Caso: { visits: [] }
-  if (Array.isArray(payload?.visits)) {
-    const visitsData = payload.visits;
+  if (p && Array.isArray(p.visits)) {
+    const visitsData = p.visits as T[];
     return {
       data: visitsData,
       meta: {
@@ -28,16 +29,17 @@ export function parsePaginatedResponse<T>(
   }
 
   // Caso estándar: { data: [], meta: {} }
-  const data = Array.isArray(payload?.data) ? payload.data : [];
-  const rawMeta = payload?.meta || {};
+  const data = p && Array.isArray(p.data) ? (p.data as T[]) : [];
+  const rawMeta = (p?.meta as Partial<IPaginationMeta>) || {};
 
-  const total = Number.isFinite(rawMeta.total) ? rawMeta.total : data.length;
-  const page = Number.isFinite(rawMeta.page) ? rawMeta.page : 1;
-  const limit = Number.isFinite(rawMeta.limit) ? rawMeta.limit : fallbackLimit;
+  const total = rawMeta.total != null ? Number(rawMeta.total) : data.length;
+  const page = rawMeta.page != null ? Number(rawMeta.page) : 1;
+  const limit = rawMeta.limit != null ? Number(rawMeta.limit) : fallbackLimit;
 
-  const totalPages = Number.isFinite(rawMeta.totalPages)
-    ? rawMeta.totalPages
-    : Math.max(1, Math.ceil(total / Math.max(1, limit)));
+  const totalPages =
+    rawMeta.totalPages != null
+      ? Number(rawMeta.totalPages)
+      : Math.max(1, Math.ceil(total / Math.max(1, limit)));
 
   return {
     data,
@@ -48,34 +50,40 @@ export function parsePaginatedResponse<T>(
 /**
  * Extrae array de datos de múltiples formatos de respuesta
  */
-export function extractArray<T>(payload: any): T[] {
-  if (Array.isArray(payload)) return payload;
-  if (Array.isArray(payload?.data)) return payload.data;
-  if (Array.isArray(payload?.reviews)) return payload.reviews;
-  if (Array.isArray(payload?.visits)) return payload.visits;
-  if (Array.isArray(payload?.employees)) return payload.employees;
+export function extractArray<T>(payload: unknown): T[] {
+  if (Array.isArray(payload)) return payload as T[];
+  const p = payload as Record<string, unknown> | null;
+  if (p && Array.isArray(p.data)) return p.data as T[];
+  if (p && Array.isArray(p.reviews)) return p.reviews as T[];
+  if (p && Array.isArray(p.visits)) return p.visits as T[];
+  if (p && Array.isArray(p.employees)) return p.employees as T[];
   return [];
 }
 
 /**
  * Ordena items por fecha descendente (más recientes primero)
  */
-export function sortByDateDesc<T extends { date?: any; createdAt?: any }>(items: T[]): T[] {
-  return [...items].sort(
-    (a, b) => new Date(b.date || b.createdAt).getTime() - new Date(a.date || a.createdAt).getTime(),
-  );
+export function sortByDateDesc<T extends { date?: string | Date; createdAt?: string | Date }>(
+  items: T[],
+): T[] {
+  return [...items].sort((a, b) => {
+    const dateA = a.date || a.createdAt;
+    const dateB = b.date || b.createdAt;
+    return new Date(dateB as string | Date).getTime() - new Date(dateA as string | Date).getTime();
+  });
 }
 
 /**
  * Valida si es un objeto vacío
  */
-export function isEmpty(obj: any): boolean {
-  return !obj || Object.keys(obj).length === 0;
+export function isEmpty(obj: unknown): boolean {
+  return !obj || typeof obj !== 'object' || Object.keys(obj as object).length === 0;
 }
 
 /**
  * Normaliza ID (soporta _id y id)
  */
-export function getId(obj: any): string | undefined {
-  return obj?._id ?? obj?.id;
+export function getId(obj: unknown): string | undefined {
+  const p = obj as Record<string, unknown> | null;
+  return (p?._id as string | undefined) ?? (p?.id as string | undefined);
 }

@@ -8,7 +8,7 @@ import { useTranslation } from 'react-i18next';
 import CustomerDetailModal from '../components/CustomerDetailModal';
 
 export default function Clients() {
-  const { user, restaurant } = useAuth() as any;
+  const { user, restaurant } = useAuth() as Record<string, unknown>;
   const { t } = useTranslation();
   const [clients, setClients] = useState<Customer[]>([]);
   const [loading, setLoading] = useState(true);
@@ -18,7 +18,7 @@ export default function Clients() {
   // Modal state
   const [selectedClient, setSelectedClient] = useState<Customer | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [restaurantVisits, setRestaurantVisits] = useState<any[]>([]);
+  const [restaurantVisits, setRestaurantVisits] = useState<unknown[]>([]);
 
   const restaurantId = user?.restaurant_id || restaurant?._id || restaurant?.id || '';
 
@@ -44,14 +44,16 @@ export default function Clients() {
 
       // 3. Filtrar por restaurante actual
       const filteredVisits = visits.filter(
-        (visit: any) =>
+        (visit: Record<string, unknown>) =>
           String(visit.restaurant_id?._id || visit.restaurant_id) === String(restaurantId),
       );
 
       // 4. Sacar los customer_id únicos
       const uniqueCustomerIds = [
         ...new Set(
-          filteredVisits.map((visit: any) => String(visit.customer_id?._id || visit.customer_id)),
+          filteredVisits.map((visit: Record<string, unknown>) =>
+            String(visit.customer_id?._id || visit.customer_id),
+          ),
         ),
       ];
 
@@ -64,7 +66,7 @@ export default function Clients() {
       );
 
       setClients(restaurantCustomers);
-    } catch (err: any) {
+    } catch (err: Record<string, unknown>) {
       console.error('Error loading clients:', err);
       setError(err.message || t('clients.errorLoading'));
     } finally {

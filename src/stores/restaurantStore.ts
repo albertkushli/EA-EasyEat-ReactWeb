@@ -2,16 +2,23 @@ import { create } from 'zustand';
 import type { Restaurant } from '@/types/Restaurant';
 import { fetchRestaurants, fetchNearbyRestaurants } from '@/services/restaurant.service';
 
-interface RestaurantStore {
+export interface RestaurantStore {
   restaurants: Restaurant[];
   loading: boolean;
+  selectedId: string | null;
   loadRestaurants: () => Promise<void>;
   loadNearby: (lat: number, lng: number, maxDistance?: number) => Promise<void>;
+  setSelected: (id?: string | null) => void;
 }
 
 export const useRestaurantStore = create<RestaurantStore>((set) => ({
   restaurants: [],
   loading: false,
+  selectedId: null,
+
+  setSelected: (id?: string | null) => {
+    set({ selectedId: id ?? null });
+  },
 
   loadRestaurants: async () => {
     set({ loading: true });

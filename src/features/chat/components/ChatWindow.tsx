@@ -62,7 +62,8 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ onClose, isDashboard }) => {
   };
 
   const restaurantName =
-    (activeConversation?.restaurant as any)?.profile?.name ?? 'Chat con Restaurante';
+    activeConversation?.restaurant?.profile?.name ??
+    'Chat con Restaurante';
 
   return (
     <div

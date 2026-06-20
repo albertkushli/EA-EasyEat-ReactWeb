@@ -1,9 +1,11 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState, memo } from 'react';
 import { useLoadScript, GoogleMap, Marker, MarkerClusterer } from '@react-google-maps/api';
+import type { Clusterer } from '@react-google-maps/marker-clusterer';
 import { useRestaurantStore } from '@/stores/restaurantStore';
+import type { RestaurantStore } from '@/stores/restaurantStore';
 import { useLocationStore } from '@/stores/locationStore';
-import RestaurantCard from './RestaurantCard';
-import LoadingOverlay from './LoadingOverlay';
+import RestaurantCard from '@/features/restaurants/components/RestaurantCard';
+import LoadingOverlay from '@/shared/components/ui/LoadingOverlay';
 import MapOverlay from './MapOverlay';
 import PremiumSearchBar from './PremiumSearchBar';
 import FloatingControlBar from './FloatingControlBar';
@@ -95,10 +97,10 @@ const OptimizedMarker = memo(
     restaurant: Restaurant;
     isSelected: boolean;
     onClick: () => void;
-    clusterer?: any;
+    clusterer?: Clusterer;
   }) => {
     const coords = getRestaurantCoordinates(restaurant);
-    const isNearby = (restaurant as any).isNearby;
+    const isNearby = restaurant.isNearby;
     const markerColor = isNearby ? '#ff9800' : '#e53935';
 
     // Memoize marker URL to avoid regenerating on every render
@@ -111,8 +113,8 @@ const OptimizedMarker = memo(
     const iconConfig = useMemo(
       () => ({
         url: markerUrl,
-        scaledSize: new (window as any).google.maps.Size(36, 36),
-        anchor: new (window as any).google.maps.Point(18, 36),
+        scaledSize: new (window as unknown as { google: typeof google }).google.maps.Size(36, 36),
+        anchor: new (window as unknown as { google: typeof google }).google.maps.Point(18, 36),
       }),
       [markerUrl],
     );
@@ -124,7 +126,11 @@ const OptimizedMarker = memo(
         position={coords}
         onClick={onClick}
         icon={iconConfig}
-        animation={isSelected ? (window as any).google.maps.Animation.BOUNCE : undefined}
+        animation={
+          isSelected
+            ? (window as unknown as { google: typeof google }).google.maps.Animation.BOUNCE
+            : undefined
+        }
         clusterer={clusterer}
       />
     );
@@ -137,7 +143,7 @@ const OptimizedMarker = memo(
     return (
       prevProps.isSelected === nextProps.isSelected &&
       prevProps.restaurant._id === nextProps.restaurant._id &&
-      (prevProps.restaurant as any).isNearby === (nextProps.restaurant as any).isNearby &&
+      prevProps.restaurant.isNearby === nextProps.restaurant.isNearby &&
       prevCoordsKey === nextCoordsKey
     );
   },
@@ -148,7 +154,7 @@ OptimizedMarker.displayName = 'OptimizedMarker';
 /**
  * User location marker component
  */
-const UserLocationMarker = memo(({ coords }: { coords?: any }) => {
+const UserLocationMarker = memo(({ coords }: { coords?: { lat: number; lng: number } | null }) => {
   if (!coords) return null;
 
   return (
@@ -156,8 +162,8 @@ const UserLocationMarker = memo(({ coords }: { coords?: any }) => {
       position={{ lat: coords.lat, lng: coords.lng }}
       icon={{
         url: createMarkerUrl('#3b82f6', 28, false, false),
-        scaledSize: new (window as any).google.maps.Size(28, 28),
-        anchor: new (window as any).google.maps.Point(14, 14),
+        scaledSize: new (window as unknown as { google: typeof google }).google.maps.Size(28, 28),
+        anchor: new (window as unknown as { google: typeof google }).google.maps.Point(14, 14),
       }}
       clickable={false}
     />
@@ -190,7 +196,7 @@ function filterRestaurants(
 
     // Distance filter
     if (filters.distance !== 'all' && userCoords) {
-      const distanceKm = (restaurant as any).distanceKm;
+      const distanceKm = restaurant.distanceKm;
       const maxDistance = parseFloat(filters.distance.replace('km', ''));
       if (distanceKm && distanceKm > maxDistance) {
         return false;
@@ -236,14 +242,12 @@ export default function MapScreen() {
     [trackMapEvent],
   );
 
-  const restaurants = useRestaurantStore((s: any) => s.restaurants as Restaurant[]);
-  const loading = useRestaurantStore((s: any) => s.loading as boolean);
-  const loadRestaurants = useRestaurantStore((s: any) => s.loadRestaurants as () => Promise<void>);
-  const loadNearby = useRestaurantStore(
-    (s: any) => s.loadNearby as (lat: number, lng: number, maxDistance?: number) => Promise<void>,
-  );
-  const selectedId = useRestaurantStore((s: any) => s.selectedId as string | undefined | null);
-  const setSelected = useRestaurantStore((s: any) => s.setSelected as (id?: string | null) => void);
+  const restaurants = useRestaurantStore((s: RestaurantStore) => s.restaurants);
+  const loading = useRestaurantStore((s: RestaurantStore) => s.loading);
+  const loadRestaurants = useRestaurantStore((s: RestaurantStore) => s.loadRestaurants);
+  const loadNearby = useRestaurantStore((s: RestaurantStore) => s.loadNearby);
+  const selectedId = useRestaurantStore((s: RestaurantStore) => s.selectedId);
+  const setSelected = useRestaurantStore((s: RestaurantStore) => s.setSelected);
 
   const { coords, requestLocation } = useLocationStore();
   const [internalLoading, setInternalLoading] = useState(false);
@@ -284,10 +288,10 @@ export default function MapScreen() {
   useEffect(() => {
     if (!mapReadyForClick) return;
 
-    const state = (location.state as any) || {};
+    const state = (location.state as Record<string, unknown>) || {};
     if (state.openRestaurantId) {
       setTimeout(() => {
-        setSelected(state.openRestaurantId);
+        setSelected(state.openRestaurantId as string);
         const r = restaurants.find((x) => x._id === state.openRestaurantId);
         trackMapEvent('Open restaurant from navigation', getRestaurantTrackingName(r));
         const restaurantCoords = r ? getRestaurantCoordinates(r) : null;
@@ -350,7 +354,7 @@ export default function MapScreen() {
   );
 
   const nearbyCount = useMemo(
-    () => filteredRestaurants.filter((r) => (r as any).isNearby).length,
+    () => filteredRestaurants.filter((r) => r.isNearby).length,
     [filteredRestaurants],
   );
 
@@ -482,7 +486,8 @@ export default function MapScreen() {
           streetViewControl: false,
           zoomControl: true,
           zoomControlOptions: {
-            position: (window as any).google?.maps?.ControlPosition?.RIGHT_BOTTOM,
+            position: (window as unknown as { google: typeof google }).google?.maps?.ControlPosition
+              ?.RIGHT_BOTTOM,
           },
           styles: MODERN_MAP_STYLE,
           gestureHandling: 'greedy',
@@ -528,7 +533,7 @@ export default function MapScreen() {
               ] as any,
             }}
           >
-            {(clusterer: any) => (
+            {(clusterer: Clusterer) => (
               <>
                 {filteredRestaurants.map((r: Restaurant) => {
                   const key =

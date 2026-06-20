@@ -9,28 +9,27 @@ import type { Restaurant } from '@/types/Restaurant';
 import { extractArray, parsePaginatedResponse, sortByDateDesc } from '@/utils/response-parser';
 
 function normalizeRestaurantLocation(
-  rawLocation: any,
-  rawRestaurant: any,
+  rawLocation: unknown,
+  rawRestaurant: unknown,
 ): Restaurant['profile']['location'] {
-  const latitude =
-    rawLocation?.latitude ??
-    rawLocation?.lat ??
-    rawRestaurant?.location?.latitude ??
-    rawRestaurant?.location?.lat;
+  const loc = rawLocation as Record<string, unknown> | undefined;
+  const rest = rawRestaurant as Record<string, unknown> | undefined;
+  const restProfile = rest?.profile as Record<string, unknown> | undefined;
+  const restLoc = rest?.location as Record<string, unknown> | undefined;
+  const profileLoc = restProfile?.location as Record<string, unknown> | undefined;
+
+  const latitude = loc?.latitude ?? loc?.lat ?? restLoc?.latitude ?? restLoc?.lat;
   const longitude =
-    rawLocation?.longitude ??
-    rawLocation?.lng ??
-    rawLocation?.lon ??
-    rawRestaurant?.location?.longitude ??
-    rawRestaurant?.location?.lng ??
-    rawRestaurant?.location?.lon;
+    loc?.longitude ?? loc?.lng ?? loc?.lon ?? restLoc?.longitude ?? restLoc?.lng ?? restLoc?.lon;
+
+  const locCoords = loc?.coordinates as Record<string, unknown> | undefined;
 
   return {
-    city: rawLocation?.city ?? rawRestaurant?.profile?.location?.city ?? '',
-    address: rawLocation?.address ?? rawRestaurant?.profile?.location?.address,
-    googlePlaceId: rawLocation?.googlePlaceId ?? rawRestaurant?.profile?.location?.googlePlaceId,
-    coordinates: Array.isArray(rawLocation?.coordinates?.coordinates)
-      ? rawLocation.coordinates
+    city: (loc?.city as string) ?? (profileLoc?.city as string) ?? '',
+    address: (loc?.address as string) ?? (profileLoc?.address as string),
+    googlePlaceId: (loc?.googlePlaceId as string) ?? (profileLoc?.googlePlaceId as string),
+    coordinates: Array.isArray(locCoords?.coordinates)
+      ? (loc?.coordinates as Restaurant['profile']['location']['coordinates'])
       : {
           type: 'Point',
           coordinates: [
@@ -41,31 +40,33 @@ function normalizeRestaurantLocation(
   };
 }
 
-function normalizeRestaurant(rawRestaurant: IRestaurant | any): Restaurant {
-  const profile = rawRestaurant?.profile ?? {};
+function normalizeRestaurant(rawRestaurant: unknown): Restaurant {
+  const r = rawRestaurant as Record<string, unknown> | undefined;
+  const profile = (r?.profile as Record<string, unknown>) ?? {};
 
   return {
-    _id: rawRestaurant?._id ?? rawRestaurant?.id,
+    _id: (r?._id as string) ?? (r?.id as string),
     profile: {
-      name: profile.name ?? 'Restaurant',
-      description: profile.description ?? '',
-      globalRating: profile.globalRating ?? 0,
-      category: profile.category ?? profile.categories ?? [],
-      timetable: profile.timetable,
-      image: profile.image ?? profile.images ?? [],
-      contact: profile.contact,
+      name: (profile.name as string) ?? 'Restaurant',
+      description: (profile.description as string) ?? '',
+      globalRating: (profile.globalRating as number) ?? 0,
+      category:
+        ((profile.category ?? profile.categories) as Restaurant['profile']['category']) ?? [],
+      timetable: profile.timetable as Restaurant['profile']['timetable'],
+      image: ((profile.image ?? profile.images) as string[]) ?? [],
+      contact: profile.contact as Restaurant['profile']['contact'],
       location: normalizeRestaurantLocation(profile.location, rawRestaurant),
     },
-    employees: rawRestaurant?.employees,
-    dishes: rawRestaurant?.dishes,
-    rewards: rawRestaurant?.rewards,
-    statistics: rawRestaurant?.statistics,
-    badges: rawRestaurant?.badges,
-    visits: rawRestaurant?.visits,
-    reviews: rawRestaurant?.reviews,
-    deletedAt: rawRestaurant?.deletedAt,
-    createdAt: rawRestaurant?.createdAt,
-    updatedAt: rawRestaurant?.updatedAt,
+    employees: r?.employees as string[],
+    dishes: r?.dishes as string[],
+    rewards: r?.rewards as string[],
+    statistics: r?.statistics as string | null,
+    badges: r?.badges as string[],
+    visits: r?.visits as string[],
+    reviews: r?.reviews as string[],
+    deletedAt: r?.deletedAt as string | null,
+    createdAt: r?.createdAt as string,
+    updatedAt: r?.updatedAt as string,
   };
 }
 
@@ -92,8 +93,8 @@ export async function fetchRestaurantStats(restaurantId: string): Promise<IResta
     );
 
     // Soporta distintos formatos de respuesta
-    const resData = res.data as any;
-    if (resData?.data && typeof resData.data === 'object') return resData.data;
+    const resData = res.data as unknown as Record<string, unknown>;
+    if (resData?.data && typeof resData.data === 'object') return resData.data as IRestaurantStats;
     if (res.data && typeof res.data === 'object') return res.data;
     return null;
   } catch (err) {
@@ -171,7 +172,10 @@ export async function fetchAllRestaurantVisits(
   }
 }
 
-export const updateRestaurant = async (restaurantId: string, restaurantData: any) => {
+export const updateRestaurant = async (
+  restaurantId: string,
+  restaurantData: Partial<Restaurant>,
+) => {
   try {
     const response = await apiClient.put(`/restaurants/${restaurantId}`, restaurantData);
     return response.data?.data || response.data;

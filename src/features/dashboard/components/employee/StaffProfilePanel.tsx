@@ -12,7 +12,7 @@ interface StaffProfilePanelProps {
 
 export default function StaffProfilePanel({ user, restaurant }: StaffProfilePanelProps) {
   const { t } = useTranslation();
-  const { logout } = useAuth() as any;
+  const { logout } = useAuth() as Record<string, unknown>;
   const [loading, setLoading] = useState(false);
 
   return (
@@ -131,7 +131,9 @@ export default function StaffProfilePanel({ user, restaurant }: StaffProfilePane
                     if (window.confirm(message)) {
                       setLoading(true);
                       const restaurantId =
-                        user?.restaurant_id || restaurant?._id || (restaurant as any)?.id;
+                        user?.restaurant_id ||
+                        restaurant?._id ||
+                        (restaurant as Record<string, unknown>)?.id;
                       if (restaurantId) {
                         try {
                           await softDeleteRestaurant(restaurantId);

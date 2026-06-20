@@ -58,7 +58,11 @@ export default function HomeEmployee() {
               visits={dashboard.visits}
               reviews={dashboard.reviews}
               dishes={dashboard.dishes}
-              restaurantId={dashboard.selectedRestaurant?._id ?? dashboard.restaurant?._id ?? dashboard.user?.restaurant_id!}
+              restaurantId={
+                dashboard.selectedRestaurant?._id ??
+                dashboard.restaurant?._id ??
+                (dashboard.user?.restaurant_id || '')
+              }
               averagePointsPerVisit={dashboard.averagePointsPerVisit}
               loyalCustomers={dashboard.loyalCustomers}
               restRating={dashboard.restRating}
@@ -84,13 +88,19 @@ export default function HomeEmployee() {
               visits={dashboard.allVisits}
               reviews={dashboard.reviews}
               dishes={dashboard.dishes}
-              restaurantId={dashboard.selectedRestaurant?._id ?? dashboard.restaurant?._id ?? dashboard.user?.restaurant_id!}
+              restaurantId={
+                dashboard.selectedRestaurant?._id ??
+                dashboard.restaurant?._id ??
+                (dashboard.user?.restaurant_id || '')
+              }
               restaurantKpis={dashboard.restaurantKpis}
               restRating={dashboard.restRating}
             />
           ) : dashboard.activeView === 'settings' ? (
             <div style={{ padding: '2rem' }}>
-              <RestaurantSettings restaurant={dashboard.selectedRestaurant ?? dashboard.restaurant} />
+              <RestaurantSettings
+                restaurant={dashboard.selectedRestaurant ?? dashboard.restaurant}
+              />
             </div>
           ) : dashboard.activeView === 'chat' ? (
             <div style={{ padding: '2rem' }}>

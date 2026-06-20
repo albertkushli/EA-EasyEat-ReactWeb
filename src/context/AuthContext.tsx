@@ -13,7 +13,7 @@ interface AuthContextType {
     password: string,
     userType?: string,
   ) => Promise<{ success: boolean; error?: string }>;
-  register: (userData: any) => Promise<{ success: boolean; error?: string }>;
+  register: (userData: Record<string, unknown>) => Promise<{ success: boolean; error?: string }>;
   loginGoogle: (
     credential: string,
     role: 'customer' | 'employee',
@@ -133,11 +133,12 @@ export const AuthProvider: FC<{ children: ReactNode }> = ({ children }) => {
         } else {
           return { success: false, error: 'Unexpected response: ' + res.status + ' ' + res.data };
         }
-      } catch (error: any) {
-        console.error('Login error:', error);
+      } catch (error) {
+        const err = error as any;
+        console.error('Login error:', err);
         return {
           success: false,
-          error: error.response?.data?.message || 'Login failed',
+          error: err.response?.data?.message || 'Login failed',
         };
       }
     },
@@ -145,22 +146,23 @@ export const AuthProvider: FC<{ children: ReactNode }> = ({ children }) => {
   );
 
   const register = useCallback(
-    async (userData: any) => {
+    async (userData: Record<string, unknown>) => {
       try {
         // 1. Create the customer using the existing backend endpoint
         const res = await apiClient.post('/customers', userData);
 
         if (res.status === 201) {
           // 2. Perform auto-login using the credentials provided during registration
-          return await login(userData.email, userData.password, 'customer');
+          return await login(userData.email as string, userData.password as string, 'customer');
         } else {
           return { success: false, error: 'Unexpected response: ' + res.status + ' ' + res.data };
         }
-      } catch (error: any) {
-        console.error('Register error:', error);
+      } catch (error) {
+        const err = error as any;
+        console.error('Register error:', err);
         return {
           success: false,
-          error: error.response?.data?.message || 'Registration failed',
+          error: err.response?.data?.message || 'Registration failed',
         };
       }
     },
@@ -179,11 +181,12 @@ export const AuthProvider: FC<{ children: ReactNode }> = ({ children }) => {
       } else {
         return { success: false, error: 'Unexpected response: ' + res.status + ' ' + res.data };
       }
-    } catch (error: any) {
-      console.error('Google login error:', error);
+    } catch (error) {
+      const err = error as any;
+      console.error('Google login error:', err);
       return {
         success: false,
-        error: error.response?.data?.message || 'Google login failed',
+        error: err.response?.data?.message || 'Google login failed',
       };
     }
   }, []);

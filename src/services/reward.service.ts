@@ -1,3 +1,4 @@
+import { isAxiosError } from 'axios';
 import apiClient from '@/services/apiClient';
 import { Reward } from '@/types/Reward';
 import { API_ENDPOINTS } from '../constants';
@@ -13,8 +14,12 @@ export const getRewardsByRestaurant = async (restaurantId: string) => {
     const json = response.data;
     const data = json?.data || json;
     return Array.isArray(data) ? data : data.rewards || [];
-  } catch (error: any) {
-    console.error('getRewardsByRestaurant error:', error.response?.data || error.message);
+  } catch (error: unknown) {
+    if (isAxiosError(error)) {
+      console.error('getRewardsByRestaurant error:', error.response?.data || error.message);
+    } else {
+      console.error('getRewardsByRestaurant error:', error);
+    }
     throw error;
   }
 };
@@ -23,8 +28,12 @@ export const createReward = async (rewardData: Partial<Reward>) => {
   try {
     const response = await apiClient.post('/rewards', rewardData);
     return response.data?.data || response.data;
-  } catch (error: any) {
-    console.error('createReward error:', error.response?.data || error.message);
+  } catch (error: unknown) {
+    if (isAxiosError(error)) {
+      console.error('createReward error:', error.response?.data || error.message);
+    } else {
+      console.error('createReward error:', error);
+    }
     throw error;
   }
 };
@@ -33,8 +42,12 @@ export const updateReward = async (rewardId: string, rewardData: Partial<Reward>
   try {
     const response = await apiClient.put(`/rewards/${rewardId}`, rewardData);
     return response.data?.data || response.data;
-  } catch (error: any) {
-    console.error('updateReward error:', error.response?.data || error.message);
+  } catch (error: unknown) {
+    if (isAxiosError(error)) {
+      console.error('updateReward error:', error.response?.data || error.message);
+    } else {
+      console.error('updateReward error:', error);
+    }
     throw error;
   }
 };
@@ -45,8 +58,12 @@ export const deleteReward = async (rewardId: string, restaurantId: string) => {
       params: { restaurant_id: restaurantId },
     });
     return response.data;
-  } catch (error: any) {
-    console.error('deleteReward error:', error.response?.data || error.message);
+  } catch (error: unknown) {
+    if (isAxiosError(error)) {
+      console.error('deleteReward error:', error.response?.data || error.message);
+    } else {
+      console.error('deleteReward error:', error);
+    }
     throw error;
   }
 };
@@ -54,7 +71,7 @@ export const deleteReward = async (rewardId: string, restaurantId: string) => {
 /**
  * Obtiene los canjes (redemptions) de un restaurante
  */
-export async function fetchRedemptionsByRestaurant(restaurantId: string): Promise<any[]> {
+export async function fetchRedemptionsByRestaurant(restaurantId: string): Promise<unknown[]> {
   if (!restaurantId) return [];
 
   try {

@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo, useRef } from 'react';
+import { useEffect, useState, useMemo, useCallback } from 'react';
 import {
   getEmployeesByRestaurant,
   createEmployee,
@@ -25,10 +25,29 @@ import EmployeeModal from '@/features/employees/components/EmployeeModal';
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
 
+interface EmployeeListItem {
+  _id?: string;
+  id?: string;
+  visits?: number;
+  rating?: number;
+  profile?: {
+    name?: string;
+    email?: string;
+    phone?: string;
+    role?: string;
+  };
+  stats?: {
+    totalVisits?: number;
+    visits?: number;
+    averageRating?: number;
+    revenue?: number;
+  };
+}
+
 export default function Employees() {
-  const { user, restaurant } = useAuth() as any;
+  const { user, restaurant } = useAuth();
   const { t } = useTranslation();
-  const [employees, setEmployees] = useState<any[]>([]);
+  const [employees, setEmployees] = useState<EmployeeListItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -44,36 +63,49 @@ export default function Employees() {
 
   // Modal State
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedEmployee, setSelectedEmployee] = useState<any | null>(null);
+  const [selectedEmployee, setSelectedEmployee] = useState<Record<string, unknown> | null>(null);
 
   const restaurantId = user?.restaurant_id || restaurant?._id || restaurant?.id || '';
 
-  useEffect(() => {
-    if (restaurantId) {
-      loadEmployees();
-    } else {
-      setLoading(false);
-      setError(
-        t('employees.errorNoRestaurant') || 'No se pudo identificar el restaurante del usuario.',
-      );
+  const loadEmployees = useCallback(async () => {
+    try {
+      queueMicrotask(() => {
+        setLoading(true);
+        setError(null);
+      });
+      const data = await getEmployeesByRestaurant(restaurantId);
+      queueMicrotask(() => {
+        setEmployees(data);
+      });
+    } catch (err: unknown) {
+      console.error('Error loading employees:', err);
+      const msg = err instanceof Error ? err.message : '';
+      queueMicrotask(() => {
+        setError(
+          msg || t('employees.errorLoading') || 'No se pudieron cargar los empleados.',
+        );
+      });
+    } finally {
+      queueMicrotask(() => {
+        setLoading(false);
+      });
     }
   }, [restaurantId, t]);
 
-  const loadEmployees = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      const data = await getEmployeesByRestaurant(restaurantId);
-      setEmployees(data);
-    } catch (err: any) {
-      console.error('Error loading employees:', err);
-      setError(
-        err.message || t('employees.errorLoading') || 'No se pudieron cargar los empleados.',
-      );
-    } finally {
-      setLoading(false);
+  useEffect(() => {
+    if (restaurantId) {
+      queueMicrotask(() => {
+        loadEmployees();
+      });
+    } else {
+      queueMicrotask(() => {
+        setLoading(false);
+        setError(
+          t('employees.errorNoRestaurant') || 'No se pudo identificar el restaurante del usuario.',
+        );
+      });
     }
-  };
+  }, [restaurantId, t, loadEmployees]);
 
   const filteredEmployees = useMemo(() => {
     return employees.filter((employee) => {
@@ -119,7 +151,7 @@ export default function Employees() {
     setIsModalOpen(true);
   };
 
-  const handleEditClick = (employee: any) => {
+  const handleEditClick = (employee: Record<string, unknown>) => {
     setSelectedEmployee(employee);
     setIsModalOpen(true);
   };
@@ -140,7 +172,7 @@ export default function Employees() {
     }
   };
 
-  const handleSaveEmployee = async (employeeData: any) => {
+  const handleSaveEmployee = async (employeeData: Record<string, unknown>) => {
     try {
       if (selectedEmployee) {
         const updated = await updateEmployee(selectedEmployee._id, {
@@ -210,11 +242,10 @@ export default function Employees() {
           <div className="flex items-center gap-2 w-full md:w-auto">
             <button
               onClick={() => setIsFilterPanelOpen(!isFilterPanelOpen)}
-              className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-black transition-all flex-1 md:flex-none justify-center border ${
-                isFilterPanelOpen || Object.values(filters).some((v) => v !== 'all' && v !== 0)
+              className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-black transition-all flex-1 md:flex-none justify-center border ${isFilterPanelOpen || Object.values(filters).some((v) => v !== 'all' && v !== 0)
                   ? 'bg-orange-500 text-white border-transparent shadow-lg shadow-orange-200'
                   : 'bg-white text-gray-600 border-gray-100 hover:bg-gray-50'
-              }`}
+                }`}
             >
               <Filter className="w-4 h-4" />
               <span>{t('employees.filters.title').toUpperCase()}</span>

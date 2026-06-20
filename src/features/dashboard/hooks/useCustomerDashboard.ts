@@ -4,7 +4,7 @@ import { useSearchParams } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
 import apiClient from '@/services/apiClient';
 import { fetchCustomer, updateCustomer, softDeleteCustomer } from '@/services/customer.service';
-import type { ICustomer, IRestaurant } from '@/types';
+import type { ICustomer } from '@/types';
 import { trackEvent } from '@/services/matomo';
 
 export interface CustomerRestaurantLocation {
@@ -279,16 +279,20 @@ export function useCustomerDashboard(): UseCustomerDashboardResult {
 
     if (!restaurantFromParams) {
       if (!loadingCustomerData) {
-        setSelectedRestaurant(null);
+        queueMicrotask(() => {
+          setSelectedRestaurant(null);
+        });
       }
       return;
     }
 
-    setSelectedRestaurant((currentRestaurant) =>
-      getRestaurantIdFromEntry(currentRestaurant) === restaurantId
-        ? currentRestaurant
-        : restaurantFromParams,
-    );
+    queueMicrotask(() => {
+      setSelectedRestaurant((currentRestaurant) =>
+        getRestaurantIdFromEntry(currentRestaurant) === restaurantId
+          ? currentRestaurant
+          : restaurantFromParams,
+      );
+    });
   }, [activeTab, loadingCustomerData, restaurants, searchParams]);
 
   useEffect(() => {
@@ -464,8 +468,10 @@ export function useCustomerDashboard(): UseCustomerDashboardResult {
       new Set(
         visits.map((visit) => {
           if (isRecord(visit.restaurant_id)) {
-            const restaurantProfile = isRecord((visit.restaurant_id as any).profile)
-              ? (visit.restaurant_id as any).profile
+            const restaurantProfile = isRecord(
+              (visit.restaurant_id as Record<string, unknown>).profile,
+            )
+              ? (visit.restaurant_id as Record<string, unknown>).profile
               : null;
             return String(restaurantProfile?.name ?? visit.restaurant_name ?? '');
           }
