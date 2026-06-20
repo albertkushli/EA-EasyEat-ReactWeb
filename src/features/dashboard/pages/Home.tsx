@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import logoImg from '@/assets/logo.svg';
 import Footer from '@/shared/components/Footer';
 import LanguageDropdown from '@/shared/components/ui/LanguageDropdown';
 import MapScreenPremium from '@/imports/MapScreenPremium';
@@ -29,8 +30,7 @@ export default function Home() {
     <div className="landing-page">
       <nav className="lp-nav">
         <Link to="/" className="lp-logo">
-          <span style={{ fontSize: '1.5rem' }}>🍽️</span>
-          <span>{t('navbar.logo')}</span>
+          <img src={logoImg} alt="EasyEat Logo" style={{ height: '40px' }} />
         </Link>
         <div className="lp-nav-links">
           <a href="#demo" className="lp-link">

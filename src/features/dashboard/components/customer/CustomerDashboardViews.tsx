@@ -2,6 +2,7 @@ import { type FormEvent, useState, useEffect, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
+import logoImg from '@/assets/logo.svg';
 import { QRCodeCanvas } from 'qrcode.react';
 import {
   ArrowLeft,
@@ -1004,9 +1005,10 @@ export function CustomerSidebar({ activeTab, onTabChange, user, onLogout }: Cust
   return (
     <aside className="hc-sidebar">
       <div className="hc-sidebar__brand">
-        <div className="hc-sidebar__logo">🍽️</div>
         <div>
-          <p className="hc-sidebar__title">{t('navbar.logo', 'EasyEat')}</p>
+          <p className="hc-sidebar__title">
+            <img src={logoImg} alt="EasyEat Logo" style={{ height: '32px', marginBottom: '4px' }} />
+          </p>
           <p className="hc-sidebar__subtitle">
             {t('auth.login.tagline', 'Tu experiencia gastronómica')}
           </p>
