@@ -114,6 +114,7 @@ interface CustomerDiscoverViewProps {
 interface CustomerHistoryRewardsViewProps {
   visits: CustomerVisit[];
   restaurants: CustomerRestaurant[];
+  pointsWallet: CustomerPointsWalletEntry[];
 }
 
 interface CustomerQrModalProps {
@@ -1744,6 +1745,7 @@ export function CustomerDiscoverView({
 export function CustomerHistoryRewardsView({
   visits,
   restaurants,
+  pointsWallet,
 }: CustomerHistoryRewardsViewProps) {
   const totalVisits = visits.length;
   const totalMoneySpent = visits.reduce((sum, visit) => sum + (Number(visit.billAmount) || 0), 0);
@@ -1808,6 +1810,54 @@ export function CustomerHistoryRewardsView({
             <h3>{totalVisits}</h3>
             <p>{t('stats_dashboard.visits', 'Visites realitzades')}</p>
           </div>
+        </div>
+      </div>
+
+      <div className="hc-rewards-points-section hc-animate-slide" style={{ animationDelay: '0.35s' }}>
+        <h3 className="hc-rewards-history-title">
+          {t('stats_dashboard.pointsWallet.title', 'Els teus punts per restaurant')}
+        </h3>
+        <div className="hc-rewards-history-list">
+          {pointsWallet.length > 0 ? (
+            pointsWallet.map((walletEntry, index) => {
+              const restaurant = getRestaurantInfo(walletEntry.restaurant_id);
+              const image = restaurant ? getRestaurantImage(restaurant) : '';
+              
+              return (
+                <div key={walletEntry._id || index} className="hc-history-item">
+                  <div className="hc-history-item__left">
+                    <div className="hc-history-item__img">
+                      {image ? (
+                        <img
+                          src={image}
+                          alt={restaurant ? getRestaurantName(restaurant) : 'Restaurant'}
+                        />
+                      ) : (
+                        <div className="placeholder">🍽️</div>
+                      )}
+                    </div>
+                    <div className="hc-history-item__info">
+                      <h4>
+                        {restaurant
+                          ? getRestaurantName(restaurant)
+                          : t('stats_dashboard.history.unknownRestaurant', 'Restaurant desconegut')}
+                      </h4>
+                      <p>{t('stats_dashboard.pointsWallet.available', 'Punts disponibles')}</p>
+                    </div>
+                  </div>
+                  <div className="hc-history-item__right">
+                    <div className="hc-history-badge hc-history-badge--points" style={{ fontSize: '1.2rem', padding: '0.5rem 1rem' }}>
+                      <Coins size={18} /> {walletEntry.points || 0}
+                    </div>
+                  </div>
+                </div>
+              );
+            })
+          ) : (
+            <div className="hc-empty">
+              {t('stats_dashboard.pointsWallet.empty', 'Encara no tens punts a cap restaurant.')}
+            </div>
+          )}
         </div>
       </div>
 
