@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { supportService, SupportChatMessage } from '../../../services/support-service';
 import '../styles/SupportChat.css';
+import logoImg from '@/assets/logo.svg';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Icons
@@ -125,7 +126,9 @@ const SupportChat: React.FC = () => {
       {isOpen && (
         <div className="support-panel">
           <div className="support-header">
-            <h3>Asistente EasyEat</h3>
+            <h3 style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              Asistente <img src={logoImg} alt="EasyEat Logo" style={{ height: '18px' }} />
+            </h3>
             <button
               className="support-close-btn"
               onClick={() => setIsOpen(false)}

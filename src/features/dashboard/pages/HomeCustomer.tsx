@@ -95,6 +95,7 @@ export default function HomeCustomer() {
             <CustomerHistoryRewardsView
               visits={dashboard.visits}
               restaurants={dashboard.restaurants}
+              pointsWallet={dashboard.pointsWallet}
             />
           ) : (
             <section className="hc-section hc-tab-panel">

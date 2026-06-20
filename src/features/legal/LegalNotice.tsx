@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { Shield, Info, Gavel, Mail, Scale, ChevronRight } from 'lucide-react';
 import Footer from '@/shared/components/Footer';
+import logoImg from '@/assets/logo.svg';
 
 export default function LegalNotice() {
   const { t } = useTranslation();
@@ -16,8 +17,8 @@ export default function LegalNotice() {
       {/* Navbar Minimalist */}
       <nav className="bg-white/80 backdrop-blur-md border-b border-slate-200 sticky top-0 z-50 px-6 py-4">
         <div className="max-w-7xl mx-auto flex justify-between items-center">
-          <Link to="/" className="text-2xl font-black text-orange-600 tracking-tight">
-            EasyEat
+          <Link to="/" className="text-2xl font-black text-orange-600 tracking-tight flex items-center gap-2">
+            <img src={logoImg} alt="EasyEat Logo" style={{ height: '32px' }} />
           </Link>
           <Link
             to="/"
@@ -60,7 +61,9 @@ export default function LegalNotice() {
                 <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">
                   Nombre Comercial
                 </p>
-                <p className="font-bold text-slate-700 text-lg">Easy Eat</p>
+                <p className="font-bold text-slate-700 text-lg">
+                  <img src={logoImg} alt="Easy Eat Logo" style={{ height: '24px' }} />
+                </p>
               </div>
               <div>
                 <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">

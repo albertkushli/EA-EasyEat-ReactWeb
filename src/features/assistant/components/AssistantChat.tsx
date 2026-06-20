@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { X, Bot, Send, Loader2, RotateCcw } from 'lucide-react';
+import logoImg from '@/assets/logo.svg';
 import { useTranslation } from 'react-i18next';
 import { askAssistant } from '@/services/llm.service';
 import '@/styles/AssistantChat.css';
@@ -123,7 +124,9 @@ const AssistantChat: React.FC<AssistantChatProps> = ({ isOpen, onClose }) => {
             </div>
             <div>
               <h3 className="ac-header__title">{t('assistant.title', 'AI Assistant')}</h3>
-              <span className="ac-header__subtitle">{t('assistant.subtitle', "EasyEat · IA")}</span>
+              <span className="ac-header__subtitle" style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                <img src={logoImg} alt="EasyEat Logo" style={{ height: '14px' }} /> · IA
+              </span>
               <span className="ac-header__subtitle">{t('assistant.notes1', "The assistant has no memory.")}</span>
               <span className="ac-header__subtitle">{t('assistant.notes2', "Conversations are not saved.")}</span>
             </div>

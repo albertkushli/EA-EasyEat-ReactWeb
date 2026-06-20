@@ -205,3 +205,5 @@ export interface IApiResponse<T = any> {
   status?: number;
   error?: string;
 }
+
+export * from './PointsWallet';
