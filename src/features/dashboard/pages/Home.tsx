@@ -224,25 +224,17 @@ export default function Home() {
             <span className="stat-label">{t('stats.visits')}</span>
           </div>
         </div>
-        <p style={{ marginTop: '50px', opacity: 0.6, fontWeight: 700, letterSpacing: '1px' }}>
+        <p className="stat-tagline">
           {t('stats.tagline')}
         </p>
       </section>
 
       <section className="lp-final-cta">
         <div className="cta-box">
-          <h2 style={{ fontSize: '42px', fontWeight: 800, marginBottom: '24px' }}>
+          <h2 className="cta-title">
             {t('cta.ready')}
           </h2>
-          <p
-            style={{
-              fontSize: '18px',
-              color: '#64748b',
-              marginBottom: '40px',
-              maxWidth: '600px',
-              margin: '0 auto 40px',
-            }}
-          >
+          <p className="cta-subtitle">
             {t('cta.join')}
           </p>
           <Link
@@ -252,31 +244,11 @@ export default function Home() {
           >
             {t('cta.access')} <ArrowRight size={20} />
           </Link>
-          <div
-            style={{ marginTop: '30px', display: 'flex', justifyContent: 'center', gap: '24px' }}
-          >
-            <span
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '8px',
-                fontSize: '14px',
-                fontWeight: 600,
-                color: '#94a3b8',
-              }}
-            >
+          <div className="cta-benefits">
+            <span className="cta-benefit-item">
               <CheckCircle size={16} className="text-green" /> {t('cta.benefits.noCards')}
             </span>
-            <span
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '8px',
-                fontSize: '14px',
-                fontWeight: 600,
-                color: '#94a3b8',
-              }}
-            >
+            <span className="cta-benefit-item">
               <CheckCircle size={16} className="text-green" /> {t('cta.benefits.free')}
             </span>
           </div>

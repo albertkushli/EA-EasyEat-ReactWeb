@@ -31,6 +31,12 @@ function PublicRoute({ children }: { children: ReactNode }) {
   return isAuthenticated ? <Navigate to="/dashboard" /> : children;
 }
 
+function AccessibilityWrapper() {
+  const location = useLocation();
+  if (location.pathname === '/') return null;
+  return <AccessibilityPanel />;
+}
+
 export default function App() {
   function MapRouteWrapper() {
     const location = useLocation();
@@ -111,9 +117,9 @@ export default function App() {
               <Route path="/map" element={<MapRouteWrapper />} />
               <Route path="/aviso-legal" element={<LegalNotice />} />
             </Routes>
+            <AccessibilityWrapper />
           </Router>
           <SupportChat />
-          <AccessibilityPanel />
         </ChatProvider>
       </AuthProvider>
     </ThemeProvider>
