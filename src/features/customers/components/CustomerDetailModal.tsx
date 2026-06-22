@@ -22,7 +22,7 @@ interface CustomerDetailModalProps {
   onClose: () => void;
   customer: Customer | null;
   restaurantId: string;
-  restaurantVisits: any[];
+  restaurantVisits: Record<string, unknown>[];
 }
 
 export default function CustomerDetailModal({
@@ -33,7 +33,7 @@ export default function CustomerDetailModal({
   restaurantVisits,
 }: CustomerDetailModalProps) {
   const { t } = useTranslation();
-  const [fullCustomer, setFullCustomer] = useState<any>(null);
+  const [fullCustomer, setFullCustomer] = useState<Record<string, unknown>>(null);
   const [loading, setLoading] = useState(true);
   const [restaurantReviews, setRestaurantReviews] = useState<IReview[]>([]);
 
@@ -62,7 +62,7 @@ export default function CustomerDetailModal({
     if (!customer) return null;
 
     const customerVisits = restaurantVisits.filter(
-      (visit: any) =>
+      (visit: Record<string, unknown>) =>
         String(visit.restaurant_id?._id || visit.restaurant_id) === String(restaurantId) &&
         String(visit.customer_id?._id || visit.customer_id) === String(customer._id),
     );
@@ -83,13 +83,13 @@ export default function CustomerDetailModal({
     const lastVisit = sortedVisits[0];
 
     const filteredReviews = restaurantReviews.filter(
-      (review: any) =>
+      (review: Record<string, unknown>) =>
         String(review.restaurant_id?._id || review.restaurant_id) === String(restaurantId) &&
         String(review.customer_id?._id || review.customer_id) === String(customer._id),
     );
 
     const ratings = filteredReviews
-      .map((review: any) => Number(review.globalRating))
+      .map((review: Record<string, unknown>) => Number(review.globalRating))
       .filter((rating) => !Number.isNaN(rating));
 
     const averageRating =

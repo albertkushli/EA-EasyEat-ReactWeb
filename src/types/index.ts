@@ -145,8 +145,8 @@ export interface IReview {
   _id?: string;
   id?: string;
   employee_id?: string | null;
-  customer_id: string | any;
-  restaurant_id: string | any;
+  customer_id: string;
+  restaurant_id: string;
   date?: string | Date;
   globalRating: number;
   images?: string[];
@@ -199,7 +199,7 @@ export interface IRestaurantStats {
 // API RESPONSE GENÉRICO
 // ─────────────────────────────────────────
 
-export interface IApiResponse<T = any> {
+export interface IApiResponse<T = unknown> {
   data?: T;
   message?: string;
   status?: number;

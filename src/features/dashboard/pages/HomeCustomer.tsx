@@ -1,5 +1,4 @@
 import { useTranslation } from 'react-i18next';
-import LanguageDropdown from '@/shared/components/ui/LanguageDropdown';
 import { useCustomerDashboard } from '../hooks/useCustomerDashboard';
 import {
   CustomerDiscoverView,
@@ -117,14 +116,14 @@ export default function HomeCustomer() {
       <CustomerQrModal
         open={dashboard.showQrModal}
         onClose={() => dashboard.setShowQrModal(false)}
-        userId={dashboard.user?._id! || dashboard.user?.id!}
+        userId={dashboard.user?._id || dashboard.user?.id || ''}
       />
       <RewardQrModal
         open={dashboard.showRewardQrModal}
         onClose={() => dashboard.setShowRewardQrModal(false)}
-        userId={dashboard.user?._id! || dashboard.user?.id!}
-        restaurantId={dashboard.selectedRestaurant?._id! || dashboard.selectedRestaurant?.id!}
-        rewardId={dashboard.selectedReward?._id! || dashboard.selectedReward?.id!}
+        userId={dashboard.user?._id || dashboard.user?.id || ''}
+        restaurantId={dashboard.selectedRestaurant?._id || dashboard.selectedRestaurant?.id || ''}
+        rewardId={dashboard.selectedReward?._id || dashboard.selectedReward?.id || ''}
       />
     </div>
   );

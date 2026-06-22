@@ -26,6 +26,52 @@ interface DishModalProps {
   dish?: Dish | null;
 }
 
+interface TagSelectorProps {
+  label: string;
+  icon: React.ComponentType<{ className?: string }>;
+  options: string[];
+  selectedItems: string[];
+  onToggle: (item: string) => void;
+  colorClass: string;
+}
+
+function TagSelector({
+  label,
+  icon: Icon,
+  options,
+  selectedItems,
+  onToggle,
+  colorClass,
+}: TagSelectorProps) {
+  return (
+    <div className="space-y-2">
+      <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1 flex items-center gap-2">
+        <Icon className="w-3 h-3" /> {label}
+      </label>
+      <div className="flex flex-wrap gap-1.5 p-3 bg-gray-50 border border-gray-100 rounded-2xl min-h-[4rem]">
+        {options.map((option: string) => {
+          const isSelected = selectedItems.includes(option);
+          return (
+            <button
+              key={option}
+              type="button"
+              onClick={() => onToggle(option)}
+              className={`px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-tight transition-all flex items-center gap-1.5 border ${
+                isSelected
+                  ? `${colorClass} border-transparent shadow-sm scale-105`
+                  : 'bg-white border-gray-100 text-gray-400 hover:border-gray-200'
+              }`}
+            >
+              {isSelected && <Check className="w-3 h-3" />}
+              {option.replace('-', ' ')}
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
 const ALLERGEN_OPTIONS = [
   'gluten',
   'shellfish',
@@ -95,10 +141,12 @@ export default function DishModal({ isOpen, onClose, onSave, dish }: DishModalPr
 
   useEffect(() => {
     if (dish) {
-      setFormData({ ...dish });
-      setTextInputs({
-        images: dish.images?.join(', ') || '',
-        ingredients: dish.ingredients?.join(', ') || '',
+      queueMicrotask(() => {
+        setFormData({ ...dish });
+        setTextInputs({
+          images: dish.images?.join(', ') || '',
+          ingredients: dish.ingredients?.join(', ') || '',
+        });
       });
     } else {
       const defaultState = {
@@ -115,10 +163,12 @@ export default function DishModal({ isOpen, onClose, onSave, dish }: DishModalPr
         flavorProfile: [],
         availableAt: ['lunch', 'dinner'],
       };
-      setFormData(defaultState);
-      setTextInputs({
-        images: '',
-        ingredients: '',
+      queueMicrotask(() => {
+        setFormData(defaultState);
+        setTextInputs({
+          images: '',
+          ingredients: '',
+        });
       });
     }
   }, [dish, isOpen]);
@@ -154,41 +204,6 @@ export default function DishModal({ isOpen, onClose, onSave, dish }: DishModalPr
   };
 
   if (!isOpen) return null;
-
-  const TagSelector = ({
-    label,
-    icon: Icon,
-    options,
-    selectedItems,
-    onToggle,
-    colorClass,
-  }: any) => (
-    <div className="space-y-2">
-      <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1 flex items-center gap-2">
-        <Icon className="w-3 h-3" /> {label}
-      </label>
-      <div className="flex flex-wrap gap-1.5 p-3 bg-gray-50 border border-gray-100 rounded-2xl min-h-[4rem]">
-        {options.map((option: string) => {
-          const isSelected = selectedItems.includes(option);
-          return (
-            <button
-              key={option}
-              type="button"
-              onClick={() => onToggle(option)}
-              className={`px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-tight transition-all flex items-center gap-1.5 border ${
-                isSelected
-                  ? `${colorClass} border-transparent shadow-sm scale-105`
-                  : 'bg-white border-gray-100 text-gray-400 hover:border-gray-200'
-              }`}
-            >
-              {isSelected && <Check className="w-3 h-3" />}
-              {option.replace('-', ' ')}
-            </button>
-          );
-        })}
-      </div>
-    </div>
-  );
 
   return (
     <AnimatePresence>
@@ -277,7 +292,10 @@ export default function DishModal({ isOpen, onClose, onSave, dish }: DishModalPr
                           <select
                             value={formData.section}
                             onChange={(e) =>
-                              setFormData({ ...formData, section: e.target.value as any })
+                              setFormData({
+                                ...formData,
+                                section: e.target.value as Dish['section'],
+                              })
                             }
                             className="w-full p-3 pl-10 bg-gray-50 border border-gray-100 rounded-xl text-sm font-bold text-gray-700 focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 outline-none transition-all appearance-none"
                           >
@@ -327,7 +345,10 @@ export default function DishModal({ isOpen, onClose, onSave, dish }: DishModalPr
                         <select
                           value={formData.portionSize}
                           onChange={(e) =>
-                            setFormData({ ...formData, portionSize: e.target.value as any })
+                            setFormData({
+                              ...formData,
+                              portionSize: e.target.value as Dish['portionSize'],
+                            })
                           }
                           className="w-full p-3 pl-10 bg-gray-50 border border-gray-100 rounded-xl text-sm font-bold text-gray-700 focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 outline-none transition-all appearance-none"
                         >

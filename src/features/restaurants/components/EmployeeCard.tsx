@@ -29,13 +29,13 @@ interface EmployeeStatus {
 // HELPERS
 // ════════════════════════════════════════════════
 
-function safeToNumber(value: any, fallback: number = 0): number {
+function safeToNumber(value: Record<string, unknown>, fallback: number = 0): number {
   const parsed = Number(value);
   return Number.isFinite(parsed) ? parsed : fallback;
 }
 
-function extractEmployeeProfile(employee: IEmployee, t: any): EmployeeProfile {
-  const profile = (employee?.profile as any) || {};
+function extractEmployeeProfile(employee: IEmployee, t: Record<string, unknown>): EmployeeProfile {
+  const profile = (employee?.profile as Record<string, unknown>) || {};
   return {
     name: profile?.name || t('components.employeeCard.noName'),
     email: profile?.email || t('components.employeeCard.noEmail'),
@@ -45,30 +45,36 @@ function extractEmployeeProfile(employee: IEmployee, t: any): EmployeeProfile {
 }
 
 function extractEmployeeStats(employee: IEmployeeStats, visits: IVisit[] = []): EmployeeStatsData {
-  const stats = (employee as any)?.stats || {};
+  const stats = (employee as Record<string, unknown>)?.stats || {};
 
   let visits_count = safeToNumber(stats?.visits, 0);
   if (visits_count === 0) visits_count = safeToNumber(stats?.totalVisits, 0);
   if (visits_count === 0) visits_count = safeToNumber(stats?.visit_count, 0);
-  if (visits_count === 0) visits_count = safeToNumber((employee as any)?.visits, 0);
+  if (visits_count === 0)
+    visits_count = safeToNumber((employee as Record<string, unknown>)?.visits, 0);
 
   let revenue = safeToNumber(stats?.revenue, 0);
   if (revenue === 0) revenue = safeToNumber(stats?.totalRevenue, 0);
   if (revenue === 0) revenue = safeToNumber(stats?.bill_amount, 0);
-  if (revenue === 0) revenue = safeToNumber((employee as any)?.revenue, 0);
+  if (revenue === 0) revenue = safeToNumber((employee as Record<string, unknown>)?.revenue, 0);
 
   if (revenue === 0 && visits && visits.length > 0) {
     const employeeVisits = visits.filter(
-      (v) => String((v as any).employee_id) === String(employee?._id) && !(v as any).deletedAt,
+      (v) =>
+        String((v as Record<string, unknown>).employee_id) === String(employee?._id) &&
+        !(v as Record<string, unknown>).deletedAt,
     );
-    revenue = employeeVisits.reduce((sum, v) => sum + ((v as any).billAmount || 0), 0);
+    revenue = employeeVisits.reduce(
+      (sum, v) => sum + ((v as Record<string, unknown>).billAmount || 0),
+      0,
+    );
     visits_count = employeeVisits.length;
   }
 
   let rating = safeToNumber(stats?.averageRating, 0);
   if (rating === 0) rating = safeToNumber(stats?.average_rating, 0);
   if (rating === 0) rating = safeToNumber(stats?.rating, 0);
-  if (rating === 0) rating = safeToNumber((employee as any)?.rating, 0);
+  if (rating === 0) rating = safeToNumber((employee as Record<string, unknown>)?.rating, 0);
 
   return {
     visits: visits_count,
@@ -77,8 +83,11 @@ function extractEmployeeStats(employee: IEmployeeStats, visits: IVisit[] = []): 
   };
 }
 
-function extractEmployeeStatus(employee: IEmployeeStats, t: any): EmployeeStatus {
-  const isActive = Boolean((employee as any)?.active);
+function extractEmployeeStatus(
+  employee: IEmployeeStats,
+  t: Record<string, unknown>,
+): EmployeeStatus {
+  const isActive = Boolean((employee as Record<string, unknown>)?.active);
   return {
     isActive,
     label: isActive ? t('components.employeeCard.active') : t('components.employeeCard.inactive'),
@@ -99,11 +108,11 @@ const EmployeeInfo: FC<{ profile: EmployeeProfile }> = ({ profile }) => (
   </div>
 );
 
-const EmployeeStats: FC<{ stats: EmployeeStatsData; locale: string; t: any }> = ({
-  stats,
-  locale,
-  t,
-}) => {
+const EmployeeStats: FC<{
+  stats: EmployeeStatsData;
+  locale: string;
+  t: Record<string, unknown>;
+}> = ({ stats, locale, t }) => {
   const currencyFormatter = new Intl.NumberFormat(locale, {
     style: 'currency',
     currency: 'EUR',
@@ -146,8 +155,8 @@ const EmployeeCard: FC<EmployeeCardProps> = ({ employee, visits = [] }) => {
   const locale = i18n.language;
 
   const profile = extractEmployeeProfile(employee, t);
-  const stats = extractEmployeeStats(employee as any, visits);
-  const status = extractEmployeeStatus(employee as any, t);
+  const stats = extractEmployeeStats(employee as Record<string, unknown>, visits);
+  const status = extractEmployeeStatus(employee as Record<string, unknown>, t);
 
   const avatarLetter = profile.name?.[0]?.toUpperCase() || '?';
 

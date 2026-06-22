@@ -4,7 +4,7 @@ import type { Restaurant } from '@/types/Restaurant';
 import { MAP_THEME } from '@/constants/mapTheme';
 
 interface RestaurantPreviewCardProps {
-  restaurant: Restaurant | null;
+  restaurant: (Restaurant & { isNearby?: boolean; distanceKm?: number }) | null;
   onClose: () => void;
   onViewDetails: (restaurantId: string) => void;
 }
@@ -61,7 +61,7 @@ export const RestaurantPreviewCard: React.FC<RestaurantPreviewCardProps> = ({
               />
 
               {/* Nearby Badge */}
-              {(restaurant as any).isNearby && (
+              {restaurant.isNearby && (
                 <div
                   className="absolute top-3 left-3 px-3 py-1 rounded-full text-xs font-semibold text-white"
                   style={{ background: MAP_THEME.accent }}
@@ -98,10 +98,10 @@ export const RestaurantPreviewCard: React.FC<RestaurantPreviewCardProps> = ({
 
               {/* Info Row */}
               <div className="flex flex-wrap gap-2 mb-4">
-                {((restaurant as any).distanceKm ?? null) !== null && (
+                {restaurant.distanceKm !== undefined && restaurant.distanceKm !== null && (
                   <div className="flex items-center gap-1 text-xs text-gray-600 bg-gray-50 px-2.5 py-1.5 rounded-lg">
                     <MapPin className="w-3 h-3" />
-                    {(restaurant as any).distanceKm.toFixed(1)} km
+                    {restaurant.distanceKm.toFixed(1)} km
                   </div>
                 )}
 

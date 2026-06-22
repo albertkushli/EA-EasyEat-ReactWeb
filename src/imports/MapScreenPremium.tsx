@@ -57,11 +57,11 @@ function getRating(r: Restaurant): number {
 }
 
 function getDistance(r: Restaurant): number | null {
-  return (r as any).distanceKm ?? null;
+  return r.distanceKm ?? null;
 }
 
 function isNearby(r: Restaurant): boolean {
-  return Boolean((r as any).isNearby);
+  return Boolean(r.isNearby);
 }
 
 function getCuisine(r: Restaurant): string {
@@ -130,7 +130,7 @@ function getRestaurantCoordinates(restaurant: Restaurant): { lat: number; lng: n
   const candidates = [
     rawCoordinates,
     profileRecord?.location,
-    restaurantRecord.location,
+    restaurantRecord?.location,
     restaurantRecord,
   ];
 

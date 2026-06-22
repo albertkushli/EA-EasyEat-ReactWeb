@@ -11,7 +11,7 @@ import {
   ResponsiveContainer,
 } from 'recharts';
 
-function normalizeRestaurantId(value: any) {
+function normalizeRestaurantId(value: Record<string, unknown>) {
   return String(value?._id ?? value ?? '');
 }
 
@@ -21,7 +21,11 @@ function average(values: number[]) {
   return total / values.length;
 }
 
-function buildReviewStats(reviews: any, restaurantId: any, t: any) {
+function buildReviewStats(
+  reviews: Record<string, unknown>,
+  restaurantId: Record<string, unknown>,
+  t: Record<string, unknown>,
+) {
   const chartKeys = [
     { key: 'foodQuality', name: t('components.reviewScores.categories.food') },
     { key: 'staffService', name: t('components.reviewScores.categories.service') },

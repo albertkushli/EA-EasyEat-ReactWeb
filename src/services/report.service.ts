@@ -1,7 +1,10 @@
 import { API_ENDPOINTS } from '@/constants';
 import apiClient from '@/services/apiClient';
 
-export async function createRestaurantReport(restaurantId: string, reason: string): Promise<any | null> {
+export async function createRestaurantReport(
+  restaurantId: string,
+  reason: string,
+): Promise<Record<string, unknown> | null> {
   if (!restaurantId) return null;
 
   try {
@@ -16,7 +19,7 @@ export async function createRestaurantReport(restaurantId: string, reason: strin
   }
 }
 
-export async function fetchReports(): Promise<any[]> {
+export async function fetchReports(): Promise<Record<string, unknown>[]> {
   try {
     const response = await apiClient.get(API_ENDPOINTS.REPORTS);
     const data = response.data?.data ?? response.data;
@@ -27,7 +30,10 @@ export async function fetchReports(): Promise<any[]> {
   }
 }
 
-export async function updateReport(reportId: string, updates: Record<string, unknown>): Promise<any | null> {
+export async function updateReport(
+  reportId: string,
+  updates: Record<string, unknown>,
+): Promise<Record<string, unknown> | null> {
   if (!reportId) return null;
 
   try {

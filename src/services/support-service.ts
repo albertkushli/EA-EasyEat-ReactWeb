@@ -1,5 +1,7 @@
 import apiClient from './apiClient';
 
+import { isAxiosError } from 'axios';
+
 export interface SupportChatMessage {
   role: 'user' | 'model';
   parts: string;
@@ -21,12 +23,15 @@ export const supportService = {
       });
 
       return response.data.response;
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('[supportService] Error sending message:', error);
-      throw new Error(
-        error.response?.data?.message ||
-          'No se pudo conectar con el asistente. Por favor, inténtalo de nuevo.',
-      );
+      if (isAxiosError(error)) {
+        throw new Error(
+          error.response?.data?.message ||
+            'No se pudo conectar con el asistente. Por favor, inténtalo de nuevo.',
+        );
+      }
+      throw new Error('No se pudo conectar con el asistente. Por favor, inténtalo de nuevo.');
     }
   },
 };

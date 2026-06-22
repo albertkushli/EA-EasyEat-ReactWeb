@@ -53,6 +53,7 @@ export interface Timetable {
   friday?: TimetableSlot[];
   saturday?: TimetableSlot[];
   sunday?: TimetableSlot[];
+  [day: string]: TimetableSlot[] | undefined;
 }
 
 export interface GeoPoint {
@@ -70,6 +71,14 @@ export interface RestaurantLocation {
 export interface RestaurantContact {
   phone?: string;
   email?: string;
+  website?: string;
+}
+
+export interface PointsSystem {
+  method?: 'simple' | 'exponential';
+  pointsPerEuro?: number;
+  maxPointsVisit?: number;
+  [key: string]: unknown;
 }
 
 export interface RestaurantProfile {
@@ -82,6 +91,7 @@ export interface RestaurantProfile {
   image?: string[];
   contact?: RestaurantContact;
   location: RestaurantLocation;
+  pointsSystem?: PointsSystem;
 }
 
 export interface Restaurant {
@@ -98,6 +108,7 @@ export interface Restaurant {
   createdAt?: string;
   updatedAt?: string;
   distanceKm?: number;
+  isNearby?: boolean;
 }
 
 export type RestaurantId = Restaurant['_id'] | string;

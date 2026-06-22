@@ -1,15 +1,8 @@
-import { useMemo } from "react";
-import {
-  PieChart,
-  Pie,
-  Cell,
-  Tooltip,
-  ResponsiveContainer,
-  Legend,
-} from "recharts";
-import type { IVisit } from "@/types";
+import { useMemo } from 'react';
+import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, Legend } from 'recharts';
+import type { IVisit } from '@/types';
 
-type StatisticsPeriod = "7d" | "30d" | "12m";
+type StatisticsPeriod = '7d' | '30d' | '12m';
 
 interface CustomerDonutChartProps {
   visits: IVisit[];
@@ -18,11 +11,11 @@ interface CustomerDonutChartProps {
 }
 
 function normalizeRestaurantId(value: unknown) {
-  if (value && typeof value === "object" && "_id" in value) {
-    return String((value as { _id?: string })._id ?? "");
+  if (value && typeof value === 'object' && '_id' in value) {
+    return String((value as { _id?: string })._id ?? '');
   }
 
-  return String(value ?? "");
+  return String(value ?? '');
 }
 
 function getPeriodStart(period?: StatisticsPeriod) {
@@ -31,9 +24,9 @@ function getPeriodStart(period?: StatisticsPeriod) {
   const now = new Date();
   const start = new Date(now);
 
-  if (period === "7d") {
+  if (period === '7d') {
     start.setDate(now.getDate() - 6);
-  } else if (period === "30d") {
+  } else if (period === '30d') {
     start.setDate(now.getDate() - 29);
   } else {
     start.setMonth(now.getMonth() - 11);
@@ -48,7 +41,7 @@ export default function CustomerDonutChart({
   restaurantId,
   period,
 }: CustomerDonutChartProps) {
-  const COLORS = ["#22c55e", "#f97316"];
+  const COLORS = ['#22c55e', '#f97316'];
 
   const data = useMemo(() => {
     const currentRestaurantId = normalizeRestaurantId(restaurantId);
@@ -75,7 +68,7 @@ export default function CustomerDonutChart({
 
         const cid = normalizeRestaurantId(visit.customer_id);
 
-        if (cid && cid !== "undefined") acc[cid] = (acc[cid] || 0) + 1;
+        if (cid && cid !== 'undefined') acc[cid] = (acc[cid] || 0) + 1;
 
         return acc;
       },
@@ -84,13 +77,11 @@ export default function CustomerDonutChart({
 
     let nuevos = 0,
       recurrentes = 0;
-    Object.values(customerCounts).forEach((count) =>
-      count === 1 ? nuevos++ : recurrentes++,
-    );
+    Object.values(customerCounts).forEach((count) => (count === 1 ? nuevos++ : recurrentes++));
 
     return [
-      { name: "Nuevos", value: nuevos },
-      { name: "Recurrentes", value: recurrentes },
+      { name: 'Nuevos', value: nuevos },
+      { name: 'Recurrentes', value: recurrentes },
     ];
   }, [visits, restaurantId, period]);
 
@@ -108,17 +99,14 @@ export default function CustomerDonutChart({
             dataKey="value"
           >
             {data.map((_, index) => (
-              <Cell
-                key={`cell-${index}`}
-                fill={COLORS[index % COLORS.length]}
-              />
+              <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
             ))}
           </Pie>
           <Tooltip
             contentStyle={{
-              borderRadius: "8px",
-              border: "none",
-              boxShadow: "0 4px 6px -1px rgb(0 0 0 / 0.1)",
+              borderRadius: '8px',
+              border: 'none',
+              boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)',
             }}
           />
           <Legend verticalAlign="bottom" height={36} iconType="circle" />

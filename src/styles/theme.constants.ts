@@ -179,8 +179,9 @@ export const {
 } = PREMIUM_THEME;
 
 // Helper function to apply theme to component
-export const withTheme = (Component: React.ComponentType<any>) => {
-  return (props: any) => React.createElement(Component, { ...props, theme: PREMIUM_THEME });
+export const withTheme = (Component: React.ComponentType<Record<string, unknown>>) => {
+  return (props: Record<string, unknown>) =>
+    React.createElement(Component, { ...props, theme: PREMIUM_THEME });
 };
 
 // Helper for responsive breakpoints

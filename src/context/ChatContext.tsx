@@ -83,10 +83,17 @@ export const ChatProvider: FC<{ children: ReactNode }> = ({ children }) => {
       let data: Conversation[] = [];
 
       if (role === 'customer') {
-        const customerId = (user as any)._id ?? (user as any).id;
-        data = await chatService.getCustomerConversations(customerId);
-      } else if ((role === 'owner' || role === 'staff') && (user as any).restaurant_id) {
-        data = await chatService.getRestaurantConversations((user as any).restaurant_id);
+        const customerId = user._id ?? user.id;
+        if (customerId) {
+          data = await chatService.getCustomerConversations(customerId);
+        }
+      } else if (
+        (role === 'owner' || role === 'staff') &&
+        user.restaurant_id
+      ) {
+        data = await chatService.getRestaurantConversations(
+          user.restaurant_id,
+        );
       }
 
       setConversations(Array.isArray(data) ? data : []);
@@ -139,12 +146,12 @@ export const ChatProvider: FC<{ children: ReactNode }> = ({ children }) => {
       console.log('✅ Chat Socket connected:', newSocket.id);
 
       // Join the appropriate notification room so we receive conversation updates
-      const u = userRef.current as any;
+      const u = userRef.current;
       const currentRole = roleRef.current;
       if ((currentRole === 'owner' || currentRole === 'staff') && u?.restaurant_id) {
         newSocket.emit('chat:joinRestaurant', { restaurantId: u.restaurant_id });
-      } else if (currentRole === 'customer') {
-        const customerId = u?._id ?? u?.id;
+      } else if (currentRole === 'customer' && u) {
+        const customerId = u._id ?? u.id;
         if (customerId) newSocket.emit('chat:joinCustomer', { customerId });
       }
     });
@@ -237,8 +244,8 @@ export const ChatProvider: FC<{ children: ReactNode }> = ({ children }) => {
   /** Create or retrieve a conversation then make it active (customer-side) */
   const startConversation = useCallback(
     async (restaurantId: string): Promise<string> => {
-      const u = userRef.current as any;
-      const customerId = u?._id ?? u?.id ?? u?.customer_id;
+      const u = userRef.current;
+      const customerId = u?._id ?? u?.id;
 
       console.log('[Chat] startConversation called', {
         restaurantId,
@@ -277,7 +284,7 @@ export const ChatProvider: FC<{ children: ReactNode }> = ({ children }) => {
         console.warn('Cannot send message: socket not ready or no active conversation');
         return;
       }
-      const u = userRef.current as any;
+      const u = userRef.current;
       const senderId = u?._id ?? u?.id;
 
       let senderRole: SenderRole = 'customer';

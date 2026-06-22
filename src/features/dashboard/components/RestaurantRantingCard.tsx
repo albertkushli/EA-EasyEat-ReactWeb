@@ -11,7 +11,7 @@ type RestaurantData = {
 
 export default function RestaurantRantingCard() {
   const { t } = useTranslation();
-  const authCtx = useAuth() as any;
+  const authCtx = useAuth() as Record<string, unknown>;
   const restaurantId = String(authCtx?.user?.restaurant_id ?? '');
   const [restaurant, setRestaurant] = useState<RestaurantData | null>(null);
   const [loading, setLoading] = useState(false);

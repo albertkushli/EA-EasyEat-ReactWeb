@@ -1,11 +1,18 @@
-import { useEffect, useState, useCallback, useMemo } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '@/context/AuthContext';
 import { restaurantService, reviewService } from '@/services';
 import { getDishesByRestaurant } from '@/services/dish.service';
 import { DEFAULT_META, USER_ROLES, VISITS_LIMIT, VISITS_PAGE_SIZE } from '@/constants';
-import type { IEmployeeStats, IRestaurant, IRestaurantStats, IReview, IVisit, UserRole } from '@/types';
+import type {
+  IEmployeeStats,
+  IRestaurant,
+  IRestaurantStats,
+  IReview,
+  IVisit,
+  UserRole,
+} from '@/types';
 import type { Dish } from '@/types/Dish';
 
 interface UseEmployeeDashboardResult {
@@ -57,7 +64,8 @@ export function useEmployeeDashboard(): UseEmployeeDashboardResult {
   const [loading, setLoading] = useState(true);
   const isOwner = role === USER_ROLES.OWNER;
   const activeRestaurant = selectedRestaurant ?? restaurant;
-  const activeRestaurantId = activeRestaurant?._id ?? activeRestaurant?.id ?? user?.restaurant_id ?? '';
+  const activeRestaurantId =
+    activeRestaurant?._id ?? activeRestaurant?.id ?? user?.restaurant_id ?? '';
 
   const [activeView, setActiveView] = useState(() => {
     if (
@@ -96,7 +104,9 @@ export function useEmployeeDashboard(): UseEmployeeDashboardResult {
         'billing',
       ].includes(view)
     ) {
-      setActiveView(view);
+      queueMicrotask(() => {
+        setActiveView(view);
+      });
     }
   }, [view]);
 
@@ -173,7 +183,7 @@ export function useEmployeeDashboard(): UseEmployeeDashboardResult {
     }
 
     fetchOwnerRestaurants();
-  }, [role, user?._id, restaurant, selectedRestaurant]);
+  }, [role, user?._id, user?.restaurant_id, restaurant, selectedRestaurant]);
 
   useEffect(() => {
     async function fetchKpis() {
@@ -242,12 +252,9 @@ export function useEmployeeDashboard(): UseEmployeeDashboardResult {
   const isDataLoading =
     loading || ((role === USER_ROLES.OWNER || role === USER_ROLES.STAFF) && !activeRestaurant);
 
-  const handleSelectedRestaurantChange = useCallback(
-    (restaurant: IRestaurant | null) => {
-      setSelectedRestaurant(restaurant);
-    },
-    [],
-  );
+  const handleSelectedRestaurantChange = useCallback((restaurant: IRestaurant | null) => {
+    setSelectedRestaurant(restaurant);
+  }, []);
 
   return {
     t,

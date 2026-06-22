@@ -17,7 +17,10 @@ export default function LegalNotice() {
       {/* Navbar Minimalist */}
       <nav className="bg-white/80 backdrop-blur-md border-b border-slate-200 sticky top-0 z-50 px-6 py-4">
         <div className="max-w-7xl mx-auto flex justify-between items-center">
-          <Link to="/" className="text-2xl font-black text-orange-600 tracking-tight flex items-center gap-2">
+          <Link
+            to="/"
+            className="text-2xl font-black text-orange-600 tracking-tight flex items-center gap-2"
+          >
             <img src={logoImg} alt="EasyEat Logo" style={{ height: '32px' }} />
           </Link>
           <Link

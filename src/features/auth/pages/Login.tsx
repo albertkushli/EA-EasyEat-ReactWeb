@@ -40,7 +40,6 @@ export default function Login() {
       script.onload = () => initializeGoogleSignIn();
       document.body.appendChild(script);
     };
-
     if (!existingScript) {
       loadScript();
     } else if ((window as any).google) {

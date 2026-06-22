@@ -18,19 +18,19 @@ function getRestaurantId(restaurant?: RestaurantSource | null): string | null {
 
 function getRestaurantImages(restaurant?: RestaurantSource | null): string[] {
   if (!restaurant) return [];
-  const profile = restaurant.profile as any;
+  const profile = restaurant.profile as Record<string, unknown>;
   return profile?.image ?? profile?.images ?? [];
 }
 
 function getRestaurantCategories(restaurant?: RestaurantSource | null): string[] {
   if (!restaurant) return [];
-  const profile = restaurant.profile as any;
+  const profile = restaurant.profile as Record<string, unknown>;
   return profile?.category ?? profile?.categories ?? [];
 }
 
 function getRestaurantLocation(restaurant?: RestaurantSource | null) {
   if (!restaurant) return null;
-  const location = (restaurant.profile as any)?.location;
+  const location = (restaurant.profile as Record<string, unknown>)?.location;
   if (!location) return null;
 
   return {
@@ -41,17 +41,17 @@ function getRestaurantLocation(restaurant?: RestaurantSource | null) {
 
 function getRestaurantRating(restaurant?: RestaurantSource | null): number {
   if (!restaurant) return 0;
-  return (restaurant.profile as any)?.globalRating ?? 0;
+  return (restaurant.profile as Record<string, unknown>)?.globalRating ?? 0;
 }
 
 function getRestaurantDescription(restaurant?: RestaurantSource | null): string {
   if (!restaurant) return '';
-  return (restaurant.profile as any)?.description ?? '';
+  return (restaurant.profile as Record<string, unknown>)?.description ?? '';
 }
 
 function getRestaurantContact(restaurant?: RestaurantSource | null) {
   if (!restaurant) return null;
-  return (restaurant.profile as any)?.contact ?? null;
+  return (restaurant.profile as Record<string, unknown>)?.contact ?? null;
 }
 
 function formatNumber(value: number | undefined | null): string {
@@ -61,7 +61,9 @@ function formatNumber(value: number | undefined | null): string {
 
 function Card({ children, className = '' }: { children: ReactNode; className?: string }) {
   return (
-    <div className={`rounded-2xl border border-black/5 bg-white p-5 shadow-sm space-y-4 ${className}`}>
+    <div
+      className={`rounded-2xl border border-black/5 bg-white p-5 shadow-sm space-y-4 ${className}`}
+    >
       {children}
     </div>
   );
@@ -100,41 +102,45 @@ export default function RestaurantDetailsScreen() {
   const handleLikeReview = async (reviewId?: string, currentLikes = 0) => {
     if (!reviewId) return;
     const isAlreadyLiked = likedReviewIds.includes(reviewId);
-    
+
     // Toggle likes count
     const nextLikes = isAlreadyLiked ? Math.max(0, currentLikes - 1) : currentLikes + 1;
-    
+
     // Optimistic UI update
-    setReviews(prev => prev.map(rev => {
-      const id = rev._id ?? rev.id;
-      if (id === reviewId) {
-        return { ...rev, likes: nextLikes };
-      }
-      return rev;
-    }));
-    
+    setReviews((prev) =>
+      prev.map((rev) => {
+        const id = rev._id ?? rev.id;
+        if (id === reviewId) {
+          return { ...rev, likes: nextLikes };
+        }
+        return rev;
+      }),
+    );
+
     if (isAlreadyLiked) {
-      setLikedReviewIds(prev => prev.filter(id => id !== reviewId));
+      setLikedReviewIds((prev) => prev.filter((id) => id !== reviewId));
     } else {
-      setLikedReviewIds(prev => [...prev, reviewId]);
+      setLikedReviewIds((prev) => [...prev, reviewId]);
     }
-    
+
     try {
       await reviewService.updateReview(reviewId, { likes: nextLikes });
     } catch (err) {
       console.error('Error updating review likes:', err);
       // Rollback
-      setReviews(prev => prev.map(rev => {
-        const id = rev._id ?? rev.id;
-        if (id === reviewId) {
-          return { ...rev, likes: currentLikes };
-        }
-        return rev;
-      }));
+      setReviews((prev) =>
+        prev.map((rev) => {
+          const id = rev._id ?? rev.id;
+          if (id === reviewId) {
+            return { ...rev, likes: currentLikes };
+          }
+          return rev;
+        }),
+      );
       if (isAlreadyLiked) {
-        setLikedReviewIds(prev => [...prev, reviewId]);
+        setLikedReviewIds((prev) => [...prev, reviewId]);
       } else {
-        setLikedReviewIds(prev => prev.filter(id => id !== reviewId));
+        setLikedReviewIds((prev) => prev.filter((id) => id !== reviewId));
       }
     }
   };
@@ -335,7 +341,9 @@ export default function RestaurantDetailsScreen() {
                             </span>
                           </div>
 
-                          <p className="text-sm text-gray-700">{review.comment || 'No comment provided.'}</p>
+                          <p className="text-sm text-gray-700">
+                            {review.comment || 'No comment provided.'}
+                          </p>
 
                           {review.images && review.images.length > 0 && (
                             <div className="grid grid-cols-3 gap-2">
@@ -349,7 +357,7 @@ export default function RestaurantDetailsScreen() {
                             </div>
                           )}
 
-                          <button 
+                          <button
                             onClick={() => handleLikeReview(review._id || review.id, review.likes)}
                             className={`inline-flex items-center gap-1 rounded-full border px-3 py-1 text-xs font-semibold transition ${
                               likedReviewIds.includes(review._id || review.id || '')

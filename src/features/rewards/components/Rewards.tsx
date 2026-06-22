@@ -27,7 +27,7 @@ import { useTranslation } from 'react-i18next';
 export default function Rewards() {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const { user, restaurant } = useAuth() as any;
+  const { user, restaurant } = useAuth() as Record<string, unknown>;
   const [rewards, setRewards] = useState<Reward[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -56,7 +56,7 @@ export default function Rewards() {
       setError(null);
       const data = await getRewardsByRestaurant(restaurantId);
       setRewards(data);
-    } catch (err: any) {
+    } catch (err: Record<string, unknown>) {
       console.error('Error loading rewards:', err);
       setError(
         err.message || t('rewards.errorLoading') || 'No se pudieron cargar las recompensas.',
@@ -124,7 +124,7 @@ export default function Rewards() {
         const created = await createReward({ ...rewardData, restaurant_id: restaurantId });
         setRewards([...rewards, created]);
       }
-    } catch (err: any) {
+    } catch (err: Record<string, unknown>) {
       console.error('Error saving reward:', err);
       if (
         err?.response?.data?.error === 'PLAN_LIMIT_REACHED' ||

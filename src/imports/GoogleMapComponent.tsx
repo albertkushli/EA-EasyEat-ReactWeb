@@ -60,7 +60,7 @@ interface GoogleMapComponentProps {
   userLocation?: Location | null;
   isLoading?: boolean;
   onMapLoad?: (map: google.maps.Map) => void;
-  mapStyle?: any[];
+  mapStyle?: google.maps.MapTypeStyle[];
 }
 
 /**
@@ -91,8 +91,8 @@ const RestaurantMarker = memo<RestaurantMarkerProps>(
     const iconConfig = useMemo(
       () => ({
         url: markerUrl,
-        scaledSize: new (window as any).google.maps.Size(36, 36),
-        anchor: new (window as any).google.maps.Point(18, 36),
+        scaledSize: new (window as unknown as { google: typeof google }).google.maps.Size(36, 36),
+        anchor: new (window as unknown as { google: typeof google }).google.maps.Point(18, 36),
       }),
       [markerUrl],
     );
@@ -104,7 +104,11 @@ const RestaurantMarker = memo<RestaurantMarkerProps>(
         position={coords}
         onClick={onClick}
         icon={iconConfig}
-        animation={isSelected ? (window as any).google.maps.Animation.BOUNCE : undefined}
+        animation={
+          isSelected
+            ? (window as unknown as { google: typeof google }).google.maps.Animation.BOUNCE
+            : undefined
+        }
         title={restaurant.profile?.name || 'Restaurant'}
         clusterer={clusterer}
       />
@@ -140,8 +144,8 @@ const UserLocationMarker = memo<UserLocationMarkerProps>(({ coords }) => {
       position={{ lat: coords.lat, lng: coords.lng }}
       icon={{
         url: createMarkerUrl(MAP_THEME.accent, 28, false, false),
-        scaledSize: new (window as any).google.maps.Size(28, 28),
-        anchor: new (window as any).google.maps.Point(14, 14),
+        scaledSize: new (window as unknown as { google: typeof google }).google.maps.Size(28, 28),
+        anchor: new (window as unknown as { google: typeof google }).google.maps.Point(14, 14),
       }}
       clickable={false}
       title="Your Location"
@@ -236,7 +240,8 @@ const GoogleMapComponent: React.FC<GoogleMapComponentProps> = ({
         streetViewControl: false,
         zoomControl: true,
         zoomControlOptions: {
-          position: (window as any).google?.maps?.ControlPosition?.RIGHT_BOTTOM,
+          position: (window as unknown as { google: typeof google }).google?.maps?.ControlPosition
+            ?.RIGHT_BOTTOM,
         },
         styles: mapStyle,
         gestureHandling: 'greedy',

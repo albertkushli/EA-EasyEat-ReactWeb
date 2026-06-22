@@ -4,7 +4,7 @@ import logoImg from '@/assets/logo.svg';
 import { useTranslation } from 'react-i18next';
 import { askAssistant } from '@/services/llm.service';
 import '@/styles/AssistantChat.css';
-import ReactMarkdown from 'react-markdown'
+import ReactMarkdown from 'react-markdown';
 
 interface Message {
   id: string;
@@ -76,7 +76,7 @@ const AssistantChat: React.FC<AssistantChatProps> = ({ isOpen, onClose }) => {
       const errorMessage: Message = {
         id: `error-${Date.now()}`,
         role: 'assistant',
-        text: t('assistant.error', "An error occurred. Please try again."),
+        text: t('assistant.error', 'An error occurred. Please try again.'),
         timestamp: new Date(),
       };
       setMessages((prev) => [...prev, errorMessage]);
@@ -113,7 +113,7 @@ const AssistantChat: React.FC<AssistantChatProps> = ({ isOpen, onClose }) => {
         ref={panelRef}
         className={`ac-panel ${isOpen ? 'ac-panel--open' : ''}`}
         role="dialog"
-        aria-label={t('assistant.title', "Assistent IA")}
+        aria-label={t('assistant.title', 'Assistent IA')}
         aria-modal="true"
       >
         {/* Header */}
@@ -124,11 +124,18 @@ const AssistantChat: React.FC<AssistantChatProps> = ({ isOpen, onClose }) => {
             </div>
             <div>
               <h3 className="ac-header__title">{t('assistant.title', 'AI Assistant')}</h3>
-              <span className="ac-header__subtitle" style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+              <span
+                className="ac-header__subtitle"
+                style={{ display: 'flex', alignItems: 'center', gap: '4px' }}
+              >
                 <img src={logoImg} alt="EasyEat Logo" style={{ height: '14px' }} /> · IA
               </span>
-              <span className="ac-header__subtitle">{t('assistant.notes1', "The assistant has no memory.")}</span>
-              <span className="ac-header__subtitle">{t('assistant.notes2', "Conversations are not saved.")}</span>
+              <span className="ac-header__subtitle">
+                {t('assistant.notes1', 'The assistant has no memory.')}
+              </span>
+              <span className="ac-header__subtitle">
+                {t('assistant.notes2', 'Conversations are not saved.')}
+              </span>
             </div>
           </div>
           <div className="ac-header__actions">
@@ -161,13 +168,16 @@ const AssistantChat: React.FC<AssistantChatProps> = ({ isOpen, onClose }) => {
               </div>
               <p className="ac-empty__title">{t('assistant.empty.title', 'How can I help you?')}</p>
               <p className="ac-empty__desc">
-                {t('assistant.empty.desc', 'Ask me anything about restaurants, menu, recommendations, or points.')}
+                {t(
+                  'assistant.empty.desc',
+                  'Ask me anything about restaurants, menu, recommendations, or points.',
+                )}
               </p>
               <div className="ac-suggestions">
                 {[
-                  t('assistant.suggestion.1', "What restaurants do you have available?"),
-                  t('assistant.suggestion.2', "Where can I eat for less than €10?"),
-                  t('assistant.suggestion.3', "Recommend me a pizza restaurant"),
+                  t('assistant.suggestion.1', 'What restaurants do you have available?'),
+                  t('assistant.suggestion.2', 'Where can I eat for less than €10?'),
+                  t('assistant.suggestion.3', 'Recommend me a pizza restaurant'),
                 ].map((suggestion) => (
                   <button
                     key={suggestion}
@@ -185,10 +195,7 @@ const AssistantChat: React.FC<AssistantChatProps> = ({ isOpen, onClose }) => {
           ) : (
             <>
               {messages.map((msg) => (
-                <div
-                  key={msg.id}
-                  className={`ac-message ac-message--${msg.role}`}
-                >
+                <div key={msg.id} className={`ac-message ac-message--${msg.role}`}>
                   {msg.role === 'assistant' && (
                     <div className="ac-message__avatar">
                       <Bot size={14} />

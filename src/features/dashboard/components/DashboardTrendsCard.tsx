@@ -70,7 +70,11 @@ function getDailyLookup(visits: IVisit[], locale: string | string[]) {
   }, new Map());
 }
 
-function getPeriodTotals(dailyLookup: any, startDate: Date | string, endDate: Date | string) {
+function getPeriodTotals(
+  dailyLookup: Record<string, unknown>,
+  startDate: Date | string,
+  endDate: Date | string,
+) {
   let visits = 0;
   let revenue = 0;
 
@@ -103,7 +107,7 @@ function getChangeTone(change: number | null) {
   return 'neutral';
 }
 
-function buildPredictedDays(dailyData: any[], locale: string | string[]) {
+function buildPredictedDays(dailyData: Record<string, unknown>[], locale: string | string[]) {
   if (!dailyData.length) return [];
 
   const recentDays = dailyData.slice(-7);
@@ -154,7 +158,7 @@ function buildChartData(visits: IVisit[], locale: string | string[]) {
   return [...realDays, ...predictedDays];
 }
 
-function splitChartData(chartData: any[]) {
+function splitChartData(chartData: Record<string, unknown>[]) {
   return {
     realData: chartData
       .filter((item) => item.predicted === false)
@@ -228,7 +232,7 @@ function TrendsTooltip({
   t,
 }: {
   active?: boolean;
-  payload?: any[];
+  payload?: Record<string, unknown>[];
   label?: string;
   t: TFunction<'translation', undefined>;
 }) {

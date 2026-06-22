@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
 import { getRewardsByRestaurant } from '@/services/reward.service';
@@ -7,19 +7,20 @@ import { motion } from 'framer-motion';
 import {
   Check,
   Crown,
-  Zap,
   HelpCircle,
   ArrowRight,
   Sparkles,
-  BarChart3,
-  TrendingUp,
   FileCheck,
   CreditCard,
   Loader2,
 } from 'lucide-react';
 
+function redirectTo(url: string) {
+  window.location.href = url;
+}
+
 export default function BillingPanel() {
-  const { restaurant, reloadRestaurant } = useAuth() as any;
+  const { restaurant, reloadRestaurant } = useAuth();
   const [searchParams] = useSearchParams();
 
   const [activeCount, setActiveCount] = useState<number>(0);
@@ -31,36 +32,45 @@ export default function BillingPanel() {
   const restaurantId = restaurant?._id || restaurant?.id || '';
   const currentPlan = restaurant?.plan || 'free';
 
+  const loadRewardsUsage = useCallback(async () => {
+    try {
+      queueMicrotask(() => {
+        setLoadingUsage(true);
+      });
+      const rewards = await getRewardsByRestaurant(restaurantId);
+      const active = rewards.filter((r: Record<string, unknown>) => r.active).length;
+      queueMicrotask(() => {
+        setActiveCount(active);
+      });
+    } catch (err) {
+      console.error('Error loading usage stats:', err);
+    } finally {
+      queueMicrotask(() => {
+        setLoadingUsage(false);
+      });
+    }
+  }, [restaurantId]);
+
   useEffect(() => {
     if (restaurantId) {
       loadRewardsUsage();
     }
-  }, [restaurantId]);
+  }, [restaurantId, loadRewardsUsage]);
 
   useEffect(() => {
     const isSuccess = searchParams.get('success') === 'true';
     const planParam = searchParams.get('plan');
 
     if (isSuccess && planParam) {
-      setShowCelebration(true);
-      setBillingPlanUrlParam(planParam);
+      // Use queueMicrotask to avoid synchronous setState in effect
+      queueMicrotask(() => {
+        setShowCelebration(true);
+        setBillingPlanUrlParam(planParam);
+      });
       // Reactive reload of restaurant state to update currentPlan immediately
       reloadRestaurant();
     }
   }, [searchParams, reloadRestaurant]);
-
-  const loadRewardsUsage = async () => {
-    try {
-      setLoadingUsage(true);
-      const rewards = await getRewardsByRestaurant(restaurantId);
-      const active = rewards.filter((r: any) => r.active).length;
-      setActiveCount(active);
-    } catch (err) {
-      console.error('Error loading usage stats:', err);
-    } finally {
-      setLoadingUsage(false);
-    }
-  };
 
   const handleUpgrade = async (plan: 'premium' | 'business') => {
     try {
@@ -72,13 +82,14 @@ export default function BillingPanel() {
 
       if (res.data?.url) {
         // Redirection to the secure Stripe-hosted Checkout Page
-        window.location.href = res.data.url;
+        redirectTo(res.data.url);
       } else {
         alert('No se pudo iniciar la sesión de Stripe Checkout.');
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Stripe Session Error:', err);
-      alert(err.response?.data?.error || 'Error al conectar con Stripe.');
+      const axiosError = err as { response?: { data?: { error?: string } } };
+      alert(axiosError.response?.data?.error || 'Error al conectar con Stripe.');
     } finally {
       setCheckoutLoading(null);
     }
@@ -316,7 +327,7 @@ export default function BillingPanel() {
               ) : (
                 <button
                   disabled={plan.disabled || checkoutLoading !== null}
-                  onClick={() => handleUpgrade(plan.id as any)}
+                  onClick={() => handleUpgrade(plan.id as 'premium' | 'business')}
                   className={`w-full py-4 font-black text-xs uppercase tracking-wider rounded-2xl transition-all flex items-center justify-center gap-2 ${
                     plan.popular
                       ? 'bg-gradient-to-r from-orange-500 to-red-600 text-white shadow-xl shadow-orange-500/20 hover:scale-105'

@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo } from 'react';
 import {
   LineChart,
   Line,
@@ -7,10 +7,10 @@ import {
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
-} from "recharts";
-import type { IVisit } from "@/types";
+} from 'recharts';
+import type { IVisit } from '@/types';
 
-export type StatisticsPeriod = "7d" | "30d" | "12m";
+export type StatisticsPeriod = '7d' | '30d' | '12m';
 
 interface RevenueLineChartProps {
   visits: IVisit[];
@@ -19,11 +19,11 @@ interface RevenueLineChartProps {
 }
 
 function normalizeRestaurantId(value: unknown) {
-  if (value && typeof value === "object" && "_id" in value) {
-    return String((value as { _id?: string })._id ?? "");
+  if (value && typeof value === 'object' && '_id' in value) {
+    return String((value as { _id?: string })._id ?? '');
   }
 
-  return String(value ?? "");
+  return String(value ?? '');
 }
 
 function getPeriodStart(period?: StatisticsPeriod) {
@@ -32,9 +32,9 @@ function getPeriodStart(period?: StatisticsPeriod) {
   const now = new Date();
   const start = new Date(now);
 
-  if (period === "7d") {
+  if (period === '7d') {
     start.setDate(now.getDate() - 6);
-  } else if (period === "30d") {
+  } else if (period === '30d') {
     start.setDate(now.getDate() - 29);
   } else {
     start.setMonth(now.getMonth() - 11);
@@ -44,11 +44,7 @@ function getPeriodStart(period?: StatisticsPeriod) {
   return start;
 }
 
-export default function RevenueLineChart({
-  visits,
-  restaurantId,
-  period,
-}: RevenueLineChartProps) {
+export default function RevenueLineChart({ visits, restaurantId, period }: RevenueLineChartProps) {
   const data = useMemo(() => {
     const currentRestaurantId = normalizeRestaurantId(restaurantId);
     const periodStart = getPeriodStart(period);
@@ -68,16 +64,13 @@ export default function RevenueLineChart({
 
         const visitDate = new Date(visitDateValue);
 
-        if (
-          periodStart &&
-          (Number.isNaN(visitDate.getTime()) || visitDate < periodStart)
-        ) {
+        if (periodStart && (Number.isNaN(visitDate.getTime()) || visitDate < periodStart)) {
           return acc;
         }
 
-        const dateStr = visitDate.toLocaleDateString("es-ES", {
-          day: "2-digit",
-          month: "2-digit",
+        const dateStr = visitDate.toLocaleDateString('es-ES', {
+          day: '2-digit',
+          month: '2-digit',
         });
         acc[dateStr] = (acc[dateStr] || 0) + (Number(visit.billAmount) || 0);
         return acc;
@@ -93,32 +86,25 @@ export default function RevenueLineChart({
   return (
     <div className="w-full h-full min-h-[260px]">
       <ResponsiveContainer width="100%" height="100%">
-        <LineChart
-          data={data}
-          margin={{ top: 10, right: 20, left: 10, bottom: 35 }}
-        >
-          <CartesianGrid
-            strokeDasharray="3 3"
-            vertical={false}
-            stroke="#f1f5f9"
-          />
+        <LineChart data={data} margin={{ top: 10, right: 20, left: 10, bottom: 35 }}>
+          <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
           <XAxis
             dataKey="date"
-            tick={{ fontSize: 12, fill: "#94a3b8" }}
+            tick={{ fontSize: 12, fill: '#94a3b8' }}
             axisLine={false}
             tickLine={false}
           />
           <YAxis
-            tick={{ fontSize: 12, fill: "#94a3b8" }}
+            tick={{ fontSize: 12, fill: '#94a3b8' }}
             axisLine={false}
             tickLine={false}
             tickFormatter={(val) => `€${val}`}
           />
           <Tooltip
             contentStyle={{
-              borderRadius: "8px",
-              border: "none",
-              boxShadow: "0 4px 6px -1px rgb(0 0 0 / 0.1)",
+              borderRadius: '8px',
+              border: 'none',
+              boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)',
             }}
           />
           <Line
@@ -127,7 +113,7 @@ export default function RevenueLineChart({
             name="Ingresos"
             stroke="#f97316"
             strokeWidth={3}
-            dot={{ r: 4, fill: "#f97316" }}
+            dot={{ r: 4, fill: '#f97316' }}
             activeDot={{ r: 6 }}
           />
         </LineChart>

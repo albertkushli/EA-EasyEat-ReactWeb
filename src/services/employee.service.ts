@@ -6,7 +6,6 @@ import apiClient from '@/services/apiClient';
 import { API_ENDPOINTS } from '../constants';
 import { IEmployeeStats } from '../types';
 import { extractArray } from '../utils/response-parser';
-import { create } from 'node_modules/axios/index.cjs';
 
 /**
  * Obtiene lista de empleados con estadísticas
@@ -36,7 +35,7 @@ export const getEmployeesByRestaurant = async (restaurantId: string) => {
   }
 };
 
-export const createEmployee = async (employeeData: any) => {
+export const createEmployee = async (employeeData: Record<string, unknown>) => {
   try {
     const response = await apiClient.post('/employees', employeeData);
     return response.data?.data || response.data;
@@ -46,7 +45,7 @@ export const createEmployee = async (employeeData: any) => {
   }
 };
 
-export const updateEmployee = async (employeeId: string, employeeData: any) => {
+export const updateEmployee = async (employeeId: string, employeeData: Record<string, unknown>) => {
   try {
     const response = await apiClient.put(`/employees/${employeeId}`, employeeData);
     return response.data?.data || response.data;
